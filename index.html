@@ -14,6 +14,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style> 
         body { font-family: 'Cairo', sans-serif; } 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-fade { animation: fadeIn 0.6s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
@@ -39,6 +44,20 @@
             </div>
         </div>
     </header>
+
+    <!-- Auto Sliding Banner (Between Header and Main Content) -->
+    <div class="max-w-7xl mx-auto px-4 w-full mt-4">
+        <div id="promoSlider" class="relative overflow-hidden rounded-3xl shadow-md bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white p-6 sm:p-8 flex items-center justify-between min-h-[140px] border border-emerald-800">
+            <div class="space-y-2 z-10 max-w-xl">
+                <span id="sliderBadge" class="bg-emerald-500/30 text-emerald-300 text-[10px] font-black px-3 py-1 rounded-full border border-emerald-500/40">🔥 شعار اليوم</span>
+                <h3 id="sliderTitle" class="text-lg sm:text-2xl font-black text-white slide-fade">بدل داكشي اللي ما محتاجوش، وربح جديد فبلاش!</h3>
+                <p id="sliderDesc" class="text-xs sm:text-sm text-slate-200 font-light slide-fade">المقايضة المباشرة راس فـ راس بـ 0 درهم بين أطراف المغاربة بكل أمان.</p>
+            </div>
+            <div class="hidden md:block opacity-80 text-6xl pl-4">
+                <i id="sliderIcon" class="fa-solid fa-arrows-rotate text-emerald-400 animate-spin" style="animation-duration: 12s;"></i>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
@@ -120,8 +139,9 @@
                     <input type="text" id="regName" required placeholder="نزار زمزام" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">رقم الهاتف *</label>
+                    <label class="font-bold text-slate-700 block mb-1">رقم الهاتف (آمن ومعتمد) *</label>
                     <input type="tel" id="regPhone" required placeholder="0600000000" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <p class="text-[10px] text-amber-600 font-bold mt-1">⚠️ مسموح بحساب واحد فقط لكل رقم هاتف لمنع التحايل.</p>
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">المدينة *</label>
@@ -135,8 +155,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">كلمة السر *</label>
-                    <input type="password" id="regPass" required placeholder="أدخل كلمة السر" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="font-bold text-slate-700 block mb-1">كلمة السر (6 أحرف/أرقام على الأقل) *</label>
+                    <input type="password" id="regPass" required placeholder="أدخل كلمة السر الآمنة" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition mt-2 cursor-pointer">إنشاء حساب جديد 🚀</button>
             </form>
@@ -189,6 +209,63 @@
         </div>
     </div>
 
+    <!-- Modal: Edit Item -->
+    <div id="editModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100 text-right">
+            <button onclick="closeModal('editModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <h3 class="font-black text-lg text-slate-900">تعديل العرض النشط ✏️</h3>
+            <form onsubmit="handleEditItem(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="editListingId">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">عنوان العرض *</label>
+                    <input type="text" id="editTitle" required class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">الفئة *</label>
+                        <select id="editCategory" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                            <option value="إلكترونيات">إلكترونيات</option>
+                            <option value="وسائل نقل">دراجات وسيارات</option>
+                            <option value="أثاث">أثاث ومنزل</option>
+                            <option value="خدمات">حرفيين وخدمات</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">نوع التبادل *</label>
+                        <select id="editTradeType" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                            <option value="راس فـ راس">راس فـ راس</option>
+                            <option value="نزيدك الفلوس">نزيدك الفلوس</option>
+                            <option value="تزيدني الفلوس">تزيدني الفلوس</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">شنو باغي بدالها؟ *</label>
+                    <input type="text" id="editWanted" required class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">وصف قصير</label>
+                    <textarea id="editDesc" rows="2" class="w-full bg-slate-50 border p-3 rounded-xl font-bold"></textarea>
+                </div>
+                <button type="submit" id="editSubmitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer">حفظ التعديلات 💾</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Successful Trade Details -->
+    <div id="successTradeModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right overflow-hidden">
+            <button onclick="closeModal('successTradeModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition z-10">&times;</button>
+            <div class="text-center space-y-1 border-b pb-3">
+                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full">🎉 مقايضة ناجحة وموثقة</span>
+                <h3 class="font-black text-lg text-slate-900">تفاصيل عملية التبادل</h3>
+            </div>
+            <div id="successTradeContent" class="space-y-4 max-h-[70vh] overflow-y-auto pt-2">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Profile Details & Trade Requests & User's Listings -->
     <div id="profileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-6 shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto text-right">
@@ -206,6 +283,9 @@
                     </div>
                     <h4 id="profileModalName" class="font-black text-base text-slate-800"></h4>
                     <p id="profileModalPhone" class="text-xs text-slate-500 font-bold"></p>
+                    <div id="profileRatingBadge" class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
+                        <!-- Injected via JS -->
+                    </div>
                 </div>
             </div>
 
@@ -217,9 +297,17 @@
                 </div>
             </div>
 
+            <!-- Successful Trades Section -->
+            <div class="space-y-3 border-t pt-4">
+                <h4 class="font-black text-sm text-emerald-700">المقايضات الناجحة والمكتملة 🎉</h4>
+                <div id="successfulTradesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto p-1">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
             <!-- User's Personal Listings Section -->
             <div class="space-y-3 border-t pt-4">
-                <h4 class="font-black text-sm text-slate-800">عروضك النشطة والمكتملة</h4>
+                <h4 class="font-black text-sm text-slate-800">عروضك النشطة (اضغط على العرض للتعديل ✏️)</h4>
                 <div id="userListingsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-1">
                     <!-- Injected via JS -->
                 </div>
@@ -230,6 +318,35 @@
                     تسجيل الخروج 🚪
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal: Rating System -->
+    <div id="ratingModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right">
+            <button onclick="closeModal('ratingModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <h3 class="font-black text-base text-slate-900">تقييم شريك المقايضة 🌟</h3>
+            <p id="ratingTargetName" class="text-xs text-slate-500 font-bold"></p>
+            
+            <div class="flex justify-center gap-2 text-2xl py-2 cursor-pointer" id="starContainer">
+                <span onclick="setRatingStars(1)" class="star text-slate-300">★</span>
+                <span onclick="setRatingStars(2)" class="star text-slate-300">★</span>
+                <span onclick="setRatingStars(3)" class="star text-slate-300">★</span>
+                <span onclick="setRatingStars(4)" class="star text-slate-300">★</span>
+                <span onclick="setRatingStars(5)" class="star text-slate-300">★</span>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block font-bold text-xs text-slate-700">اختر تعليقاً جاهزاً أو أضف انطباعك:</label>
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" onclick="appendRatingTag('شخص ثقة 🤝')" class="bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold transition">شخص ثقة 🤝</button>
+                    <button type="button" onclick="appendRatingTag('تعامل راقي 🌟')" class="bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold transition">تعامل راقي 🌟</button>
+                    <button type="button" onclick="appendRatingTag('دقيق في الموعد ⏰')" class="bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold transition">دقيق في الموعد ⏰</button>
+                    <button type="button" onclick="appendRatingTag('صادق وسريع ⚡')" class="bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold transition">صادق وسريع ⚡</button>
+                </div>
+                <textarea id="ratingCommentInput" rows="2" placeholder="اكتب ملاحظتك..." class="w-full bg-slate-50 border p-3 rounded-xl font-bold text-xs mt-2"></textarea>
+            </div>
+            <button onclick="submitUserRating()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs shadow transition cursor-pointer">إرسال التقييم 🚀</button>
         </div>
     </div>
 
@@ -246,19 +363,24 @@
 
     <!-- Modal: Professional Chat & Meetup Window (WhatsApp Style) -->
     <div id="chatModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-100 rounded-3xl max-w-lg w-full shadow-2xl relative border border-slate-200 text-right flex flex-col h-[85vh] overflow-hidden">
+        <div class="bg-slate-100 rounded-3xl max-w-lg w-full shadow-2xl relative border border-slate-200 text-right flex flex-col h-[90vh] overflow-hidden">
             <!-- Chat Header -->
-            <div class="bg-white p-4 flex items-center justify-between border-b border-slate-200 shadow-sm z-10">
+            <div class="bg-white p-3 flex items-center justify-between border-b border-slate-200 shadow-sm z-10">
                 <div class="flex items-center gap-3">
-                    <img id="chatPartnerAvatar" src="" class="w-11 h-11 rounded-full object-cover border-2 border-emerald-500">
+                    <img id="chatPartnerAvatar" src="" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
                     <div>
-                        <h4 id="chatPartnerName" class="font-black text-sm text-slate-900"></h4>
-                        <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                        <h4 id="chatPartnerName" class="font-black text-xs text-slate-900"></h4>
+                        <span class="text-[9px] text-emerald-600 font-bold flex items-center gap-1">
                             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> متصل الآن للتنسيق
                         </span>
                     </div>
                 </div>
                 <button onclick="closeModal('chatModal')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            </div>
+
+            <!-- Product Info Banner in Chat -->
+            <div id="chatProductBanner" class="bg-emerald-50 px-4 py-2 border-b border-emerald-100 flex items-center gap-3 text-xs">
+                <!-- Injected via JS -->
             </div>
 
             <!-- Chat Messages Box (WhatsApp Style with Emojis & Bubbles) -->
@@ -267,7 +389,7 @@
             </div>
 
             <!-- Emoji Quick Bar -->
-            <div class="bg-white px-3 py-2 border-t border-slate-200 flex items-center gap-2 overflow-x-auto text-base">
+            <div class="bg-white px-3 py-1.5 border-t border-slate-200 flex items-center gap-2 overflow-x-auto text-base">
                 <button onclick="addEmoji('😊')" class="hover:scale-125 transition">😊</button>
                 <button onclick="addEmoji('🤝')" class="hover:scale-125 transition">🤝</button>
                 <button onclick="addEmoji('📍')" class="hover:scale-125 transition">📍</button>
@@ -281,17 +403,17 @@
             <!-- Chat Input Footer -->
             <div class="bg-white p-3 space-y-2 border-t border-slate-200">
                 <div class="flex gap-2 items-center">
-                    <label for="chatImageInput" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3.5 py-3 rounded-2xl text-xs font-bold transition cursor-pointer flex items-center gap-1">
+                    <label for="chatImageInput" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-2.5 rounded-2xl text-xs font-bold transition cursor-pointer flex items-center gap-1">
                         <i class="fa-solid fa-camera text-sm"></i>
                     </label>
                     <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="sendChatImage(event)">
                     
-                    <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك هنا..." class="flex-grow bg-slate-100 border border-slate-200 p-3 rounded-2xl font-bold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-2xl text-xs transition shadow cursor-pointer flex items-center gap-1">
+                    <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك هنا..." class="flex-grow bg-slate-100 border border-slate-200 p-2.5 rounded-2xl font-bold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-2xl text-xs transition shadow cursor-pointer flex items-center gap-1">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
-                <button onclick="completeTradeSuccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition cursor-pointer flex items-center justify-center gap-2">
+                <button onclick="completeTradeSuccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs shadow transition cursor-pointer flex items-center justify-center gap-2">
                     <i class="fa-solid fa-circle-check"></i> تأكيد إتمام المقابضة بنجاح 🎉
                 </button>
             </div>
@@ -301,7 +423,7 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12 space-y-1">
         <p>جميع الحقوق محفوظة © 2026 - بدل.ma</p>
-        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 9</p>
+        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 13</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -310,8 +432,19 @@
         let allListings = [];
         let allProfiles = {};
         let allRequests = [];
+        let allRatings = [];
         let activeChatRequestId = null;
         let chatInterval = null;
+        let selectedStarCount = 5;
+        let ratingTargetUserId = null;
+
+        // Auto Sliding Banners Data (Moroccan Darija Catchy Quotes)
+        const promoSlides = [
+            { badge: "🔥 عرض مميز", title: "بدل داكشي اللي ما محتاجوش بـ 0 درهم!", desc: "المقايضة فبلادنا ساهلة، حط سلعتك وبدل مع ولاد بلادك فابور.", icon: "fa-arrows-rotate" },
+            { badge: "⭐ ثقة وأمان", title: "تلاقاو فبلادكم وتبادلو بكل ثقة وراحة بال!", desc: "نظام التقييمات كيعطيك فكرة واضحة على مصداقية شريك المقايضة.", icon: "fa-shield-halved" },
+            { badge: "⚡ سرعة واحترافية", title: "من هاتف قديم لبيسيكليت ولا أثاث منزلي جديد!", desc: "كلشي ممكن فمنصة بدل.ma، نشر عرضك ودخل فدردشة فورية.", icon: "fa-bolt" }
+        ];
+        let currentSlideIndex = 0;
 
         window.onload = function() {
             const savedAcc = localStorage.getItem('badal_auth_account');
@@ -319,8 +452,30 @@
                 currentAccount = JSON.parse(savedAcc);
             }
             fetchProfilesAndData();
-            setInterval(fetchRequests, 5000);
+            setInterval(fetchDataPolling, 4000);
+            setInterval(rotatePromoSlider, 4500);
         };
+
+        function rotatePromoSlider() {
+            currentSlideIndex = (currentSlideIndex + 1) % promoSlides.length;
+            const slide = promoSlides[currentSlideIndex];
+            const badgeEl = document.getElementById('sliderBadge');
+            const titleEl = document.getElementById('sliderTitle');
+            const descEl = document.getElementById('sliderDesc');
+            const iconEl = document.getElementById('sliderIcon');
+
+            if(badgeEl && titleEl && descEl && iconEl) {
+                badgeEl.textContent = slide.badge;
+                titleEl.textContent = slide.title;
+                descEl.textContent = slide.desc;
+                iconEl.className = `fa-solid ${slide.icon} text-emerald-400 animate-spin`;
+            }
+        }
+
+        async function fetchDataPolling() {
+            await fetchRequests();
+            await fetchRatings();
+        }
 
         async function fetchProfilesAndData() {
             const { data: profs } = await _supabase.from('profiles').select('*');
@@ -331,8 +486,14 @@
                     localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
                 }
             }
+            await fetchRatings();
             await fetchListings();
             await fetchRequests();
+        }
+
+        async function fetchRatings() {
+            const { data } = await _supabase.from('ratings').select('*');
+            allRatings = data || [];
         }
 
         async function fetchRequests() {
@@ -341,21 +502,29 @@
             updateHeaderUI();
         }
 
+        function getUserRatingStats(userId) {
+            const userRats = allRatings.filter(r => String(r.rated_user_id) === String(userId));
+            if(userRats.length === 0) return { avg: '5.0', count: 0 };
+            const sum = userRats.reduce((acc, curr) => acc + Number(curr.rating), 0);
+            return { avg: (sum / userRats.length).toFixed(1), count: userRats.length };
+        }
+
         function updateHeaderUI() {
             const container = document.getElementById('authHeaderSection');
             if(currentAccount) {
                 const avatar = currentAccount.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
-                const pendingCount = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id) && r.status === 'pending').length;
+                const stats = getUserRatingStats(currentAccount.id);
+                const activeChatsCount = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted').length;
 
                 container.innerHTML = `
                     <div class="flex items-center gap-3 cursor-pointer relative" onclick="openProfileModal()">
                         <div class="relative">
                             <img src="${avatar}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500 shadow-sm">
-                            ${pendingCount > 0 ? `<span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center animate-bounce border-2 border-white">${pendingCount}</span>` : ''}
+                            ${activeChatsCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-md animate-pulse">${activeChatsCount}</span>` : ''}
                         </div>
                         <div class="hidden sm:block text-right">
                             <span class="text-xs font-black text-slate-800 block">${currentAccount.full_name}</span>
-                            <span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-location-dot"></i> ${currentAccount.city}</span>
+                            <span class="text-[10px] text-amber-600 font-bold">⭐ ${stats.avg} (${stats.count} تقييم)</span>
                         </div>
                     </div>
                 `;
@@ -389,15 +558,29 @@
 
         async function handleRegisterSubmit(e) {
             e.preventDefault();
-            const full_name = document.getElementById('regName').value;
-            const phone = document.getElementById('regPhone').value;
+            const full_name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
             const city = document.getElementById('regCity').value;
             const password = document.getElementById('regPass').value;
             const avatar_url = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
 
-            const { data: existing } = await _supabase.from('profiles').select('*').eq('phone', phone);
+            // حماية صارمة لمنع التحايل وفتح حسابات متعددة بنفس رقم الهاتف
+            if(phone.length < 10) {
+                alert("المرجو إدخال رقم هاتف مغربي صحيح (مثلاً: 0600000000)");
+                return;
+            }
+            if(password.length < 6) {
+                alert("كلمة السر يجب أن تكون من 6 أحرف أو أرقام على الأقل لضمان الأمان.");
+                return;
+            }
+
+            const { data: existing, error: checkErr } = await _supabase.from('profiles').select('*').eq('phone', phone);
+            if(checkErr) {
+                alert("حدث خطأ أثناء التحقق من الرقم، المرجو المحاولة لاحقاً.");
+                return;
+            }
             if(existing && existing.length > 0) {
-                alert("هذا الرقم مسجل به حساب سابقاً!");
+                alert("⚠️ تنبيه أمني: هذا الرقم مسجل مسبقاً في النظام. مسموح بحساب واحد فقط لكل رقم لمنع التحايل والتحقق من الموثوقية!");
                 switchAuthTab('login');
                 return;
             }
@@ -405,7 +588,7 @@
             const { data, error } = await _supabase.from('profiles').insert([{ full_name, phone, city, password, avatar_url }]).select();
 
             if(error) {
-                alert("خطأ في إنشاء الحساب: " + error.message);
+                alert("خطأ في إنشاء الحساب الآمن: " + error.message);
                 return;
             }
 
@@ -413,12 +596,12 @@
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             await fetchProfilesAndData();
             closeModal('authModal');
-            alert(`مرحباً بك يا ${full_name}! تم إنشاء حسابك بنجاح.`);
+            alert(`مرحباً بك يا ${full_name}! تم تفعيل حسابك الموثق بنجاح في بدل.ma 🚀`);
         }
 
         async function handleLoginSubmit(e) {
             e.preventDefault();
-            const phone = document.getElementById('loginPhone').value;
+            const phone = document.getElementById('loginPhone').value.trim();
             const password = document.getElementById('loginPass').value;
 
             const { data, error } = await _supabase.from('profiles').select('*').eq('phone', phone).eq('password', password);
@@ -449,39 +632,48 @@
             document.getElementById('profileModalName').textContent = currentAccount.full_name;
             document.getElementById('profileModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
             
-            const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id));
-            const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id));
+            const stats = getUserRatingStats(currentAccount.id);
+            document.getElementById('profileRatingBadge').innerHTML = `⭐ ${stats.avg} (${stats.count} تقييم من المستخدمين)`;
+
+            const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id) && r.status !== 'rejected');
+            const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id) && r.status !== 'rejected');
             const reqContainer = document.getElementById('tradeRequestsContainer');
 
             let htmlContent = '';
 
             if(myReceived.length > 0) {
-                htmlContent += `<p class="font-bold text-[11px] text-emerald-700 mb-1">الطلبات الواردة إليك:</p>`;
+                htmlContent += `<p class="font-bold text-[11px] text-emerald-700 mb-1.5">الطلبات الواردة إليك:</p>`;
                 htmlContent += myReceived.map(req => {
                     const sender = allProfiles[String(req.sender_id)] || { full_name: 'مستخدم', avatar_url: 'https://via.placeholder.com/150' };
                     const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
 
                     return `
-                        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2 text-xs mb-2">
+                        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs mb-2.5 transition hover:border-emerald-300">
                             <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <img src="${sender.avatar_url}" class="w-9 h-9 rounded-full object-cover border">
+                                <div class="flex items-center gap-2.5">
+                                    <img src="${sender.avatar_url}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500 shadow-sm">
                                     <div>
-                                        <span class="font-black text-slate-800 block">${sender.full_name}</span>
-                                        <span class="text-[10px] text-slate-500 font-bold">يريد مقايضة منتجك: ${listing.title}</span>
+                                        <span class="font-black text-slate-900 block">${sender.full_name}</span>
+                                        <span class="text-[10px] text-slate-500 font-bold">يريد مقايضة منتجك: <strong class="text-emerald-700">${listing.title}</strong></span>
                                     </div>
                                 </div>
-                                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${req.status === 'pending' ? 'bg-amber-50 text-amber-600 border border-amber-200' : req.status === 'accepted' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500'}">
-                                    ${req.status === 'pending' ? 'قيد الانتظار' : req.status === 'accepted' ? 'تمت الموافقة 🤝' : 'ملغي'}
+                                <span class="text-[10px] px-3 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                                    ${req.status === 'pending' ? '⏳ جاري الانتظار' : '🤝 تمت الموافقة'}
                                 </span>
                             </div>
                             ${req.status === 'pending' ? `
-                                <div class="flex gap-2 pt-1">
-                                    <button onclick="respondTrade('${req.id}', 'accepted')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl transition cursor-pointer">موافقة وتحديد اللقاء 🤝</button>
-                                    <button onclick="respondTrade('${req.id}', 'rejected')" class="w-1/3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 rounded-xl transition cursor-pointer">إلغاء</button>
+                                <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+                                    <button onclick="respondTrade('${req.id}', 'accepted')" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm cursor-pointer flex items-center justify-center gap-1.5">
+                                        <i class="fa-solid fa-check-circle"></i> موافقة وتنسيق اللقاء
+                                    </button>
+                                    <button onclick="respondTrade('${req.id}', 'rejected')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center gap-1">
+                                        <i class="fa-solid fa-xmark"></i> رفض
+                                    </button>
                                 </div>
                             ` : req.status === 'accepted' ? `
-                                <button onclick="openChatModal('${req.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl transition cursor-pointer">فتح دردشة اللقاء 💬</button>
+                                <button onclick="openChatModal('${req.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl transition shadow-sm cursor-pointer flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-comments"></i> فتح دردشة اللقاء وتحديد الموعد 💬
+                                </button>
                             ` : ''}
                         </div>
                     `;
@@ -489,47 +681,76 @@
             }
 
             if(mySent.length > 0) {
-                htmlContent += `<p class="font-bold text-[11px] text-blue-700 mt-3 mb-1">طلباتك المرسلة:</p>`;
+                htmlContent += `<p class="font-bold text-[11px] text-blue-700 mt-4 mb-1.5">طلباتك المرسلة (إلى مالكي العروض):</p>`;
                 htmlContent += mySent.map(req => {
                     const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
 
                     return `
-                        <div class="bg-blue-50/50 p-3 rounded-2xl border border-blue-100 space-y-1 text-xs mb-2">
+                        <div class="bg-blue-50/40 p-3.5 rounded-2xl border border-blue-100 shadow-sm space-y-2 text-xs mb-2.5">
                             <div class="flex items-center justify-between">
-                                <span class="font-black text-slate-800">أرسلت طلباً لعرض: ${listing.title}</span>
-                                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${req.status === 'pending' ? 'bg-amber-50 text-amber-600 border border-amber-200' : req.status === 'accepted' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-rose-50 text-rose-600 border border-rose-200'}">
-                                    ${req.status === 'pending' ? '⏳ في انتظار الموافقة من الطرف الثاني' : req.status === 'accepted' ? '✅ تمت الموافقة من المالك' : '❌ مرفوض'}
+                                <span class="font-black text-slate-900">أرسلت طلباً لعرض: <strong class="text-blue-700">${listing.title}</strong></span>
+                                <span class="text-[10px] px-3 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                                    ${req.status === 'pending' ? '⏳ في انتظار رد المالك' : '✅ وافق المالك'}
                                 </span>
                             </div>
-                            ${req.status === 'accepted' ? `
-                                <button onclick="openChatModal('${req.id}')" class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl transition cursor-pointer">الدخول للدردشة وتحديد اللقاء 💬</button>
-                            ` : ''}
+                            <div class="flex items-center justify-between pt-2 border-t border-blue-100/60">
+                                ${req.status === 'accepted' ? `
+                                    <button onclick="openChatModal('${req.id}')" class="flex-grow bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-xl transition shadow-sm cursor-pointer flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-comments"></i> دخول للدردشة وتحديد اللقاء 💬
+                                    </button>
+                                ` : `
+                                    <span class="text-[10px] text-slate-500 font-medium">تأخر المالك؟ يمكنك إلغاء طلبك فوراً وحذفه من الطرفين.</span>
+                                `}
+                                <button onclick="cancelMySentRequest('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 px-3 rounded-xl transition cursor-pointer flex items-center gap-1 text-[11px] mr-auto">
+                                    <i class="fa-solid fa-trash-can"></i> إلغاء وحذف العرض
+                                </button>
+                            </div>
                         </div>
                     `;
                 }).join('');
             }
 
             if(myReceived.length === 0 && mySent.length === 0) {
-                reqContainer.innerHTML = `<p class="text-xs text-slate-400 py-2">لا توجد طلبات مقايضة حالياً.</p>`;
+                reqContainer.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-2xl border">لا توجد طلبات مقايضة نشطة حالياً.</p>`;
             } else {
                 reqContainer.innerHTML = htmlContent;
             }
 
-            const userItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id));
+            // Successful Trades
+            const successfulItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status === 'completed');
+            const succContainer = document.getElementById('successfulTradesContainer');
+            if(successfulItems.length === 0) {
+                succContainer.innerHTML = `<p class="col-span-full text-xs text-slate-400 py-2">ليس لديك مقايضات مكتملة بعد.</p>`;
+            } else {
+                succContainer.innerHTML = successfulItems.map(item => `
+                    <div onclick="openSuccessTradeModal('${item.id}')" class="flex items-center justify-between p-3 rounded-2xl border bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-xs cursor-pointer hover:shadow-md transition">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500">
+                            <div>
+                                <h5 class="font-black text-slate-900 line-clamp-1">${item.title}</h5>
+                                <span class="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-check"></i> اضغط لمعاينة تفاصيل المقايضة
+                                </span>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-left text-emerald-600"></i>
+                    </div>
+                `).join('');
+            }
+
+            // User's Active Listings
+            const userItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status !== 'completed');
             const container = document.getElementById('userListingsContainer');
-            
             if(userItems.length === 0) {
-                container.innerHTML = `<p class="col-span-full text-center text-xs text-slate-400 py-4">ليس لديك أي عروض منشورة حتى الآن.</p>`;
+                container.innerHTML = `<p class="col-span-full text-center text-xs text-slate-400 py-4">ليس لديك أي عروض نشطة حالياً.</p>`;
             } else {
                 container.innerHTML = userItems.map(item => `
-                    <div class="flex items-center justify-between p-2.5 rounded-2xl border text-xs ${item.status === 'completed' ? 'bg-slate-200 border-slate-300 opacity-75' : 'bg-slate-50 border-slate-200'}">
-                        <div class="flex items-center gap-2">
-                            <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover">
+                    <div class="flex items-center justify-between p-2.5 rounded-2xl border bg-slate-50 border-slate-200 text-xs">
+                        <div class="flex items-center gap-2 cursor-pointer flex-grow" onclick="openEditModal('${item.id}')">
+                            <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border">
                             <div>
-                                <h5 class="font-black text-slate-800 line-clamp-1">${item.title}</h5>
-                                <span class="text-[10px] font-bold ${item.status === 'completed' ? 'text-slate-600' : 'text-emerald-600'}">
-                                    ${item.status === 'completed' ? '✅ تمت بنجاح' : item.trade_type}
-                                </span>
+                                <h5 class="font-black text-slate-800 line-clamp-1">${item.title} ✏️</h5>
+                                <span class="text-[10px] font-bold text-emerald-600">${item.trade_type} - اضغط للتعديل</span>
                             </div>
                         </div>
                         <button onclick="deleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl transition cursor-pointer">
@@ -540,6 +761,102 @@
             }
 
             openModal('profileModal');
+        }
+
+        async function cancelMySentRequest(reqId) {
+            if(!confirm("هل أنت متأكد من رغبتك في إلغاء هذا الطلب وحذفه نهائياً من الطرفين؟")) return;
+
+            const { error } = await _supabase.from('trade_requests').delete().eq('id', reqId);
+            if(error) {
+                alert("خطأ أثناء إلغاء الطلب: " + error.message);
+            } else {
+                await fetchRequests();
+                openProfileModal();
+                alert("تم إلغاء وحذف الطلب بنجاح من المنصة.");
+            }
+        }
+
+        async function openSuccessTradeModal(listingId) {
+            closeModal('profileModal');
+            
+            const item = allListings.find(l => String(l.id) === String(listingId));
+            if(!item) return;
+
+            const req = allRequests.find(r => String(r.listing_id) === String(listingId) && r.status === 'accepted');
+            const partnerId = req ? (String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id) : null;
+            const partner = partnerId ? (allProfiles[String(partnerId)] || { full_name: 'شريك مبادل', city: item.city, avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' }) : { full_name: 'شريك مبادل', city: item.city, avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+
+            const content = document.getElementById('successTradeContent');
+            content.innerHTML = `
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-bold border-b pb-2">
+                        <span>📍 مدينة اللقاء والتبادل: <strong class="text-emerald-700">${item.city}</strong></span>
+                        <span>🏷️ نوع التبادل: <strong class="text-slate-800">${item.trade_type}</strong></span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 items-center">
+                        <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
+                            <img src="${currentAccount.avatar_url}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-emerald-500">
+                            <h5 class="font-black text-slate-900 text-xs">${currentAccount.full_name} (أنت)</h5>
+                            <p class="text-[10px] text-slate-500 font-bold">المنتج: ${item.title}</p>
+                            <img src="${item.image_url}" class="w-full h-24 object-cover rounded-lg mt-1">
+                        </div>
+
+                        <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
+                            <img src="${partner.avatar_url}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-blue-500">
+                            <h5 class="font-black text-slate-900 text-xs">${partner.full_name}</h5>
+                            <p class="text-[10px] text-slate-500 font-bold">الشريك في المقايضة</p>
+                            <div class="h-24 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-700 text-xs font-black border border-emerald-100">
+                                تم التبادل بنجاح 🤝
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-center text-xs">
+                        <span class="font-bold text-emerald-900 block">✨ ما كان مطلوباً في المقايضة:</span>
+                        <p class="text-emerald-700 font-black mt-0.5">${item.wanted}</p>
+                    </div>
+                </div>
+            `;
+            openModal('successTradeModal');
+        }
+
+        function openEditModal(listingId) {
+            const item = allListings.find(l => String(l.id) === String(listingId));
+            if(!item) return;
+
+            document.getElementById('editListingId').value = item.id;
+            document.getElementById('editTitle').value = item.title;
+            document.getElementById('editCategory').value = item.category || 'إلكترونيات';
+            document.getElementById('editTradeType').value = item.trade_type || 'راس فـ راس';
+            document.getElementById('editWanted').value = item.wanted;
+            document.getElementById('editDesc').value = item.description || '';
+
+            closeModal('profileModal');
+            openModal('editModal');
+        }
+
+        async function handleEditItem(e) {
+            e.preventDefault();
+            const id = document.getElementById('editListingId').value;
+            const title = document.getElementById('editTitle').value;
+            const category = document.getElementById('editCategory').value;
+            const trade_type = document.getElementById('editTradeType').value;
+            const wanted = document.getElementById('editWanted').value;
+            const description = document.getElementById('editDesc').value;
+
+            const { error } = await _supabase.from('listings').update({
+                title, category, trade_type, wanted, description
+            }).eq('id', id);
+
+            if(error) {
+                alert("خطأ في التعديل: " + error.message);
+            } else {
+                closeModal('editModal');
+                await fetchListings();
+                alert("تم تعديل العرض بنجاح! ✏️");
+                openProfileModal();
+            }
         }
 
         async function handleAvatarUpload(e) {
@@ -556,7 +873,6 @@
             }
 
             const avatarUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-
             const { error: updateErr } = await _supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentAccount.id);
             if(updateErr) {
                 alert("خطأ في تحديث البروفايل: " + updateErr.message);
@@ -606,14 +922,18 @@
             grid.innerHTML = list.map(item => {
                 const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
                 const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+                const authorStats = getUserRatingStats(item.user_id);
                 const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
 
                 return `
                 <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col justify-between group">
                     <div>
-                        <div class="flex items-center gap-2 p-3 border-b border-slate-100 bg-slate-50/50">
-                            <img src="${author.avatar_url}" class="w-7 h-7 rounded-full object-cover border border-emerald-500">
-                            <span class="text-xs font-black text-slate-800">${author.full_name}</span>
+                        <div class="flex items-center justify-between p-3 border-b border-slate-100 bg-slate-50/50">
+                            <div class="flex items-center gap-2">
+                                <img src="${author.avatar_url}" class="w-7 h-7 rounded-full object-cover border border-emerald-500">
+                                <span class="text-xs font-black text-slate-800">${author.full_name}</span>
+                            </div>
+                            <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg} (${authorStats.count})</span>
                         </div>
 
                         <div onclick="openProductModal('${item.id}')" class="cursor-pointer">
@@ -638,8 +958,8 @@
                     </div>
                     <div class="p-4 pt-0 flex gap-2 border-t border-slate-50 mt-2">
                         ${isMyItem ? `
-                            <button onclick="deleteListing('${item.id}')" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs py-2.5 rounded-xl text-center transition cursor-pointer">
-                                <i class="fa-solid fa-trash"></i> حذف العرض (عرضك)
+                            <button onclick="openEditModal('${item.id}')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-xl text-center transition cursor-pointer">
+                                <i class="fa-solid fa-pen-to-square"></i> تعديل العرض (عرضك)
                             </button>
                         ` : mySentReq ? `
                             <button disabled class="w-full bg-slate-200 text-slate-600 font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 cursor-not-allowed">
@@ -662,16 +982,20 @@
 
             const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
             const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+            const authorStats = getUserRatingStats(item.user_id);
             const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
             const content = document.getElementById('productModalContent');
 
             content.innerHTML = `
-                <div class="flex items-center gap-3 border-b pb-3">
-                    <img src="${author.avatar_url}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
-                    <div>
-                        <span class="text-xs text-slate-400 block font-bold">صاحب العرض</span>
-                        <h4 class="font-black text-sm text-slate-900">${author.full_name}</h4>
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div class="flex items-center gap-3">
+                        <img src="${author.avatar_url}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
+                        <div>
+                            <span class="text-xs text-slate-400 block font-bold">صاحب العرض</span>
+                            <h4 class="font-black text-sm text-slate-900">${author.full_name}</h4>
+                        </div>
                     </div>
+                    <span class="text-xs bg-amber-50 text-amber-700 px-3 py-1 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg} (${authorStats.count} تقييم)</span>
                 </div>
                 <div class="relative rounded-2xl overflow-hidden bg-slate-100 shadow-md max-h-80 flex items-center justify-center">
                     <img src="${item.image_url}" class="w-full h-full object-contain max-h-80">
@@ -687,8 +1011,8 @@
                     <p class="text-xs text-slate-600 leading-relaxed">${item.description || 'لا يوجد وصف إضافي.'}</p>
                 </div>
                 ${isMyItem ? `
-                    <button onclick="closeModal('productModal'); deleteListing('${item.id}');" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer text-xs">
-                        حذف هذا العرض 🗑️
+                    <button onclick="closeModal('productModal'); openEditModal('${item.id}');" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer text-xs">
+                        تعديل هذا العرض ✏️
                     </button>
                 ` : mySentReq ? `
                     <button disabled class="w-full bg-slate-200 text-slate-600 font-bold py-3.5 rounded-xl text-center cursor-not-allowed text-xs">
@@ -748,9 +1072,18 @@
 
             const partnerId = String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id;
             const partner = allProfiles[String(partnerId)] || { full_name: 'شريك المقايضة', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'منتج المقايضة', image_url: '' };
 
             document.getElementById('chatPartnerAvatar').src = partner.avatar_url;
             document.getElementById('chatPartnerName').textContent = partner.full_name;
+
+            document.getElementById('chatProductBanner').innerHTML = `
+                <img src="${listing.image_url}" class="w-10 h-10 rounded-lg object-cover">
+                <div class="flex-grow">
+                    <span class="text-[10px] text-emerald-800 font-bold block">منتج المقايضة للتنسيق:</span>
+                    <h5 class="font-black text-slate-900 text-xs">${listing.title}</h5>
+                </div>
+            `;
 
             closeModal('profileModal');
             openModal('chatModal');
@@ -819,7 +1152,6 @@
             }
 
             const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-
             await _supabase.from('messages').insert([{
                 request_id: activeChatRequestId,
                 sender_id: String(currentAccount.id),
@@ -844,8 +1176,58 @@
             
             if(chatInterval) clearInterval(chatInterval);
             closeModal('chatModal');
-            alert("تم إتمام المقابضة بنجاح! تحول المنتج إلى البروفايل مع شارة مكتمل ✅");
-            openProfileModal();
+
+            // Open Rating Modal for partner
+            const partnerId = String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id;
+            openRatingModal(partnerId);
+        }
+
+        function openRatingModal(userId) {
+            ratingTargetUserId = userId;
+            const partner = allProfiles[String(userId)] || { full_name: 'الشريك' };
+            document.getElementById('ratingTargetName').textContent = `تقييم المستخدم: ${partner.full_name}`;
+            setRatingStars(5);
+            document.getElementById('ratingCommentInput').value = '';
+            openModal('ratingModal');
+        }
+
+        function setRatingStars(count) {
+            selectedStarCount = count;
+            const stars = document.querySelectorAll('#starContainer .star');
+            stars.forEach((s, idx) => {
+                if(idx < count) {
+                    s.className = "star text-amber-400 cursor-pointer";
+                } else {
+                    s.className = "star text-slate-300 cursor-pointer";
+                }
+            });
+        }
+
+        function appendRatingTag(tag) {
+            const input = document.getElementById('ratingCommentInput');
+            input.value = input.value ? input.value + ' - ' + tag : tag;
+            input.focus();
+        }
+
+        async function submitUserRating() {
+            if(!ratingTargetUserId || !currentAccount) return;
+            const comment = document.getElementById('ratingCommentInput').value;
+
+            const { error } = await _supabase.from('ratings').insert([{
+                rater_id: String(currentAccount.id),
+                rated_user_id: String(ratingTargetUserId),
+                rating: selectedStarCount,
+                comment: comment
+            }]);
+
+            if(error) {
+                alert("خطأ في إرسال التقييم: " + error.message);
+            } else {
+                await fetchRatings();
+                closeModal('ratingModal');
+                alert("تم إرسال التقييم بنجاح! شكراً لمساهمتك في موثوقية المنصة ⭐");
+                openProfileModal();
+            }
         }
 
         async function handleAddItem(e) {
@@ -865,7 +1247,6 @@
             const fileName = `${Date.now()}.${fileExt}`;
 
             const { error: imgErr } = await _supabase.storage.from('product-images').upload(fileName, file);
-
             if(imgErr) {
                 alert("خطأ في رفع الصورة: " + imgErr.message);
                 btn.innerText = "نشر العرض في المنصة 🚀";
@@ -874,7 +1255,6 @@
             }
 
             const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-
             const { error: insertErr } = await _supabase.from('listings').insert([{
                 title: document.getElementById('addTitle').value,
                 category: document.getElementById('addCategory').value,
