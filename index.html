@@ -244,45 +244,64 @@
         </div>
     </div>
 
-    <!-- Modal: Chat & Meetup Window -->
+    <!-- Modal: Professional Chat & Meetup Window (WhatsApp Style) -->
     <div id="chatModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right flex flex-col h-[85vh]">
-            <button onclick="closeModal('chatModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition z-10">&times;</button>
-            
-            <div class="flex items-center gap-3 border-b pb-3">
-                <img id="chatPartnerAvatar" src="" class="w-12 h-12 rounded-full object-cover border-2 border-emerald-500">
-                <div>
-                    <h4 id="chatPartnerName" class="font-black text-sm text-slate-900"></h4>
-                    <p class="text-[10px] text-emerald-600 font-bold">دردشة تنسيق المقايضة وتحديد مكان الالتقاء 🤝</p>
+        <div class="bg-slate-100 rounded-3xl max-w-lg w-full shadow-2xl relative border border-slate-200 text-right flex flex-col h-[85vh] overflow-hidden">
+            <!-- Chat Header -->
+            <div class="bg-white p-4 flex items-center justify-between border-b border-slate-200 shadow-sm z-10">
+                <div class="flex items-center gap-3">
+                    <img id="chatPartnerAvatar" src="" class="w-11 h-11 rounded-full object-cover border-2 border-emerald-500">
+                    <div>
+                        <h4 id="chatPartnerName" class="font-black text-sm text-slate-900"></h4>
+                        <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> متصل الآن للتنسيق
+                        </span>
+                    </div>
                 </div>
+                <button onclick="closeModal('chatModal')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             </div>
 
-            <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-3 bg-slate-50 rounded-2xl text-xs">
-                <div class="bg-emerald-100 text-emerald-900 p-3 rounded-2xl max-w-[80%]">
-                    مرحباً! تم قبول طلب المقايضة بنجاح. تواصل معي هنا لتحديد مكان ووقت اللقاء أو لطلب صور إضافية.
-                </div>
+            <!-- Chat Messages Box (WhatsApp Style with Emojis & Bubbles) -->
+            <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-4 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] text-xs">
+                <!-- Injected via JS -->
             </div>
 
-            <div class="space-y-2 pt-2 border-t">
+            <!-- Emoji Quick Bar -->
+            <div class="bg-white px-3 py-2 border-t border-slate-200 flex items-center gap-2 overflow-x-auto text-base">
+                <button onclick="addEmoji('😊')" class="hover:scale-125 transition">😊</button>
+                <button onclick="addEmoji('🤝')" class="hover:scale-125 transition">🤝</button>
+                <button onclick="addEmoji('📍')" class="hover:scale-125 transition">📍</button>
+                <button onclick="addEmoji('🚗')" class="hover:scale-125 transition">🚗</button>
+                <button onclick="addEmoji('⌚')" class="hover:scale-125 transition">⌚</button>
+                <button onclick="addEmoji('👍')" class="hover:scale-125 transition">👍</button>
+                <button onclick="addEmoji('🔥')" class="hover:scale-125 transition">🔥</button>
+                <button onclick="addEmoji('🇲🇦')" class="hover:scale-125 transition">🇲🇦</button>
+            </div>
+
+            <!-- Chat Input Footer -->
+            <div class="bg-white p-3 space-y-2 border-t border-slate-200">
                 <div class="flex gap-2 items-center">
-                    <label for="chatImageInput" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-3 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1">
-                        <i class="fa-solid fa-camera"></i> إرسال صورة
+                    <label for="chatImageInput" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3.5 py-3 rounded-2xl text-xs font-bold transition cursor-pointer flex items-center gap-1">
+                        <i class="fa-solid fa-camera text-sm"></i>
                     </label>
                     <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="sendChatImage(event)">
                     
-                    <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك أو مكان اللقاء..." class="flex-grow bg-slate-100 border p-3 rounded-xl font-bold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-3 rounded-xl text-xs transition cursor-pointer">إرسال 📤</button>
+                    <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك هنا..." class="flex-grow bg-slate-100 border border-slate-200 p-3 rounded-2xl font-bold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-2xl text-xs transition shadow cursor-pointer flex items-center gap-1">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
                 </div>
-                <button onclick="completeTradeSuccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-xs shadow transition cursor-pointer">
-                    تأكيد إتمام المقابضة بنجاح 🎉
+                <button onclick="completeTradeSuccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition cursor-pointer flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check"></i> تأكيد إتمام المقابضة بنجاح 🎉
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12">
+    <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12 space-y-1">
         <p>جميع الحقوق محفوظة © 2026 - بدل.ma</p>
+        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 9</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -292,6 +311,7 @@
         let allProfiles = {};
         let allRequests = [];
         let activeChatRequestId = null;
+        let chatInterval = null;
 
         window.onload = function() {
             const savedAcc = localStorage.getItem('badal_auth_account');
@@ -429,7 +449,6 @@
             document.getElementById('profileModalName').textContent = currentAccount.full_name;
             document.getElementById('profileModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
             
-            // Render Trade Requests (Both Received & Sent)
             const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id));
             const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id));
             const reqContainer = document.getElementById('tradeRequestsContainer');
@@ -496,7 +515,6 @@
                 reqContainer.innerHTML = htmlContent;
             }
 
-            // Render User's listings inside profile
             const userItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id));
             const container = document.getElementById('userListingsContainer');
             
@@ -588,8 +606,6 @@
             grid.innerHTML = list.map(item => {
                 const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
                 const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
-
-                // Check if I already sent a request for this item
                 const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
 
                 return `
@@ -738,26 +754,61 @@
 
             closeModal('profileModal');
             openModal('chatModal');
+            
+            // Load messages and start polling for real-time chat sync
+            loadChatMessages();
+            if(chatInterval) clearInterval(chatInterval);
+            chatInterval = setInterval(loadChatMessages, 3000);
         }
 
-        function sendChatMessage() {
+        async function loadChatMessages() {
+            if(!activeChatRequestId) return;
+            const { data } = await _supabase.from('messages').select('*').eq('request_id', activeChatRequestId).order('created_at', { ascending: true });
+            
+            const box = document.getElementById('chatMessagesBox');
+            if(!data || data.length === 0) {
+                box.innerHTML = `
+                    <div class="text-center py-6 text-slate-400 font-bold text-xs">
+                        <p>🤝 مرحباً بكم في دردشة المقايضة!</p>
+                        <p class="text-[10px] mt-1">تفاهمو على مكان ووقت الالتقاء بكل أمان.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            box.innerHTML = data.map(m => {
+                const isMe = String(m.sender_id) === String(currentAccount.id);
+                return `
+                    <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1">
+                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs shadow-sm ${isMe ? 'bg-emerald-600 text-white rounded-bl-none' : 'bg-white text-slate-800 border border-slate-200 rounded-br-none'}">
+                            ${m.message ? `<p class="font-semibold leading-relaxed">${m.message}</p>` : ''}
+                            ${m.image_url ? `<img src="${m.image_url}" class="w-48 h-40 object-cover rounded-xl mt-1 shadow">` : ''}
+                        </div>
+                        <span class="text-[9px] text-slate-400 px-1">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    </div>
+                `;
+            }).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function sendChatMessage() {
             const input = document.getElementById('chatInputMessage');
             const msg = input.value.trim();
-            if(!msg) return;
+            if(!msg || !activeChatRequestId) return;
 
-            const box = document.getElementById('chatMessagesBox');
-            box.innerHTML += `
-                <div class="bg-emerald-600 text-white p-3 rounded-2xl max-w-[80%] mr-auto text-left font-semibold">
-                    ${msg}
-                </div>
-            `;
+            await _supabase.from('messages').insert([{
+                request_id: activeChatRequestId,
+                sender_id: String(currentAccount.id),
+                message: msg
+            }]);
+
             input.value = '';
-            box.scrollTop = box.scrollHeight;
+            loadChatMessages();
         }
 
         async function sendChatImage(e) {
             const file = e.target.files[0];
-            if(!file) return;
+            if(!file || !activeChatRequestId) return;
 
             const fileExt = file.name.split('.').pop();
             const fileName = `chat_${Date.now()}.${fileExt}`;
@@ -769,14 +820,20 @@
             }
 
             const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-            const box = document.getElementById('chatMessagesBox');
-            box.innerHTML += `
-                <div class="bg-emerald-50 p-2 rounded-2xl max-w-[60%] mr-auto border border-emerald-200">
-                    <span class="text-[10px] text-emerald-800 font-bold block mb-1">صورة إضافية للمنتج:</span>
-                    <img src="${imageUrl}" class="w-full h-40 object-cover rounded-xl shadow">
-                </div>
-            `;
-            box.scrollTop = box.scrollHeight;
+
+            await _supabase.from('messages').insert([{
+                request_id: activeChatRequestId,
+                sender_id: String(currentAccount.id),
+                image_url: imageUrl
+            }]);
+
+            loadChatMessages();
+        }
+
+        function addEmoji(emoji) {
+            const input = document.getElementById('chatInputMessage');
+            input.value += emoji;
+            input.focus();
         }
 
         async function completeTradeSuccess() {
@@ -786,6 +843,7 @@
             await _supabase.from('listings').update({ status: 'completed' }).eq('id', req.listing_id);
             await fetchListings();
             
+            if(chatInterval) clearInterval(chatInterval);
             closeModal('chatModal');
             alert("تم إتمام المقابضة بنجاح! تحول المنتج إلى البروفايل مع شارة مكتمل ✅");
             openProfileModal();
@@ -866,7 +924,10 @@
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function closeModal(id) { 
+            document.getElementById(id).classList.add('hidden'); 
+            if(id === 'chatModal' && chatInterval) clearInterval(chatInterval);
+        }
     </script>
 </body>
 </html>
