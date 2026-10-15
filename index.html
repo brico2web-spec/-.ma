@@ -45,7 +45,7 @@
         </div>
     </header>
 
-    <!-- Auto Sliding Banner (Between Header and Main Content) -->
+    <!-- Auto Sliding Banner -->
     <div class="max-w-7xl mx-auto px-4 w-full mt-4">
         <div id="promoSlider" class="relative overflow-hidden rounded-3xl shadow-md bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white p-6 sm:p-8 flex items-center justify-between min-h-[140px] border border-emerald-800">
             <div class="space-y-2 z-10 max-w-xl">
@@ -111,11 +111,25 @@
 
     </main>
 
-    <!-- Modal: Authentic Auth System -->
+    <!-- Modal: Auth System with Google Single Sign-On -->
     <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative border border-slate-100">
             <button onclick="closeModal('authModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             
+            <h3 class="font-black text-base text-slate-900">تسجيل الدخول / حساب جديد</h3>
+
+            <!-- Google One-Click Login Button -->
+            <button onclick="handleGoogleLogin()" class="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl border border-slate-300 shadow-sm transition flex items-center justify-center gap-2 text-xs cursor-pointer">
+                <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+                متابعة باستخدام حساب Google 🌐
+            </button>
+
+            <div class="relative flex py-1 items-center">
+                <div class="flex-grow border-t border-slate-200"></div>
+                <span class="flex-shrink mx-3 text-slate-400 text-[10px] font-bold">أو بالطريقة العادية</span>
+                <div class="flex-grow border-t border-slate-200"></div>
+            </div>
+
             <div class="flex border-b border-slate-200">
                 <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="w-1/2 py-2 text-sm font-bold text-emerald-600 border-b-2 border-emerald-600">تسجيل الدخول</button>
                 <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="w-1/2 py-2 text-sm font-bold text-slate-400">حساب جديد</button>
@@ -139,9 +153,8 @@
                     <input type="text" id="regName" required placeholder="نزار زمزام" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">رقم الهاتف (آمن ومعتمد) *</label>
+                    <label class="font-bold text-slate-700 block mb-1">رقم الهاتف *</label>
                     <input type="tel" id="regPhone" required placeholder="0600000000" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <p class="text-[10px] text-amber-600 font-bold mt-1">⚠️ مسموح بحساب واحد فقط لكل رقم هاتف لمنع التحايل.</p>
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">المدينة *</label>
@@ -155,8 +168,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">كلمة السر (6 أحرف/أرقام على الأقل) *</label>
-                    <input type="password" id="regPass" required placeholder="أدخل كلمة السر الآمنة" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="font-bold text-slate-700 block mb-1">كلمة السر *</label>
+                    <input type="password" id="regPass" required placeholder="أدخل كلمة السر" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition mt-2 cursor-pointer">إنشاء حساب جديد 🚀</button>
             </form>
@@ -423,7 +436,7 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12 space-y-1">
         <p>جميع الحقوق محفوظة © 2026 - بدل.ma</p>
-        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 13</p>
+        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 16 (Google Single Sign-On 🌐)</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -446,15 +459,53 @@
         ];
         let currentSlideIndex = 0;
 
-        window.onload = function() {
-            const savedAcc = localStorage.getItem('badal_auth_account');
-            if(savedAcc) {
-                currentAccount = JSON.parse(savedAcc);
+        window.onload = async function() {
+            // التحقق من عودة المستخدم من المصادقة عبر Google
+            const { data: { session } } = await _supabase.auth.getSession();
+            if (session && session.user) {
+                const user = session.user;
+                // التحقق هل البروفايل مسجل في جدول profiles أم لا
+                let { data: profile } = await _supabase.from('profiles').select('*').eq('id', user.id).single();
+                
+                if (!profile) {
+                    // إنشاء بروفايل تلقائي لمستخدم جوجل الجديد
+                    const newProfile = {
+                        id: user.id,
+                        full_name: user.user_metadata.full_name || user.email.split('@')[0],
+                        phone: user.user_metadata.phone || '0600000000',
+                        city: 'القنيطرة',
+                        avatar_url: user.user_metadata.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+                        password: 'google_oauth_user'
+                    };
+                    await _supabase.from('profiles').insert([newProfile]);
+                    profile = newProfile;
+                }
+                currentAccount = profile;
+                localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
+            } else {
+                const savedAcc = localStorage.getItem('badal_auth_account');
+                if(savedAcc) {
+                    currentAccount = JSON.parse(savedAcc);
+                }
             }
+
             fetchProfilesAndData();
             setInterval(fetchDataPolling, 4000);
             setInterval(rotatePromoSlider, 4500);
         };
+
+        // دالة الدخول الفوري عبر حساب Google المجاني
+        async function handleGoogleLogin() {
+            const { error } = await _supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + window.location.pathname
+                }
+            });
+            if (error) {
+                alert("خطأ أثناء تسجيل الدخول بـ Google: " + error.message);
+            }
+        }
 
         function rotatePromoSlider() {
             currentSlideIndex = (currentSlideIndex + 1) % promoSlides.length;
@@ -564,31 +615,28 @@
             const password = document.getElementById('regPass').value;
             const avatar_url = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
 
-            // حماية صارمة لمنع التحايل وفتح حسابات متعددة بنفس رقم الهاتف
             if(phone.length < 10) {
                 alert("المرجو إدخال رقم هاتف مغربي صحيح (مثلاً: 0600000000)");
                 return;
             }
             if(password.length < 6) {
-                alert("كلمة السر يجب أن تكون من 6 أحرف أو أرقام على الأقل لضمان الأمان.");
+                alert("كلمة السر يجب أن تكون من 6 أحرف أو أرقام على الأقل.");
                 return;
             }
 
-            const { data: existing, error: checkErr } = await _supabase.from('profiles').select('*').eq('phone', phone);
-            if(checkErr) {
-                alert("حدث خطأ أثناء التحقق من الرقم، المرجو المحاولة لاحقاً.");
-                return;
-            }
-            if(existing && existing.length > 0) {
-                alert("⚠️ تنبيه أمني: هذا الرقم مسجل مسبقاً في النظام. مسموح بحساب واحد فقط لكل رقم لمنع التحايل والتحقق من الموثوقية!");
+            const { data: existingPhone } = await _supabase.from('profiles').select('*').eq('phone', phone);
+            if(existingPhone && existingPhone.length > 0) {
+                alert("⚠️ هذا الرقم مسجل مسبقاً في النظام!");
                 switchAuthTab('login');
                 return;
             }
 
-            const { data, error } = await _supabase.from('profiles').insert([{ full_name, phone, city, password, avatar_url }]).select();
+            const { data, error } = await _supabase.from('profiles').insert([{
+                full_name, phone, city, password, avatar_url
+            }]).select();
 
             if(error) {
-                alert("خطأ في إنشاء الحساب الآمن: " + error.message);
+                alert("خطأ في إنشاء الحساب: " + error.message);
                 return;
             }
 
@@ -596,7 +644,7 @@
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             await fetchProfilesAndData();
             closeModal('authModal');
-            alert(`مرحباً بك يا ${full_name}! تم تفعيل حسابك الموثق بنجاح في بدل.ma 🚀`);
+            alert(`🎉 أهلاً بك يا ${currentAccount.full_name}! تم إنشاء حسابك بنجاح.`);
         }
 
         async function handleLoginSubmit(e) {
@@ -618,7 +666,8 @@
             alert(`أهلاً بك مجدداً يا ${currentAccount.full_name}!`);
         }
 
-        function handleLogout() {
+        async function handleLogout() {
+            await _supabase.auth.signOut();
             localStorage.removeItem('badal_auth_account');
             currentAccount = null;
             updateHeaderUI();
@@ -681,7 +730,7 @@
             }
 
             if(mySent.length > 0) {
-                htmlContent += `<p class="font-bold text-[11px] text-blue-700 mt-4 mb-1.5">طلباتك المرسلة (إلى مالكي العروض):</p>`;
+                htmlContent += `<p class="font-bold text-[11px] text-blue-700 mt-4 mb-1.5">طلباتك المرسلة:</p>`;
                 htmlContent += mySent.map(req => {
                     const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
 
@@ -699,10 +748,10 @@
                                         <i class="fa-solid fa-comments"></i> دخول للدردشة وتحديد اللقاء 💬
                                     </button>
                                 ` : `
-                                    <span class="text-[10px] text-slate-500 font-medium">تأخر المالك؟ يمكنك إلغاء طلبك فوراً وحذفه من الطرفين.</span>
+                                    <span class="text-[10px] text-slate-500 font-medium">في انتظار الرد...</span>
                                 `}
                                 <button onclick="cancelMySentRequest('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 px-3 rounded-xl transition cursor-pointer flex items-center gap-1 text-[11px] mr-auto">
-                                    <i class="fa-solid fa-trash-can"></i> إلغاء وحذف العرض
+                                    <i class="fa-solid fa-trash-can"></i> إلغاء الطلب
                                 </button>
                             </div>
                         </div>
@@ -729,7 +778,7 @@
                             <div>
                                 <h5 class="font-black text-slate-900 line-clamp-1">${item.title}</h5>
                                 <span class="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
-                                    <i class="fa-solid fa-circle-check"></i> اضغط لمعاينة تفاصيل المقايضة
+                                    <i class="fa-solid fa-circle-check"></i> معاينة تفاصيل المقايضة
                                 </span>
                             </div>
                         </div>
@@ -764,57 +813,45 @@
         }
 
         async function cancelMySentRequest(reqId) {
-            if(!confirm("هل أنت متأكد من رغبتك في إلغاء هذا الطلب وحذفه نهائياً من الطرفين؟")) return;
-
+            if(!confirm("هل أنت متأكد من إلغاء هذا الطلب؟")) return;
             const { error } = await _supabase.from('trade_requests').delete().eq('id', reqId);
-            if(error) {
-                alert("خطأ أثناء إلغاء الطلب: " + error.message);
-            } else {
+            if(!error) {
                 await fetchRequests();
                 openProfileModal();
-                alert("تم إلغاء وحذف الطلب بنجاح من المنصة.");
             }
         }
 
         async function openSuccessTradeModal(listingId) {
             closeModal('profileModal');
-            
             const item = allListings.find(l => String(l.id) === String(listingId));
             if(!item) return;
 
             const req = allRequests.find(r => String(r.listing_id) === String(listingId) && r.status === 'accepted');
             const partnerId = req ? (String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id) : null;
-            const partner = partnerId ? (allProfiles[String(partnerId)] || { full_name: 'شريك مبادل', city: item.city, avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' }) : { full_name: 'شريك مبادل', city: item.city, avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+            const partner = partnerId ? (allProfiles[String(partnerId)] || { full_name: 'شريك مبادل', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' }) : { full_name: 'شريك', avatar_url: '' };
 
             const content = document.getElementById('successTradeContent');
             content.innerHTML = `
                 <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
                     <div class="flex items-center justify-between text-xs text-slate-500 font-bold border-b pb-2">
-                        <span>📍 مدينة اللقاء والتبادل: <strong class="text-emerald-700">${item.city}</strong></span>
+                        <span>📍 مدينة التبادل: <strong class="text-emerald-700">${item.city}</strong></span>
                         <span>🏷️ نوع التبادل: <strong class="text-slate-800">${item.trade_type}</strong></span>
                     </div>
-
                     <div class="grid grid-cols-2 gap-3 items-center">
                         <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
                             <img src="${currentAccount.avatar_url}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-emerald-500">
                             <h5 class="font-black text-slate-900 text-xs">${currentAccount.full_name} (أنت)</h5>
-                            <p class="text-[10px] text-slate-500 font-bold">المنتج: ${item.title}</p>
+                            <p class="text-[10px] text-slate-500 font-bold">${item.title}</p>
                             <img src="${item.image_url}" class="w-full h-24 object-cover rounded-lg mt-1">
                         </div>
-
                         <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
                             <img src="${partner.avatar_url}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-blue-500">
                             <h5 class="font-black text-slate-900 text-xs">${partner.full_name}</h5>
-                            <p class="text-[10px] text-slate-500 font-bold">الشريك في المقايضة</p>
+                            <p class="text-[10px] text-slate-500 font-bold">الشريك</p>
                             <div class="h-24 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-700 text-xs font-black border border-emerald-100">
                                 تم التبادل بنجاح 🤝
                             </div>
                         </div>
-                    </div>
-
-                    <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-center text-xs">
-                        <span class="font-bold text-emerald-900 block">✨ ما كان مطلوباً في المقايضة:</span>
-                        <p class="text-emerald-700 font-black mt-0.5">${item.wanted}</p>
                     </div>
                 </div>
             `;
@@ -849,12 +886,10 @@
                 title, category, trade_type, wanted, description
             }).eq('id', id);
 
-            if(error) {
-                alert("خطأ في التعديل: " + error.message);
-            } else {
+            if(!error) {
                 closeModal('editModal');
                 await fetchListings();
-                alert("تم تعديل العرض بنجاح! ✏️");
+                alert("تم التعديل بنجاح! ✏️");
                 openProfileModal();
             }
         }
@@ -868,27 +903,22 @@
 
             const { error: uploadErr } = await _supabase.storage.from('product-images').upload(fileName, file);
             if(uploadErr) {
-                alert("خطأ في رفع الصورة: " + uploadErr.message);
+                alert("خطأ في الرفع: " + uploadErr.message);
                 return;
             }
 
             const avatarUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-            const { error: updateErr } = await _supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentAccount.id);
-            if(updateErr) {
-                alert("خطأ في تحديث البروفايل: " + updateErr.message);
-                return;
-            }
+            await _supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentAccount.id);
 
             currentAccount.avatar_url = avatarUrl;
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             await fetchProfilesAndData();
             openProfileModal();
-            alert("تم تحديث صورة البروفايل بنجاح!");
         }
 
         function handleOpenAddModal() {
             if(!currentAccount) {
-                alert("المرجو تسجيل الدخول أو إنشاء حساب جديد أولاً لإضافة عرضك!");
+                alert("المرجو تسجيل الدخول أولاً لإضافة عرضك!");
                 openModal('authModal');
                 return;
             }
@@ -898,17 +928,11 @@
         async function fetchListings() {
             const grid = document.getElementById('listingsGrid');
             const countEl = document.getElementById('products-count');
-            const { data, error } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
-
-            if(error) {
-                grid.innerHTML = `<p class="col-span-full text-center text-rose-500 text-xs">خطأ في جلب البيانات: ${error.message}</p>`;
-                return;
-            }
+            const { data } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
 
             allListings = data || [];
             const activeListings = allListings.filter(p => p.status !== 'completed');
             if(countEl) countEl.textContent = activeListings.length;
-
             renderListings(activeListings);
         }
 
@@ -921,7 +945,7 @@
 
             grid.innerHTML = list.map(item => {
                 const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
-                const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+                const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
                 const authorStats = getUserRatingStats(item.user_id);
                 const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
 
@@ -959,11 +983,11 @@
                     <div class="p-4 pt-0 flex gap-2 border-t border-slate-50 mt-2">
                         ${isMyItem ? `
                             <button onclick="openEditModal('${item.id}')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-xl text-center transition cursor-pointer">
-                                <i class="fa-solid fa-pen-to-square"></i> تعديل العرض (عرضك)
+                                <i class="fa-solid fa-pen-to-square"></i> تعديل العرض
                             </button>
                         ` : mySentReq ? `
                             <button disabled class="w-full bg-slate-200 text-slate-600 font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                <i class="fa-solid fa-check"></i> ${mySentReq.status === 'accepted' ? 'تمت الموافقة 🤝' : 'لقد تم الإرسال ⏳'}
+                                <i class="fa-solid fa-check"></i> ${mySentReq.status === 'accepted' ? 'تمت الموافقة 🤝' : 'قيد الانتظار ⏳'}
                             </button>
                         ` : `
                             <button onclick="handleRequestTrade('${item.id}', '${item.user_id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow transition cursor-pointer">
@@ -981,12 +1005,11 @@
             if(!item) return;
 
             const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
-            const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+            const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
             const authorStats = getUserRatingStats(item.user_id);
             const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
-            const content = document.getElementById('productModalContent');
 
-            content.innerHTML = `
+            document.getElementById('productModalContent').innerHTML = `
                 <div class="flex items-center justify-between border-b pb-3">
                     <div class="flex items-center gap-3">
                         <img src="${author.avatar_url}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
@@ -995,7 +1018,7 @@
                             <h4 class="font-black text-sm text-slate-900">${author.full_name}</h4>
                         </div>
                     </div>
-                    <span class="text-xs bg-amber-50 text-amber-700 px-3 py-1 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg} (${authorStats.count} تقييم)</span>
+                    <span class="text-xs bg-amber-50 text-amber-700 px-3 py-1 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg} (${authorStats.count})</span>
                 </div>
                 <div class="relative rounded-2xl overflow-hidden bg-slate-100 shadow-md max-h-80 flex items-center justify-center">
                     <img src="${item.image_url}" class="w-full h-full object-contain max-h-80">
@@ -1008,20 +1031,14 @@
                         <span class="font-bold text-emerald-800 block mb-1">الشيء المطلوب للمقايضة:</span>
                         <p class="text-slate-800 font-bold text-sm">${item.wanted}</p>
                     </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">${item.description || 'لا يوجد وصف إضافي.'}</p>
+                    <p class="text-xs text-slate-600 leading-relaxed">${item.description || ''}</p>
                 </div>
                 ${isMyItem ? `
-                    <button onclick="closeModal('productModal'); openEditModal('${item.id}');" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer text-xs">
-                        تعديل هذا العرض ✏️
-                    </button>
+                    <button onclick="closeModal('productModal'); openEditModal('${item.id}');" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl text-xs">تعديل العرض</button>
                 ` : mySentReq ? `
-                    <button disabled class="w-full bg-slate-200 text-slate-600 font-bold py-3.5 rounded-xl text-center cursor-not-allowed text-xs">
-                        ${mySentReq.status === 'accepted' ? 'تمت الموافقة 🤝' : 'لقد تم الإرسال (في انتظار الموافقة ⏳)'}
-                    </button>
+                    <button disabled class="w-full bg-slate-200 text-slate-600 font-bold py-3 rounded-xl text-xs">تم إرسال الطلب</button>
                 ` : `
-                    <button onclick="closeModal('productModal'); handleRequestTrade('${item.id}', '${item.user_id}');" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer text-xs">
-                        إرسال طلب مقايضة لهذا العرض 🤝
-                    </button>
+                    <button onclick="closeModal('productModal'); handleRequestTrade('${item.id}', '${item.user_id}');" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl text-xs">طلب مقايضة 🤝</button>
                 `}
             `;
             openModal('productModal');
@@ -1029,40 +1046,32 @@
 
         async function handleRequestTrade(listingId, receiverId) {
             if(!currentAccount) {
-                alert("المرجو تسجيل الدخول أولاً لإرسال طلب المقايضة!");
+                alert("المرجو تسجيل الدخول أولاً!");
                 openModal('authModal');
                 return;
             }
             if(String(currentAccount.id) === String(receiverId)) {
-                alert("لا يمكنك إرسال طلب مقايضة لنفسك!");
+                alert("لا يمكنك مقايضة عرضك!");
                 return;
             }
 
-            const { error } = await _supabase.from('trade_requests').insert([{
+            await _supabase.from('trade_requests').insert([{
                 sender_id: String(currentAccount.id),
                 receiver_id: String(receiverId),
                 listing_id: String(listingId),
                 status: 'pending'
             }]);
 
-            if(error) {
-                alert("خطأ أثناء إرسال الطلب: " + error.message);
-            } else {
-                await fetchRequests();
-                fetchListings();
-                alert("تم إرسال طلب المقايضة بنجاح! يمكنك متابعة حالته من ملفك الشخصي.");
-            }
+            await fetchRequests();
+            fetchListings();
+            alert("تم إرسال طلب المقايضة بنجاح!");
         }
 
         async function respondTrade(reqId, status) {
-            const { error } = await _supabase.from('trade_requests').update({ status }).eq('id', reqId);
-            if(!error) {
-                await fetchRequests();
-                openProfileModal();
-                if(status === 'accepted') {
-                    openChatModal(reqId);
-                }
-            }
+            await _supabase.from('trade_requests').update({ status }).eq('id', reqId);
+            await fetchRequests();
+            openProfileModal();
+            if(status === 'accepted') openChatModal(reqId);
         }
 
         function openChatModal(reqId) {
@@ -1071,23 +1080,21 @@
             if(!req) return;
 
             const partnerId = String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id;
-            const partner = allProfiles[String(partnerId)] || { full_name: 'شريك المقايضة', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
-            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'منتج المقايضة', image_url: '' };
+            const partner = allProfiles[String(partnerId)] || { full_name: 'الشريك', avatar_url: '' };
+            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: '', image_url: '' };
 
             document.getElementById('chatPartnerAvatar').src = partner.avatar_url;
             document.getElementById('chatPartnerName').textContent = partner.full_name;
-
             document.getElementById('chatProductBanner').innerHTML = `
                 <img src="${listing.image_url}" class="w-10 h-10 rounded-lg object-cover">
                 <div class="flex-grow">
-                    <span class="text-[10px] text-emerald-800 font-bold block">منتج المقايضة للتنسيق:</span>
+                    <span class="text-[10px] text-emerald-800 font-bold block">منتج المقايضة:</span>
                     <h5 class="font-black text-slate-900 text-xs">${listing.title}</h5>
                 </div>
             `;
 
             closeModal('profileModal');
             openModal('chatModal');
-            
             loadChatMessages();
             if(chatInterval) clearInterval(chatInterval);
             chatInterval = setInterval(loadChatMessages, 3000);
@@ -1099,12 +1106,7 @@
             
             const box = document.getElementById('chatMessagesBox');
             if(!data || data.length === 0) {
-                box.innerHTML = `
-                    <div class="text-center py-6 text-slate-400 font-bold text-xs">
-                        <p>🤝 مرحباً بكم في دردشة المقايضة!</p>
-                        <p class="text-[10px] mt-1">تفاهمو على مكان ووقت الالتقاء بكل أمان.</p>
-                    </div>
-                `;
+                box.innerHTML = `<div class="text-center py-6 text-slate-400 font-bold text-xs"><p>🤝 مرحباً بكم في دردشة المقايضة!</p></div>`;
                 return;
             }
 
@@ -1112,11 +1114,10 @@
                 const isMe = String(m.sender_id) === String(currentAccount.id);
                 return `
                     <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1">
-                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs shadow-sm ${isMe ? 'bg-emerald-600 text-white rounded-bl-none' : 'bg-white text-slate-800 border border-slate-200 rounded-br-none'}">
-                            ${m.message ? `<p class="font-semibold leading-relaxed">${m.message}</p>` : ''}
-                            ${m.image_url ? `<img src="${m.image_url}" class="w-48 h-40 object-cover rounded-xl mt-1 shadow">` : ''}
+                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs shadow-sm ${isMe ? 'bg-emerald-600 text-white' : 'bg-white text-slate-800 border'}">
+                            ${m.message ? `<p>${m.message}</p>` : ''}
+                            ${m.image_url ? `<img src="${m.image_url}" class="w-48 h-40 object-cover rounded-xl mt-1">` : ''}
                         </div>
-                        <span class="text-[9px] text-slate-400 px-1">${new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     </div>
                 `;
             }).join('');
@@ -1142,29 +1143,20 @@
             const file = e.target.files[0];
             if(!file || !activeChatRequestId) return;
 
-            const fileExt = file.name.split('.').pop();
-            const fileName = `chat_${Date.now()}.${fileExt}`;
-
-            const { error: uploadErr } = await _supabase.storage.from('product-images').upload(fileName, file);
-            if(uploadErr) {
-                alert("خطأ في رفع الصورة: " + uploadErr.message);
-                return;
-            }
-
+            const fileName = `chat_${Date.now()}.${file.name.split('.').pop()}`;
+            await _supabase.storage.from('product-images').upload(fileName, file);
             const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+
             await _supabase.from('messages').insert([{
                 request_id: activeChatRequestId,
                 sender_id: String(currentAccount.id),
                 image_url: imageUrl
             }]);
-
             loadChatMessages();
         }
 
         function addEmoji(emoji) {
-            const input = document.getElementById('chatInputMessage');
-            input.value += emoji;
-            input.focus();
+            document.getElementById('chatInputMessage').value += emoji;
         }
 
         async function completeTradeSuccess() {
@@ -1173,89 +1165,55 @@
 
             await _supabase.from('listings').update({ status: 'completed' }).eq('id', req.listing_id);
             await fetchListings();
-            
             if(chatInterval) clearInterval(chatInterval);
             closeModal('chatModal');
-
-            // Open Rating Modal for partner
-            const partnerId = String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id;
-            openRatingModal(partnerId);
+            openRatingModal(String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id);
         }
 
         function openRatingModal(userId) {
             ratingTargetUserId = userId;
             const partner = allProfiles[String(userId)] || { full_name: 'الشريك' };
-            document.getElementById('ratingTargetName').textContent = `تقييم المستخدم: ${partner.full_name}`;
+            document.getElementById('ratingTargetName').textContent = `تقييم: ${partner.full_name}`;
             setRatingStars(5);
-            document.getElementById('ratingCommentInput').value = '';
             openModal('ratingModal');
         }
 
         function setRatingStars(count) {
             selectedStarCount = count;
-            const stars = document.querySelectorAll('#starContainer .star');
-            stars.forEach((s, idx) => {
-                if(idx < count) {
-                    s.className = "star text-amber-400 cursor-pointer";
-                } else {
-                    s.className = "star text-slate-300 cursor-pointer";
-                }
+            document.querySelectorAll('#starContainer .star').forEach((s, idx) => {
+                s.className = idx < count ? "star text-amber-400 cursor-pointer" : "star text-slate-300 cursor-pointer";
             });
         }
 
         function appendRatingTag(tag) {
             const input = document.getElementById('ratingCommentInput');
             input.value = input.value ? input.value + ' - ' + tag : tag;
-            input.focus();
         }
 
         async function submitUserRating() {
             if(!ratingTargetUserId || !currentAccount) return;
-            const comment = document.getElementById('ratingCommentInput').value;
-
-            const { error } = await _supabase.from('ratings').insert([{
+            await _supabase.from('ratings').insert([{
                 rater_id: String(currentAccount.id),
                 rated_user_id: String(ratingTargetUserId),
                 rating: selectedStarCount,
-                comment: comment
+                comment: document.getElementById('ratingCommentInput').value
             }]);
-
-            if(error) {
-                alert("خطأ في إرسال التقييم: " + error.message);
-            } else {
-                await fetchRatings();
-                closeModal('ratingModal');
-                alert("تم إرسال التقييم بنجاح! شكراً لمساهمتك في موثوقية المنصة ⭐");
-                openProfileModal();
-            }
+            await fetchRatings();
+            closeModal('ratingModal');
+            alert("تم إرسال التقييم بنجاح! ⭐");
+            openProfileModal();
         }
 
         async function handleAddItem(e) {
             e.preventDefault();
-            if(!currentAccount) {
-                alert("المرجو تسجيل الدخول أولاً!");
-                openModal('authModal');
-                return;
-            }
-
-            const btn = document.getElementById('submitBtn');
-            btn.innerText = "جاري رفع الصورة والنشر...";
-            btn.disabled = true;
+            if(!currentAccount) return;
 
             const file = document.getElementById('addImageFile').files[0];
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${Date.now()}.${fileExt}`;
-
-            const { error: imgErr } = await _supabase.storage.from('product-images').upload(fileName, file);
-            if(imgErr) {
-                alert("خطأ في رفع الصورة: " + imgErr.message);
-                btn.innerText = "نشر العرض في المنصة 🚀";
-                btn.disabled = false;
-                return;
-            }
-
+            const fileName = `${Date.now()}.${file.name.split('.').pop()}`;
+            await _supabase.storage.from('product-images').upload(fileName, file);
             const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-            const { error: insertErr } = await _supabase.from('listings').insert([{
+
+            await _supabase.from('listings').insert([{
                 title: document.getElementById('addTitle').value,
                 category: document.getElementById('addCategory').value,
                 city: currentAccount.city,
@@ -1268,17 +1226,9 @@
                 status: 'active'
             }]);
 
-            btn.innerText = "نشر العرض في المنصة 🚀";
-            btn.disabled = false;
-
-            if(insertErr) {
-                alert("خطأ في حفظ العرض: " + insertErr.message);
-            } else {
-                closeModal('addModal');
-                document.getElementById('addModal').querySelector('form').reset();
-                fetchListings();
-                alert("تم نشر عرضك بنجاح على بدل.ma! 🎉");
-            }
+            closeModal('addModal');
+            fetchListings();
+            alert("تم نشر عرضك بنجاح! 🎉");
         }
 
         async function deleteListing(id) {
@@ -1286,20 +1236,17 @@
                 await _supabase.from('listings').delete().eq('id', id);
                 closeModal('profileModal');
                 fetchListings();
-                alert("تم حذف العرض بنجاح.");
             }
         }
 
         function filterProducts() {
             const q = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allListings.filter(p => p.status !== 'completed' && (p.title.toLowerCase().includes(q) || (p.description && p.description.toLowerCase().includes(q)) || p.city.toLowerCase().includes(q)));
-            renderListings(filtered);
+            renderListings(allListings.filter(p => p.status !== 'completed' && (p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q))));
         }
 
         function filterCategory(c) {
             const active = allListings.filter(p => p.status !== 'completed');
-            const filtered = c === 'الكل' ? active : active.filter(p => p.category === c);
-            renderListings(filtered);
+            renderListings(c === 'الكل' ? active : active.filter(p => p.category === c));
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
