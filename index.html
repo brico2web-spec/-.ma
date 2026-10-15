@@ -436,7 +436,7 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12 space-y-1">
         <p>جميع الحقوق محفوظة © 2026 - بدل.ma</p>
-        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 16 (Google Single Sign-On 🌐)</p>
+        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 17 (Real-time Instant Notifications 🔔)</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -447,7 +447,6 @@
         let allRequests = [];
         let allRatings = [];
         let activeChatRequestId = null;
-        let chatInterval = null;
         let selectedStarCount = 5;
         let ratingTargetUserId = null;
 
@@ -464,11 +463,9 @@
             const { data: { session } } = await _supabase.auth.getSession();
             if (session && session.user) {
                 const user = session.user;
-                // التحقق هل البروفايل مسجل في جدول profiles أم لا
                 let { data: profile } = await _supabase.from('profiles').select('*').eq('id', user.id).single();
                 
                 if (!profile) {
-                    // إنشاء بروفايل تلقائي لمستخدم جوجل الجديد
                     const newProfile = {
                         id: user.id,
                         full_name: user.user_metadata.full_name || user.email.split('@')[0],
@@ -489,10 +486,50 @@
                 }
             }
 
-            fetchProfilesAndData();
-            setInterval(fetchDataPolling, 4000);
+            await fetchProfilesAndData();
+            setupRealtimeSubscriptions(); // تشغيل الإشعارات الفورية
             setInterval(rotatePromoSlider, 4500);
         };
+
+        // تفعيل الإشعارات الفورية عبر Supabase Realtime
+        function setupRealtimeSubscriptions() {
+            // الاستماع لتغييرات طلبات المقايضة (Trade Requests)
+            _supabase.channel('public:trade_requests')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'trade_requests' }, payload => {
+                    fetchRequests();
+                    if (currentAccount && (payload.new.receiver_id === currentAccount.id || payload.new.sender_id === currentAccount.id)) {
+                        showFloatingNotification("🔔 تحديث جديد في طلبات المقايضة!");
+                    }
+                })
+                .subscribe();
+
+            // الاستماع للرسائل الفورية في الدردشة (Messages)
+            _supabase.channel('public:messages')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                    if (activeChatRequestId && payload.new.request_id === activeChatRequestId) {
+                        loadChatMessages();
+                    } else if (currentAccount && payload.new.sender_id !== currentAccount.id) {
+                        showFloatingNotification("💬 وصلت لك رسالة جديدة فدردشة المقايضة!");
+                    }
+                })
+                .subscribe();
+
+            // الاستماع للعروض الجديدة (Listings)
+            _supabase.channel('public:listings')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, payload => {
+                    fetchListings();
+                })
+                .subscribe();
+        }
+
+        // إشعار بصري عائم خفيف داخل التطبيق
+        function showFloatingNotification(text) {
+            const notif = document.createElement('div');
+            notif.className = "fixed bottom-5 left-5 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl z-50 border border-emerald-500 slide-fade flex items-center gap-2";
+            notif.innerHTML = `<i class="fa-solid fa-bell text-emerald-400 animate-bounce"></i> ${text}`;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 4000);
+        }
 
         // دالة الدخول الفوري عبر حساب Google المجاني
         async function handleGoogleLogin() {
@@ -521,11 +558,6 @@
                 descEl.textContent = slide.desc;
                 iconEl.className = `fa-solid ${slide.icon} text-emerald-400 animate-spin`;
             }
-        }
-
-        async function fetchDataPolling() {
-            await fetchRequests();
-            await fetchRatings();
         }
 
         async function fetchProfilesAndData() {
@@ -1096,8 +1128,6 @@
             closeModal('profileModal');
             openModal('chatModal');
             loadChatMessages();
-            if(chatInterval) clearInterval(chatInterval);
-            chatInterval = setInterval(loadChatMessages, 3000);
         }
 
         async function loadChatMessages() {
@@ -1165,7 +1195,6 @@
 
             await _supabase.from('listings').update({ status: 'completed' }).eq('id', req.listing_id);
             await fetchListings();
-            if(chatInterval) clearInterval(chatInterval);
             closeModal('chatModal');
             openRatingModal(String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id);
         }
@@ -1250,10 +1279,7 @@
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { 
-            document.getElementById(id).classList.add('hidden'); 
-            if(id === 'chatModal' && chatInterval) clearInterval(chatInterval);
-        }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     </script>
 </body>
 </html>
