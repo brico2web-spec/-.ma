@@ -45,20 +45,67 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
 
-    <!-- Header Navigation -->
+    <!-- Header Navigation (مبدل مكان المنيو مع اللوغو) -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <div class="cursor-pointer flex flex-col" onclick="switchTab('home')">
-                <h1 class="text-2xl font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></h1>
-                <p class="text-[10px] text-slate-400 font-bold">منصة المقايضة المباشرة بـ 0 درهم</p>
-            </div>
-
-            <!-- Header Auth Section -->
+            <!-- Header Auth Section with Menu Icon (مكانه الآن في اليمين) -->
             <div id="authHeaderSection">
                 <!-- Injected via JS -->
             </div>
+
+            <!-- Logo Section (مكانه الآن في اليسار) -->
+            <div class="cursor-pointer flex flex-col items-end" onclick="switchTab('home')">
+                <h1 class="text-2xl font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></h1>
+                <p class="text-[10px] text-slate-400 font-bold">منصة المقايضة المباشرة بـ 0 درهم</p>
+            </div>
         </div>
     </header>
+
+    <!-- Right Side Navigation Menu (Drawer) -->
+    <div id="rightMenuDrawer" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm transition-opacity">
+        <div id="drawerContent" class="absolute top-0 right-0 w-80 max-w-[85vw] h-full bg-white shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 overflow-y-auto text-right">
+            <!-- Drawer Header / User Info -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between border-b pb-4">
+                    <h3 class="font-black text-slate-900 text-sm">قائمة الحساب</h3>
+                    <button onclick="closeRightMenu()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+                </div>
+
+                <div id="drawerUserInfo" class="flex flex-col items-center text-center p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100 space-y-2">
+                    <!-- Injected via JS -->
+                </div>
+
+                <!-- Menu Links (Each opens its own dedicated clean section) -->
+                <div class="space-y-1.5 pt-2 text-xs">
+                    <a href="#" onclick="openMenuSection('my-account'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-user-gear text-emerald-600 text-base"></i> حسابي
+                    </a>
+                    <a href="#" onclick="openMenuSection('active-listings'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-box-open text-emerald-600 text-base"></i> عروضي النشطة
+                    </a>
+                    <a href="#" onclick="openMenuSection('current-requests'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-bell text-emerald-600 text-base"></i> الطلبات الجارية
+                    </a>
+                    <a href="#" onclick="openMenuSection('successful-trades'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-handshake text-emerald-600 text-base"></i> المقايضة الناجحة
+                    </a>
+                    <a href="#" onclick="openMenuSection('deal-chats'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-comments text-emerald-600 text-base"></i> دردشة الصفقة
+                    </a>
+                </div>
+            </div>
+
+            <!-- Drawer Footer: WhatsApp Location Button & Logout -->
+            <div class="space-y-2 pt-4 border-t">
+                <button onclick="sendLocationOnWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-brands fa-whatsapp text-base"></i> إرسال الموقع عبر الواتساب 📍
+                </button>
+                <button onclick="handleLogout(); closeRightMenu();" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج من الحساب 🚪
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Real-time Popup Container for Instant Trade Requests -->
     <div id="liveRequestsPopupContainer" class="fixed top-24 left-4 z-50 space-y-3 w-80 max-w-full pointer-events-none">
@@ -97,18 +144,29 @@
             </div>
 
             <!-- Search Bar & Categories -->
-            <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                <div class="relative w-full md:w-96">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                <div class="relative w-full md:w-80">
                     <i class="fa-solid fa-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن هاتف، أثاث، ساعة، ملابس..." class="w-full pr-12 pl-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs sm:text-sm">
+                    <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن هاتف، أثاث، ساعة، ملابس..." class="w-full pr-12 pl-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs sm:text-sm">
                 </div>
                 
-                <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-                    <button onclick="filterCategory('الكل')" class="cat-chip active-chip px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white whitespace-nowrap shadow-sm transition">الكل</button>
-                    <button onclick="filterCategory('إلكترونيات')" class="cat-chip px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap transition">إلكترونيات</button>
-                    <button onclick="filterCategory('أثاث')" class="cat-chip px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap transition">أثاث ومنزل</button>
-                    <button onclick="filterCategory('وسائل نقل')" class="cat-chip px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap transition">دراجات وسيارات</button>
-                    <button onclick="filterCategory('خدمات')" class="cat-chip px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap transition">حرفيين وخدمات</button>
+                <!-- Modern & Smooth Categories Navigation -->
+                <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                    <button onclick="filterCategory('الكل')" id="cat-btn-الكل" class="cat-chip px-4 py-2.5 rounded-2xl text-xs font-black bg-emerald-600 text-white whitespace-nowrap shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-border-all"></i> الكل
+                    </button>
+                    <button onclick="filterCategory('إلكترونيات')" id="cat-btn-إلكترونيات" class="cat-chip px-4 py-2.5 rounded-2xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer border border-slate-200/60">
+                        <i class="fa-solid fa-laptop text-emerald-600"></i> إلكترونيات
+                    </button>
+                    <button onclick="filterCategory('أثاث')" id="cat-btn-أثاث" class="cat-chip px-4 py-2.5 rounded-2xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer border border-slate-200/60">
+                        <i class="fa-solid fa-couch text-emerald-600"></i> أثاث ومنزل
+                    </button>
+                    <button onclick="filterCategory('وسائل نقل')" id="cat-btn-وسائل نقل" class="cat-chip px-4 py-2.5 rounded-2xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer border border-slate-200/60">
+                        <i class="fa-solid fa-car text-emerald-600"></i> دراجات وسيارات
+                    </button>
+                    <button onclick="filterCategory('خدمات')" id="cat-btn-خدمات" class="cat-chip px-4 py-2.5 rounded-2xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer border border-slate-200/60">
+                        <i class="fa-solid fa-briefcase text-emerald-600"></i> حرفيين وخدمات
+                    </button>
                 </div>
             </div>
 
@@ -311,57 +369,63 @@
         </div>
     </div>
 
-    <!-- Modal: Profile Details & Trade Requests & User's Listings -->
-    <div id="profileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-6 shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto text-right">
-            <button onclick="closeModal('profileModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
-            
+    <!-- 1. MODAL: MY ACCOUNT (حسابي) -->
+    <div id="modalMyAccount" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-6 shadow-2xl relative border border-slate-100 text-right">
+            <button onclick="closeModal('modalMyAccount')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             <div class="text-center space-y-3">
-                <h3 class="font-black text-lg text-slate-900">حسابي الشخصي</h3>
+                <h3 class="font-black text-lg text-slate-900">إدارة حسابي الشخصي ⚙️</h3>
                 <div class="flex flex-col items-center gap-3">
                     <div class="relative group">
-                        <img id="profileModalAvatar" src="" class="w-20 h-20 rounded-full object-cover border-4 border-emerald-500 shadow-md">
+                        <img id="accModalAvatar" src="" class="w-20 h-20 rounded-full object-cover border-4 border-emerald-500 shadow-md">
                         <label for="avatarFileInput" class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition cursor-pointer text-xs font-bold">
                             <i class="fa-solid fa-camera mr-1"></i> تغيير
                         </label>
                         <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
                     </div>
-                    <h4 id="profileModalName" class="font-black text-base text-slate-800"></h4>
-                    <p id="profileModalPhone" class="text-xs text-slate-500 font-bold"></p>
-                    <div id="profileRatingBadge" class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
+                    <h4 id="accModalName" class="font-black text-base text-slate-800"></h4>
+                    <p id="accModalPhone" class="text-xs text-slate-500 font-bold"></p>
+                    <p id="accModalCity" class="text-xs text-emerald-600 font-bold"></p>
+                    <div id="accRatingBadge" class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
                         <!-- Injected via JS -->
                     </div>
                 </div>
             </div>
+            <button onclick="handleLogout(); closeModal('modalMyAccount');" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-3 rounded-xl transition cursor-pointer text-xs flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج من الحساب 🚪
+            </button>
+        </div>
+    </div>
 
-            <!-- Trade Requests Section (Received & Sent) -->
-            <div class="space-y-3 border-t pt-4">
-                <h4 class="font-black text-sm text-slate-800">طلبات المقايضة (الواردة والمرسلة) 🔔</h4>
-                <div id="tradeRequestsContainer" class="space-y-2 max-h-56 overflow-y-auto">
-                    <!-- Injected via JS -->
-                </div>
+    <!-- 2. MODAL: ACTIVE LISTINGS (عروضي النشطة) -->
+    <div id="modalActiveListings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[85vh] overflow-y-auto text-right">
+            <button onclick="closeModal('modalActiveListings')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <h3 class="font-black text-base text-slate-900 border-b pb-3">عروضي النشطة 📦</h3>
+            <div id="activeListingsContent" class="space-y-3">
+                <!-- Injected via JS -->
             </div>
+        </div>
+    </div>
 
-            <!-- Successful Trades Section -->
-            <div class="space-y-3 border-t pt-4">
-                <h4 class="font-black text-sm text-emerald-700">المقايضات الناجحة والمكتملة 🎉</h4>
-                <div id="successfulTradesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto p-1">
-                    <!-- Injected via JS -->
-                </div>
+    <!-- 3. MODAL: CURRENT REQUESTS (الطلبات الجارية) -->
+    <div id="modalCurrentRequests" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[85vh] overflow-y-auto text-right">
+            <button onclick="closeModal('modalCurrentRequests')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <h3 class="font-black text-base text-slate-900 border-b pb-3">الطلبات الجارية (الواردة والمرسلة) 🔔</h3>
+            <div id="currentRequestsContent" class="space-y-3">
+                <!-- Injected via JS -->
             </div>
+        </div>
+    </div>
 
-            <!-- User's Personal Listings Section -->
-            <div class="space-y-3 border-t pt-4">
-                <h4 class="font-black text-sm text-slate-800">عروضك النشطة (اضغط على العرض للتعديل ✏️)</h4>
-                <div id="userListingsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-1">
-                    <!-- Injected via JS -->
-                </div>
-            </div>
-
-            <div class="flex gap-2 pt-2 border-t">
-                <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-3 rounded-xl transition cursor-pointer text-xs">
-                    تسجيل الخروج 🚪
-                </button>
+    <!-- 4. MODAL: SUCCESSFUL TRADES (المقايضة الناجحة) -->
+    <div id="modalSuccessfulTrades" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[85vh] overflow-y-auto text-right">
+            <button onclick="closeModal('modalSuccessfulTrades')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <h3 class="font-black text-base text-emerald-700 border-b pb-3">المقايضات الناجحة والمكتملة 🎉</h3>
+            <div id="successfulTradesContent" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Injected via JS -->
             </div>
         </div>
     </div>
@@ -539,7 +603,7 @@
                         full_name: user.user_metadata.full_name || user.email.split('@')[0],
                         phone: user.user_metadata.phone || '0600000000',
                         city: 'القنيطرة',
-                        avatar_url: user.user_metadata.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+                        avatar_url: user.user_metadata.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg',
                         password: 'google_oauth_user'
                     };
                     await _supabase.from('profiles').insert([newProfile]);
@@ -594,7 +658,7 @@
 
         // عرض نافذة منبثقة فورية وصغيرة (Popup) على الشاشة للشخص الثاني عند طلب المقايضة
         function showInstantTradePopup(req) {
-            const sender = allProfiles[String(req.sender_id)] || { full_name: 'شريك مبادل', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+            const sender = allProfiles[String(req.sender_id)] || { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
             const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
 
             const container = document.getElementById('liveRequestsPopupContainer');
@@ -708,31 +772,246 @@
             return { avg: (sum / userRats.length).toFixed(1), count: userRats.length };
         }
 
+        // تحديث الهيدر لإظهار أيقونة المنيو
         function updateHeaderUI() {
             const container = document.getElementById('authHeaderSection');
             if(currentAccount) {
-                const avatar = currentAccount.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
-                const stats = getUserRatingStats(currentAccount.id);
                 const activeChatsCount = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted').length;
 
                 container.innerHTML = `
-                    <div class="flex items-center gap-3 cursor-pointer relative" onclick="openProfileModal()">
-                        <div class="relative">
-                            <img src="${avatar}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500 shadow-sm">
-                            ${activeChatsCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow-md animate-pulse">${activeChatsCount}</span>` : ''}
-                        </div>
-                        <div class="hidden sm:block text-right">
-                            <span class="text-xs font-black text-slate-800 block">${currentAccount.full_name}</span>
-                            <span class="text-[10px] text-amber-600 font-bold">⭐ ${stats.avg} (${stats.count} تقييم)</span>
-                        </div>
-                    </div>
+                    <button onclick="openRightMenu()" class="relative bg-emerald-50 hover:bg-emerald-100 text-emerald-700 w-11 h-11 rounded-2xl flex items-center justify-center transition border border-emerald-200 cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                        ${activeChatsCount > 0 ? `<span class="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow animate-pulse">${activeChatsCount}</span>` : ''}
+                    </button>
                 `;
+                updateDrawerUserInfo();
             } else {
                 container.innerHTML = `
                     <button onclick="openModal('authModal')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer border border-emerald-200">
                         <i class="fa-solid fa-right-to-bracket ml-1"></i> دخول / حساب جديد
                     </button>
                 `;
+            }
+        }
+
+        // تحديث محتوى معلومات المستخدم في المنيو الجانبي
+        function updateDrawerUserInfo() {
+            if(!currentAccount) return;
+            const avatar = currentAccount.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
+            const stats = getUserRatingStats(currentAccount.id);
+            const city = currentAccount.city || 'المغرب';
+
+            document.getElementById('drawerUserInfo').innerHTML = `
+                <img src="${avatar}" class="w-16 h-16 rounded-full object-cover border-2 border-emerald-500 shadow-md">
+                <h4 class="font-black text-slate-900 text-sm">${currentAccount.full_name}</h4>
+                <p class="text-[11px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-emerald-600 ml-1"></i> ${city}</p>
+                <div class="bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
+                    ⭐ ${stats.avg} (${stats.count} تقييم)
+                </div>
+            `;
+        }
+
+        function openRightMenu() {
+            if(!currentAccount) {
+                openModal('authModal');
+                return;
+            }
+            updateDrawerUserInfo();
+            const drawer = document.getElementById('rightMenuDrawer');
+            const content = document.getElementById('drawerContent');
+            drawer.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('translate-x-full');
+            }, 10);
+        }
+
+        function closeRightMenu() {
+            const drawer = document.getElementById('rightMenuDrawer');
+            const content = document.getElementById('drawerContent');
+            content.classList.add('translate-x-full');
+            setTimeout(() => {
+                drawer.classList.add('hidden');
+            }, 300);
+        }
+
+        // فتح الأقسام بصفحات مستقلة مخصصة (كل قسم باختصاصه مع حالة الفراغ العصرية)
+        function openMenuSection(sectionKey) {
+            closeRightMenu();
+            if(!currentAccount) {
+                openModal('authModal');
+                return;
+            }
+
+            if(sectionKey === 'my-account') {
+                // قسم حسابي الشخصي مع الصورة والمدينة والتقييم
+                document.getElementById('accModalAvatar').src = currentAccount.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
+                document.getElementById('accModalName').textContent = currentAccount.full_name;
+                document.getElementById('accModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
+                document.getElementById('accModalCity').textContent = `المدينة: ${currentAccount.city || 'غير محددة'}`;
+                const stats = getUserRatingStats(currentAccount.id);
+                document.getElementById('accRatingBadge').innerHTML = `⭐ ${stats.avg} (${stats.count} تقييم من المستخدمين)`;
+                openModal('modalMyAccount');
+
+            } else if(sectionKey === 'active-listings') {
+                // قسم عروضي النشطة فقط
+                const userItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status !== 'completed');
+                const container = document.getElementById('activeListingsContent');
+                if(userItems.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-10 space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                            <i class="fa-solid fa-box-open text-4xl text-slate-300"></i>
+                            <h4 class="font-black text-slate-700 text-sm">عروضي النشطة فارغة حالياً</h4>
+                            <p class="text-[11px] text-slate-400">لم تقم بإضافة أي عرض مقايضة بعد.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = userItems.map(item => `
+                        <div class="flex items-center justify-between p-3 rounded-2xl border bg-slate-50 border-slate-200 text-xs">
+                            <div class="flex items-center gap-3 cursor-pointer flex-grow" onclick="closeModal('modalActiveListings'); openEditModal('${item.id}')">
+                                <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border">
+                                <div>
+                                    <h5 class="font-black text-slate-800 line-clamp-1">${item.title} ✏️</h5>
+                                    <span class="text-[10px] font-bold text-emerald-600">${item.trade_type} - اضغط للتعديل</span>
+                                </div>
+                            </div>
+                            <button onclick="deleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2.5 rounded-xl transition cursor-pointer">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                }
+                openModal('modalActiveListings');
+
+            } else if(sectionKey === 'current-requests') {
+                // قسم الطلبات الجارية (الواردة والمرسلة) فقط
+                const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id) && r.status !== 'rejected');
+                const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id) && r.status !== 'rejected');
+                const container = document.getElementById('currentRequestsContent');
+
+                if(myReceived.length === 0 && mySent.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-10 space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                            <i class="fa-solid fa-bell-slash text-4xl text-slate-300"></i>
+                            <h4 class="font-black text-slate-700 text-sm">الطلبات الجارية فارغة</h4>
+                            <p class="text-[11px] text-slate-400">لا توجد أي طلبات مقايضة واردة أو مرسلة حالياً.</p>
+                        </div>
+                    `;
+                } else {
+                    let html = '';
+                    if(myReceived.length > 0) {
+                        html += `<p class="font-bold text-xs text-emerald-700 mb-1">الطلبات الواردة إليك:</p>`;
+                        html += myReceived.map(req => {
+                            const sender = allProfiles[String(req.sender_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+                            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
+                            return `
+                                <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs mb-2">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2.5">
+                                            <img src="${sender.avatar_url}" class="w-9 h-9 rounded-full object-cover border-2 border-emerald-500">
+                                            <div>
+                                                <span class="font-black text-slate-900 block">${sender.full_name}</span>
+                                                <span class="text-[10px] text-slate-500 font-bold">يريد مقايضة منتجك: <strong class="text-emerald-700">${listing.title}</strong></span>
+                                            </div>
+                                        </div>
+                                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                                            ${req.status === 'pending' ? '⏳ جاري الانتظار' : '🤝 تمت الموافقة'}
+                                        </span>
+                                    </div>
+                                    ${req.status === 'pending' ? `
+                                        <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
+                                            <button onclick="respondTrade('${req.id}', 'accepted')" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl transition cursor-pointer">موافقة وتنسيق اللقاء</button>
+                                            <button onclick="respondTrade('${req.id}', 'rejected')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 px-3 rounded-xl transition cursor-pointer">رفض</button>
+                                        </div>
+                                    ` : req.status === 'accepted' ? `
+                                        <button onclick="closeModal('modalCurrentRequests'); openChatModal('${req.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl transition cursor-pointer flex items-center justify-center gap-1">
+                                            <i class="fa-solid fa-comments"></i> فتح دردشة الصفقة 💬
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    if(mySent.length > 0) {
+                        html += `<p class="font-bold text-xs text-blue-700 mt-4 mb-1">طلباتك المرسلة:</p>`;
+                        html += mySent.map(req => {
+                            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
+                            return `
+                                <div class="bg-blue-50/40 p-3.5 rounded-2xl border border-blue-100 shadow-sm space-y-2 text-xs mb-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-black text-slate-900">أرسلت طلباً لعرض: <strong class="text-blue-700">${listing.title}</strong></span>
+                                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                                            ${req.status === 'pending' ? '⏳ قيد الانتظار' : '✅ موافق'}
+                                        </span>
+                                    </div>
+                                    ${req.status === 'accepted' ? `
+                                        <button onclick="closeModal('modalCurrentRequests'); openChatModal('${req.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl transition cursor-pointer flex items-center justify-center gap-1 mt-1">
+                                            <i class="fa-solid fa-comments"></i> دخول لدردشة الصفقة 💬
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                    container.innerHTML = html;
+                }
+                openModal('modalCurrentRequests');
+
+            } else if(sectionKey === 'successful-trades') {
+                // قسم المقايضة الناجحة فقط
+                const successfulItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status === 'completed');
+                const container = document.getElementById('successfulTradesContent');
+                if(successfulItems.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-10 space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                            <i class="fa-solid fa-handshake-slash text-4xl text-slate-300"></i>
+                            <h4 class="font-black text-slate-700 text-sm">قسم المقايضة الناجحة فارغ</h4>
+                            <p class="text-[11px] text-slate-400">ليس لديك أي عمليات تبادل مكتملة بعد.</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = successfulItems.map(item => `
+                        <div onclick="closeModal('modalSuccessfulTrades'); openSuccessTradeModal('${item.id}')" class="flex items-center justify-between p-3 rounded-2xl border bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-xs cursor-pointer hover:shadow-md transition">
+                            <div class="flex items-center gap-3">
+                                <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500">
+                                <div>
+                                    <h5 class="font-black text-slate-900 line-clamp-1">${item.title}</h5>
+                                    <span class="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
+                                        <i class="fa-solid fa-circle-check"></i> معاينة التفاصيل
+                                    </span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-left text-emerald-600"></i>
+                        </div>
+                    `).join('');
+                }
+                openModal('modalSuccessfulTrades');
+
+            } else if(sectionKey === 'deal-chats') {
+                // دردشة الصفقة
+                const activeReq = allRequests.find(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted');
+                if(activeReq) {
+                    openChatModal(activeReq.id);
+                } else {
+                    alert("⚠️ قسم دردشة الصفقة فارغ: ليس لديك أي صفقات مقبولة أو نشطة للدردشة حالياً.");
+                }
+            }
+        }
+
+        // دالة إرسال الموقع عبر الواتساب
+        function sendLocationOnWhatsApp() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const mapUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+                    const text = `📍 *هذا هو موقعي الحالي للقاء إتمام المقايضة عبر منصة بدل.ma:*\n${mapUrl}`;
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+                }, () => {
+                    alert("تعذر الحصول على موقعك الحالي. تأكد من تفعيل خدمة تحديد الموقع (GPS).");
+                });
+            } else {
+                alert("متصفحك لا يدعم خاصية تحديد الموقع الجغرافي.");
             }
         }
 
@@ -761,7 +1040,8 @@
             const phone = document.getElementById('regPhone').value.trim();
             const city = document.getElementById('regCity').value;
             const password = document.getElementById('regPass').value;
-            const avatar_url = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
+            // تعيين الصورة الافتراضية الجديدة للمستخدم الجديد
+            const avatar_url = 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
 
             if(phone.length < 10) {
                 alert("المرجو إدخال رقم هاتف مغربي صحيح (مثلاً: 0600000000)");
@@ -819,7 +1099,6 @@
             localStorage.removeItem('badal_auth_account');
             currentAccount = null;
             updateHeaderUI();
-            closeModal('profileModal');
             fetchListings();
         }
 
@@ -837,160 +1116,13 @@
             }
         }
 
-        function openProfileModal() {
-            if(!currentAccount) return;
-            document.getElementById('profileModalAvatar').src = currentAccount.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
-            document.getElementById('profileModalName').textContent = currentAccount.full_name;
-            document.getElementById('profileModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
-            
-            const stats = getUserRatingStats(currentAccount.id);
-            document.getElementById('profileRatingBadge').innerHTML = `⭐ ${stats.avg} (${stats.count} تقييم من المستخدمين)`;
-
-            const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id) && r.status !== 'rejected');
-            const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id) && r.status !== 'rejected');
-            const reqContainer = document.getElementById('tradeRequestsContainer');
-
-            let htmlContent = '';
-
-            if(myReceived.length > 0) {
-                htmlContent += `<p class="font-bold text-[11px] text-emerald-700 mb-1.5">الطلبات الواردة إليك:</p>`;
-                htmlContent += myReceived.map(req => {
-                    const sender = allProfiles[String(req.sender_id)] || { full_name: 'مستخدم', avatar_url: 'https://via.placeholder.com/150' };
-                    const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
-
-                    return `
-                        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs mb-2.5 transition hover:border-emerald-300">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2.5">
-                                    <img src="${sender.avatar_url}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500 shadow-sm">
-                                    <div>
-                                        <span class="font-black text-slate-900 block">${sender.full_name}</span>
-                                        <span class="text-[10px] text-slate-500 font-bold">يريد مقايضة منتجك: <strong class="text-emerald-700">${listing.title}</strong></span>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] px-3 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
-                                    ${req.status === 'pending' ? '⏳ جاري الانتظار' : '🤝 تمت الموافقة'}
-                                </span>
-                            </div>
-                            ${req.status === 'pending' ? `
-                                <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
-                                    <button onclick="respondTrade('${req.id}', 'accepted')" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl transition shadow-sm cursor-pointer flex items-center justify-center gap-1.5">
-                                        <i class="fa-solid fa-check-circle"></i> موافقة وتنسيق اللقاء
-                                    </button>
-                                    <button onclick="respondTrade('${req.id}', 'rejected')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2.5 px-4 rounded-xl transition cursor-pointer flex items-center gap-1">
-                                        <i class="fa-solid fa-xmark"></i> رفض
-                                    </button>
-                                </div>
-                            ` : req.status === 'accepted' ? `
-                                <button onclick="openChatModal('${req.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl transition shadow-sm cursor-pointer flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-comments"></i> فتح دردشة اللقاء وتحديد الموعد 💬
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            if(mySent.length > 0) {
-                htmlContent += `<p class="font-bold text-[11px] text-blue-700 mt-4 mb-1.5">طلباتك المرسلة:</p>`;
-                htmlContent += mySent.map(req => {
-                    const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
-
-                    return `
-                        <div class="bg-blue-50/40 p-3.5 rounded-2xl border border-blue-100 shadow-sm space-y-2 text-xs mb-2.5">
-                            <div class="flex items-center justify-between">
-                                <span class="font-black text-slate-900">أرسلت طلباً لعرض: <strong class="text-blue-700">${listing.title}</strong></span>
-                                <span class="text-[10px] px-3 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
-                                    ${req.status === 'pending' ? '⏳ في انتظار رد المالك' : '✅ وافق المالك'}
-                                </span>
-                            </div>
-                            <div class="flex items-center justify-between pt-2 border-t border-blue-100/60">
-                                ${req.status === 'accepted' ? `
-                                    <button onclick="openChatModal('${req.id}')" class="flex-grow bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-xl transition shadow-sm cursor-pointer flex items-center justify-center gap-2">
-                                        <i class="fa-solid fa-comments"></i> دخول للدردشة وتحديد اللقاء 💬
-                                    </button>
-                                ` : `
-                                    <span class="text-[10px] text-slate-500 font-medium">في انتظار الرد...</span>
-                                `}
-                                <button onclick="cancelMySentRequest('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 px-3 rounded-xl transition cursor-pointer flex items-center gap-1 text-[11px] mr-auto">
-                                    <i class="fa-solid fa-trash-can"></i> إلغاء الطلب
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            if(myReceived.length === 0 && mySent.length === 0) {
-                reqContainer.innerHTML = `<p class="text-xs text-slate-400 py-3 text-center bg-slate-50 rounded-2xl border">لا توجد طلبات مقايضة نشطة حالياً.</p>`;
-            } else {
-                reqContainer.innerHTML = htmlContent;
-            }
-
-            // Successful Trades
-            const successfulItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status === 'completed');
-            const succContainer = document.getElementById('successfulTradesContainer');
-            if(successfulItems.length === 0) {
-                succContainer.innerHTML = `<p class="col-span-full text-xs text-slate-400 py-2">ليس لديك مقايضات مكتملة بعد.</p>`;
-            } else {
-                succContainer.innerHTML = successfulItems.map(item => `
-                    <div onclick="openSuccessTradeModal('${item.id}')" class="flex items-center justify-between p-3 rounded-2xl border bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-xs cursor-pointer hover:shadow-md transition">
-                        <div class="flex items-center gap-3">
-                            <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500">
-                            <div>
-                                <h5 class="font-black text-slate-900 line-clamp-1">${item.title}</h5>
-                                <span class="text-[10px] font-bold text-emerald-700 flex items-center gap-1">
-                                    <i class="fa-solid fa-circle-check"></i> معاينة تفاصيل المقايضة
-                                </span>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-chevron-left text-emerald-600"></i>
-                    </div>
-                `).join('');
-            }
-
-            // User's Active Listings
-            const userItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status !== 'completed');
-            const container = document.getElementById('userListingsContainer');
-            if(userItems.length === 0) {
-                container.innerHTML = `<p class="col-span-full text-center text-xs text-slate-400 py-4">ليس لديك أي عروض نشطة حالياً.</p>`;
-            } else {
-                container.innerHTML = userItems.map(item => `
-                    <div class="flex items-center justify-between p-2.5 rounded-2xl border bg-slate-50 border-slate-200 text-xs">
-                        <div class="flex items-center gap-2 cursor-pointer flex-grow" onclick="openEditModal('${item.id}')">
-                            <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border">
-                            <div>
-                                <h5 class="font-black text-slate-800 line-clamp-1">${item.title} ✏️</h5>
-                                <span class="text-[10px] font-bold text-emerald-600">${item.trade_type} - اضغط للتعديل</span>
-                            </div>
-                        </div>
-                        <button onclick="deleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl transition cursor-pointer">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                `).join('');
-            }
-
-            openModal('profileModal');
-        }
-
-        async function cancelMySentRequest(reqId) {
-            if(!confirm("هل أنت متأكد من إلغاء هذا الطلب؟")) return;
-            const { error } = await _supabase.from('trade_requests').delete().eq('id', reqId);
-            if(!error) {
-                await fetchRequests();
-                openProfileModal();
-            }
-        }
-
         async function openSuccessTradeModal(listingId) {
-            closeModal('profileModal');
             const item = allListings.find(l => String(l.id) === String(listingId));
             if(!item) return;
 
             const req = allRequests.find(r => String(r.listing_id) === String(listingId) && r.status === 'accepted');
             const partnerId = req ? (String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id) : null;
-            const partner = partnerId ? (allProfiles[String(partnerId)] || { full_name: 'شريك مبادل', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' }) : { full_name: 'شريك', avatar_url: '' };
+            const partner = partnerId ? (allProfiles[String(partnerId)] || { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' }) : { full_name: 'شريك', avatar_url: '' };
 
             const content = document.getElementById('successTradeContent');
             content.innerHTML = `
@@ -1031,7 +1163,6 @@
             document.getElementById('editWanted').value = item.wanted;
             document.getElementById('editDesc').value = item.description || '';
 
-            closeModal('profileModal');
             openModal('editModal');
         }
 
@@ -1052,7 +1183,6 @@
                 closeModal('editModal');
                 await fetchListings();
                 alert("تم التعديل بنجاح! ✏️");
-                openProfileModal();
             }
         }
 
@@ -1075,7 +1205,8 @@
             currentAccount.avatar_url = avatarUrl;
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             await fetchProfilesAndData();
-            openProfileModal();
+            document.getElementById('accModalAvatar').src = currentAccount.avatar_url;
+            updateDrawerUserInfo();
         }
 
         function handleOpenAddModal() {
@@ -1132,7 +1263,7 @@
 
             grid.innerHTML = list.map(item => {
                 const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
-                const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+                const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
                 const authorStats = getUserRatingStats(item.user_id);
                 const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
 
@@ -1208,7 +1339,7 @@
             if(!item) return;
 
             const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
-            const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+            const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
             const authorStats = getUserRatingStats(item.user_id);
             const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
             const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
@@ -1280,7 +1411,8 @@
         async function respondTrade(reqId, status) {
             await _supabase.from('trade_requests').update({ status }).eq('id', reqId);
             await fetchRequests();
-            openProfileModal();
+            closeModal('modalCurrentRequests');
+            openMenuSection('current-requests');
             if(status === 'accepted') openChatModal(reqId);
         }
 
@@ -1303,7 +1435,6 @@
                 </div>
             `;
 
-            closeModal('profileModal');
             openModal('chatModal');
             loadChatMessages();
         }
@@ -1408,7 +1539,6 @@
             await fetchRatings();
             closeModal('ratingModal');
             alert("تم إرسال التقييم بنجاح! ⭐");
-            openProfileModal();
         }
 
         async function handleAddItem(e) {
@@ -1441,7 +1571,7 @@
         async function deleteListing(id) {
             if(confirm("واش متأكد بغيتي تمسح هاد العرض؟")) {
                 await _supabase.from('listings').delete().eq('id', id);
-                closeModal('profileModal');
+                closeModal('modalActiveListings');
                 fetchListings();
             }
         }
@@ -1451,9 +1581,24 @@
             renderListings(allListings.filter(p => p.status !== 'completed' && (p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q))));
         }
 
+        // دالة تحديث الأقسام مع تغيير الشكل البصري للزر النشط بسلاسة
         function filterCategory(c) {
-            const active = allListings.filter(p => p.status !== 'completed');
-            renderListings(c === 'الكل' ? active : active.filter(p => p.category === c));
+            const activeListings = allListings.filter(p => p.status !== 'completed');
+            
+            // تحديث الـ CSS الخاص بالأزرار
+            const categories = ['الكل', 'إلكترونيات', 'أثاث', 'وسائل نقل', 'خدمات'];
+            categories.forEach(cat => {
+                const btn = document.getElementById('cat-btn-' + cat);
+                if(btn) {
+                    if(cat === c) {
+                        btn.className = "cat-chip px-4 py-2.5 rounded-2xl text-xs font-black bg-emerald-600 text-white whitespace-nowrap shadow-md transition flex items-center gap-1.5 cursor-pointer";
+                    } else {
+                        btn.className = "cat-chip px-4 py-2.5 rounded-2xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer border border-slate-200/60";
+                    }
+                }
+            });
+
+            renderListings(c === 'الكل' ? activeListings : activeListings.filter(p => p.category === c));
         }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
