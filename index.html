@@ -18,7 +18,12 @@
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); border-color: rgba(16, 185, 129, 0.8); }
+            50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.8); border-color: rgba(5, 150, 105, 1); }
+        }
         .slide-fade { animation: fadeIn 0.6s ease-in-out; }
+        .random-wanted-card { animation: pulseGlow 2.5s infinite ease-in-out; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
@@ -44,6 +49,11 @@
             </div>
         </div>
     </header>
+
+    <!-- Real-time Popup Container for Instant Trade Requests -->
+    <div id="liveRequestsPopupContainer" class="fixed top-24 left-4 z-50 space-y-3 w-80 max-w-full pointer-events-none">
+        <!-- Injected via JS -->
+    </div>
 
     <!-- Auto Sliding Banner -->
     <div class="max-w-7xl mx-auto px-4 w-full mt-4">
@@ -176,7 +186,7 @@
         </div>
     </div>
 
-    <!-- Modal: Add Item -->
+    <!-- Modal: Add Item (Updated with Random Wanted Checkbox) -->
     <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100">
             <button onclick="closeModal('addModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
@@ -205,9 +215,21 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Random Wanted Feature (اختيار عشوائي - باغي لي كان) -->
+                <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label for="randomWantedCheck" class="font-black text-emerald-900 cursor-pointer flex items-center gap-1.5 text-xs">
+                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i> إختيار عشوائي (باغي لي كان 🎁)
+                        </label>
+                        <input type="checkbox" id="randomWantedCheck" onchange="toggleRandomWanted(this)" class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                    </div>
+                    <p class="text-[10px] text-slate-500 font-medium">إذا فعلت هذه الخانة، سيتم قبول أي عرض مقايضة كيفما كان بشكل تلقائي!</p>
+                </div>
+
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">شنو باغي بدالها؟ *</label>
-                    <input type="text" id="addWanted" required placeholder="مثلاً: باغي بيسيكليت VTT ولا تلفزة" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                    <input type="text" id="addWanted" required placeholder="مثلاً: باغي بيسيكليت VTT ولا تلفزة" class="w-full bg-slate-50 border p-3 rounded-xl font-bold transition">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">صورة المنتج *</label>
@@ -436,7 +458,7 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12 space-y-1">
         <p>جميع الحقوق محفوظة © 2026 - بدل.ma</p>
-        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 18 (WhatsApp Share Feature 📲)</p>
+        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 19 (Instant Live Trade Popups & Random Wanted 🎁)</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -491,23 +513,28 @@
             setInterval(rotatePromoSlider, 4500);
         };
 
-        // تفعيل الإشعارات الفورية عبر Supabase Realtime
+        // تفعيل الإشعارات الفورية والتنبيهات الحية عبر Supabase Realtime
         function setupRealtimeSubscriptions() {
             _supabase.channel('public:trade_requests')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'trade_requests' }, payload => {
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'trade_requests' }, payload => {
                     fetchRequests();
-                    if (currentAccount && (payload.new.receiver_id === currentAccount.id || payload.new.sender_id === currentAccount.id)) {
-                        showFloatingNotification("🔔 تحديث جديد في طلبات المقايضة!");
+                    const newReq = payload.new;
+                    if (currentAccount && String(newReq.receiver_id) === String(currentAccount.id)) {
+                        showInstantTradePopup(newReq);
                     }
+                })
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'trade_requests' }, payload => {
+                    fetchRequests();
                 })
                 .subscribe();
 
             _supabase.channel('public:messages')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-                    if (activeChatRequestId && payload.new.request_id === activeChatRequestId) {
+                    const newMsg = payload.new;
+                    if (activeChatRequestId && String(newMsg.request_id) === String(activeChatRequestId)) {
                         loadChatMessages();
-                    } else if (currentAccount && payload.new.sender_id !== currentAccount.id) {
-                        showFloatingNotification("💬 وصلت لك رسالة جديدة فدردشة المقايضة!");
+                    } else if (currentAccount && String(newMsg.sender_id) !== String(currentAccount.id)) {
+                        showFloatingNotification("💬 رسالة جديدة في دردشة المقايضة!");
                     }
                 })
                 .subscribe();
@@ -519,9 +546,58 @@
                 .subscribe();
         }
 
+        // عرض نافذة منبثقة فورية وصغيرة (Popup) على الشاشة للشخص الثاني عند طلب المقايضة
+        function showInstantTradePopup(req) {
+            const sender = allProfiles[String(req.sender_id)] || { full_name: 'شريك مبادل', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
+            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
+
+            const container = document.getElementById('liveRequestsPopupContainer');
+            const popupId = 'popup-req-' + req.id;
+
+            const popupEl = document.createElement('div');
+            popupEl.id = popupId;
+            popupEl.className = "pointer-events-auto bg-white rounded-2xl shadow-2xl border-2 border-emerald-500 p-4 space-y-3 slide-fade text-right";
+            popupEl.innerHTML = `
+                <div class="flex items-center justify-between border-b pb-2">
+                    <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-full animate-bounce">⚡ طلب مقايضة جديد!</span>
+                    <button onclick="document.getElementById('${popupId}').remove()" class="text-slate-400 hover:text-slate-600 font-bold text-sm">&times;</button>
+                </div>
+                <div class="flex items-center gap-3">
+                    <img src="${sender.avatar_url}" class="w-12 h-12 rounded-full object-cover border-2 border-emerald-500 shadow-md">
+                    <div>
+                        <h5 class="font-black text-xs text-slate-900">${sender.full_name}</h5>
+                        <p class="text-[10px] text-slate-500 font-bold line-clamp-1">يريد مقايضة: <strong class="text-emerald-700">${listing.title}</strong></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <button onclick="acceptInstantReq('${req.id}'); document.getElementById('${popupId}').remove();" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition shadow cursor-pointer">
+                        قبول ✅
+                    </button>
+                    <button onclick="rejectInstantReq('${req.id}'); document.getElementById('${popupId}').remove();" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 px-3 rounded-xl text-xs transition cursor-pointer">
+                        رفض ❌
+                    </button>
+                </div>
+            `;
+            container.appendChild(popupEl);
+
+            // صوت أو تنبيه بصري إضافي
+            showFloatingNotification(`🔔 ${sender.full_name} أرسل لك طلب مقايضة فورياً!`);
+        }
+
+        async function acceptInstantReq(reqId) {
+            await _supabase.from('trade_requests').update({ status: 'accepted' }).eq('id', reqId);
+            await fetchRequests();
+            openChatModal(reqId);
+        }
+
+        async function rejectInstantReq(reqId) {
+            await _supabase.from('trade_requests').update({ status: 'rejected' }).eq('id', reqId);
+            await fetchRequests();
+        }
+
         function showFloatingNotification(text) {
             const notif = document.createElement('div');
-            notif.className = "fixed bottom-5 left-5 bg-slate-900/90 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl z-50 border border-emerald-500 slide-fade flex items-center gap-2 backdrop-blur-md";
+            notif.className = "fixed bottom-5 left-5 bg-slate-900/90 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl z-50 border border-emerald-500 slide-fade flex items-center gap-2 backdrop-blur-md pointer-events-auto";
             notif.innerHTML = `<i class="fa-solid fa-bell text-emerald-400 animate-bounce"></i> ${text}`;
             document.body.appendChild(notif);
             setTimeout(() => notif.remove(), 4000);
@@ -700,6 +776,20 @@
             updateHeaderUI();
             closeModal('profileModal');
             fetchListings();
+        }
+
+        // دالة التحكم في قفل خانة "شنو باغي بدالها؟" عند اختيار "باغي لي كان"
+        function toggleRandomWanted(checkbox) {
+            const wantedInput = document.getElementById('addWanted');
+            if (checkbox.checked) {
+                wantedInput.value = "باغي لي كان - يقبل أي عرض 🎁";
+                wantedInput.disabled = true;
+                wantedInput.classList.add('bg-slate-200', 'text-emerald-700', 'font-black');
+            } else {
+                wantedInput.value = "";
+                wantedInput.disabled = false;
+                wantedInput.classList.remove('bg-slate-200', 'text-emerald-700', 'font-black');
+            }
         }
 
         function openProfileModal() {
@@ -949,6 +1039,13 @@
                 openModal('authModal');
                 return;
             }
+            // إعادة ضبط نموذج الإضافة
+            document.getElementById('randomWantedCheck').checked = false;
+            const wantedInput = document.getElementById('addWanted');
+            wantedInput.value = "";
+            wantedInput.disabled = false;
+            wantedInput.classList.remove('bg-slate-200', 'text-emerald-700', 'font-black');
+
             openModal('addModal');
         }
 
@@ -995,10 +1092,12 @@
                 const authorStats = getUserRatingStats(item.user_id);
                 const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
 
+                const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
+
                 return `
-                <div id="product-${item.id}" class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col justify-between group">
+                <div id="product-${item.id}" class="border rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col justify-between group ${isRandomWanted ? 'random-wanted-card border-emerald-500' : 'bg-white border-slate-200'}">
                     <div>
-                        <div class="flex items-center justify-between p-3 border-b border-slate-100 bg-slate-50/50">
+                        <div class="flex items-center justify-between p-3 border-b border-slate-100 ${isRandomWanted ? 'bg-emerald-50/80' : 'bg-slate-50/50'}">
                             <div class="flex items-center gap-2">
                                 <img src="${author.avatar_url}" class="w-7 h-7 rounded-full object-cover border border-emerald-500">
                                 <span class="text-xs font-black text-slate-800">${author.full_name}</span>
@@ -1015,12 +1114,13 @@
                                 <span class="absolute bottom-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md">
                                     <i class="fa-solid fa-location-dot"></i> ${item.city}
                                 </span>
+                                ${isRandomWanted ? `<span class="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full animate-pulse shadow-md"><i class="fa-solid fa-gift"></i> باغي لي كان</span>` : ''}
                             </div>
                             <div class="p-4 space-y-2">
                                 <h3 class="font-black text-slate-900 text-sm line-clamp-1">${item.title}</h3>
-                                <div class="bg-emerald-50 p-2.5 rounded-xl text-xs border border-emerald-100">
-                                    <span class="font-bold text-emerald-800 block">باغي مقابلها:</span>
-                                    <p class="text-slate-700 font-semibold line-clamp-2">${item.wanted}</p>
+                                <div class="p-2.5 rounded-xl text-xs border ${isRandomWanted ? 'bg-emerald-100/60 border-emerald-300 text-emerald-900 font-black' : 'bg-emerald-50 border-emerald-100 text-slate-700'}">
+                                    <span class="font-bold block ${isRandomWanted ? 'text-emerald-800' : 'text-emerald-800'}">باغي مقابلها:</span>
+                                    <p class="font-semibold line-clamp-2">${item.wanted}</p>
                                 </div>
                                 <p class="text-xs text-slate-500 line-clamp-2">${item.description || ''}</p>
                             </div>
@@ -1060,6 +1160,7 @@
             const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
             const authorStats = getUserRatingStats(item.user_id);
             const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
+            const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
 
             document.getElementById('productModalContent').innerHTML = `
                 <div class="flex items-center justify-between border-b pb-3">
@@ -1075,13 +1176,14 @@
                 <div class="relative rounded-2xl overflow-hidden bg-slate-100 shadow-md max-h-80 flex items-center justify-center">
                     <img src="${item.image_url}" class="w-full h-full object-contain max-h-80">
                     <span class="absolute top-3 right-3 bg-slate-900/80 text-white text-xs font-bold px-3 py-1 rounded-full">${item.trade_type}</span>
+                    ${isRandomWanted ? `<span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-black px-3 py-1 rounded-full animate-pulse"><i class="fa-solid fa-gift"></i> باغي لي كان</span>` : ''}
                 </div>
                 <div class="space-y-2">
                     <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block"><i class="fa-solid fa-location-dot"></i> ${item.city}</span>
                     <h3 class="font-black text-xl text-slate-900">${item.title}</h3>
-                    <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-100 text-xs">
-                        <span class="font-bold text-emerald-800 block mb-1">الشيء المطلوب للمقايضة:</span>
-                        <p class="text-slate-800 font-bold text-sm">${item.wanted}</p>
+                    <div class="p-3 rounded-2xl border text-xs ${isRandomWanted ? 'bg-emerald-100 border-emerald-300 text-emerald-900 font-black' : 'bg-emerald-50 border-emerald-100 text-slate-800'}">
+                        <span class="font-bold block mb-1 ${isRandomWanted ? 'text-emerald-800' : 'text-emerald-800'}">الشيء المطلوب للمقايضة:</span>
+                        <p class="font-bold text-sm">${item.wanted}</p>
                     </div>
                     <p class="text-xs text-slate-600 leading-relaxed">${item.description || ''}</p>
                 </div>
