@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بدل.ma - أول منصة مغربية حقيقية للمقايضة والتسهيل</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style> body { font-family: 'Cairo', sans-serif; } </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Supabase Config Init -->
+    <script>
+        const SUPABASE_URL = 'https://ppcquipmddofccpxyntj.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwY3F1aXBtZGRvZmNjcHh5bnRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjE5MTMsImV4cCI6MjEwNzU5NzkxM30.VZUILKGWpumj9GoNOH89jCgh4PpdNbeHfgbAxogivkY';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </div>
+                <span class="text-2xl font-black text-slate-900">بدل<span class="text-emerald-600">.ma</span></span>
+            </div>
+            <div id="authButtons" class="flex items-center gap-3">
+                <!-- Dynamic Auth Buttons -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-gradient-to-r from-emerald-950 to-slate-900 p-6 rounded-3xl text-white shadow-xl">
+            <div>
+                <span class="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/30 inline-block mb-2">🇲🇦 منصة حقيقية مرتبطة بـ Supabase</span>
+                <h1 class="text-2xl font-black">عروض المقايضة الحية بالمغرب</h1>
+                <p class="text-xs text-slate-300 mt-1">بدل داكشي اللي ما محتاجوش بـ 0 درهم (راس فـ راس أو مع الفارق)</p>
+            </div>
+            <button onclick="openAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-3 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-plus-circle text-base"></i> أضف عرضك الجديد
+            </button>
+        </div>
+
+        <!-- Grid Listings -->
+        <div id="listingsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p class="col-span-full text-center py-12 text-slate-400 font-bold">جاري تحميل العروض الحقيقية...</p>
+        </div>
+    </main>
+
+    <!-- Modal: Auth (Login / Register) -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative">
+            <button onclick="closeModal('authModal')" class="absolute top-4 left-4 text-slate-400 font-bold">&times;</button>
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-user-lock"></i>
+            </div>
+            <h3 class="font-black text-lg text-slate-900">تسجيل الدخول / إنشاء حساب</h3>
+            <p class="text-xs text-slate-500">أدخل بريدك الإلكتروني وكلمة السر للمتابعة</p>
+            <form onsubmit="handleLogin(event)" class="space-y-3 text-xs">
+                <input type="email" id="loginEmail" required placeholder="البريد الإلكتروني" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <input type="password" id="loginPass" required placeholder="كلمة السر (6 أحرف على الأقل)" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition">دخول أو إنشاء حساب جديد</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Item -->
+    <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <button onclick="closeModal('addModal')" class="absolute top-4 left-4 text-slate-400 font-bold">&times;</button>
+            <h3 class="font-black text-lg text-slate-900">نشر عرض مقايضة جديد</h3>
+            <form onsubmit="handleAddItem(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">عنوان العرض *</label>
+                    <input type="text" id="addTitle" required placeholder="مثلاً: هاتف نقي أو طاولة خشبية" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">الفئة *</label>
+                        <select id="addCategory" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                            <option value="إلكترونيات">إلكترونيات</option>
+                            <option value="وسائل نقل">دراجات وسيارات</option>
+                            <option value="أثاث">أثاث ومنزل</option>
+                            <option value="خدمات">حرفيين وخدمات</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">المدينة *</label>
+                        <select id="addCity" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                            <option value="القنيطرة">القنيطرة</option>
+                            <option value="الرباط">الرباط</option>
+                            <option value="الدار البيضاء">الدار البيضاء</option>
+                            <option value="فاس">فاس</option>
+                            <option value="طنجة">طنجة</option>
+                            <option value="سلا">سلا</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">نوع التبادل *</label>
+                        <select id="addTradeType" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                            <option value="راس فـ راس">راس فـ راس</option>
+                            <option value="نزيدك الفلوس">نزيدك الفلوس</option>
+                            <option value="تزيدني الفلوس">تزيدني الفلوس</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">مبلغ الفارق (درهم)</label>
+                        <input type="number" id="addCash" value="0" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">شنو باغي بدالها؟ *</label>
+                    <input type="text" id="addWanted" required placeholder="مثلاً: باغي بيسيكليت VTT ولا تلفزة" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">رقم الواتساب للتواصل *</label>
+                    <input type="tel" id="addPhone" required placeholder="0600000000" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">صورة المنتج *</label>
+                    <input type="file" id="addImageFile" accept="image/*" required class="w-full bg-slate-50 border p-2 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">وصف قصير</label>
+                    <textarea id="addDesc" rows="2" placeholder="حالة المنتج..." class="w-full bg-slate-50 border p-3 rounded-xl font-bold"></textarea>
+                </div>
+                <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition">نشر العرض في المنصة 🚀</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Application Logic -->
+    <script>
+        let currentUser = null;
+
+        window.onload = async function() {
+            const { data: { session } } = await _supabase.auth.getSession();
+            currentUser = session ? session.user : null;
+            updateAuthUI();
+            fetchListings();
+        };
+
+        function updateAuthUI() {
+            const container = document.getElementById('authButtons');
+            if(currentUser) {
+                container.innerHTML = `
+                    <span class="text-xs font-bold text-emerald-700 hidden sm:inline">${currentUser.email}</span>
+                    <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold px-3 py-2 rounded-xl transition">خروج</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openModal('authModal')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition">تسجيل الدخول</button>
+                `;
+            }
+        }
+
+        async function fetchListings() {
+            const grid = document.getElementById('listingsGrid');
+            const { data, error } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
+
+            if(error) {
+                grid.innerHTML = `<p class="col-span-full text-center text-rose-500 text-xs">خطأ في جلب البيانات: ${error.message}</p>`;
+                return;
+            }
+
+            if(!data || data.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-12 font-bold">ما كاين حتا عرض دابا. كن أول واحد يحط عرض!</p>`;
+                return;
+            }
+
+            grid.innerHTML = data.map(item => {
+                const waText = encodeURIComponent(`السلام عليكم، شفت عرضك (${item.title}) فـ بدل.ma وبغيت نتفاوض فـ المقايضة.`);
+                const waUrl = `https://wa.me/212${item.phone.replace(/^0+/, '')}?text=${waText}`;
+
+                return `
+                <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col justify-between group">
+                    <div>
+                        <div class="relative h-48 bg-slate-100 overflow-hidden">
+                            <img src="${item.image_url}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                            <span class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                                ${item.trade_type} ${item.cash_amount ? `(+${item.cash_amount} DH)` : ''}
+                            </span>
+                            <span class="absolute bottom-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md">
+                                <i class="fa-solid fa-location-dot"></i> ${item.city}
+                            </span>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <h3 class="font-black text-slate-900 text-sm line-clamp-1">${item.title}</h3>
+                            <div class="bg-emerald-50 p-2.5 rounded-xl text-xs border border-emerald-100">
+                                <span class="font-bold text-emerald-800 block">باغي مقابلها:</span>
+                                <p class="text-slate-700 font-semibold line-clamp-2">${item.wanted}</p>
+                            </div>
+                            <p class="text-xs text-slate-500 line-clamp-2">${item.description || ''}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 grid grid-cols-2 gap-2 border-t border-slate-50 mt-2">
+                        <a href="${waUrl}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow transition">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> واتساب
+                        </a>
+                        ${currentUser && currentUser.id === item.user_id ? `
+                            <button onclick="deleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs py-2.5 rounded-xl text-center transition">
+                                <i class="fa-solid fa-trash"></i> حذف
+                            </button>
+                        ` : `
+                            <a href="${waUrl}" target="_blank" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1 transition">
+                                <i class="fa-solid fa-arrows-rotate"></i> مقايضة
+                            </a>
+                        `}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPass').value;
+
+            let { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+            if (error) {
+                const signUp = await _supabase.auth.signUp({ email, password });
+                if (signUp.error) {
+                    alert("خطأ: " + signUp.error.message);
+                    return;
+                }
+                data = signUp.data;
+                alert("تم إنشاء حسابك وتسجيل دخولك بنجاح!");
+            }
+
+            currentUser = data.user;
+            updateAuthUI();
+            closeModal('authModal');
+            fetchListings();
+        }
+
+        async function handleLogout() {
+            await _supabase.auth.signOut();
+            currentUser = null;
+            updateAuthUI();
+            fetchListings();
+        }
+
+        async function handleAddItem(e) {
+            e.preventDefault();
+            if(!currentUser) {
+                alert("خاصك تسجل الدخول أولاً!");
+                openModal('authModal');
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "جاري رفع الصورة والنشر...";
+            btn.disabled = true;
+
+            const file = document.getElementById('addImageFile').files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+
+            // 1. Upload Image to Supabase Bucket
+            const { error: imgErr } = await _supabase.storage.from('product-images').upload(fileName, file);
+
+            if(imgErr) {
+                alert("خطأ في رفع الصورة: " + imgErr.message);
+                btn.innerText = "نشر العرض في المنصة 🚀";
+                btn.disabled = false;
+                return;
+            }
+
+            const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+
+            // 2. Insert into listings table
+            const { error: insertErr } = await _supabase.from('listings').insert([{
+                title: document.getElementById('addTitle').value,
+                category: document.getElementById('addCategory').value,
+                city: document.getElementById('addCity').value,
+                trade_type: document.getElementById('addTradeType').value,
+                cash_amount: parseFloat(document.getElementById('addCash').value) || 0,
+                wanted: document.getElementById('addWanted').value,
+                phone: document.getElementById('addPhone').value,
+                description: document.getElementById('addDesc').value,
+                image_url: imageUrl,
+                user_id: currentUser.id
+            }]);
+
+            btn.innerText = "نشر العرض في المنصة 🚀";
+            btn.disabled = false;
+
+            if(insertErr) {
+                alert("خطأ في حفظ العرض: " + insertErr.message);
+            } else {
+                closeModal('addModal');
+                document.getElementById('addModal').querySelector('form').reset();
+                fetchListings();
+                alert("تم نشر عرضك بنجاح على بدل.ma! 🎉");
+            }
+        }
+
+        async function deleteListing(id) {
+            if(confirm("واش متأكد بغيتي تمسح هاد العرض؟")) {
+                await _supabase.from('listings').delete().eq('id', id);
+                fetchListings();
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    </script>
+</body>
+</html>
