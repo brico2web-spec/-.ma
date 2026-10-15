@@ -8,15 +8,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Tajawal - خط سهل وواضح للقراءة) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style> 
-        body { font-family: 'Cairo', sans-serif; } 
+        body { font-family: 'Tajawal', sans-serif; } 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(8px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes hemzaGlow {
             0%, 100% { 
@@ -28,7 +28,13 @@
                 border-color: rgba(236, 72, 153, 1);
             }
         }
+        @keyframes sliderZoom {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(1); }
+        }
         .slide-fade { animation: fadeIn 0.6s ease-in-out; }
+        .slider-img-anim { animation: sliderZoom 8s infinite ease-in-out; }
         .hemza-card { 
             animation: hemzaGlow 2.5s infinite ease-in-out; 
             background: linear-gradient(135deg, #fffbeb 0%, #fdf2f8 50%, #ffffff 100%); 
@@ -45,15 +51,12 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
 
-    <!-- Header Navigation (مبدل مكان المنيو مع اللوغو) -->
+    <!-- Header Navigation -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <!-- Header Auth Section with Menu Icon (مكانه الآن في اليمين) -->
             <div id="authHeaderSection">
                 <!-- Injected via JS -->
             </div>
-
-            <!-- Logo Section (مكانه الآن في اليسار) -->
             <div class="cursor-pointer flex flex-col items-end" onclick="switchTab('home')">
                 <h1 class="text-2xl font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></h1>
                 <p class="text-[10px] text-slate-400 font-bold">منصة المقايضة المباشرة بـ 0 درهم</p>
@@ -64,7 +67,6 @@
     <!-- Right Side Navigation Menu (Drawer) -->
     <div id="rightMenuDrawer" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm transition-opacity">
         <div id="drawerContent" class="absolute top-0 right-0 w-80 max-w-[85vw] h-full bg-white shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 overflow-y-auto text-right">
-            <!-- Drawer Header / User Info -->
             <div class="space-y-4">
                 <div class="flex items-center justify-between border-b pb-4">
                     <h3 class="font-black text-slate-900 text-sm">قائمة الحساب</h3>
@@ -75,7 +77,6 @@
                     <!-- Injected via JS -->
                 </div>
 
-                <!-- Menu Links (Each opens its own dedicated clean section) -->
                 <div class="space-y-1.5 pt-2 text-xs">
                     <a href="#" onclick="openMenuSection('my-account'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
                         <i class="fa-solid fa-user-gear text-emerald-600 text-base"></i> حسابي
@@ -95,7 +96,6 @@
                 </div>
             </div>
 
-            <!-- Drawer Footer: WhatsApp Location Button & Logout -->
             <div class="space-y-2 pt-4 border-t">
                 <button onclick="sendLocationOnWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer">
                     <i class="fa-brands fa-whatsapp text-base"></i> إرسال الموقع عبر الواتساب 📍
@@ -107,31 +107,65 @@
         </div>
     </div>
 
-    <!-- Real-time Popup Container for Instant Trade Requests -->
+    <!-- Real-time Popup Container -->
     <div id="liveRequestsPopupContainer" class="fixed top-24 left-4 z-50 space-y-3 w-80 max-w-full pointer-events-none">
         <!-- Injected via JS -->
     </div>
 
+    <!-- Modern Notification / Custom Alert Modal Container -->
+    <div id="customAlertModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center space-y-4 shadow-2xl border border-slate-100 slide-fade">
+            <div id="customAlertIcon" class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <h4 id="customAlertTitle" class="font-black text-slate-900 text-base">تنبيه</h4>
+            <p id="customAlertMessage" class="text-xs text-slate-600 leading-relaxed font-medium"></p>
+            <button onclick="closeCustomAlert()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs shadow transition cursor-pointer">
+                مفهوم حسناً 👍
+            </button>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal Container -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center space-y-4 shadow-2xl border border-slate-100 slide-fade">
+            <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4 class="font-black text-slate-900 text-base">تأكيد العملية</h4>
+            <p id="customConfirmMessage" class="text-xs text-slate-600 leading-relaxed font-medium"></p>
+            <div class="grid grid-cols-2 gap-2 pt-2">
+                <button id="customConfirmYesBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">نعم، متأكد</button>
+                <button onclick="closeCustomConfirm(false)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Auto Sliding Banner -->
     <div class="max-w-7xl mx-auto px-4 w-full mt-4">
-        <div id="promoSlider" class="relative overflow-hidden rounded-3xl shadow-md bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white p-6 sm:p-8 flex items-center justify-between min-h-[140px] border border-emerald-800">
-            <div class="space-y-2 z-10 max-w-xl">
-                <span id="sliderBadge" class="bg-emerald-500/30 text-emerald-300 text-[10px] font-black px-3 py-1 rounded-full border border-emerald-500/40">🔥 شعار اليوم</span>
-                <h3 id="sliderTitle" class="text-lg sm:text-2xl font-black text-white slide-fade">بدل داكشي اللي ما محتاجوش، وربح جديد فبلاش!</h3>
-                <p id="sliderDesc" class="text-xs sm:text-sm text-slate-200 font-light slide-fade">المقايضة المباشرة راس فـ راس بـ 0 درهم بين أطراف المغاربة بكل أمان.</p>
+        <div id="promoSlider" class="relative overflow-hidden rounded-3xl shadow-xl bg-slate-900 text-white min-h-[220px] sm:min-h-[260px] border border-emerald-800 flex items-center">
+            <div class="absolute inset-0 z-0 overflow-hidden">
+                <img id="sliderImage" src="https://i.ibb.co/xqkYD5cw/851378121-1856877015481742-849615278726728125-n.jpg" class="w-full h-full object-cover object-center slider-img-anim transition-all duration-1000">
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-900/40"></div>
             </div>
-            <div class="hidden md:block opacity-80 text-6xl pl-4">
-                <i id="sliderIcon" class="fa-solid fa-arrows-rotate text-emerald-400 animate-spin" style="animation-duration: 12s;"></i>
+            <div class="relative z-10 p-6 sm:p-10 max-w-2xl space-y-3">
+                <span id="sliderBadge" class="bg-emerald-500/40 text-emerald-300 text-[11px] font-black px-3.5 py-1.5 rounded-full border border-emerald-400/50 backdrop-blur-md inline-flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt text-amber-400"></i> همزة لا تُعوض
+                </span>
+                <h3 id="sliderTitle" class="text-xl sm:text-3xl font-black text-white slide-fade drop-shadow-md leading-tight">بدل داكشي اللي ما محتاجوش، وربح جديد فبلاش!</h3>
+                <p id="sliderDesc" class="text-xs sm:text-sm text-slate-200 font-medium slide-fade drop-shadow leading-relaxed">المقايضة المباشرة راس فـ راس بـ 0 درهم بين ولاد بلادك بكل أمان وثقة.</p>
+                <div class="pt-1 flex items-center gap-2">
+                    <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-arrows-rotate"></i> ابدأ المقايضة الآن
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
-
-        <!-- TAB 1: HOME -->
         <section id="tab-home" class="space-y-6 tab-content">
-            <!-- Hero Banner -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-6 sm:p-8 rounded-3xl text-white shadow-xl border border-slate-800">
                 <div>
                     <span class="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/30 inline-block mb-2">🇲🇦 المنصة المغربية الرسمية للمقايضة</span>
@@ -143,14 +177,12 @@
                 </button>
             </div>
 
-            <!-- Search Bar & Categories -->
             <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
                 <div class="relative w-full md:w-80">
                     <i class="fa-solid fa-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن هاتف، أثاث، ساعة، ملابس..." class="w-full pr-12 pl-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs sm:text-sm">
                 </div>
                 
-                <!-- Modern & Smooth Categories Navigation -->
                 <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none">
                     <button onclick="filterCategory('الكل')" id="cat-btn-الكل" class="cat-chip px-4 py-2.5 rounded-2xl text-xs font-black bg-emerald-600 text-white whitespace-nowrap shadow-md transition flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-border-all"></i> الكل
@@ -170,7 +202,6 @@
                 </div>
             </div>
 
-            <!-- Listings Header -->
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="text-xl font-black text-slate-800">العروض المتاحة للمقايضة الفورية</h3>
@@ -181,22 +212,39 @@
                 </div>
             </div>
 
-            <!-- Real Listings Grid from Supabase -->
             <div id="listingsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <p class="col-span-full text-center py-12 text-slate-400 font-bold">جاري تحميل العروض الحقيقية...</p>
             </div>
         </section>
-
     </main>
 
-    <!-- Modal: Auth System with Google Single Sign-On -->
+    <!-- SECTION: الأشخاص المتميزون (فوق الفوتر مباشرة، يتحرك أوتوماتيكياً بروفايل واحد كل أسبوع من 10 بروفايلات بدون أسهم) -->
+    <section class="max-w-7xl mx-auto px-4 w-full my-8">
+        <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-800/60 text-right space-y-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                <div>
+                    <span class="bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/30 inline-block mb-1">⭐ لوحة الشرف الأسبوعية</span>
+                    <h3 class="text-xl font-black text-white">الأشخاص المتميزون في المنصة</h3>
+                </div>
+                <p class="text-[11px] text-slate-400 font-medium">أبرز الشركاء الموثوقين (يتم اختيار 10 بروفايلات وتحديثها أوتوماتيكياً كل أسبوع)</p>
+            </div>
+
+            <!-- Single Profile Auto-Swapping Container (No Arrows) -->
+            <div class="relative overflow-hidden py-4 flex items-center justify-center">
+                <div id="featuredSingleProfileContainer" class="w-full max-w-sm transition-all duration-700 ease-in-out">
+                    <!-- Injected via JS -->
+                    <div class="text-center py-6 text-slate-400 text-xs">جاري تحميل الأشخاص المتميزين...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal: Auth System -->
     <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative border border-slate-100">
             <button onclick="closeModal('authModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
-            
             <h3 class="font-black text-base text-slate-900">تسجيل الدخول / حساب جديد</h3>
 
-            <!-- Google One-Click Login Button -->
             <button onclick="handleGoogleLogin()" class="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl border border-slate-300 shadow-sm transition flex items-center justify-center gap-2 text-xs cursor-pointer">
                 <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
                 متابعة باستخدام حساب Google 🌐
@@ -254,7 +302,7 @@
         </div>
     </div>
 
-    <!-- Modal: Add Item (Updated with Random Wanted Checkbox) -->
+    <!-- Modal: Add Item -->
     <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100">
             <button onclick="closeModal('addModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
@@ -284,7 +332,6 @@
                     </div>
                 </div>
 
-                <!-- Random Wanted Feature (اختيار عشوائي - باغي لي كان) -->
                 <div class="bg-gradient-to-r from-amber-50 to-pink-50 p-4 rounded-2xl border-2 border-amber-300 space-y-2 shadow-inner">
                     <div class="flex items-center justify-between">
                         <label for="randomWantedCheck" class="font-black text-amber-900 cursor-pointer flex items-center gap-2 text-xs">
@@ -369,7 +416,7 @@
         </div>
     </div>
 
-    <!-- 1. MODAL: MY ACCOUNT (حسابي) -->
+    <!-- MODAL: MY ACCOUNT -->
     <div id="modalMyAccount" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-6 shadow-2xl relative border border-slate-100 text-right">
             <button onclick="closeModal('modalMyAccount')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
@@ -397,7 +444,7 @@
         </div>
     </div>
 
-    <!-- 2. MODAL: ACTIVE LISTINGS (عروضي النشطة) -->
+    <!-- MODAL: ACTIVE LISTINGS -->
     <div id="modalActiveListings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[85vh] overflow-y-auto text-right">
             <button onclick="closeModal('modalActiveListings')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
@@ -408,7 +455,7 @@
         </div>
     </div>
 
-    <!-- 3. MODAL: CURRENT REQUESTS (الطلبات الجارية) -->
+    <!-- MODAL: CURRENT REQUESTS -->
     <div id="modalCurrentRequests" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[85vh] overflow-y-auto text-right">
             <button onclick="closeModal('modalCurrentRequests')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
@@ -419,7 +466,7 @@
         </div>
     </div>
 
-    <!-- 4. MODAL: SUCCESSFUL TRADES (المقايضة الناجحة) -->
+    <!-- MODAL: SUCCESSFUL TRADES -->
     <div id="modalSuccessfulTrades" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[85vh] overflow-y-auto text-right">
             <button onclick="closeModal('modalSuccessfulTrades')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
@@ -459,21 +506,17 @@
         </div>
     </div>
 
-    <!-- Modal: Product Details & Zoom Image -->
+    <!-- Modal: Product Details -->
     <div id="productModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('productModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition z-10">&times;</button>
-            
-            <div id="productModalContent" class="space-y-4 text-right">
-                <!-- Injected via JS -->
-            </div>
+            <div id="productModalContent" class="space-y-4 text-right"></div>
         </div>
     </div>
 
-    <!-- Modal: Professional Chat & Meetup Window (WhatsApp Style) -->
+    <!-- Modal: Professional Chat & Meetup Window -->
     <div id="chatModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-slate-100 rounded-3xl max-w-lg w-full shadow-2xl relative border border-slate-200 text-right flex flex-col h-[90vh] overflow-hidden">
-            <!-- Chat Header -->
             <div class="bg-white p-3 flex items-center justify-between border-b border-slate-200 shadow-sm z-10">
                 <div class="flex items-center gap-3">
                     <img id="chatPartnerAvatar" src="" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
@@ -487,17 +530,10 @@
                 <button onclick="closeModal('chatModal')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             </div>
 
-            <!-- Product Info Banner in Chat -->
-            <div id="chatProductBanner" class="bg-emerald-50 px-4 py-2 border-b border-emerald-100 flex items-center gap-3 text-xs">
-                <!-- Injected via JS -->
-            </div>
+            <div id="chatProductBanner" class="bg-emerald-50 px-4 py-2 border-b border-emerald-100 flex items-center gap-3 text-xs"></div>
 
-            <!-- Chat Messages Box (WhatsApp Style with Emojis & Bubbles) -->
-            <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-4 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] text-xs">
-                <!-- Injected via JS -->
-            </div>
+            <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-4 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] text-xs"></div>
 
-            <!-- Emoji Quick Bar -->
             <div class="bg-white px-3 py-1.5 border-t border-slate-200 flex items-center gap-2 overflow-x-auto text-base">
                 <button onclick="addEmoji('😊')" class="hover:scale-125 transition">😊</button>
                 <button onclick="addEmoji('🤝')" class="hover:scale-125 transition">🤝</button>
@@ -509,7 +545,6 @@
                 <button onclick="addEmoji('🇲🇦')" class="hover:scale-125 transition">🇲🇦</button>
             </div>
 
-            <!-- Chat Input Footer -->
             <div class="bg-white p-3 space-y-2 border-t border-slate-200">
                 <div class="flex gap-2 items-center">
                     <label for="chatImageInput" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-2.5 rounded-2xl text-xs font-bold transition cursor-pointer flex items-center gap-1">
@@ -532,7 +567,6 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-300 py-10 border-t border-slate-800 mt-12 text-right">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-xs">
-            <!-- Col 1: Brand & Slogan -->
             <div class="space-y-3">
                 <div class="flex flex-col">
                     <h2 class="text-2xl font-black text-white tracking-wider">بدل<span class="text-emerald-500">.ma</span></h2>
@@ -543,7 +577,6 @@
                 </p>
             </div>
 
-            <!-- Col 2: Trade Rules & Security Policy -->
             <div class="space-y-2 bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
                 <h4 class="font-black text-amber-400 text-sm flex items-center gap-1.5">
                     <i class="fa-solid fa-shield-halved"></i> قانون وإرشادات المقايضة الآمنة
@@ -556,7 +589,6 @@
                 </p>
             </div>
 
-            <!-- Col 3: Quick Info & Contact -->
             <div class="space-y-3">
                 <h4 class="font-black text-white text-sm">لماذا منصة بدل.ma؟ ✨</h4>
                 <ul class="space-y-1.5 text-slate-400 text-[11px]">
@@ -581,17 +613,59 @@
         let activeChatRequestId = null;
         let selectedStarCount = 5;
         let ratingTargetUserId = null;
+        
+        let weeklyFeaturedList = [];
+        let currentFeaturedProfileIndex = 0;
+        let featuredInterval = null;
 
-        // Auto Sliding Banners Data (Moroccan Darija Catchy Quotes)
+        // Custom Modal replacement for alert & confirm
+        function showModalAlert(title, message, type = 'info') {
+            document.getElementById('customAlertTitle').textContent = title;
+            document.getElementById('customAlertMessage').textContent = message;
+            const iconEl = document.getElementById('customAlertIcon');
+            if(type === 'success') {
+                iconEl.className = "w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto text-xl";
+                iconEl.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+            } else if(type === 'error') {
+                iconEl.className = "w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto text-xl";
+                iconEl.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i>`;
+            } else {
+                iconEl.className = "w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto text-xl";
+                iconEl.innerHTML = `<i class="fa-solid fa-circle-info"></i>`;
+            }
+            document.getElementById('customAlertModal').classList.remove('hidden');
+        }
+        function closeCustomAlert() {
+            document.getElementById('customAlertModal').classList.add('hidden');
+        }
+
+        let confirmCallback = null;
+        function showModalConfirm(message, callback) {
+            document.getElementById('customConfirmMessage').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('customConfirmModal').classList.remove('hidden');
+            document.getElementById('customConfirmYesBtn').onclick = function() {
+                closeCustomConfirm(true);
+            };
+        }
+        function closeCustomConfirm(res) {
+            document.getElementById('customConfirmModal').classList.add('hidden');
+            if(confirmCallback) {
+                confirmCallback(res);
+                confirmCallback = null;
+            }
+        }
+
         const promoSlides = [
-            { badge: "🔥 عرض مميز", title: "بدل داكشي اللي ما محتاجوش بـ 0 درهم!", desc: "المقايضة فبلادنا ساهلة، حط سلعتك وبدل مع ولاد بلادك فابور.", icon: "fa-arrows-rotate" },
-            { badge: "⭐ ثقة وأمان", title: "تلاقاو فبلادكم وتبادلو بكل ثقة وراحة بال!", desc: "نظام التقييمات كيعطيك فكرة واضحة على مصداقية شريك المقايضة.", icon: "fa-shield-halved" },
-            { badge: "⚡ سرعة واحترافية", title: "من هاتف قديم لبيسيكليت ولا أثاث منزلي جديد!", desc: "كلشي ممكن فمنصة بدل.ma، نشر عرضك ودخل فدردشة فورية.", icon: "fa-bolt" }
+            { badge: "🔥 همزة اليوم الكبرى", title: "بدل داكشي اللي ما محتاجوش بـ 0 درهم!", desc: "المقايضة فبلادنا ساهلة، حط سلعتك وبدل مع ولاد بلادك فابور وبكل أمان.", image: "https://i.ibb.co/xqkYD5cw/851378121-1856877015481742-849615278726728125-n.jpg" },
+            { badge: "⭐ عروض لا تُعوض", title: "تلاقاو فبلادكم وتبادلو بكل ثقة وراحة بال!", desc: "نظام التقييمات كيعطيك فكرة واضحة على مصداقية شريك المقايضة.", image: "https://i.ibb.co/zhCrbkZj/851274884-1996875977669961-5099625717805136087-n.jpg" },
+            { badge: "⚡ سرعة واحترافية", title: "من هاتف قديم لبيسيكليت ولا أثاث منزلي جديد!", desc: "كلشي ممكن فمنصة بدل.ma، نشر عرضك ودخل فدردشة فورية دابا.", image: "https://i.ibb.co/bj9b0L0j/849698680-1010850302029923-2861693638416349819-n.jpg" },
+            { badge: "🎁 فرصة ذهبية للجميع", title: "اغتنم الهمزة واستفد من التبادل المباشر!", desc: "بدون مصاريف وسيطة، تواصل، تفقو، وتلاقاو فمكان عام.", image: "https://i.ibb.co/5WG6Jz4S/850382157-1736764254068969-4097034660599618975-n.jpg" },
+            { badge: "🇲🇦 المنصة المغربية الأولى", title: "الحل الأنسب لتجديد أجهزتك وأغراضك بلا فلوس!", desc: "انضم لآلاف المغاربة لي كيبادلو كل نهار بذكاء وسرعة فائقة.", image: "https://i.ibb.co/VWvMZws7/851292991-2250008289179100-7614838554077584757-n-webp.jpg" }
         ];
         let currentSlideIndex = 0;
 
         window.onload = async function() {
-            // التحقق من عودة المستخدم من المصادقة عبر Google
             const { data: { session } } = await _supabase.auth.getSession();
             if (session && session.user) {
                 const user = session.user;
@@ -619,11 +693,10 @@
             }
 
             await fetchProfilesAndData();
-            setupRealtimeSubscriptions(); // تشغيل الإشعارات الفورية
-            setInterval(rotatePromoSlider, 4500);
+            setupRealtimeSubscriptions();
+            setInterval(rotatePromoSlider, 5000);
         };
 
-        // تفعيل الإشعارات الفورية والتنبيهات الحية عبر Supabase Realtime
         function setupRealtimeSubscriptions() {
             _supabase.channel('public:trade_requests')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'trade_requests' }, payload => {
@@ -656,7 +729,6 @@
                 .subscribe();
         }
 
-        // عرض نافذة منبثقة فورية وصغيرة (Popup) على الشاشة للشخص الثاني عند طلب المقايضة
         function showInstantTradePopup(req) {
             const sender = allProfiles[String(req.sender_id)] || { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
             const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
@@ -689,7 +761,6 @@
                 </div>
             `;
             container.appendChild(popupEl);
-
             showFloatingNotification(`🔔 ${sender.full_name} أرسل لك طلب مقايضة فورياً!`);
         }
 
@@ -715,12 +786,10 @@
         async function handleGoogleLogin() {
             const { error } = await _supabase.auth.signInWithOAuth({
                 provider: 'google',
-                options: {
-                    redirectTo: window.location.origin + window.location.pathname
-                }
+                options: { redirectTo: window.location.origin + window.location.pathname }
             });
             if (error) {
-                alert("خطأ أثناء تسجيل الدخول بـ Google: " + error.message);
+                showModalAlert("خطأ", "خطأ أثناء تسجيل الدخول بـ Google: " + error.message, 'error');
             }
         }
 
@@ -730,13 +799,13 @@
             const badgeEl = document.getElementById('sliderBadge');
             const titleEl = document.getElementById('sliderTitle');
             const descEl = document.getElementById('sliderDesc');
-            const iconEl = document.getElementById('sliderIcon');
+            const imgEl = document.getElementById('sliderImage');
 
-            if(badgeEl && titleEl && descEl && iconEl) {
-                badgeEl.textContent = slide.badge;
+            if(badgeEl && titleEl && descEl && imgEl) {
+                badgeEl.innerHTML = `<i class="fa-solid fa-bolt text-amber-400"></i> ${slide.badge}`;
                 titleEl.textContent = slide.title;
                 descEl.textContent = slide.desc;
-                iconEl.className = `fa-solid ${slide.icon} text-emerald-400 animate-spin`;
+                imgEl.src = slide.image;
             }
         }
 
@@ -752,6 +821,64 @@
             await fetchRatings();
             await fetchListings();
             await fetchRequests();
+            setupWeeklyFeaturedProfiles(profs || []);
+        }
+
+        // خوارزمية اختيار 10 بروفايلات أوتوماتيكياً كل أسبوع وعرض بروفايل واحد متحرك تباعاً بدون أسهم
+        function setupWeeklyFeaturedProfiles(profilesArr) {
+            if(!profilesArr || profilesArr.length === 0) return;
+
+            // حساب رقم الأسبوع الحالي في السنة لتغيير البروفايلات أوتوماتيكياً كل أسبوع
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const weekNumber = Math.ceil((((now - startOfYear) / 86400000) + startOfYear.getDay() + 1) / 7);
+
+            let sorted = [...profilesArr];
+            sorted.sort((a, b) => String(a.id).localeCompare(String(b.id)));
+
+            const rotateFactor = (weekNumber * 3) % Math.max(1, sorted.length);
+            weeklyFeaturedList = [...sorted.slice(rotateFactor), ...sorted.slice(0, rotateFactor)].slice(0, 10);
+
+            if(weeklyFeaturedList.length === 0) weeklyFeaturedList = profilesArr.slice(0, 10);
+
+            currentFeaturedProfileIndex = 0;
+            renderSingleFeaturedProfile();
+
+            if(featuredInterval) clearInterval(featuredInterval);
+            featuredInterval = setInterval(() => {
+                if(weeklyFeaturedList.length > 0) {
+                    currentFeaturedProfileIndex = (currentFeaturedProfileIndex + 1) % weeklyFeaturedList.length;
+                    renderSingleFeaturedProfile();
+                }
+            }, 3500);
+        }
+
+        function renderSingleFeaturedProfile() {
+            const container = document.getElementById('featuredSingleProfileContainer');
+            if(!container || weeklyFeaturedList.length === 0) return;
+
+            const profile = weeklyFeaturedList[currentFeaturedProfileIndex];
+            const stats = getUserRatingStats(profile.id);
+            const city = profile.city || 'المغرب';
+            const avatar = profile.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
+
+            container.innerHTML = `
+                <div class="bg-slate-800/90 border border-emerald-500/50 rounded-3xl p-5 flex items-center gap-4 shadow-2xl slide-fade backdrop-blur-md">
+                    <div class="relative flex-shrink-0">
+                        <img src="${avatar}" class="w-16 h-16 rounded-full object-cover border-2 border-emerald-400 shadow-lg">
+                        <span class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-white">⭐ ${stats.avg}</span>
+                    </div>
+                    <div class="flex-grow space-y-1 text-right">
+                        <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-block">شريك موثوق هذا الأسبوع 🌟</span>
+                        <h4 class="font-black text-white text-base">${profile.full_name}</h4>
+                        <p class="text-xs text-slate-300 font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-location-dot text-emerald-400"></i> ${city}
+                            <span class="mx-1 text-slate-500">•</span>
+                            <span class="text-amber-400 font-bold">${stats.count} تقييم ناجح</span>
+                        </p>
+                    </div>
+                </div>
+            `;
         }
 
         async function fetchRatings() {
@@ -772,7 +899,6 @@
             return { avg: (sum / userRats.length).toFixed(1), count: userRats.length };
         }
 
-        // تحديث الهيدر لإظهار أيقونة المنيو
         function updateHeaderUI() {
             const container = document.getElementById('authHeaderSection');
             if(currentAccount) {
@@ -794,7 +920,6 @@
             }
         }
 
-        // تحديث محتوى معلومات المستخدم في المنيو الجانبي
         function updateDrawerUserInfo() {
             if(!currentAccount) return;
             const avatar = currentAccount.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
@@ -820,21 +945,16 @@
             const drawer = document.getElementById('rightMenuDrawer');
             const content = document.getElementById('drawerContent');
             drawer.classList.remove('hidden');
-            setTimeout(() => {
-                content.classList.remove('translate-x-full');
-            }, 10);
+            setTimeout(() => { content.classList.remove('translate-x-full'); }, 10);
         }
 
         function closeRightMenu() {
             const drawer = document.getElementById('rightMenuDrawer');
             const content = document.getElementById('drawerContent');
             content.classList.add('translate-x-full');
-            setTimeout(() => {
-                drawer.classList.add('hidden');
-            }, 300);
+            setTimeout(() => { drawer.classList.add('hidden'); }, 300);
         }
 
-        // فتح الأقسام بصفحات مستقلة مخصصة (كل قسم باختصاصه مع حالة الفراغ العصرية)
         function openMenuSection(sectionKey) {
             closeRightMenu();
             if(!currentAccount) {
@@ -843,7 +963,6 @@
             }
 
             if(sectionKey === 'my-account') {
-                // قسم حسابي الشخصي مع الصورة والمدينة والتقييم
                 document.getElementById('accModalAvatar').src = currentAccount.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
                 document.getElementById('accModalName').textContent = currentAccount.full_name;
                 document.getElementById('accModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
@@ -853,7 +972,6 @@
                 openModal('modalMyAccount');
 
             } else if(sectionKey === 'active-listings') {
-                // قسم عروضي النشطة فقط
                 const userItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status !== 'completed');
                 const container = document.getElementById('activeListingsContent');
                 if(userItems.length === 0) {
@@ -883,7 +1001,6 @@
                 openModal('modalActiveListings');
 
             } else if(sectionKey === 'current-requests') {
-                // قسم الطلبات الجارية (الواردة والمرسلة) فقط
                 const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id) && r.status !== 'rejected');
                 const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id) && r.status !== 'rejected');
                 const container = document.getElementById('currentRequestsContent');
@@ -958,7 +1075,6 @@
                 openModal('modalCurrentRequests');
 
             } else if(sectionKey === 'successful-trades') {
-                // قسم المقايضة الناجحة فقط
                 const successfulItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status === 'completed');
                 const container = document.getElementById('successfulTradesContent');
                 if(successfulItems.length === 0) {
@@ -988,17 +1104,15 @@
                 openModal('modalSuccessfulTrades');
 
             } else if(sectionKey === 'deal-chats') {
-                // دردشة الصفقة
                 const activeReq = allRequests.find(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted');
                 if(activeReq) {
                     openChatModal(activeReq.id);
                 } else {
-                    alert("⚠️ قسم دردشة الصفقة فارغ: ليس لديك أي صفقات مقبولة أو نشطة للدردشة حالياً.");
+                    showModalAlert("تنبيه", "قسم دردشة الصفقة فارغ: ليس لديك أي صفقات مقبولة أو نشطة للدردشة حالياً.", "info");
                 }
             }
         }
 
-        // دالة إرسال الموقع عبر الواتساب
         function sendLocationOnWhatsApp() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
@@ -1008,10 +1122,10 @@
                     const text = `📍 *هذا هو موقعي الحالي للقاء إتمام المقايضة عبر منصة بدل.ma:*\n${mapUrl}`;
                     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
                 }, () => {
-                    alert("تعذر الحصول على موقعك الحالي. تأكد من تفعيل خدمة تحديد الموقع (GPS).");
+                    showModalAlert("تنبيه", "تعذر الحصول على موقعك الحالي. تأكد من تفعيل خدمة تحديد الموقع (GPS).", "error");
                 });
             } else {
-                alert("متصفحك لا يدعم خاصية تحديد الموقع الجغرافي.");
+                showModalAlert("تنبيه", "متصفحك لا يدعم خاصية تحديد الموقع الجغرافي.", "error");
             }
         }
 
@@ -1040,21 +1154,20 @@
             const phone = document.getElementById('regPhone').value.trim();
             const city = document.getElementById('regCity').value;
             const password = document.getElementById('regPass').value;
-            // تعيين الصورة الافتراضية الجديدة للمستخدم الجديد
             const avatar_url = 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
 
             if(phone.length < 10) {
-                alert("المرجو إدخال رقم هاتف مغربي صحيح (مثلاً: 0600000000)");
+                showModalAlert("تنبيه", "المرجو إدخال رقم هاتف مغربي صحيح (مثلاً: 0600000000)", "error");
                 return;
             }
             if(password.length < 6) {
-                alert("كلمة السر يجب أن تكون من 6 أحرف أو أرقام على الأقل.");
+                showModalAlert("تنبيه", "كلمة السر يجب أن تكون من 6 أحرف أو أرقام على الأقل.", "error");
                 return;
             }
 
             const { data: existingPhone } = await _supabase.from('profiles').select('*').eq('phone', phone);
             if(existingPhone && existingPhone.length > 0) {
-                alert("⚠️ هذا الرقم مسجل مسبقاً في النظام!");
+                showModalAlert("تنبيه", "هذا الرقم مسجل مسبقاً في النظام!", "info");
                 switchAuthTab('login');
                 return;
             }
@@ -1064,7 +1177,7 @@
             }]).select();
 
             if(error) {
-                alert("خطأ في إنشاء الحساب: " + error.message);
+                showModalAlert("خطأ", "خطأ في إنشاء الحساب: " + error.message, 'error');
                 return;
             }
 
@@ -1072,7 +1185,7 @@
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             await fetchProfilesAndData();
             closeModal('authModal');
-            alert(`🎉 أهلاً بك يا ${currentAccount.full_name}! تم إنشاء حسابك بنجاح.`);
+            showModalAlert("نجاح", `🎉 أهلاً بك يا ${currentAccount.full_name}! تم إنشاء حسابك بنجاح.`, "success");
         }
 
         async function handleLoginSubmit(e) {
@@ -1083,7 +1196,7 @@
             const { data, error } = await _supabase.from('profiles').select('*').eq('phone', phone).eq('password', password);
 
             if(error || !data || data.length === 0) {
-                alert("رقم الهاتف أو كلمة السر غير صحيحة!");
+                showModalAlert("خطأ", "رقم الهاتف أو كلمة السر غير صحيحة!", "error");
                 return;
             }
 
@@ -1091,7 +1204,7 @@
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             await fetchProfilesAndData();
             closeModal('authModal');
-            alert(`أهلاً بك مجدداً يا ${currentAccount.full_name}!`);
+            showModalAlert("نجاح", `أهلاً بك مجدداً يا ${currentAccount.full_name}!`, "success");
         }
 
         async function handleLogout() {
@@ -1102,7 +1215,6 @@
             fetchListings();
         }
 
-        // دالة التحكم في قفل خانة "شنو باغي بدالها؟" عند اختيار "باغي لي كان"
         function toggleRandomWanted(checkbox) {
             const wantedInput = document.getElementById('addWanted');
             if (checkbox.checked) {
@@ -1182,7 +1294,7 @@
             if(!error) {
                 closeModal('editModal');
                 await fetchListings();
-                alert("تم التعديل بنجاح! ✏️");
+                showModalAlert("نجاح", "تم التعديل بنجاح! ✏️", "success");
             }
         }
 
@@ -1195,7 +1307,7 @@
 
             const { error: uploadErr } = await _supabase.storage.from('product-images').upload(fileName, file);
             if(uploadErr) {
-                alert("خطأ في الرفع: " + uploadErr.message);
+                showModalAlert("خطأ", "خطأ في الرفع: " + uploadErr.message, 'error');
                 return;
             }
 
@@ -1211,7 +1323,7 @@
 
         function handleOpenAddModal() {
             if(!currentAccount) {
-                alert("المرجو تسجيل الدخول أولاً لإضافة عرضك!");
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً لإضافة عرضك!", "info");
                 openModal('authModal');
                 return;
             }
@@ -1235,7 +1347,6 @@
             renderListings(activeListings);
         }
 
-        // دالة لمشاركة العرض على الواتساب مع عبارة مثيرة ورابط الصورة والمنتج
         function shareOnWhatsApp(itemId) {
             const item = allListings.find(l => String(l.id) === String(itemId));
             if(!item) return;
@@ -1266,7 +1377,6 @@
                 const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
                 const authorStats = getUserRatingStats(item.user_id);
                 const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
-
                 const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
 
                 return `
@@ -1281,7 +1391,6 @@
                         </div>
 
                         <div onclick="openProductModal('${item.id}')" class="cursor-pointer">
-                            <!-- تعديل عرض الصورة لتكون واضحة وبدون تكبير مبالغ فيه -->
                             <div class="relative h-48 w-full bg-slate-100 overflow-hidden flex items-center justify-center">
                                 <img src="${item.image_url}" class="w-full h-full object-cover object-center group-hover:scale-105 transition duration-300">
                                 <span class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">
@@ -1324,7 +1433,6 @@
                                 </button>
                             `}
                         </div>
-                        <!-- زر مشاركة المنتج على الواتساب -->
                         <button onclick="shareOnWhatsApp('${item.id}')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-2 rounded-xl text-center flex items-center justify-center gap-2 border border-emerald-200 transition cursor-pointer">
                             <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> بارطاجي العرض فـ WhatsApp 📲
                         </button>
@@ -1371,11 +1479,11 @@
                 </div>
                 <div class="space-y-2 pt-2">
                     ${isMyItem ? `
-                        <button onclick="closeModal('productModal'); openEditModal('${item.id}');" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl text-xs">تعديل العرض</button>
+                        <button onclick="closeModal('productModal'); openEditModal('${item.id}');" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl text-xs cursor-pointer">تعديل العرض</button>
                     ` : mySentReq ? `
                         <button disabled class="w-full bg-slate-200 text-slate-600 font-bold py-3 rounded-xl text-xs">تم إرسال الطلب</button>
                     ` : `
-                        <button onclick="closeModal('productModal'); handleRequestTrade('${item.id}', '${item.user_id}');" class="w-full ${isRandomWanted ? 'bg-gradient-to-r from-amber-500 to-pink-600 shadow-lg' : 'bg-emerald-600'} text-white font-bold py-3 rounded-xl text-xs">طلب مقايضة 🤝</button>
+                        <button onclick="closeModal('productModal'); handleRequestTrade('${item.id}', '${item.user_id}');" class="w-full ${isRandomWanted ? 'bg-gradient-to-r from-amber-500 to-pink-600 shadow-lg' : 'bg-emerald-600'} text-white font-bold py-3 rounded-xl text-xs cursor-pointer">طلب مقايضة 🤝</button>
                     `}
                     <button onclick="shareOnWhatsApp('${item.id}')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-2 border border-emerald-200 transition cursor-pointer">
                         <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> بارطاجي العرض فـ WhatsApp 📲
@@ -1387,12 +1495,12 @@
 
         async function handleRequestTrade(listingId, receiverId) {
             if(!currentAccount) {
-                alert("المرجو تسجيل الدخول أولاً!");
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً!", "info");
                 openModal('authModal');
                 return;
             }
             if(String(currentAccount.id) === String(receiverId)) {
-                alert("لا يمكنك مقايضة عرضك!");
+                showModalAlert("تنبيه", "لا يمكنك مقايضة عرضك!", "error");
                 return;
             }
 
@@ -1405,7 +1513,7 @@
 
             await fetchRequests();
             fetchListings();
-            alert("تم إرسال طلب المقايضة بنجاح!");
+            showModalAlert("نجاح", "تم إرسال طلب المقايضة بنجاح!", "success");
         }
 
         async function respondTrade(reqId, status) {
@@ -1538,7 +1646,7 @@
             }]);
             await fetchRatings();
             closeModal('ratingModal');
-            alert("تم إرسال التقييم بنجاح! ⭐");
+            showModalAlert("نجاح", "تم إرسال التقييم بنجاح! ⭐", "success");
         }
 
         async function handleAddItem(e) {
@@ -1565,15 +1673,18 @@
 
             closeModal('addModal');
             fetchListings();
-            alert("تم نشر عرضك بنجاح! 🎉");
+            showModalAlert("نجاح", "تم نشر عرضك بنجاح! 🎉", "success");
         }
 
         async function deleteListing(id) {
-            if(confirm("واش متأكد بغيتي تمسح هاد العرض؟")) {
-                await _supabase.from('listings').delete().eq('id', id);
-                closeModal('modalActiveListings');
-                fetchListings();
-            }
+            showModalConfirm("واش متأكد بغيتي تمسح هاد العرض؟", async (res) => {
+                if(res) {
+                    await _supabase.from('listings').delete().eq('id', id);
+                    closeModal('modalActiveListings');
+                    fetchListings();
+                    showModalAlert("نجاح", "تم مسح العرض بنجاح", "success");
+                }
+            });
         }
 
         function filterProducts() {
@@ -1581,11 +1692,8 @@
             renderListings(allListings.filter(p => p.status !== 'completed' && (p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q))));
         }
 
-        // دالة تحديث الأقسام مع تغيير الشكل البصري للزر النشط بسلاسة
         function filterCategory(c) {
             const activeListings = allListings.filter(p => p.status !== 'completed');
-            
-            // تحديث الـ CSS الخاص بالأزرار
             const categories = ['الكل', 'إلكترونيات', 'أثاث', 'وسائل نقل', 'خدمات'];
             categories.forEach(cat => {
                 const btn = document.getElementById('cat-btn-' + cat);
