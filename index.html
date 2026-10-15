@@ -294,14 +294,16 @@
                 currentAccount = JSON.parse(savedAcc);
             }
             fetchProfilesAndData();
+            // Realtime auto refresh every 5 seconds for notifications
+            setInterval(fetchRequests, 5000);
         };
 
         async function fetchProfilesAndData() {
             const { data: profs } = await _supabase.from('profiles').select('*');
             if(profs) {
-                profs.forEach(p => { allProfiles[p.id] = p; });
+                profs.forEach(p => { allProfiles[String(p.id)] = p; });
                 if(currentAccount) {
-                    currentAccount = allProfiles[currentAccount.id] || currentAccount;
+                    currentAccount = allProfiles[String(currentAccount.id)] || currentAccount;
                     localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
                 }
             }
@@ -310,7 +312,7 @@
         }
 
         async function fetchRequests() {
-            const { data } = await _supabase.from('trade_requests').select('*');
+            const { data, error } = await _supabase.from('trade_requests').select('*');
             allRequests = data || [];
             updateHeaderUI();
         }
@@ -320,14 +322,14 @@
             if(currentAccount) {
                 const avatar = currentAccount.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
                 
-                // Check pending requests for notification badge
-                const pendingCount = allRequests.filter(r => r.receiver_id == currentAccount.id && r.status == 'pending').length;
+                // Count pending requests where I am receiver
+                const pendingCount = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id) && r.status === 'pending').length;
 
                 container.innerHTML = `
                     <div class="flex items-center gap-3 cursor-pointer relative" onclick="openProfileModal()">
                         <div class="relative">
                             <img src="${avatar}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500 shadow-sm">
-                            ${pendingCount > 0 ? `<span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center animate-pulse">${pendingCount}</span>` : ''}
+                            ${pendingCount > 0 ? `<span class="absolute -top-1 -right-1 bg-rose-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center animate-bounce border-2 border-white">${pendingCount}</span>` : ''}
                         </div>
                         <div class="hidden sm:block text-right">
                             <span class="text-xs font-black text-slate-800 block">${currentAccount.full_name}</span>
@@ -426,15 +428,15 @@
             document.getElementById('profileModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
             
             // Render Trade Requests
-            const myRequests = allRequests.filter(r => r.receiver_id == currentAccount.id);
+            const myRequests = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id));
             const reqContainer = document.getElementById('tradeRequestsContainer');
 
             if(myRequests.length === 0) {
                 reqContainer.innerHTML = `<p class="text-xs text-slate-400 py-2">لا توجد طلبات مقايضة حالياً.</p>`;
             } else {
                 reqContainer.innerHTML = myRequests.map(req => {
-                    const sender = allProfiles[req.sender_id] || { full_name: 'مستخدم', avatar_url: 'https://via.placeholder.com/150', phone: '' };
-                    const listing = allListings.find(l => l.id == req.listing_id) || { title: 'منتذف' };
+                    const sender = allProfiles[String(req.sender_id)] || { full_name: 'مستخدم', avatar_url: 'https://via.placeholder.com/150', phone: '' };
+                    const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
 
                     return `
                         <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2 text-xs">
@@ -446,16 +448,16 @@
                                         <span class="text-[10px] text-slate-500 font-bold">يريد مقايضة منتجك: ${listing.title}</span>
                                     </div>
                                 </div>
-                                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${req.status == 'pending' ? 'bg-amber-50 text-amber-600 border border-amber-200' : req.status == 'accepted' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500'}">
-                                    ${req.status == 'pending' ? 'قيد الانتظار' : req.status == 'accepted' ? 'تمت الموافقة 🤝' : 'ملغي'}
+                                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold ${req.status === 'pending' ? 'bg-amber-50 text-amber-600 border border-amber-200' : req.status === 'accepted' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-slate-100 text-slate-500'}">
+                                    ${req.status === 'pending' ? 'قيد الانتظار' : req.status === 'accepted' ? 'تمت الموافقة 🤝' : 'ملغي'}
                                 </span>
                             </div>
-                            ${req.status == 'pending' ? `
+                            ${req.status === 'pending' ? `
                                 <div class="flex gap-2 pt-1">
                                     <button onclick="respondTrade('${req.id}', 'accepted')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl transition cursor-pointer">موافقة وتحديد اللقاء 🤝</button>
                                     <button onclick="respondTrade('${req.id}', 'rejected')" class="w-1/3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-2 rounded-xl transition cursor-pointer">إلغاء</button>
                                 </div>
-                            ` : req.status == 'accepted' ? `
+                            ` : req.status === 'accepted' ? `
                                 <button onclick="openChatModal('${req.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl transition cursor-pointer">فتح دردشة اللقاء 💬</button>
                             ` : ''}
                         </div>
@@ -464,7 +466,7 @@
             }
 
             // Render User's listings inside profile
-            const userItems = allListings.filter(p => p.user_id == currentAccount.id);
+            const userItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id));
             const container = document.getElementById('userListingsContainer');
             
             if(userItems.length === 0) {
@@ -554,8 +556,8 @@
             }
 
             grid.innerHTML = list.map(item => {
-                const isMyItem = currentAccount && currentAccount.id == item.user_id;
-                const author = allProfiles[item.user_id] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://via.placeholder.com/150' };
+                const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
+                const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
 
                 return `
                 <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col justify-between group">
@@ -603,11 +605,11 @@
         }
 
         function openProductModal(id) {
-            const item = allListings.find(p => p.id == id);
+            const item = allListings.find(p => String(p.id) === String(id));
             if(!item) return;
 
-            const isMyItem = currentAccount && currentAccount.id == item.user_id;
-            const author = allProfiles[item.user_id] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://via.placeholder.com/150' };
+            const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
+            const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم بدل.ma', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
             const content = document.getElementById('productModalContent');
 
             content.innerHTML = `
@@ -650,23 +652,23 @@
                 openModal('authModal');
                 return;
             }
-            if(currentAccount.id == receiverId) {
+            if(String(currentAccount.id) === String(receiverId)) {
                 alert("لا يمكنك إرسال طلب مقايضة لنفسك!");
                 return;
             }
 
             const { error } = await _supabase.from('trade_requests').insert([{
-                sender_id: currentAccount.id,
-                receiver_id: receiverId,
-                listing_id: listingId,
+                sender_id: String(currentAccount.id),
+                receiver_id: String(receiverId),
+                listing_id: String(listingId),
                 status: 'pending'
             }]);
 
             if(error) {
-                alert("تم إرسال الطلب مسبقاً أو حدث خطأ.");
+                alert("خطأ أثناء إرسال الطلب: " + error.message);
             } else {
                 await fetchRequests();
-                alert("تم إرسال طلب المقايضة بنجاح! سيظهر إشعار لصاحب العرض فوراً.");
+                alert("تم إرسال طلب المقايضة بنجاح! سيظهر إشعار رقمي فوق صورة الناشر الآن 🎉");
             }
         }
 
@@ -683,11 +685,11 @@
 
         function openChatModal(reqId) {
             activeChatRequestId = reqId;
-            const req = allRequests.find(r => r.id == reqId);
+            const req = allRequests.find(r => String(r.id) === String(reqId));
             if(!req) return;
 
-            const partnerId = req.sender_id == currentAccount.id ? req.receiver_id : req.sender_id;
-            const partner = allProfiles[partnerId] || { full_name: 'شريك المقايضة', avatar_url: 'https://via.placeholder.com/150' };
+            const partnerId = String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id;
+            const partner = allProfiles[String(partnerId)] || { full_name: 'شريك المقايضة', avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80' };
 
             document.getElementById('chatPartnerAvatar').src = partner.avatar_url;
             document.getElementById('chatPartnerName').textContent = partner.full_name;
@@ -703,7 +705,7 @@
 
             const box = document.getElementById('chatMessagesBox');
             box.innerHTML += `
-                <div class="bg-emerald-600 text-white p-3 rounded-2xl max-w-[80%] mr-auto text-left">
+                <div class="bg-emerald-600 text-white p-3 rounded-2xl max-w-[80%] mr-auto text-left font-semibold">
                     ${msg}
                 </div>
             `;
@@ -712,15 +714,14 @@
         }
 
         async function completeTradeSuccess() {
-            const req = allRequests.find(r => r.id == activeChatRequestId);
+            const req = allRequests.find(r => String(r.id) === String(activeChatRequestId));
             if(!req) return;
 
-            // Mark listing as completed
             await _supabase.from('listings').update({ status: 'completed' }).eq('id', req.listing_id);
             await fetchListings();
             
             closeModal('chatModal');
-            alert("تم إتمام المقابضة بنجاح! تم تحويل العرض إلى اللون الرمادي في البروفايل.");
+            alert("تم إتمام المقابضة بنجاح! تحول المنتج إلى البروفايل مع شارة مكتمل ✅");
             openProfileModal();
         }
 
@@ -760,7 +761,7 @@
                 phone: currentAccount.phone,
                 description: document.getElementById('addDesc').value,
                 image_url: imageUrl,
-                user_id: currentAccount.id,
+                user_id: String(currentAccount.id),
                 status: 'active'
             }]);
 
