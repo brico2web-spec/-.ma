@@ -28,7 +28,6 @@
     <!-- Header Navigation -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <!-- Brand Logo (No Icon, Only Text & Slogan) -->
             <div class="cursor-pointer flex flex-col" onclick="switchTab('home')">
                 <h1 class="text-2xl font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></h1>
                 <p class="text-[10px] text-slate-400 font-bold">منصة المقايضة المباشرة بـ 0 درهم</p>
@@ -192,33 +191,39 @@
         </div>
     </div>
 
-    <!-- Modal: Profile Details & Avatar Upload -->
+    <!-- Modal: Profile Details & User's Listings -->
     <div id="profileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-6 shadow-2xl relative border border-slate-100 text-center">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 space-y-6 shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('profileModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             
-            <h3 class="font-black text-lg text-slate-900">حسابي الشخصي</h3>
-            
-            <div class="flex flex-col items-center gap-3">
-                <div class="relative group">
-                    <img id="profileModalAvatar" src="" class="w-24 h-24 rounded-full object-cover border-4 border-emerald-500 shadow-md">
-                    <label for="avatarFileInput" class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition cursor-pointer text-xs font-bold">
-                        <i class="fa-solid fa-camera mr-1"></i> تغيير الصورة
-                    </label>
-                    <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+            <div class="text-center space-y-3">
+                <h3 class="font-black text-lg text-slate-900">حسابي الشخصي</h3>
+                <div class="flex flex-col items-center gap-3">
+                    <div class="relative group">
+                        <img id="profileModalAvatar" src="" class="w-20 h-20 rounded-full object-cover border-4 border-emerald-500 shadow-md">
+                        <label for="avatarFileInput" class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition cursor-pointer text-xs font-bold">
+                            <i class="fa-solid fa-camera mr-1"></i> تغيير
+                        </label>
+                        <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+                    </div>
+                    <h4 id="profileModalName" class="font-black text-base text-slate-800"></h4>
+                    <p id="profileModalPhone" class="text-xs text-slate-500 font-bold"></p>
                 </div>
-                <h4 id="profileModalName" class="font-black text-base text-slate-800"></h4>
-                <p id="profileModalPhone" class="text-xs text-slate-500 font-bold"></p>
             </div>
 
-            <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-right space-y-2 text-xs">
-                <p><span class="font-bold text-emerald-800">المدينة:</span> <span id="profileModalCity"></span></p>
-                <p><span class="font-bold text-emerald-800">حالة الحساب:</span> نشط وموثق للمقايضة</p>
+            <!-- User's Personal Listings Section -->
+            <div class="space-y-3 border-t pt-4">
+                <h4 class="font-black text-sm text-slate-800">عروضك النشطة (${0})</h4>
+                <div id="userListingsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-1">
+                    <!-- Injected via JS -->
+                </div>
             </div>
 
-            <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-3 rounded-xl transition cursor-pointer text-xs">
-                تسجيل الخروج من الحساب 🚪
-            </button>
+            <div class="flex gap-2 pt-2 border-t">
+                <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-3 rounded-xl transition cursor-pointer text-xs">
+                    تسجيل الخروج 🚪
+                </button>
+            </div>
         </div>
     </div>
 
@@ -255,7 +260,7 @@
         function updateHeaderUI() {
             const container = document.getElementById('authHeaderSection');
             if(currentAccount) {
-                const avatar = currentAccount.avatar_url || 'https://via.placeholder.com/150';
+                const avatar = currentAccount.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
                 container.innerHTML = `
                     <div class="flex items-center gap-3 cursor-pointer" onclick="openProfileModal()">
                         <img src="${avatar}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500 shadow-sm">
@@ -351,10 +356,33 @@
 
         function openProfileModal() {
             if(!currentAccount) return;
-            document.getElementById('profileModalAvatar').src = currentAccount.avatar_url || 'https://via.placeholder.com/150';
+            document.getElementById('profileModalAvatar').src = currentAccount.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
             document.getElementById('profileModalName').textContent = currentAccount.full_name;
             document.getElementById('profileModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
-            document.getElementById('profileModalCity').textContent = currentAccount.city;
+            
+            // Render User's listings inside profile
+            const userItems = allListings.filter(p => p.user_id == currentAccount.id);
+            const container = document.getElementById('userListingsContainer');
+            
+            if(userItems.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-xs text-slate-400 py-4">ليس لديك أي عروض منشورة حتى الآن.</p>`;
+            } else {
+                container.innerHTML = userItems.map(item => `
+                    <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs">
+                        <div class="flex items-center gap-2">
+                            <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover">
+                            <div>
+                                <h5 class="font-black text-slate-800 line-clamp-1">${item.title}</h5>
+                                <span class="text-[10px] text-emerald-600 font-bold">${item.trade_type}</span>
+                            </div>
+                        </div>
+                        <button onclick="deleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl transition cursor-pointer">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
             openModal('profileModal');
         }
 
@@ -419,6 +447,8 @@
             }
 
             grid.innerHTML = list.map(item => {
+                const isMyItem = currentAccount && currentAccount.id == item.user_id;
+
                 return `
                 <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col justify-between group">
                     <div onclick="openProductModal('${item.id}')" class="cursor-pointer">
@@ -441,9 +471,9 @@
                         </div>
                     </div>
                     <div class="p-4 pt-0 flex gap-2 border-t border-slate-50 mt-2">
-                        ${currentAccount && currentAccount.id === item.user_id ? `
+                        ${isMyItem ? `
                             <button onclick="deleteListing('${item.id}')" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs py-2.5 rounded-xl text-center transition cursor-pointer">
-                                <i class="fa-solid fa-trash"></i> حذف العرض
+                                <i class="fa-solid fa-trash"></i> حذف العرض (عرضك)
                             </button>
                         ` : `
                             <button onclick="handleRequestTrade()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow transition cursor-pointer">
@@ -460,7 +490,9 @@
             const item = allListings.find(p => p.id == id);
             if(!item) return;
 
+            const isMyItem = currentAccount && currentAccount.id == item.user_id;
             const content = document.getElementById('productModalContent');
+
             content.innerHTML = `
                 <div class="relative rounded-2xl overflow-hidden bg-slate-100 shadow-md max-h-80 flex items-center justify-center">
                     <img src="${item.image_url}" class="w-full h-full object-contain max-h-80">
@@ -475,9 +507,15 @@
                     </div>
                     <p class="text-xs text-slate-600 leading-relaxed">${item.description || 'لا يوجد وصف إضافي.'}</p>
                 </div>
-                <button onclick="closeModal('productModal'); handleRequestTrade();" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer text-xs">
-                    إرسال طلب مقايضة لهذا العرض 🤝
-                </button>
+                ${isMyItem ? `
+                    <button onclick="closeModal('productModal'); deleteListing('${item.id}');" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer text-xs">
+                        حذف هذا العرض 🗑️
+                    </button>
+                ` : `
+                    <button onclick="closeModal('productModal'); handleRequestTrade();" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer text-xs">
+                        إرسال طلب مقايضة لهذا العرض 🤝
+                    </button>
+                `}
             `;
             openModal('productModal');
         }
@@ -546,7 +584,9 @@
         async function deleteListing(id) {
             if(confirm("واش متأكد بغيتي تمسح هاد العرض؟")) {
                 await _supabase.from('listings').delete().eq('id', id);
+                closeModal('profileModal');
                 fetchListings();
+                alert("تم حذف العرض بنجاح.");
             }
         }
 
