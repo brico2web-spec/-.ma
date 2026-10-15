@@ -18,12 +18,22 @@
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); border-color: rgba(16, 185, 129, 0.8); }
-            50% { box-shadow: 0 0 25px rgba(16, 185, 129, 0.8); border-color: rgba(5, 150, 105, 1); }
+        @keyframes hemzaGlow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(245, 158, 11, 0.6), 0 0 40px rgba(236, 72, 153, 0.3); 
+                border-color: rgba(245, 158, 11, 1);
+            }
+            50% { 
+                box-shadow: 0 0 35px rgba(236, 72, 153, 0.8), 0 0 60px rgba(245, 158, 11, 0.5); 
+                border-color: rgba(236, 72, 153, 1);
+            }
         }
         .slide-fade { animation: fadeIn 0.6s ease-in-out; }
-        .random-wanted-card { animation: pulseGlow 2.5s infinite ease-in-out; background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); }
+        .hemza-card { 
+            animation: hemzaGlow 2.5s infinite ease-in-out; 
+            background: linear-gradient(135deg, #fffbeb 0%, #fdf2f8 50%, #ffffff 100%); 
+            border-width: 2px;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
@@ -217,14 +227,14 @@
                 </div>
 
                 <!-- Random Wanted Feature (اختيار عشوائي - باغي لي كان) -->
-                <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200 space-y-2">
+                <div class="bg-gradient-to-r from-amber-50 to-pink-50 p-4 rounded-2xl border-2 border-amber-300 space-y-2 shadow-inner">
                     <div class="flex items-center justify-between">
-                        <label for="randomWantedCheck" class="font-black text-emerald-900 cursor-pointer flex items-center gap-1.5 text-xs">
-                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i> إختيار عشوائي (باغي لي كان 🎁)
+                        <label for="randomWantedCheck" class="font-black text-amber-900 cursor-pointer flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-gift text-pink-600 text-base animate-bounce"></i> همزة للطرفين (باغي لي كان 🎁)
                         </label>
-                        <input type="checkbox" id="randomWantedCheck" onchange="toggleRandomWanted(this)" class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                        <input type="checkbox" id="randomWantedCheck" onchange="toggleRandomWanted(this)" class="w-5 h-5 accent-pink-600 cursor-pointer">
                     </div>
-                    <p class="text-[10px] text-slate-500 font-medium">إذا فعلت هذه الخانة، سيتم قبول أي عرض مقايضة كيفما كان بشكل تلقائي!</p>
+                    <p class="text-[10px] text-slate-600 font-bold">اجعل عرضك مميزاً وهمزة لا تُعوض، واقبل أي شيء يليه في المقايضة فوراً!</p>
                 </div>
 
                 <div>
@@ -458,7 +468,7 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12 space-y-1">
         <p>جميع الحقوق محفوظة © 2026 - بدل.ma</p>
-        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 19 (Instant Live Trade Popups & Random Wanted 🎁)</p>
+        <p class="text-[10px] text-emerald-400 font-bold">نسخة التطبيق: النسخة 20 (Hemza Special Edition 🎁✨)</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -580,7 +590,6 @@
             `;
             container.appendChild(popupEl);
 
-            // صوت أو تنبيه بصري إضافي
             showFloatingNotification(`🔔 ${sender.full_name} أرسل لك طلب مقايضة فورياً!`);
         }
 
@@ -784,11 +793,11 @@
             if (checkbox.checked) {
                 wantedInput.value = "باغي لي كان - يقبل أي عرض 🎁";
                 wantedInput.disabled = true;
-                wantedInput.classList.add('bg-slate-200', 'text-emerald-700', 'font-black');
+                wantedInput.classList.add('bg-slate-200', 'text-pink-700', 'font-black');
             } else {
                 wantedInput.value = "";
                 wantedInput.disabled = false;
-                wantedInput.classList.remove('bg-slate-200', 'text-emerald-700', 'font-black');
+                wantedInput.classList.remove('bg-slate-200', 'text-pink-700', 'font-black');
             }
         }
 
@@ -1039,12 +1048,11 @@
                 openModal('authModal');
                 return;
             }
-            // إعادة ضبط نموذج الإضافة
             document.getElementById('randomWantedCheck').checked = false;
             const wantedInput = document.getElementById('addWanted');
             wantedInput.value = "";
             wantedInput.disabled = false;
-            wantedInput.classList.remove('bg-slate-200', 'text-emerald-700', 'font-black');
+            wantedInput.classList.remove('bg-slate-200', 'text-pink-700', 'font-black');
 
             openModal('addModal');
         }
@@ -1095,11 +1103,11 @@
                 const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
 
                 return `
-                <div id="product-${item.id}" class="border rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col justify-between group ${isRandomWanted ? 'random-wanted-card border-emerald-500' : 'bg-white border-slate-200'}">
+                <div id="product-${item.id}" class="border rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition flex flex-col justify-between group ${isRandomWanted ? 'hemza-card' : 'bg-white border-slate-200'}">
                     <div>
-                        <div class="flex items-center justify-between p-3 border-b border-slate-100 ${isRandomWanted ? 'bg-emerald-50/80' : 'bg-slate-50/50'}">
+                        <div class="flex items-center justify-between p-3 border-b ${isRandomWanted ? 'bg-gradient-to-r from-amber-100 to-pink-100 border-amber-200' : 'border-slate-100 bg-slate-50/50'}">
                             <div class="flex items-center gap-2">
-                                <img src="${author.avatar_url}" class="w-7 h-7 rounded-full object-cover border border-emerald-500">
+                                <img src="${author.avatar_url}" class="w-7 h-7 rounded-full object-cover border-2 ${isRandomWanted ? 'border-pink-500' : 'border-emerald-500'}">
                                 <span class="text-xs font-black text-slate-800">${author.full_name}</span>
                             </div>
                             <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg} (${authorStats.count})</span>
@@ -1108,25 +1116,31 @@
                         <div onclick="openProductModal('${item.id}')" class="cursor-pointer">
                             <div class="relative h-48 bg-slate-100 overflow-hidden">
                                 <img src="${item.image_url}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                                <span class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold px-3 py-1 rounded-full">
+                                <span class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold px-3 py-1 rounded-full shadow">
                                     ${item.trade_type}
                                 </span>
-                                <span class="absolute bottom-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md">
+                                <span class="absolute bottom-3 left-3 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow">
                                     <i class="fa-solid fa-location-dot"></i> ${item.city}
                                 </span>
-                                ${isRandomWanted ? `<span class="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded-full animate-pulse shadow-md"><i class="fa-solid fa-gift"></i> باغي لي كان</span>` : ''}
+                                ${isRandomWanted ? `
+                                    <span class="absolute top-3 left-3 bg-gradient-to-r from-amber-500 to-pink-600 text-white text-[10px] font-black px-3 py-1 rounded-full animate-bounce shadow-lg flex items-center gap-1 border border-white">
+                                        <i class="fa-solid fa-bolt text-yellow-200"></i> همزة للطرفين 🎁
+                                    </span>
+                                ` : ''}
                             </div>
                             <div class="p-4 space-y-2">
                                 <h3 class="font-black text-slate-900 text-sm line-clamp-1">${item.title}</h3>
-                                <div class="p-2.5 rounded-xl text-xs border ${isRandomWanted ? 'bg-emerald-100/60 border-emerald-300 text-emerald-900 font-black' : 'bg-emerald-50 border-emerald-100 text-slate-700'}">
-                                    <span class="font-bold block ${isRandomWanted ? 'text-emerald-800' : 'text-emerald-800'}">باغي مقابلها:</span>
+                                <div class="p-3 rounded-2xl text-xs border ${isRandomWanted ? 'bg-gradient-to-r from-amber-100/90 to-pink-100/90 border-amber-300 text-pink-900 font-black shadow-inner' : 'bg-emerald-50 border-emerald-100 text-slate-700'}">
+                                    <span class="font-bold block mb-0.5 ${isRandomWanted ? 'text-pink-700 flex items-center gap-1' : 'text-emerald-800'}">
+                                        ${isRandomWanted ? '<i class="fa-solid fa-gift"></i> عرض همزة مفتوح:' : 'باغي مقابلها:'}
+                                    </span>
                                     <p class="font-semibold line-clamp-2">${item.wanted}</p>
                                 </div>
                                 <p class="text-xs text-slate-500 line-clamp-2">${item.description || ''}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="p-4 pt-0 space-y-2 border-t border-slate-50 mt-2">
+                    <div class="p-4 pt-0 space-y-2 border-t border-slate-100 mt-2">
                         <div class="flex gap-2">
                             ${isMyItem ? `
                                 <button onclick="openEditModal('${item.id}')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 rounded-xl text-center transition cursor-pointer">
@@ -1137,8 +1151,8 @@
                                     <i class="fa-solid fa-check"></i> ${mySentReq.status === 'accepted' ? 'تمت الموافقة 🤝' : 'قيد الانتظار ⏳'}
                                 </button>
                             ` : `
-                                <button onclick="handleRequestTrade('${item.id}', '${item.user_id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow transition cursor-pointer">
-                                    <i class="fa-solid fa-arrows-rotate"></i> طلب مقايضة
+                                <button onclick="handleRequestTrade('${item.id}', '${item.user_id}')" class="w-full ${isRandomWanted ? 'bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 shadow-lg' : 'bg-emerald-600 hover:bg-emerald-700'} text-white font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 transition cursor-pointer">
+                                    <i class="fa-solid ${isRandomWanted ? 'fa-bolt' : 'fa-arrows-rotate'}"></i> ${isRandomWanted ? 'اغتنم الهمزة وطلب المقايضة! ⚡' : 'طلب مقايضة'}
                                 </button>
                             `}
                         </div>
@@ -1176,13 +1190,13 @@
                 <div class="relative rounded-2xl overflow-hidden bg-slate-100 shadow-md max-h-80 flex items-center justify-center">
                     <img src="${item.image_url}" class="w-full h-full object-contain max-h-80">
                     <span class="absolute top-3 right-3 bg-slate-900/80 text-white text-xs font-bold px-3 py-1 rounded-full">${item.trade_type}</span>
-                    ${isRandomWanted ? `<span class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-black px-3 py-1 rounded-full animate-pulse"><i class="fa-solid fa-gift"></i> باغي لي كان</span>` : ''}
+                    ${isRandomWanted ? `<span class="absolute top-3 left-3 bg-gradient-to-r from-amber-500 to-pink-600 text-white text-xs font-black px-3 py-1 rounded-full animate-bounce shadow-lg"><i class="fa-solid fa-bolt"></i> همزة للطرفين 🎁</span>` : ''}
                 </div>
                 <div class="space-y-2">
                     <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block"><i class="fa-solid fa-location-dot"></i> ${item.city}</span>
                     <h3 class="font-black text-xl text-slate-900">${item.title}</h3>
-                    <div class="p-3 rounded-2xl border text-xs ${isRandomWanted ? 'bg-emerald-100 border-emerald-300 text-emerald-900 font-black' : 'bg-emerald-50 border-emerald-100 text-slate-800'}">
-                        <span class="font-bold block mb-1 ${isRandomWanted ? 'text-emerald-800' : 'text-emerald-800'}">الشيء المطلوب للمقايضة:</span>
+                    <div class="p-3 rounded-2xl border text-xs ${isRandomWanted ? 'bg-gradient-to-r from-amber-100 to-pink-100 border-amber-300 text-pink-900 font-black' : 'bg-emerald-50 border-emerald-100 text-slate-800'}">
+                        <span class="font-bold block mb-1 ${isRandomWanted ? 'text-pink-700' : 'text-emerald-800'}">الشيء المطلوب للمقايضة:</span>
                         <p class="font-bold text-sm">${item.wanted}</p>
                     </div>
                     <p class="text-xs text-slate-600 leading-relaxed">${item.description || ''}</p>
@@ -1193,7 +1207,7 @@
                     ` : mySentReq ? `
                         <button disabled class="w-full bg-slate-200 text-slate-600 font-bold py-3 rounded-xl text-xs">تم إرسال الطلب</button>
                     ` : `
-                        <button onclick="closeModal('productModal'); handleRequestTrade('${item.id}', '${item.user_id}');" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl text-xs">طلب مقايضة 🤝</button>
+                        <button onclick="closeModal('productModal'); handleRequestTrade('${item.id}', '${item.user_id}');" class="w-full ${isRandomWanted ? 'bg-gradient-to-r from-amber-500 to-pink-600 shadow-lg' : 'bg-emerald-600'} text-white font-bold py-3 rounded-xl text-xs">طلب مقايضة 🤝</button>
                     `}
                     <button onclick="shareOnWhatsApp('${item.id}')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-2 border border-emerald-200 transition cursor-pointer">
                         <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> بارطاجي العرض فـ WhatsApp 📲
