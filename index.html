@@ -755,7 +755,6 @@
             closeModal('profileModal');
             openModal('chatModal');
             
-            // Load messages and start polling for real-time chat sync
             loadChatMessages();
             if(chatInterval) clearInterval(chatInterval);
             chatInterval = setInterval(loadChatMessages, 3000);
