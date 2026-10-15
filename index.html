@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بدل.ma - المنصة المغربية الحقيقية للمقايضة</title>
+    <title>بدل.ma - المنصة المغربية للمقايضة</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome 6 Icons -->
@@ -28,14 +28,10 @@
     <!-- Header Navigation -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
-                <div class="w-11 h-11 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-black shadow-lg shadow-emerald-600/20">
-                    <i class="fa-solid fa-arrows-rotate text-xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></h1>
-                    <p class="text-[10px] text-slate-400 font-bold">منصة المقايضة المباشرة بـ 0 درهم</p>
-                </div>
+            <!-- Brand Logo (No Icon, Only Text & Slogan) -->
+            <div class="cursor-pointer flex flex-col" onclick="switchTab('home')">
+                <h1 class="text-2xl font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></h1>
+                <p class="text-[10px] text-slate-400 font-bold">منصة المقايضة المباشرة بـ 0 درهم</p>
             </div>
 
             <!-- Header Auth Section -->
@@ -98,11 +94,10 @@
     </main>
 
     <!-- Modal: Authentic Auth System -->
-    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative">
-            <button onclick="closeModal('authModal')" class="absolute top-4 left-4 text-slate-400 font-bold text-lg">&times;</button>
+    <div id="authModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative border border-slate-100">
+            <button onclick="closeModal('authModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             
-            <!-- Auth Tab Buttons -->
             <div class="flex border-b border-slate-200">
                 <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="w-1/2 py-2 text-sm font-bold text-emerald-600 border-b-2 border-emerald-600">تسجيل الدخول</button>
                 <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="w-1/2 py-2 text-sm font-bold text-slate-400">حساب جديد</button>
@@ -152,9 +147,9 @@
     </div>
 
     <!-- Modal: Add Item -->
-    <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative">
-            <button onclick="closeModal('addModal')" class="absolute top-4 left-4 text-slate-400 font-bold text-lg">&times;</button>
+    <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100">
+            <button onclick="closeModal('addModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             <h3 class="font-black text-lg text-slate-900">نشر عرض مقايضة جديد</h3>
             <form onsubmit="handleAddItem(event)" class="space-y-3 text-xs text-right">
                 <div>
@@ -197,9 +192,50 @@
         </div>
     </div>
 
+    <!-- Modal: Profile Details & Avatar Upload -->
+    <div id="profileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-6 shadow-2xl relative border border-slate-100 text-center">
+            <button onclick="closeModal('profileModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            
+            <h3 class="font-black text-lg text-slate-900">حسابي الشخصي</h3>
+            
+            <div class="flex flex-col items-center gap-3">
+                <div class="relative group">
+                    <img id="profileModalAvatar" src="" class="w-24 h-24 rounded-full object-cover border-4 border-emerald-500 shadow-md">
+                    <label for="avatarFileInput" class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition cursor-pointer text-xs font-bold">
+                        <i class="fa-solid fa-camera mr-1"></i> تغيير الصورة
+                    </label>
+                    <input type="file" id="avatarFileInput" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+                </div>
+                <h4 id="profileModalName" class="font-black text-base text-slate-800"></h4>
+                <p id="profileModalPhone" class="text-xs text-slate-500 font-bold"></p>
+            </div>
+
+            <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 text-right space-y-2 text-xs">
+                <p><span class="font-bold text-emerald-800">المدينة:</span> <span id="profileModalCity"></span></p>
+                <p><span class="font-bold text-emerald-800">حالة الحساب:</span> نشط وموثق للمقايضة</p>
+            </div>
+
+            <button onclick="handleLogout()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-3 rounded-xl transition cursor-pointer text-xs">
+                تسجيل الخروج من الحساب 🚪
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal: Product Details & Zoom Image -->
+    <div id="productModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('productModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition z-10">&times;</button>
+            
+            <div id="productModalContent" class="space-y-4 text-right">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12">
-        <p>جميع الحقوق محفوظة © 2026 - بدل.ma | النسخة 3</p>
+        <p>جميع الحقوق محفوظة © 2026 - بدل.ma</p>
     </footer>
 
     <!-- JavaScript Application Logic -->
@@ -219,12 +255,14 @@
         function updateHeaderUI() {
             const container = document.getElementById('authHeaderSection');
             if(currentAccount) {
+                const avatar = currentAccount.avatar_url || 'https://via.placeholder.com/150';
                 container.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-200">
-                            <i class="fa-solid fa-user-check text-emerald-600 ml-1"></i> ${currentAccount.full_name} (${currentAccount.city})
-                        </span>
-                        <button onclick="handleLogout()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold px-3 py-2 rounded-xl transition cursor-pointer">تسجيل الخروج</button>
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="openProfileModal()">
+                        <img src="${avatar}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500 shadow-sm">
+                        <div class="hidden sm:block text-right">
+                            <span class="text-xs font-black text-slate-800 block">${currentAccount.full_name}</span>
+                            <span class="text-[10px] text-emerald-600 font-bold"><i class="fa-solid fa-location-dot"></i> ${currentAccount.city}</span>
+                        </div>
                     </div>
                 `;
             } else {
@@ -261,15 +299,16 @@
             const phone = document.getElementById('regPhone').value;
             const city = document.getElementById('regCity').value;
             const password = document.getElementById('regPass').value;
+            const avatar_url = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
 
             const { data: existing } = await _supabase.from('profiles').select('*').eq('phone', phone);
             if(existing && existing.length > 0) {
-                alert("هذا الرقم مسجل به حساب سابقاً! يمكنك تسجيل الدخول به مباشرة.");
+                alert("هذا الرقم مسجل به حساب سابقاً!");
                 switchAuthTab('login');
                 return;
             }
 
-            const { data, error } = await _supabase.from('profiles').insert([{ full_name, phone, city, password }]).select();
+            const { data, error } = await _supabase.from('profiles').insert([{ full_name, phone, city, password, avatar_url }]).select();
 
             if(error) {
                 alert("خطأ في إنشاء الحساب: " + error.message);
@@ -306,7 +345,45 @@
             localStorage.removeItem('badal_auth_account');
             currentAccount = null;
             updateHeaderUI();
+            closeModal('profileModal');
             fetchListings();
+        }
+
+        function openProfileModal() {
+            if(!currentAccount) return;
+            document.getElementById('profileModalAvatar').src = currentAccount.avatar_url || 'https://via.placeholder.com/150';
+            document.getElementById('profileModalName').textContent = currentAccount.full_name;
+            document.getElementById('profileModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
+            document.getElementById('profileModalCity').textContent = currentAccount.city;
+            openModal('profileModal');
+        }
+
+        async function handleAvatarUpload(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const fileExt = file.name.split('.').pop();
+            const fileName = `avatar_${currentAccount.id}_${Date.now()}.${fileExt}`;
+
+            const { error: uploadErr } = await _supabase.storage.from('product-images').upload(fileName, file);
+            if(uploadErr) {
+                alert("خطأ في رفع الصورة: " + uploadErr.message);
+                return;
+            }
+
+            const avatarUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+
+            const { error: updateErr } = await _supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentAccount.id);
+            if(updateErr) {
+                alert("خطأ في تحديث البروفايل: " + updateErr.message);
+                return;
+            }
+
+            currentAccount.avatar_url = avatarUrl;
+            localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
+            updateHeaderUI();
+            openProfileModal();
+            alert("تم تحديث صورة البروفايل بنجاح!");
         }
 
         function handleOpenAddModal() {
@@ -344,7 +421,7 @@
             grid.innerHTML = list.map(item => {
                 return `
                 <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition flex flex-col justify-between group">
-                    <div>
+                    <div onclick="openProductModal('${item.id}')" class="cursor-pointer">
                         <div class="relative h-48 bg-slate-100 overflow-hidden">
                             <img src="${item.image_url}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                             <span class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold px-3 py-1 rounded-full">
@@ -369,7 +446,7 @@
                                 <i class="fa-solid fa-trash"></i> حذف العرض
                             </button>
                         ` : `
-                            <button onclick="handleRequestTrade('${item.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow transition cursor-pointer">
+                            <button onclick="handleRequestTrade()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-1.5 shadow transition cursor-pointer">
                                 <i class="fa-solid fa-arrows-rotate"></i> طلب مقايضة
                             </button>
                         `}
@@ -379,7 +456,33 @@
             }).join('');
         }
 
-        function handleRequestTrade(itemId) {
+        function openProductModal(id) {
+            const item = allListings.find(p => p.id == id);
+            if(!item) return;
+
+            const content = document.getElementById('productModalContent');
+            content.innerHTML = `
+                <div class="relative rounded-2xl overflow-hidden bg-slate-100 shadow-md max-h-80 flex items-center justify-center">
+                    <img src="${item.image_url}" class="w-full h-full object-contain max-h-80">
+                    <span class="absolute top-3 right-3 bg-slate-900/80 text-white text-xs font-bold px-3 py-1 rounded-full">${item.trade_type}</span>
+                </div>
+                <div class="space-y-2">
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block"><i class="fa-solid fa-location-dot"></i> ${item.city}</span>
+                    <h3 class="font-black text-xl text-slate-900">${item.title}</h3>
+                    <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-100 text-xs">
+                        <span class="font-bold text-emerald-800 block mb-1">الشيء المطلوب للمقايضة:</span>
+                        <p class="text-slate-800 font-bold text-sm">${item.wanted}</p>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${item.description || 'لا يوجد وصف إضافي.'}</p>
+                </div>
+                <button onclick="closeModal('productModal'); handleRequestTrade();" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer text-xs">
+                    إرسال طلب مقايضة لهذا العرض 🤝
+                </button>
+            `;
+            openModal('productModal');
+        }
+
+        function handleRequestTrade() {
             if(!currentAccount) {
                 alert("المرجو تسجيل الدخول أولاً لإرسال طلب المقايضة!");
                 openModal('authModal');
