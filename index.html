@@ -33,8 +33,14 @@
             50% { transform: scale(1.06); }
             100% { transform: scale(1); }
         }
+        @keyframes wheelSpinAnim {
+            0% { transform: rotate(0deg) scale(0.9); opacity: 0.5; }
+            50% { transform: rotate(180deg) scale(1.1); opacity: 1; }
+            100% { transform: rotate(360deg) scale(1); opacity: 1; }
+        }
         .slide-fade { animation: fadeIn 0.6s ease-in-out; }
         .slider-img-anim { animation: sliderZoom 8s infinite ease-in-out; }
+        .wheel-anim { animation: wheelSpinAnim 2.5s cubic-bezier(0.15, 0.85, 0.35, 1) forwards; }
         .hemza-card { 
             animation: hemzaGlow 2.5s infinite ease-in-out; 
             background: linear-gradient(135deg, #fffbeb 0%, #fdf2f8 50%, #ffffff 100%); 
@@ -54,7 +60,7 @@
     <!-- Header Navigation -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <div id="authHeaderSection">
+            <div id="authHeaderSection" class="flex items-center gap-2">
                 <!-- Injected via JS -->
             </div>
             <div class="cursor-pointer flex flex-col items-end" onclick="switchTab('home')">
@@ -92,6 +98,9 @@
                     </a>
                     <a href="#" onclick="openMenuSection('deal-chats'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
                         <i class="fa-solid fa-comments text-emerald-600 text-base"></i> دردشة الصفقة
+                    </a>
+                    <a href="#" onclick="closeRightMenu(); openTradeWheelGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 text-white font-black transition shadow-md animate-pulse">
+                        <i class="fa-solid fa-dice text-base"></i> لعبة عجلة الحظ للمقايضة 🎲
                     </a>
                 </div>
             </div>
@@ -158,6 +167,9 @@
                     <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-arrows-rotate"></i> ابدأ المقايضة الآن
                     </button>
+                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer animate-pulse">
+                        <i class="fa-solid fa-dice"></i> لعبة عجلة الحظ 🎲
+                    </button>
                 </div>
             </div>
         </div>
@@ -165,6 +177,20 @@
 
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+        <!-- قسم المقايضات الناجحة المعلنة على الصفحة الرئيسية (مبتكر وجذاب) -->
+        <section id="homepageCompletedTradesSection" class="bg-gradient-to-r from-amber-500/10 via-pink-500/10 to-emerald-500/10 p-5 rounded-3xl border-2 border-amber-400/40 shadow-xl space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                    <h3 class="font-black text-sm text-slate-900">🎉 أحدث المقايضات المكتملة عبر منصة بدل.ma</h3>
+                </div>
+                <span class="text-[10px] bg-amber-500 text-white font-black px-3 py-1 rounded-full shadow">تم التبادل بنجاح 100%</span>
+            </div>
+            <div id="homepageCompletedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <p class="text-xs text-slate-500 font-medium text-center py-2 col-span-full">جاري تحميل المقايضات الناجحة...</p>
+            </div>
+        </section>
+
         <section id="tab-home" class="space-y-6 tab-content">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-6 sm:p-8 rounded-3xl text-white shadow-xl border border-slate-800">
                 <div>
@@ -172,9 +198,14 @@
                     <h2 class="text-2xl sm:text-3xl font-black">بدل داكشي اللي ما محتاجوش</h2>
                     <p class="text-xs sm:text-sm text-slate-300 mt-1 font-light">مقايضة مباشرة بـ 0 درهم بين أطراف التبادل عبر المنصة.</p>
                 </div>
-                <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
-                    <i class="fa-solid fa-plus-circle text-base"></i> أضف عرضك الجديد
-                </button>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer animate-bounce">
+                        <i class="fa-solid fa-dice text-base"></i> لعبة عجلة الحظ 🎲
+                    </button>
+                    <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                        <i class="fa-solid fa-plus-circle text-base"></i> أضف عرضك الجديد
+                    </button>
+                </div>
             </div>
 
             <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
@@ -212,14 +243,14 @@
                 </div>
             </div>
 
-            <!-- تم تعديل هنا ليصبح عرض بطاقتين جنباً إلى جنب على شاشة الهاتف عبر grid-cols-2 -->
+            <!-- شبكة عرض بطاقتين جنباً إلى جنب على شاشة الهاتف -->
             <div id="listingsGrid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 <p class="col-span-full text-center py-12 text-slate-400 font-bold">جاري تحميل العروض الحقيقية...</p>
             </div>
         </section>
     </main>
 
-    <!-- SECTION: الأشخاص المتميزون (فوق الفوتر مباشرة، يتحرك أوتوماتيكياً بروفايل واحد كل أسبوع من 10 بروفايلات بدون أسهم) -->
+    <!-- SECTION: الأشخاص المتميزون -->
     <section class="max-w-7xl mx-auto px-4 w-full my-8">
         <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-800/60 text-right space-y-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
@@ -230,10 +261,8 @@
                 <p class="text-[11px] text-slate-400 font-medium">أبرز الشركاء الموثوقين (يتم اختيار 10 بروفايلات وتحديثها أوتوماتيكياً كل أسبوع)</p>
             </div>
 
-            <!-- Single Profile Auto-Swapping Container (No Arrows) -->
             <div class="relative overflow-hidden py-4 flex items-center justify-center">
                 <div id="featuredSingleProfileContainer" class="w-full max-w-sm transition-all duration-700 ease-in-out">
-                    <!-- Injected via JS -->
                     <div class="text-center py-6 text-slate-400 text-xs">جاري تحميل الأشخاص المتميزون...</div>
                 </div>
             </div>
@@ -245,6 +274,19 @@
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative border border-slate-100">
             <button onclick="closeModal('authModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             <h3 class="font-black text-base text-slate-900">تسجيل الدخول / حساب جديد</h3>
+
+            <!-- الرسالة المطلوبة والتحذير في نافذة تسجيل الدخول -->
+            <div class="bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 p-3.5 rounded-2xl text-white shadow-lg space-y-1.5 text-right">
+                <p class="font-black text-xs flex items-center gap-1.5 text-amber-200">
+                    <i class="fa-solid fa-sparkles text-sm animate-spin"></i> أهلاً بيك فـ بدل.ma!
+                </p>
+                <p class="text-[11px] font-bold leading-relaxed text-white">
+                    تبادل بأمان واكتشف هميزات لبلاد مع ناس ثقة بـ 0 درهم!
+                </p>
+                <p class="text-[10px] text-rose-200 font-black pt-1 border-t border-white/20">
+                    ⚠️ تنبيه: الإدارة غير مسؤولة نهائياً عن اللقاءات أو تبادل المنتوجات. ومن خالف الاحترام أو قواعد المعقول، فسيتم حظره نهائياً!
+                </p>
+            </div>
 
             <button onclick="handleGoogleLogin()" class="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl border border-slate-300 shadow-sm transition flex items-center justify-center gap-2 text-xs cursor-pointer">
                 <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
@@ -264,7 +306,7 @@
 
             <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs text-right">
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">رقم الهاتف *</label>
+                    <label class="font-bold text-slate-700 block mb-1">رقم الهاتف الشخصي *</label>
                     <input type="tel" id="loginPhone" required placeholder="0600000000" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
@@ -277,10 +319,10 @@
             <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-xs text-right hidden">
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">الاسم الكامل *</label>
-                    <input type="text" id="regName" required placeholder="نزار زمزام" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <input type="text" id="regName" required placeholder="أدخل اسمك الكامل" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
-                    <label class="font-bold text-slate-700 block mb-1">رقم الهاتف *</label>
+                    <label class="font-bold text-slate-700 block mb-1">رقم الهاتف الشخصي *</label>
                     <input type="tel" id="regPhone" required placeholder="0600000000" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div>
@@ -292,14 +334,57 @@
                         <option value="فاس">فاس</option>
                         <option value="طنجة">طنجة</option>
                         <option value="سلا">سلا</option>
+                        <option value="أخرى" disabled class="text-amber-600 font-bold">إيلا ما لقيتي مدينة؟ إنشاء الله بدل.ma مرار مرار طل تشاركنا لي منتوجاتك</option>
                     </select>
                 </div>
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">كلمة السر *</label>
                     <input type="password" id="regPass" required placeholder="أدخل كلمة السر" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
+
+                <!-- الخانة الجديدة لاتفاق فتح الحساب مع عبارة بسم الله -->
+                <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 p-3 rounded-2xl border-2 border-emerald-400 space-y-1.5 shadow-inner">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="regAgreementCheck" required class="w-4 h-4 accent-emerald-600 cursor-pointer">
+                        <label for="regAgreementCheck" class="font-bold text-[11px] text-slate-700 cursor-pointer leading-tight">
+                            <span class="text-emerald-700 font-black text-xs">بسم الله</span> أوافق على اتفاق فتح الحساب ومنطق المعقول، مستهلاً رحلتي في بدل.ma لأستنفذ أو يستنفذ غيري بالخير والتعاون (النسخة الأولى 🌟)
+                        </label>
+                    </div>
+                </div>
+
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow transition mt-2 cursor-pointer">إنشاء حساب جديد 🚀</button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: لعبة عجلة الحظ التفاعلية للمقايضة -->
+    <div id="tradeWheelGameModal" class="fixed inset-0 bg-slate-900/85 backdrop-blur-md z-[110] hidden flex items-center justify-center p-4">
+        <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl relative border-2 border-amber-400 text-right slide-fade overflow-hidden">
+            <button onclick="closeModal('tradeWheelGameModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center justify-center transition z-20">&times;</button>
+            
+            <div class="text-center space-y-1">
+                <span class="bg-gradient-to-r from-amber-500 to-pink-600 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-lg inline-flex items-center gap-1.5 animate-pulse">
+                    <i class="fa-solid fa-dice text-yellow-200"></i> لعبة حظ المقايضة التلقائية 🎁
+                </span>
+                <h3 class="font-black text-xl text-white">عجلة التبادل الشفاف الفوري ⚡</h3>
+                <p class="text-xs text-slate-300">كون راجل وعند كلمتك! هذي غير حظ خفيف ضريف وممتعة بين ولاد بلادك بكل روح رياضية.</p>
+            </div>
+
+            <!-- اختيار المنتج الخاص بالمستخدم للمشاركة في اللعبة -->
+            <div id="gameSelectorStep" class="space-y-3">
+                <label class="block font-bold text-xs text-amber-300">اختر من عروضك النشطة للمشاركة في العجلة:</label>
+                <div id="myGameListingsDropdown" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-1 bg-slate-800/80 rounded-2xl border border-slate-700">
+                    <!-- Injected via JS -->
+                </div>
+                <button id="startSpinWheelActionBtn" onclick="executeWheelSpin()" disabled class="w-full bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 hover:from-amber-600 hover:to-purple-700 text-white font-black py-3.5 rounded-2xl text-sm shadow-xl transition cursor-pointer flex items-center justify-center gap-2 opacity-50 cursor-not-allowed">
+                    <i class="fa-solid fa-play animate-spin"></i> أدر العجلة ودع الحظ يقرر ⚡
+                </button>
+            </div>
+
+            <!-- نافذة العرض المتحرك أثناء وبعد التدوير -->
+            <div id="gameSpinnerResultArea" class="hidden bg-slate-800/90 border-2 border-pink-500/80 rounded-3xl p-5 text-center space-y-4 shadow-2xl">
+                <!-- سيتم حقن نتيجة التدويير الخرافية هنا -->
+            </div>
         </div>
     </div>
 
@@ -308,7 +393,7 @@
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100">
             <button onclick="closeModal('addModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             <h3 class="font-black text-lg text-slate-900">نشر عرض مقايضة جديد</h3>
-            <form onsubmit="handleAddItem(event)" class="space-y-3 text-xs text-right">
+            <form id="addItemForm" onsubmit="handleAddItem(event)" class="space-y-3 text-xs text-right">
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">عنوان العرض *</label>
                     <input type="text" id="addTitle" required placeholder="مثلاً: هاتف نقي أو طاولة خشبية" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
@@ -331,6 +416,17 @@
                             <option value="تزيدني الفلوس">تزيدني الفلوس</option>
                         </select>
                     </div>
+                </div>
+
+                <!-- الخانة الجديدة المبتكرة والجذابة للعبة الحظ -->
+                <div class="bg-gradient-to-r from-amber-100 via-pink-100 to-purple-100 p-4 rounded-2xl border-2 border-pink-400 space-y-2 shadow-inner">
+                    <div class="flex items-center justify-between">
+                        <label for="participateGameCheck" class="font-black text-pink-900 cursor-pointer flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-dice text-pink-600 text-base animate-spin"></i> شارك هذا المنتج في لعبة حظ المقايضة التلقائية 🎁
+                        </label>
+                        <input type="checkbox" id="participateGameCheck" class="w-5 h-5 accent-pink-600 cursor-pointer">
+                    </div>
+                    <p class="text-[10px] text-slate-700 font-bold">كون راجل وعند كلمتك! لعبة حظ خفيف ضريف وممتعة تدخل عرضك في التحدي.</p>
                 </div>
 
                 <div class="bg-gradient-to-r from-amber-50 to-pink-50 p-4 rounded-2xl border-2 border-amber-300 space-y-2 shadow-inner">
@@ -619,6 +715,10 @@
         let currentFeaturedProfileIndex = 0;
         let featuredInterval = null;
 
+        // متغيرات خاصة بلعبة عجلة الحظ
+        let selectedGameListingId = null;
+        let sessionExcludedGameListingIds = [];
+
         // Custom Modal replacement for alert & confirm
         function showModalAlert(title, message, type = 'info') {
             document.getElementById('customAlertTitle').textContent = title;
@@ -825,11 +925,8 @@
             setupWeeklyFeaturedProfiles(profs || []);
         }
 
-        // خوارزمية اختيار 10 بروفايلات أوتوماتيكياً كل أسبوع وعرض بروفايل واحد متحرك تباعاً بدون أسهم
         function setupWeeklyFeaturedProfiles(profilesArr) {
             if(!profilesArr || profilesArr.length === 0) return;
-
-            // حساب رقم الأسبوع الحالي في السنة لتغيير البروفايلات أوتوماتيكياً كل أسبوع
             const now = new Date();
             const startOfYear = new Date(now.getFullYear(), 0, 1);
             const weekNumber = Math.ceil((((now - startOfYear) / 86400000) + startOfYear.getDay() + 1) / 7);
@@ -910,6 +1007,9 @@
                         <i class="fa-solid fa-bars text-lg"></i>
                         ${activeChatsCount > 0 ? `<span class="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow animate-pulse">${activeChatsCount}</span>` : ''}
                     </button>
+                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer animate-pulse">
+                        <i class="fa-solid fa-dice animate-spin"></i> لعبة الحظ 🎲
+                    </button>
                 `;
                 updateDrawerUserInfo();
             } else {
@@ -917,8 +1017,188 @@
                     <button onclick="openModal('authModal')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer border border-emerald-200">
                         <i class="fa-solid fa-right-to-bracket ml-1"></i> دخول / حساب جديد
                     </button>
+                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer animate-pulse">
+                        <i class="fa-solid fa-dice animate-spin"></i> لعبة الحظ 🎲
+                    </button>
                 `;
             }
+        }
+
+        // --- دوال لعبة عجلة حظ المقايضة التلقائية الشفافة ---
+        function openTradeWheelGameModal() {
+            if(!currentAccount) {
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً للمشاركة في لعبة الحظ!", "info");
+                openModal('authModal');
+                return;
+            }
+            sessionExcludedGameListingIds = [];
+            selectedGameListingId = null;
+            renderGameListingsSelector();
+            document.getElementById('gameSelectorStep').classList.remove('hidden');
+            document.getElementById('gameSpinnerResultArea').classList.add('hidden');
+            openModal('tradeWheelGameModal');
+        }
+
+        function renderGameListingsSelector() {
+            const container = document.getElementById('myGameListingsDropdown');
+            const myGameListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed');
+
+            if(myGameListings.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-slate-400 text-xs py-4">ليس لديك أي عروض نشطة حالياً. أضف عرضاً جديداً أولاً!</p>`;
+                document.getElementById('startSpinWheelActionBtn').disabled = true;
+                document.getElementById('startSpinWheelActionBtn').classList.add('opacity-50', 'cursor-not-allowed');
+                return;
+            }
+
+            container.innerHTML = myGameListings.map(item => `
+                <div onclick="selectGameItem('${item.id}')" id="game-item-card-${item.id}" class="flex items-center gap-2 p-2 rounded-xl border border-slate-700 bg-slate-900/60 cursor-pointer hover:border-pink-500 transition">
+                    <img src="${item.image_url}" class="w-10 h-10 rounded-lg object-cover">
+                    <div class="text-right overflow-hidden">
+                        <h5 class="font-black text-white text-[11px] line-clamp-1">${item.title}</h5>
+                        <span class="text-[9px] text-emerald-400 font-bold">${item.city}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectGameItem(listingId) {
+            selectedGameListingId = listingId;
+            document.querySelectorAll('[id^="game-item-card-"]').forEach(el => {
+                el.className = "flex items-center gap-2 p-2 rounded-xl border border-slate-700 bg-slate-900/60 cursor-pointer hover:border-pink-500 transition";
+            });
+            const selEl = document.getElementById('game-item-card-' + listingId);
+            if(selEl) {
+                selEl.className = "flex items-center gap-2 p-2 rounded-xl border-2 border-pink-500 bg-pink-950/50 shadow-lg cursor-pointer transition";
+            }
+            const btn = document.getElementById('startSpinWheelActionBtn');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function executeWheelSpin() {
+            if(!selectedGameListingId) {
+                showModalAlert("تنبيه", "المرجو اختيار أحد عروضك للمشاركة في العجلة أولاً!", "info");
+                return;
+            }
+
+            const availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && !sessionExcludedGameListingIds.includes(l.id));
+
+            if(availableOpponents.length === 0) {
+                showModalAlert("تنبيه", "عذراً، لا توجد عروض كافية متاحة حالياً للتدوير أو استنفذت جميع العروض المتاحة في هذه الجلسة!", "info");
+                return;
+            }
+
+            document.getElementById('gameSelectorStep').classList.add('hidden');
+            const resultArea = document.getElementById('gameSpinnerResultArea');
+            resultArea.classList.remove('hidden');
+
+            resultArea.innerHTML = `
+                <div class="py-8 space-y-4">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-r from-amber-500 to-pink-600 flex items-center justify-center mx-auto text-3xl shadow-2xl wheel-anim">
+                        <i class="fa-solid fa-dice text-white"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h4 class="font-black text-base text-amber-300 animate-pulse">جاري تدوير العجلة لاختيار الشريك المناسب... 🎲</h4>
+                        <p class="text-xs text-slate-300">كون راجل وعند كلمتك، هذي غير حظ خفيف ضريف وممتعة!</p>
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const randomIdx = Math.floor(Math.random() * availableOpponents.length);
+                const chosenOpponentListing = availableOpponents[randomIdx];
+                sessionExcludedGameListingIds.push(chosenOpponentListing.id);
+
+                const myListing = allListings.find(l => String(l.id) === String(selectedGameListingId));
+                const partner = allProfiles[String(chosenOpponentListing.user_id)] || { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+
+                completeWheelTradeInSystem(myListing, chosenOpponentListing);
+
+                resultArea.innerHTML = `
+                    <div class="space-y-4 slide-fade">
+                        <span class="bg-emerald-500/20 text-emerald-300 text-xs font-black px-4 py-1.5 rounded-full border border-emerald-400 inline-block animate-bounce">
+                            🎉 مبروك! طاحت فيك هاد الهمزة 🤝
+                        </span>
+                        
+                        <div class="grid grid-cols-2 gap-3 items-center bg-slate-900/90 p-3 rounded-2xl border border-pink-500/60">
+                            <div class="text-center space-y-1">
+                                <span class="text-[10px] text-slate-400 font-bold block">سلعتك (أنت)</span>
+                                <img src="${myListing.image_url}" class="w-20 h-20 rounded-2xl object-cover mx-auto border-2 border-emerald-500 shadow-xl transform hover:scale-105 transition">
+                                <h5 class="font-black text-xs text-white line-clamp-1">${myListing.title}</h5>
+                            </div>
+                            <div class="text-center space-y-1">
+                                <span class="text-[10px] text-pink-300 font-bold block">سلعة ${partner.full_name}</span>
+                                <img src="${chosenOpponentListing.image_url}" class="w-20 h-20 rounded-2xl object-cover mx-auto border-2 border-pink-500 shadow-xl transform hover:scale-105 transition animate-pulse">
+                                <h5 class="font-black text-xs text-white line-clamp-1">${chosenOpponentListing.title}</h5>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-amber-300 font-bold leading-relaxed">
+                            🔥 <strong>كون راجل وعند كلمتك!</strong> هذي لعبة حظ خفيف ضريف وممتعة. تواصل دابا مع الشريك وحدد وقت اللقاء (فأيام العطلة، السبت والأحد) بكل روح رياضية!
+                        </p>
+
+                        <div class="space-y-2 pt-1">
+                            <button onclick="closeModal('tradeWheelGameModal'); openChatFromGame('${chosenOpponentListing.id}');" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black py-3.5 rounded-2xl text-xs shadow-xl transition cursor-pointer flex items-center justify-center gap-2 animate-bounce">
+                                <i class="fa-solid fa-comments text-base"></i> فتح الدردشة مباشرة لتحديد الوقت والمكان 💬
+                            </button>
+                            <button onclick="closeModal('tradeWheelGameModal'); openSuccessTradeModal('${myListing.id}');" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-2xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-circle-check"></i> معاينة تفاصيل العملية 🎉
+                            </button>
+                            <button onclick="openTradeWheelGameModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-pink-300 font-bold py-2 rounded-2xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5 border border-slate-700">
+                                <i class="fa-solid fa-rotate-right"></i> لعب دورة أخرى 🎲
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }, 2500);
+        }
+
+        function openChatFromGame(opponentListingId) {
+            const req = allRequests.find(r => String(r.listing_id) === String(opponentListingId) && r.status === 'accepted');
+            if(req) {
+                openChatModal(req.id);
+            } else {
+                showModalAlert("تنبيه", "جارِ فتح نافذة التنسيق للاتفاق على وقت ومكان اللقاء (السبت، الأحد أو أيام العطلة)...", "info");
+                openMenuSection('deal-chats');
+            }
+        }
+
+        async function completeWheelTradeInSystem(myListing, opponentListing) {
+            await _supabase.from('listings').update({ status: 'completed' }).eq('id', myListing.id);
+            await _supabase.from('listings').update({ status: 'completed' }).eq('id', opponentListing.id);
+
+            const { data: newReq } = await _supabase.from('trade_requests').insert([{
+                sender_id: String(currentAccount.id),
+                receiver_id: String(opponentListing.user_id),
+                listing_id: String(opponentListing.id),
+                status: 'accepted'
+            }]).select();
+
+            await fetchRequests();
+            renderHomepageCompletedTrades();
+        }
+
+        async function renderHomepageCompletedTrades() {
+            const container = document.getElementById('homepageCompletedGrid');
+            const completedItems = allListings.filter(l => l.status === 'completed');
+
+            if(!completedItems || completedItems.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 font-medium text-center py-2 col-span-full">لا توجد مقايضات مكتملة مؤخراً عبر العجلة. كن أول من يلعب ويلتقي!</p>`;
+                return;
+            }
+
+            container.innerHTML = completedItems.slice(0, 3).map(item => {
+                return `
+                    <div onclick="openSuccessTradeModal('${item.id}')" class="bg-white/90 backdrop-blur p-3 rounded-2xl border border-amber-300 shadow-md flex items-center gap-3 cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1">
+                        <img src="${item.image_url}" class="w-14 h-14 rounded-xl object-cover border-2 border-emerald-500 flex-shrink-0">
+                        <div class="overflow-hidden text-right">
+                            <span class="bg-emerald-100 text-emerald-800 text-[9px] font-black px-2 py-0.5 rounded-full inline-block mb-0.5">تمت المقايضة بنجاح 🎉</span>
+                            <h4 class="font-black text-xs text-slate-900 line-clamp-1">${item.title}</h4>
+                            <p class="text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-emerald-600"></i> ${item.city}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function updateDrawerUserInfo() {
@@ -1151,6 +1431,12 @@
 
         async function handleRegisterSubmit(e) {
             e.preventDefault();
+            const agreementChecked = document.getElementById('regAgreementCheck').checked;
+            if(!agreementChecked) {
+                showModalAlert("تنبيه", "المرجو الموافقة على اتفاق فتح الحساب أولاً!", "info");
+                return;
+            }
+
             const full_name = document.getElementById('regName').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const city = document.getElementById('regCity').value;
@@ -1328,7 +1614,11 @@
                 openModal('authModal');
                 return;
             }
+            const formEl = document.getElementById('addItemForm');
+            if(formEl) formEl.reset();
+
             document.getElementById('randomWantedCheck').checked = false;
+            document.getElementById('participateGameCheck').checked = false;
             const wantedInput = document.getElementById('addWanted');
             wantedInput.value = "";
             wantedInput.disabled = false;
@@ -1346,6 +1636,7 @@
             const activeListings = allListings.filter(p => p.status !== 'completed');
             if(countEl) countEl.textContent = activeListings.length;
             renderListings(activeListings);
+            renderHomepageCompletedTrades();
         }
 
         function shareOnWhatsApp(itemId) {
@@ -1554,7 +1845,7 @@
             
             const box = document.getElementById('chatMessagesBox');
             if(!data || data.length === 0) {
-                box.innerHTML = `<div class="text-center py-6 text-slate-400 font-bold text-xs"><p>🤝 مرحباً بكم في دردشة المقايضة!</p></div>`;
+                box.innerHTML = `<div class="text-center py-6 text-slate-400 font-bold text-xs"><p>🤝 مرحباً بكم في دردشة المقايضة! تفقو على الوقت (السبت، الأحد أو أيام العطلة) والمكان بكل راحة.</p></div>`;
                 return;
             }
 
@@ -1659,6 +1950,8 @@
             await _supabase.storage.from('product-images').upload(fileName, file);
             const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
 
+            const participateGame = document.getElementById('participateGameCheck').checked;
+
             await _supabase.from('listings').insert([{
                 title: document.getElementById('addTitle').value,
                 category: document.getElementById('addCategory').value,
@@ -1674,7 +1967,7 @@
 
             closeModal('addModal');
             fetchListings();
-            showModalAlert("نجاح", "تم نشر عرضك بنجاح! 🎉", "success");
+            showModalAlert("نجاح", participateGame ? "تم نشر عرضك ومشاركته في لعبة حظ المقايضة بنجاح! 🎁🎲" : "تم نشر عرضك بنجاح! 🎉", "success");
         }
 
         async function deleteListing(id) {
