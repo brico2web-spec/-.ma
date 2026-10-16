@@ -841,20 +841,22 @@
             document.body.appendChild(div);
         }
 
+        // --- التحديث الشامل والفوري بدون تحديث الصفحة (Real-time Subscriptions) ---
         function setupRealtimeSubscriptions() {
+            // الاستماع لتغييرات الطلبات (إضافة، تعديل، حذف)
             _supabase.channel('public:trade_requests')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'trade_requests' }, payload => {
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'trade_requests' }, payload => {
                     fetchRequests();
-                    const newReq = payload.new;
-                    if (currentAccount && String(newReq.receiver_id) === String(currentAccount.id)) {
-                        showInstantTradePopup(newReq);
+                    if (payload.eventType === 'INSERT') {
+                        const newReq = payload.new;
+                        if (currentAccount && String(newReq.receiver_id) === String(currentAccount.id)) {
+                            showInstantTradePopup(newReq);
+                        }
                     }
-                })
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'trade_requests' }, payload => {
-                    fetchRequests();
                 })
                 .subscribe();
 
+            // الاستماع لتغييرات الرسائل (لظهور الرسالة فوراً في الدردشة)
             _supabase.channel('public:messages')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
                     const newMsg = payload.new;
@@ -867,10 +869,17 @@
                 })
                 .subscribe();
 
+            // الاستماع لتغييرات العروض (إضافة عرض، تعديل، أو إتمام المقايضة)
             _supabase.channel('public:listings')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, payload => {
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'listings' }, payload => {
                     fetchListings();
                 })
+                .subscribe();
+
+            // الاستماع لتغييرات البروفايلات والتقييمات
+            _supabase.channel('public:profiles_and_ratings')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => { fetchProfilesAndData(); })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => { fetchProfilesAndData(); })
                 .subscribe();
         }
 
@@ -1251,7 +1260,6 @@
             }).join('');
         }
 
-        // --- تحديث معلومات الموني وإشعارات الروابط بدقة عالية ---
         function updateDrawerUserInfo() {
             if(!currentAccount) return;
             const avatar = currentAccount.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
@@ -1292,15 +1300,9 @@
                 ${penaltyHtml}
             `;
 
-            // حساب عدد الطلبات الجارية للإنذار
             const pendingRequestsCount = allRequests.filter(r => (String(r.receiver_id) === String(currentAccount.id) || String(r.sender_id) === String(currentAccount.id)) && r.status === 'pending').length;
-            
-            // صفقات متفق عليها (نجمة وسطها عدد العروض المتفق عليها)
             const acceptedDealsCount = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted').length;
-
-            // رسائل غير مجاب عنها (دائرة خضراء وسطها عدد الرسائل)
-            // افتراض تجريبي أو مبني على التبادل
-            const unreadMessagesCount = 0; // يمكن ربطها بنظام الرسائل الحية
+            const unreadMessagesCount = 0;
 
             const linksContainer = document.getElementById('drawerMenuLinks');
             if(isPenalized) {
@@ -1536,7 +1538,6 @@
                 openModal('modalSuccessfulTrades');
 
             } else if(sectionKey === 'deal-chats') {
-                // عرض قائمة المنتجات المتفق عليها من كلا الطرفين في نافذة خاصة
                 const acceptedRequests = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted');
                 const container = document.getElementById('agreedDealsListContent');
 
@@ -2139,7 +2140,6 @@
             const req = allRequests.find(r => String(r.id) === String(activeChatRequestId));
             if(!req) return;
 
-            // تحديث حالة المنتج إلى مكتمل وحذف الطلب تلقائياً من الطرفين الاثنين
             await _supabase.from('listings').update({ status: 'completed' }).eq('id', req.listing_id);
             await _supabase.from('trade_requests').delete().eq('id', activeChatRequestId);
 
