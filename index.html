@@ -53,7 +53,7 @@
     <!-- Supabase Initialization -->
     <script>
         const SUPABASE_URL = 'https://ppcquipmddofccpxyntj.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwY3F1aXBtZGRvZmNjcHh5bnRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjE5MTMsImV4cCI6MjEwNzU5NzkxM30.VZUILKGWpumj9GoNOH89jCgh4PpdNbeHfgbAxogivkY';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwY3F1aXBtZGRvZmNjcHh5bnRqIiwicm9sZSI6InBwY3F1aXBtZGRvZmNjcHh5bnRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjE5MTMsImV4cCI6MjEwNzU5NzkxM30.VZUILKGWpumj9GoNOH89jCgh4PpdNbeHfgbAxogivkY';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     </script>
 
@@ -527,7 +527,7 @@
                     <h4 id="accModalName" class="font-black text-base text-slate-800"></h4>
                     <p id="accModalPhone" class="text-xs text-slate-500 font-bold"></p>
                     <p id="accModalCity" class="text-xs text-emerald-600 font-bold"></p>
-                    <div id="accRatingBadge" class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
+                    <div id="accRatingBadge" class="flex items-center gap-1.5 bg-amber-50 px-3.5 py-1.5 rounded-full border border-amber-200 text-xs font-black text-amber-700 shadow-sm">
                         <!-- Injected via JS -->
                     </div>
                 </div>
@@ -553,7 +553,7 @@
     <div id="modalCurrentRequests" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 max-h-[85vh] overflow-y-auto text-right">
             <button onclick="closeModal('modalCurrentRequests')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
-            <h3 class="font-black text-base text-slate-900 border-b pb-3">الطلبات الجارية (الواردة والمرسلة) 🔔</h3>
+            <h3 class="font-black text-base text-slate-900 border-b pb-3">الطلبات الجارية (الواردة والمرسلة والمرفوضة) 🔔</h3>
             <div id="currentRequestsContent" class="space-y-3">
                 <!-- Injected via JS -->
             </div>
@@ -582,19 +582,20 @@
         </div>
     </div>
 
-    <!-- Modal: Rating System -->
+    <!-- Modal: Rating System (التقييم بـ 5 نجمات فارغة قابلة للنقر والحساب الدقيق) -->
     <div id="ratingModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right">
             <button onclick="closeModal('ratingModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             <h3 class="font-black text-base text-slate-900">تقييم شريك المقايضة 🌟</h3>
             <p id="ratingTargetName" class="text-xs text-slate-500 font-bold"></p>
             
-            <div class="flex justify-center gap-2 text-2xl py-2 cursor-pointer" id="starContainer">
-                <span onclick="setRatingStars(1)" class="star text-slate-300">★</span>
-                <span onclick="setRatingStars(2)" class="star text-slate-300">★</span>
-                <span onclick="setRatingStars(3)" class="star text-slate-300">★</span>
-                <span onclick="setRatingStars(4)" class="star text-slate-300">★</span>
-                <span onclick="setRatingStars(5)" class="star text-slate-300">★</span>
+            <!-- 5 نجمات فارغة أولاً لتحديد التقييم بدقة -->
+            <div class="flex justify-center gap-2 text-3xl py-3 cursor-pointer" id="starContainer">
+                <span onclick="setRatingStars(1)" class="star text-slate-300 hover:scale-110 transition">☆</span>
+                <span onclick="setRatingStars(2)" class="star text-slate-300 hover:scale-110 transition">☆</span>
+                <span onclick="setRatingStars(3)" class="star text-slate-300 hover:scale-110 transition">☆</span>
+                <span onclick="setRatingStars(4)" class="star text-slate-300 hover:scale-110 transition">☆</span>
+                <span onclick="setRatingStars(5)" class="star text-slate-300 hover:scale-110 transition">☆</span>
             </div>
 
             <div class="space-y-2">
@@ -701,8 +702,8 @@
                     <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> إشعارات فورية ودردشة مباشرة بين الأطراف.</li>
                     <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> نظام تقييمات لضمان المصداقية والثقة.</li>
                 </ul>
-                <div class="pt-2 text-[10px] text-slate-500 font-bold">
-                    جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الموالية الاحترافية 🎁)
+                <div class="pt-2 text-[10px] text-emerald-400 font-black">
+                    جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة V 0.1 🌟)
                 </div>
             </div>
         </div>
@@ -716,7 +717,7 @@
         let allRequests = [];
         let allRatings = [];
         let activeChatRequestId = null;
-        let selectedStarCount = 5;
+        let selectedStarCount = 0; // تبدأ فارغة (0) لتحديد التقييم بدقة
         let ratingTargetUserId = null;
         
         let weeklyFeaturedList = [];
@@ -841,9 +842,7 @@
             document.body.appendChild(div);
         }
 
-        // --- التحديث الشامل والفوري بدون تحديث الصفحة (Real-time Subscriptions) ---
         function setupRealtimeSubscriptions() {
-            // الاستماع لتغييرات الطلبات (إضافة، تعديل، حذف)
             _supabase.channel('public:trade_requests')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'trade_requests' }, payload => {
                     fetchRequests();
@@ -856,7 +855,6 @@
                 })
                 .subscribe();
 
-            // الاستماع لتغييرات الرسائل (لظهور الرسالة فوراً في الدردشة)
             _supabase.channel('public:messages')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
                     const newMsg = payload.new;
@@ -869,14 +867,12 @@
                 })
                 .subscribe();
 
-            // الاستماع لتغييرات العروض (إضافة عرض، تعديل، أو إتمام المقايضة)
             _supabase.channel('public:listings')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'listings' }, payload => {
                     fetchListings();
                 })
                 .subscribe();
 
-            // الاستماع لتغييرات البروفايلات والتقييمات
             _supabase.channel('public:profiles_and_ratings')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => { fetchProfilesAndData(); })
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => { fetchProfilesAndData(); })
@@ -1043,11 +1039,43 @@
             updateHeaderUI();
         }
 
+        // --- نظام حساب التقييمات، النجوم، والمستويات الحقيقي والمحسوب ---
         function getUserRatingStats(userId) {
             const userRats = allRatings.filter(r => String(r.rated_user_id) === String(userId));
-            if(userRats.length === 0) return { avg: '5.0', count: 0 };
-            const sum = userRats.reduce((acc, curr) => acc + Number(curr.rating), 0);
-            return { avg: (sum / userRats.length).toFixed(1), count: userRats.length };
+            const userProfile = allProfiles[String(userId)] || {};
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const hasPenalty = penalties[userProfile.phone] && new Date() < new Date(penalties[userProfile.phone].expiryDate);
+
+            // الحساب العقلاني والمحسوب
+            let baseScore = 5.0;
+            if(userRats.length > 0) {
+                const sum = userRats.reduce((acc, curr) => acc + Number(curr.rating), 0);
+                baseScore = sum / userRats.length;
+            }
+
+            // إذا كانت هناك عقوبة ينخفض التقييم والمستوى بشكل واضح وعقلاني
+            if(hasPenalty) {
+                baseScore = Math.max(1.0, baseScore - 1.5);
+            }
+
+            const finalAvg = baseScore.toFixed(1);
+            
+            // تحديد درع المستوى بناءً على التقييم والانضباط
+            let shieldLevel = "درع المستوى الأول 🛡️";
+            let shieldColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
+
+            if(hasPenalty || baseScore < 3.0) {
+                shieldLevel = "تحت الإشراف ⚠️";
+                shieldColor = "bg-rose-50 text-rose-700 border-rose-200";
+            } else if(baseScore >= 4.5 && userRats.length >= 3) {
+                shieldLevel = "درع المستوى الماسي 💎";
+                shieldColor = "bg-purple-50 text-purple-700 border-purple-200";
+            } else if(baseScore >= 4.0) {
+                shieldLevel = "درع المستوى المتقدم 🌟";
+                shieldColor = "bg-amber-50 text-amber-700 border-amber-200";
+            }
+
+            return { avg: finalAvg, count: userRats.length, shield: shieldLevel, shieldClass: shieldColor };
         }
 
         function updateHeaderUI() {
@@ -1294,8 +1322,13 @@
                 <img src="${avatar}" class="w-16 h-16 rounded-full object-cover border-4 border-emerald-500 shadow-md">
                 <h4 class="font-black text-slate-900 text-sm">${currentAccount.full_name}</h4>
                 <p class="text-[11px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-emerald-600 ml-1"></i> ${city}</p>
-                <div class="bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
-                    ⭐ ${stats.avg} (${stats.count} تقييم)
+                <div class="flex flex-col items-center gap-1 w-full">
+                    <div class="bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
+                        ⭐ ${stats.avg} (${stats.count} تقييم)
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black border ${stats.shieldClass}">
+                        ${stats.shield}
+                    </span>
                 </div>
                 ${penaltyHtml}
             `;
@@ -1380,7 +1413,7 @@
                 document.getElementById('accModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
                 document.getElementById('accModalCity').textContent = `المدينة: ${currentAccount.city || 'غير محددة'}`;
                 const stats = getUserRatingStats(currentAccount.id);
-                document.getElementById('accRatingBadge').innerHTML = `⭐ ${stats.avg} (${stats.count} تقييم من المستخدمين)`;
+                document.getElementById('accRatingBadge').innerHTML = `⭐ ${stats.avg} (${stats.count} تقييم) • <span class="text-emerald-700">${stats.shield}</span>`;
                 openModal('modalMyAccount');
 
             } else if(sectionKey === 'active-listings') {
@@ -1419,8 +1452,8 @@
                 openModal('modalActiveListings');
 
             } else if(sectionKey === 'current-requests') {
-                const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id) && r.status !== 'rejected');
-                const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id) && r.status !== 'rejected');
+                const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id));
+                const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id));
                 const container = document.getElementById('currentRequestsContent');
 
                 if(myReceived.length === 0 && mySent.length === 0) {
@@ -1440,6 +1473,15 @@
                             const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
                             const reqDate = req.created_at ? new Date(req.created_at).toLocaleString('ar-MA') : 'وقت غير محدد';
 
+                            let statusBadge = '';
+                            if(req.status === 'pending') {
+                                statusBadge = `<span class="text-[10px] px-2.5 py-1 rounded-full font-black bg-amber-50 text-amber-700 border border-amber-200">⏳ جاري الانتظار</span>`;
+                            } else if(req.status === 'accepted') {
+                                statusBadge = `<span class="text-[10px] px-2.5 py-1 rounded-full font-black bg-emerald-50 text-emerald-700 border border-emerald-200">🤝 تمت الموافقة</span>`;
+                            } else {
+                                statusBadge = `<span class="text-[10px] px-2.5 py-1 rounded-full font-black bg-rose-50 text-rose-700 border border-rose-200">❌ مرفوض</span>`;
+                            }
+
                             return `
                                 <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs mb-2">
                                     <div class="flex items-center justify-between">
@@ -1453,19 +1495,19 @@
                                         <span class="text-[9px] text-slate-400 font-bold">📅 ${reqDate}</span>
                                     </div>
                                     <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-                                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
-                                            ${req.status === 'pending' ? '⏳ جاري الانتظار' : '🤝 تمت الموافقة'}
-                                        </span>
+                                        ${statusBadge}
                                         ${req.status === 'pending' ? `
                                             <div class="flex items-center gap-1.5">
                                                 <button onclick="respondTrade('${req.id}', 'accepted')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">موافقة وتنسيق</button>
                                                 <button onclick="respondTrade('${req.id}', 'rejected')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-2 rounded-xl transition cursor-pointer">رفض</button>
                                             </div>
-                                        ` : `
+                                        ` : req.status === 'accepted' ? `
                                             <div class="flex items-center gap-1.5">
                                                 <button onclick="closeModal('modalCurrentRequests'); openChatModal('${req.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">فتح الدردشة 💬</button>
-                                                <button onclick="cancelTradeDueToNoResponse('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-2.5 rounded-xl transition cursor-pointer text-[10px]">إلغاء لعدم الرد 🚫</button>
+                                                <button onclick="cancelTradeDueToNoResponse('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-2.5 rounded-xl transition cursor-pointer text-[10px]">إلغاء 🚫</button>
                                             </div>
+                                        ` : `
+                                            <button onclick="deleteTradeRequest('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-3 rounded-xl transition cursor-pointer text-[10px]">حذف الطلب 🗑️</button>
                                         `}
                                     </div>
                                 </div>
@@ -1476,8 +1518,18 @@
                     if(mySent.length > 0) {
                         html += `<p class="font-bold text-xs text-blue-700 mt-4 mb-1">طلباتك المرسلة:</p>`;
                         html += mySent.map(req => {
+                            const receiver = allProfiles[String(req.receiver_id)] || { full_name: 'صاحب العرض' };
                             const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
                             const reqDate = req.created_at ? new Date(req.created_at).toLocaleString('ar-MA') : 'وقت غير محدد';
+
+                            let statusBadge = '';
+                            if(req.status === 'pending') {
+                                statusBadge = `<span class="text-[10px] px-2.5 py-1 rounded-full font-black bg-amber-50 text-amber-700 border border-amber-200">⏳ قيد الانتظار</span>`;
+                            } else if(req.status === 'accepted') {
+                                statusBadge = `<span class="text-[10px] px-2.5 py-1 rounded-full font-black bg-emerald-50 text-emerald-700 border border-emerald-200">✅ موافق</span>`;
+                            } else {
+                                statusBadge = `<span class="text-[10px] px-2.5 py-1 rounded-full font-black bg-rose-50 text-rose-700 border border-rose-200">❌ مرفوض من الطرف الآخر</span>`;
+                            }
 
                             return `
                                 <div class="bg-blue-50/40 p-3.5 rounded-2xl border border-blue-100 shadow-sm space-y-2 text-xs mb-2">
@@ -1485,14 +1537,22 @@
                                         <span class="font-black text-slate-900">أرسلت طلباً لعرض: <strong class="text-blue-700">${listing.title}</strong></span>
                                         <span class="text-[9px] text-slate-400 font-bold">📅 ${reqDate}</span>
                                     </div>
+                                    ${req.status === 'rejected' ? `
+                                        <div class="bg-rose-50 border border-rose-200 p-2.5 rounded-xl text-rose-700 font-bold text-[11px]">
+                                            لقد رفض ${receiver.full_name} المقايضة 🚫
+                                        </div>
+                                    ` : ''}
                                     <div class="flex items-center justify-between pt-1">
-                                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
-                                            ${req.status === 'pending' ? '⏳ قيد الانتظار' : '✅ موافق'}
-                                        </span>
+                                        ${statusBadge}
                                         ${req.status === 'accepted' ? `
                                             <div class="flex items-center gap-1.5">
                                                 <button onclick="closeModal('modalCurrentRequests'); openChatModal('${req.id}')" class="bg-blue-600 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">دردشة الصفقة 💬</button>
-                                                <button onclick="cancelTradeDueToNoResponse('${req.id}')" class="bg-rose-50 text-rose-600 font-bold py-1.5 px-2 rounded-xl transition cursor-pointer text-[10px]">إلغاء لعدم الرد 🚫</button>
+                                                <button onclick="cancelTradeDueToNoResponse('${req.id}')" class="bg-rose-50 text-rose-600 font-bold py-1.5 px-2 rounded-xl transition cursor-pointer text-[10px]">إلغاء 🚫</button>
+                                            </div>
+                                        ` : req.status === 'rejected' ? `
+                                            <div class="flex items-center gap-1.5">
+                                                <button onclick="deleteTradeRequest('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">حذف 🗑️</button>
+                                                <button onclick="reSendTradeRequest('${req.listing_id}', '${req.receiver_id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">إعادة إرسال الطلب 🔄</button>
                                             </div>
                                         ` : `
                                             <button onclick="cancelTradeDueToNoResponse('${req.id}')" class="bg-rose-50 text-rose-600 font-bold py-1.5 px-2 rounded-xl transition cursor-pointer text-[10px]">إلغاء الطلب 🚫</button>
@@ -1566,6 +1626,27 @@
                 }).join('');
                 openModal('modalAgreedDealsList');
             }
+        }
+
+        async function deleteTradeRequest(reqId) {
+            await _supabase.from('trade_requests').delete().eq('id', reqId);
+            await fetchRequests();
+            closeModal('modalCurrentRequests');
+            openMenuSection('current-requests');
+            showModalAlert("نجاح", "تم حذف الطلب بنجاح 🗑️", "success");
+        }
+
+        async function reSendTradeRequest(listingId, receiverId) {
+            await _supabase.from('trade_requests').insert([{
+                sender_id: String(currentAccount.id),
+                receiver_id: String(receiverId),
+                listing_id: String(listingId),
+                status: 'pending'
+            }]);
+            await fetchRequests();
+            closeModal('modalCurrentRequests');
+            openMenuSection('current-requests');
+            showModalAlert("نجاح", "تم إعادة إرسال طلب المقايضة بنجاح لنفس المنتوج! 🔄", "success");
         }
 
         async function cancelTradeDueToNoResponse(reqId) {
@@ -1947,7 +2028,7 @@
                                 </button>
                             ` : mySentReq ? `
                                 <button disabled class="w-full bg-slate-200 text-slate-600 font-bold text-[11px] sm:text-xs py-2 sm:py-2.5 rounded-xl text-center flex items-center justify-center gap-1 cursor-not-allowed">
-                                    <i class="fa-solid fa-check"></i> ${mySentReq.status === 'accepted' ? 'موافق 🤝' : 'قيد الانتظار ⏳'}
+                                    <i class="fa-solid fa-check"></i> ${mySentReq.status === 'accepted' ? 'موافق 🤝' : mySentReq.status === 'rejected' ? 'مرفوض ❌' : 'قيد الانتظار ⏳'}
                                 </button>
                             ` : `
                                 <button onclick="handleRequestTrade('${item.id}', '${item.user_id}')" class="w-full ${isRandomWanted ? 'bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 shadow-lg' : 'bg-emerald-600 hover:bg-emerald-700'} text-white font-bold text-[11px] sm:text-xs py-2 sm:py-2.5 rounded-xl text-center flex items-center justify-center gap-1 transition cursor-pointer">
@@ -2155,14 +2236,20 @@
             ratingTargetUserId = userId;
             const partner = allProfiles[String(userId)] || { full_name: 'الشريك' };
             document.getElementById('ratingTargetName').textContent = `تقييم: ${partner.full_name}`;
-            setRatingStars(5);
+            setRatingStars(0); // تبدأ فارغة تماماً
             openModal('ratingModal');
         }
 
         function setRatingStars(count) {
             selectedStarCount = count;
             document.querySelectorAll('#starContainer .star').forEach((s, idx) => {
-                s.className = idx < count ? "star text-amber-400 cursor-pointer" : "star text-slate-300 cursor-pointer";
+                if(idx < count) {
+                    s.textContent = "★";
+                    s.className = "star text-amber-400 hover:scale-110 transition";
+                } else {
+                    s.textContent = "☆";
+                    s.className = "star text-slate-300 hover:scale-110 transition";
+                }
             });
         }
 
@@ -2173,6 +2260,11 @@
 
         async function submitUserRating() {
             if(!ratingTargetUserId || !currentAccount) return;
+            if(selectedStarCount === 0) {
+                showModalAlert("تنبيه", "المرجو اختيار عدد النجوم أولاً (من 1 إلى 5)!", "info");
+                return;
+            }
+
             await _supabase.from('ratings').insert([{
                 rater_id: String(currentAccount.id),
                 rated_user_id: String(ratingTargetUserId),
