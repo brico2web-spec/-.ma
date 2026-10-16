@@ -510,6 +510,31 @@
         </div>
     </div>
 
+    <!-- Modal: اختيار منتج من عروضك النشطة للمزاد -->
+    <div id="addAuctionItemModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[130] hidden flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right slide-fade max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('addAuctionItemModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <div class="border-b pb-3">
+                <span class="bg-purple-100 text-purple-800 text-xs font-black px-3 py-1 rounded-full">🔨 طرح منتج في المزاد</span>
+                <h3 class="font-black text-xl text-slate-900 mt-1">اختر من عروضك النشطة</h3>
+                <p class="text-xs text-slate-500">اختر سلعة من عروضك وحدد لها سعراً ابتدائياً (بين 10 و 500 درهم). (منتج واحد لكل جولة).</p>
+            </div>
+            
+            <div class="space-y-3">
+                <div id="myAuctionActiveListingsDropdown" class="grid grid-cols-1 gap-2 max-h-52 overflow-y-auto p-1 bg-slate-50 rounded-2xl border border-slate-200">
+                    <!-- Injected via JS -->
+                </div>
+                <div>
+                    <label class="block font-bold text-xs text-slate-700 mb-1">السعر الابتدائي (درهم) * (بين 10 و 500 د.م):</label>
+                    <input type="number" id="auctionStartPriceInput" min="10" max="500" value="50" class="w-full bg-slate-50 border p-3 rounded-xl font-bold text-xs focus:ring-2 focus:ring-purple-500">
+                </div>
+                <button onclick="submitListingToAuction()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-black py-3.5 rounded-xl text-xs shadow-lg transition cursor-pointer">
+                    تأكيد ونشر المنتج في المزاد 🚀 (لا يمكن حذفه أو تغييره لاحقاً)
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Add Item -->
     <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100">
@@ -1422,6 +1447,86 @@
             }
         }
 
+        function openAddAuctionItemModal() {
+            if(!currentAccount) {
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً لطرح منتج في المزاد!", "info");
+                openModal('authModal');
+                return;
+            }
+
+            // التحقق هل أضاف هذا المستخدم منتجاً بالفعل في هذه الجولة النشطة (3 منتجات الحالية)
+            const activeBatch = auctionItems.slice(0, 3);
+            const alreadyHasItem = activeBatch.some(item => String(item.userId) === String(currentAccount.id));
+
+            if(alreadyHasItem) {
+                showModalAlert("تنبيه", "لديك بالفعل منتج معروض في هذه الجولة النشطة للمزاد! يسمح بمنتج واحد فقط لكل مستخدم في الجولة.", "error");
+                return;
+            }
+
+            // جلب عروض المستخدم النشطة
+            const myActiveListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed');
+            const container = document.getElementById('myAuctionActiveListingsDropdown');
+
+            if(myActiveListings.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 text-xs py-4">ليس لديك أي عروض نشطة حالياً لطرحها في المزاد. أضف عرضاً جديداً أولاً!</p>`;
+                document.getElementById('auctionStartPriceInput').disabled = true;
+                openModal('addAuctionItemModal');
+                return;
+            }
+
+            document.getElementById('auctionStartPriceInput').disabled = false;
+            container.innerHTML = myActiveListings.map(item => `
+                <div class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 bg-white hover:border-purple-500 transition">
+                    <input type="radio" name="selectedAuctionListing" value="${item.id}" id="auc_radio_${item.id}" class="accent-purple-600 cursor-pointer">
+                    <img src="${item.image_url}" class="w-12 h-12 rounded-lg object-cover">
+                    <div class="text-right overflow-hidden flex-grow">
+                        <label for="auc_radio_${item.id}" class="font-black text-slate-800 text-xs line-clamp-1 cursor-pointer">${item.title}</label>
+                        <span class="text-[10px] text-emerald-600 font-bold">${item.city} - ${item.trade_type}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            openModal('addAuctionItemModal');
+        }
+
+        function submitListingToAuction() {
+            if(!currentAccount) return;
+            const selectedRadio = document.querySelector('input[name="selectedAuctionListing"]:checked');
+            if(!selectedRadio) {
+                showModalAlert("تنبيه", "المرجو اختيار منتج واحد من عروضك النشطة!", "error");
+                return;
+            }
+
+            const listingId = selectedRadio.value;
+            const listing = allListings.find(l => String(l.id) === String(listingId));
+            if(!listing) return;
+
+            const startPriceInput = Number(document.getElementById('auctionStartPriceInput').value);
+            if(isNaN(startPriceInput) || startPriceInput < 10 || startPriceInput > 500) {
+                showModalAlert("خطأ في الثمن", "السعر الابتدائي يجب أن يكون محصوراً بين 10 دراهم و 500 درهم!", "error");
+                return;
+            }
+
+            const newAuctionItem = {
+                id: 'auc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+                listingId: listing.id,
+                userId: currentAccount.id,
+                title: listing.title,
+                imageUrl: listing.image_url,
+                startPrice: startPriceInput,
+                currentPrice: startPriceInput,
+                highestBidderId: null,
+                highestBidderName: null
+            };
+
+            auctionItems.unshift(newAuctionItem);
+            localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
+
+            closeModal('addAuctionItemModal');
+            renderFridayAuctionInterface();
+            showModalAlert("نجاح", "تم طرح منتجك في المزاد بنجاح! 🔨 (ملاحظة: لا يمكن حذفه أو تغييره بعد النشر).", "success");
+        }
+
         function renderFridayAuctionInterface() {
             const container = document.getElementById('fridayAuctionContainer');
             const activeAuctionBatch = auctionItems.slice(0, 3);
@@ -1430,22 +1535,32 @@
             let secs = auctionTimerSeconds % 60;
             let timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
+            let addBtnHtml = `
+                <div class="flex items-center justify-between bg-purple-900/40 p-3 rounded-2xl border border-purple-500/50 flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-black text-purple-300">⏱️ العد التنازلي لإنتهاء المزاد (30 دقيقة):</span>
+                        <span id="auctionCountdownDisplay" class="bg-emerald-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow animate-pulse">${timeStr}</span>
+                    </div>
+                    <button onclick="openAddAuctionItemModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-plus-circle"></i> أضف منتجك للمزاد (بين 10 و 500 د.م) 🏷️
+                    </button>
+                </div>
+            `;
+
             if (activeAuctionBatch.length === 0) {
                 container.innerHTML = `
+                    ${addBtnHtml}
                     <div class="text-center py-12 space-y-3 bg-slate-900/60 rounded-3xl border border-purple-500/40">
                         <i class="fa-solid fa-gavel text-5xl text-purple-400"></i>
                         <h4 class="font-black text-white text-base">لا توجد منتجات معروضة في المزاد حالياً</h4>
-                        <p class="text-xs text-purple-200">المرجوا ترقب المنتجات القادمة في ساحة المزاد الحصري يوم الجمعة!</p>
+                        <p class="text-xs text-purple-200">كن أول من يطرح منتجه في ساحة المزاد الحصري يوم الجمعة!</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = `
-                <div class="flex items-center justify-between bg-purple-900/40 p-3 rounded-2xl border border-purple-500/50">
-                    <span class="text-xs font-black text-purple-300">⏱️ العد التنازلي لإنتهاء المزاد (30 دقيقة):</span>
-                    <span id="auctionCountdownDisplay" class="bg-emerald-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow animate-pulse">${timeStr}</span>
-                </div>
+                ${addBtnHtml}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     ${activeAuctionBatch.map((item, idx) => {
                         const seller = allProfiles[String(item.userId)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
@@ -1467,17 +1582,20 @@
                                 </div>
                                 <div class="space-y-1">
                                     <h5 class="font-black text-sm text-white line-clamp-1">${item.title}</h5>
-                                    <p class="text-[11px] text-purple-300 font-bold">السعر الحالي: <span class="text-amber-400 font-black text-sm">${item.currentPrice || item.startPrice} درهم</span></p>
+                                    <div class="bg-purple-950/80 p-2 rounded-xl border border-purple-500/30 flex items-center justify-between">
+                                        <span class="text-[10px] text-purple-300 font-bold">الثمن الحالي للمنتج:</span>
+                                        <span class="text-amber-400 font-black text-sm">${item.currentPrice || item.startPrice} درهم</span>
+                                    </div>
                                     <p class="text-[10px] text-slate-400">أعلى مزايد: <strong class="${isMyHighest ? 'text-amber-400' : 'text-emerald-400'}">${bidder} ${isMyHighest ? '(أنت 👑)' : ''}</strong></p>
                                 </div>
                                 <div class="space-y-2 pt-2 border-t border-purple-900/50">
                                     ${isMyItemInAuction ? `
                                         <div class="bg-amber-500/10 border border-amber-400/30 p-2 rounded-xl text-center">
-                                            <span class="text-[10px] text-amber-300 font-bold">هذا منتجك المعروض للمزايدة من طرف زوار المنصة 🏷️</span>
+                                            <span class="text-[10px] text-amber-300 font-bold">هذا منتجك المعروض للمزايدة من طرف زوار المنصة 🏷️ (ممنوع الحذف أو التعديل)</span>
                                         </div>
                                     ` : `
                                         <div class="flex gap-1.5 items-center">
-                                            <input type="number" id="bidInput_${item.id}" placeholder="اكتب الثمن (فرق 5 دراهم كحد أدنى)" class="w-full bg-slate-800 border border-purple-400/50 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                            <input type="number" id="bidInput_${item.id}" placeholder="اكتب الثمن (بزيادة 5 دراهم أو أكثر)" class="w-full bg-slate-800 border border-purple-400/50 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-amber-400">
                                             <button onclick="placeCustomBid('${item.id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow transition cursor-pointer whitespace-nowrap">
                                                 مزايدة ⚡
                                             </button>
@@ -1521,7 +1639,7 @@
             }
 
             if((enteredPrice - currentHighest) < 5) {
-                showModalAlert("تنبيه", "فرق المزايدة يجب ألا يقل عن 5 دراهم كحد أدنى!", "error");
+                showModalAlert("تنبيه", "فرق المزايدة يجب أن يكون 5 دراهم أو أكثر فوق السعر الحالي!", "error");
                 return;
             }
 
