@@ -679,7 +679,7 @@
                     <img id="chatPartnerAvatar" src="" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
                     <div>
                         <h4 id="chatPartnerName" class="font-black text-xs text-slate-900"></h4>
-                        <span class="text-[9px] text-emerald-600 font-bold flex items-center gap-1">
+                        <span id="chatTypingIndicator" class="text-[9px] text-emerald-600 font-bold flex items-center gap-1">
                             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> متصل الآن للتنسيق
                         </span>
                     </div>
@@ -716,12 +716,15 @@
                     </button>
                 </div>
                 
-                <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl text-center">
-                    <p class="text-[11px] font-black text-amber-800">⚠️ تأكد أولاً من تلاقيكما وأن المقايضة تمت بنجاح تام بينكما قبل الضغط على الزر أدناه:</p>
+                <!-- زر إتمام المقايضة بوضوح مع خانة تنبيه واضحة فوقه -->
+                <div class="bg-amber-50 border-2 border-amber-300 p-2.5 rounded-2xl text-center shadow-sm">
+                    <p class="text-[11px] font-black text-amber-900 leading-snug">
+                        ⚠️ تنبيه مهم جداً: تأكد أولاً من تلاقيكما وأن المقايضة تمت بنجاح تام بينكما قبل الضغط على زر تأكيد الإتمام أدناه:
+                    </p>
                 </div>
 
-                <button onclick="completeTradeSuccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition cursor-pointer flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-check"></i> تأكيد إتمام المقايضة بنجاح 🎉
+                <button onclick="completeTradeSuccess()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black py-3 rounded-xl text-xs shadow-lg transition cursor-pointer flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-check text-base"></i> تأكيد إتمام المقايضة بنجاح وتوثيقها 🎉
                 </button>
             </div>
         </div>
@@ -788,6 +791,8 @@
         let auctionItems = JSON.parse(localStorage.getItem('badal_auction_items') || '[]');
         let auctionTimerSeconds = 1800;
         let auctionTimerInterval = null;
+
+        let typingTimeout = null;
 
         function showModalAlert(title, message, type = 'info') {
             document.getElementById('customAlertTitle').textContent = title;
@@ -857,6 +862,7 @@
             setupRealtimeSubscriptions();
             setInterval(rotatePromoSlider, 5000);
             
+            // إعداد التفاعل مع زر الإرسال عبر الكيبورد (Entrée) ومؤشر الكتابة
             const chatInput = document.getElementById('chatInputMessage');
             if(chatInput) {
                 chatInput.addEventListener('keydown', function(e) {
@@ -864,6 +870,9 @@
                         e.preventDefault();
                         sendChatMessage();
                     }
+                });
+                chatInput.addEventListener('input', function() {
+                    handleTypingSignal();
                 });
             }
         };
@@ -933,9 +942,24 @@
                     const msg = payload.new;
                     if (activeChatRequestId && msg && String(msg.request_id) === String(activeChatRequestId)) {
                         loadChatMessages();
+                        if(msg.sender_id && currentAccount && String(msg.sender_id) !== String(currentAccount.id)) {
+                            showTypingIndicatorInUI(false);
+                        }
                     } else if (payload.eventType === 'INSERT' && currentAccount && String(payload.new.sender_id) !== String(currentAccount.id)) {
                         showFloatingNotification("💬 رسالة جديدة في دردشة المقايضة!");
                         fetchRequests();
+                    }
+                })
+                .subscribe();
+
+            // الاستماع لإشارات مؤشر الكتابة الفوري (Typing Indicator)
+            _supabase.channel('public:typing')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'typing_signals' }, payload => {
+                    const sig = payload.new;
+                    if (activeChatRequestId && sig && String(sig.request_id) === String(activeChatRequestId)) {
+                        if (sig.user_id && currentAccount && String(sig.user_id) !== String(currentAccount.id)) {
+                            showTypingIndicatorInUI(sig.is_typing);
+                        }
                     }
                 })
                 .subscribe();
@@ -959,6 +983,41 @@
                 })
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => { fetchProfilesAndData(); })
                 .subscribe();
+        }
+
+        async function handleTypingSignal() {
+            if(!activeChatRequestId || !currentAccount) return;
+            // إرسال إشارة الكتابة لجدول مؤقت أو عبر Supabase Broadcast / Table
+            try {
+                await _supabase.from('typing_signals').upsert({
+                    request_id: activeChatRequestId,
+                    user_id: currentAccount.id,
+                    is_typing: true,
+                    updated_at: new Date()
+                }, { onConflict: 'request_id,user_id' });
+
+                if(typingTimeout) clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(async () => {
+                    await _supabase.from('typing_signals').upsert({
+                        request_id: activeChatRequestId,
+                        user_id: currentAccount.id,
+                        is_typing: false,
+                        updated_at: new Date()
+                    }, { onConflict: 'request_id,user_id' });
+                }, 2000);
+            } catch(err) {
+                // تجاهل أخطاء الجدول في حال لم يُنشأ مسبقاً وتفعيل المؤشر المحلي
+            }
+        }
+
+        function showTypingIndicatorInUI(isTyping) {
+            const indicatorEl = document.getElementById('chatTypingIndicator');
+            if(!indicatorEl) return;
+            if(isTyping) {
+                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></i> <strong class="text-amber-600">الطرف الآخر يكتب رسالة الآن... ✍️</strong>`;
+            } else {
+                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> متصل الآن للتنسيق`;
+            }
         }
 
         function showInstantTradePopup(req) {
@@ -1167,11 +1226,13 @@
             const container = document.getElementById('authHeaderSection');
             if(currentAccount) {
                 const activeChatsCount = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted').length;
+                const pendingRequestsCount = allRequests.filter(r => (String(r.receiver_id) === String(currentAccount.id) || String(r.sender_id) === String(currentAccount.id)) && r.status === 'pending').length;
 
+                // إشعارات طلبات المقايضة فوق زر القائمة الجانبية (Drawer Menu)
                 container.innerHTML = `
                     <button onclick="openRightMenu()" class="relative bg-emerald-50 hover:bg-emerald-100 text-emerald-700 w-11 h-11 rounded-2xl flex items-center justify-center transition border border-emerald-200 cursor-pointer shadow-sm">
                         <i class="fa-solid fa-bars text-lg"></i>
-                        ${activeChatsCount > 0 ? `<span class="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow animate-pulse">${activeChatsCount}</span>` : ''}
+                        ${(activeChatsCount > 0 || pendingRequestsCount > 0) ? `<span class="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow animate-bounce" title="لديك طلبات مقايضة جديدة">${pendingRequestsCount > 0 ? pendingRequestsCount : activeChatsCount}</span>` : ''}
                     </button>
                     <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-gavel"></i> المزاد الحصري 🔨
