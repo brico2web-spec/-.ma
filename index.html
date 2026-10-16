@@ -145,7 +145,7 @@
                     <i class="fa-solid fa-bolt text-amber-400"></i> همزة لا تُعوض
                 </span>
                 <h3 id="sliderTitle" class="text-xl sm:text-3xl font-black text-white slide-fade drop-shadow-md leading-tight">بدل داكشي اللي ما محتاجوش، وربح جديد فبلاش!</h3>
-                <p id="sliderDesc" class="text-xs sm:text-sm text-slate-200 font-medium slide-fade drop-shadow leading-relaxed">المقايضة المباشرة راس فـ راس بـ 0 درهم بين ولاد بلادك بكل أمان وثقة.</p>
+                <p id="sliderDesc" class="text-xs sm:text-sm text-slate-200 font-medium slide-fade drop-shadow leading-relaxed">المقايضة المباشرة راس fـ راس بـ 0 درهم بين ولاد بلادك بكل أمان وثقة.</p>
                 <div class="pt-1 flex items-center gap-2 flex-wrap">
                     <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-arrows-rotate"></i> ابدأ المقايضة الآن
@@ -689,7 +689,8 @@
 
             <div id="chatProductBanner" class="bg-emerald-50 px-4 py-2 border-b border-emerald-100 flex items-center gap-3 text-xs"></div>
 
-            <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-4 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] text-xs"></div>
+            <!-- Chat Messages Box -->
+            <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-4 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] text-xs relative"></div>
 
             <div class="bg-white px-3 py-1.5 border-t border-slate-200 flex items-center gap-2 overflow-x-auto text-base">
                 <button onclick="addEmoji('😊')" class="hover:scale-125 transition">😊</button>
@@ -709,11 +710,16 @@
                     </label>
                     <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="sendChatImage(event)">
                     
-                    <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك هنا..." class="flex-grow bg-slate-100 border border-slate-200 p-2.5 rounded-2xl font-bold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك هنا... (اضغط Entrée للإرسال)" class="flex-grow bg-slate-100 border border-slate-200 p-2.5 rounded-2xl font-bold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-2xl text-xs transition shadow cursor-pointer flex items-center gap-1">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
+                
+                <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl text-center">
+                    <p class="text-[11px] font-black text-amber-800">⚠️ تأكد أولاً من تلاقيكما وأن المقايضة تمت بنجاح تام بينكما قبل الضغط على الزر أدناه:</p>
+                </div>
+
                 <button onclick="completeTradeSuccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow transition cursor-pointer flex items-center justify-center gap-2">
                     <i class="fa-solid fa-circle-check"></i> تأكيد إتمام المقايضة بنجاح 🎉
                 </button>
@@ -850,6 +856,16 @@
             await fetchProfilesAndData();
             setupRealtimeSubscriptions();
             setInterval(rotatePromoSlider, 5000);
+            
+            const chatInput = document.getElementById('chatInputMessage');
+            if(chatInput) {
+                chatInput.addEventListener('keydown', function(e) {
+                    if(e.key === 'Enter') {
+                        e.preventDefault();
+                        sendChatMessage();
+                    }
+                });
+            }
         };
 
         async function checkUserBannedOrPenalizedCloud(acc) {
@@ -871,15 +887,6 @@
 
             if ((cloudPenExpiry && new Date() < cloudPenExpiry) || (localPen && new Date() < new Date(localPen.expiryDate))) {
                 return false; 
-            }
-            return false;
-        }
-
-        function checkUserBannedOrPenalized(phone) {
-            const bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
-            if(bannedPhones.includes(phone)) {
-                showBannedModal();
-                return true;
             }
             return false;
         }
@@ -922,11 +929,11 @@
                 .subscribe();
 
             _supabase.channel('public:messages')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
-                    const newMsg = payload.new;
-                    if (activeChatRequestId && String(newMsg.request_id) === String(activeChatRequestId)) {
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, payload => {
+                    const msg = payload.new;
+                    if (activeChatRequestId && msg && String(msg.request_id) === String(activeChatRequestId)) {
                         loadChatMessages();
-                    } else if (currentAccount && String(newMsg.sender_id) !== String(currentAccount.id)) {
+                    } else if (payload.eventType === 'INSERT' && currentAccount && String(payload.new.sender_id) !== String(currentAccount.id)) {
                         showFloatingNotification("💬 رسالة جديدة في دردشة المقايضة!");
                         fetchRequests();
                     }
@@ -2448,14 +2455,18 @@
             const msg = input.value.trim();
             if(!msg || !activeChatRequestId) return;
 
-            await _supabase.from('messages').insert([{
+            const { error } = await _supabase.from('messages').insert([{
                 request_id: activeChatRequestId,
                 sender_id: String(currentAccount.id),
                 message: msg
             }]);
 
-            input.value = '';
-            loadChatMessages();
+            if(!error) {
+                input.value = '';
+                loadChatMessages();
+            } else {
+                showModalAlert("خطأ", "تعذر إرسال الرسالة: " + error.message, "error");
+            }
         }
 
         async function sendChatImage(e) {
