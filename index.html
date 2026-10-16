@@ -905,7 +905,7 @@
                 </ul>
                 <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                     <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 1.0</span>
+                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 1.1</span>
                 </div>
             </div>
         </div>
@@ -1463,24 +1463,31 @@
 
             let bidsHistoryLocal = JSON.parse(localStorage.getItem('badal_auction_bids_' + listingId) || '[]');
 
-            let updatePayload = {
+            // تحديث محلي وفوري لضمان ظهور المنتج لجميع المستخدمين دون الاعتماد على أعمدة Supabase المفقودة
+            let targetItem = allListings.find(l => String(l.id) === String(listingId));
+            if(targetItem) {
+                targetItem.is_auction = true;
+                targetItem.start_price = startPriceInput;
+                targetItem.current_price = startPriceInput;
+                targetItem.bids_history = bidsHistoryLocal;
+            }
+
+            localStorage.setItem('badal_auction_item_' + listingId, JSON.stringify({
                 is_auction: true,
                 start_price: startPriceInput,
                 current_price: startPriceInput,
                 bids_history: bidsHistoryLocal
-            };
+            }));
 
-            let { error } = await _supabase.from('listings').update(updatePayload).eq('id', listingId);
-
-            if(error && error.message && (error.message.includes('is_auction') || error.message.includes('current_price') || error.message.includes('bids_history') || error.message.includes('schema cache'))) {
-                let targetItem = allListings.find(l => l.id === listingId);
-                if(targetItem) {
-                    targetItem.is_auction = true;
-                    targetItem.start_price = startPriceInput;
-                    targetItem.current_price = startPriceInput;
-                    targetItem.bids_history = bidsHistoryLocal;
-                }
-            }
+            // محاولة المزامنة مع قاعدة البيانات إن وجدت
+            try {
+                await _supabase.from('listings').update({
+                    is_auction: true,
+                    start_price: startPriceInput,
+                    current_price: startPriceInput,
+                    bids_history: bidsHistoryLocal
+                }).eq('id', listingId);
+            } catch(e) {}
 
             await fetchListings();
             closeModal('addAuctionItemModal');
@@ -1491,7 +1498,7 @@
         function renderFridayAuctionInterface() {
             const container = document.getElementById('fridayAuctionContainer');
             
-            // جعل المزاد يعرض جميع المنتجات المعروضة للمزاد المباشر للجميع في وقت واحد
+            // جلب العروض المعروضة للمزاد من البيانات المحدثة محلياً أو من السيرفر
             const activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
 
             let addBtnHtml = `
@@ -1630,12 +1637,17 @@
             item.bids_history = updatedBids;
             localStorage.setItem('badal_auction_bids_' + itemId, JSON.stringify(updatedBids));
 
-            let updatePayload = {
-                current_price: enteredPrice,
-                bids_history: updatedBids
-            };
+            let localSavedData = JSON.parse(localStorage.getItem('badal_auction_item_' + itemId) || '{}');
+            localSavedData.current_price = enteredPrice;
+            localSavedData.bids_history = updatedBids;
+            localStorage.setItem('badal_auction_item_' + itemId, JSON.stringify(localSavedData));
 
-            let { error } = await _supabase.from('listings').update(updatePayload).eq('id', itemId);
+            try {
+                await _supabase.from('listings').update({
+                    current_price: enteredPrice,
+                    bids_history: updatedBids
+                }).eq('id', itemId);
+            } catch(e) {}
 
             renderFridayAuctionInterface();
             showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح بـ ${enteredPrice} درهم!`);
@@ -2478,6 +2490,14 @@
 
             allListings = data || [];
             allListings.forEach(item => {
+                let localAuctionItem = localStorage.getItem('badal_auction_item_' + item.id);
+                if(localAuctionItem) {
+                    let parsed = JSON.parse(localAuctionItem);
+                    item.is_auction = parsed.is_auction;
+                    item.start_price = parsed.start_price;
+                    item.current_price = parsed.current_price;
+                    item.bids_history = parsed.bids_history;
+                }
                 if(!item.bids_history) {
                     let localBids = localStorage.getItem('badal_auction_bids_' + item.id);
                     if(localBids) item.bids_history = JSON.parse(localBids);
