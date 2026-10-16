@@ -104,8 +104,8 @@
         <!-- Injected via JS -->
     </div>
 
-    <!-- Modern Notification / Custom Alert Modal Container -->
-    <div id="customAlertModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <!-- Modern Notification / Custom Alert Modal Container (Fixed Z-Index to appear above auction modal) -->
+    <div id="customAlertModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center space-y-4 shadow-2xl border border-slate-100 slide-fade">
             <div id="customAlertIcon" class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto text-xl">
                 <i class="fa-solid fa-circle-info"></i>
@@ -118,8 +118,8 @@
         </div>
     </div>
 
-    <!-- Custom Confirm Modal Container -->
-    <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <!-- Custom Confirm Modal Container (Fixed Z-Index) -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xs w-full p-6 text-center space-y-4 shadow-2xl border border-slate-100 slide-fade">
             <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto text-xl">
                 <i class="fa-solid fa-triangle-exclamation"></i>
@@ -491,7 +491,7 @@
         </div>
     </div>
 
-    <!-- MODAL: المزاد الحصري يوم الجمعة -->
+    <!-- MODAL: المزاد الحصري يوم الجمعة (مع تفريغ ساحة المزايدة والتحكم بالعد التنازلي الموحد) -->
     <div id="fridayAuctionModal" class="fixed inset-0 bg-slate-900/85 backdrop-blur-md z-[120] hidden flex items-center justify-center p-4">
         <div class="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl relative border-2 border-purple-400 text-right slide-fade overflow-hidden max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('fridayAuctionModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center justify-center transition z-20">&times;</button>
@@ -908,7 +908,7 @@
                 </ul>
                 <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                     <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.2</span>
+                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.3</span>
                 </div>
             </div>
         </div>
@@ -933,7 +933,6 @@
         let sessionExcludedGameListingIds = [];
 
         let auctionItems = JSON.parse(localStorage.getItem('badal_auction_items') || '[]');
-        let auctionTimerSeconds = 1800;
         let auctionTimerInterval = null;
 
         let typingTimeout = null;
@@ -1415,21 +1414,30 @@
             startAuctionTimer();
         }
 
+        // عد تنازلي موحد لكل 30 دقيقة بناءً على الوقت الفعلي لكي يظهر نفس الوقت لجميع المستخدمين ولا يتأثر بتحديث الصفحة
         function startAuctionTimer() {
             if (auctionTimerInterval) clearInterval(auctionTimerInterval);
-            auctionTimerInterval = setInterval(() => {
-                auctionTimerSeconds--;
-                if (auctionTimerSeconds <= 0) {
-                    auctionTimerSeconds = 1800; 
-                    rotateAuctionGroup();
-                }
+            
+            function updateTimer() {
+                const now = new Date();
+                const totalSecsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+                const remainingSecs = 1800 - (totalSecsToday % 1800);
+                
+                const mins = Math.floor(remainingSecs / 60);
+                const secs = remainingSecs % 60;
+                
                 const timerEl = document.getElementById('auctionCountdownDisplay');
                 if (timerEl) {
-                    const mins = Math.floor(auctionTimerSeconds / 60);
-                    const secs = auctionTimerSeconds % 60;
                     timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
                 }
-            }, 1000);
+                
+                if (remainingSecs <= 1) {
+                    rotateAuctionGroup();
+                }
+            }
+            
+            updateTimer();
+            auctionTimerInterval = setInterval(updateTimer, 1000);
         }
 
         function rotateAuctionGroup() {
@@ -1442,7 +1450,6 @@
                         showModalAlert("انتهت الجلسة 🎉", `انتهت مدة المزاد للسلعة (${item.title}). رسى المزاد على السعر النهائي: ${item.currentPrice} درهم لصالح ${item.highestBidderName}!`, "success");
                     }
                 });
-                auctionTimerSeconds = 1800;
                 renderFridayAuctionInterface();
             }
         }
@@ -1454,7 +1461,6 @@
                 return;
             }
 
-            // التحقق هل أضاف هذا المستخدم منتجاً بالفعل في هذه الجولة النشطة (3 منتجات الحالية)
             const activeBatch = auctionItems.slice(0, 3);
             const alreadyHasItem = activeBatch.some(item => String(item.userId) === String(currentAccount.id));
 
@@ -1463,7 +1469,6 @@
                 return;
             }
 
-            // جلب عروض المستخدم النشطة
             const myActiveListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed');
             const container = document.getElementById('myAuctionActiveListingsDropdown');
 
@@ -1515,8 +1520,7 @@
                 imageUrl: listing.image_url,
                 startPrice: startPriceInput,
                 currentPrice: startPriceInput,
-                highestBidderId: null,
-                highestBidderName: null
+                bidsHistory: [] // حفظ جميع المزايدات والأشخاص لكل منتج
             };
 
             auctionItems.unshift(newAuctionItem);
@@ -1531,15 +1535,11 @@
             const container = document.getElementById('fridayAuctionContainer');
             const activeAuctionBatch = auctionItems.slice(0, 3);
 
-            let mins = Math.floor(auctionTimerSeconds / 60);
-            let secs = auctionTimerSeconds % 60;
-            let timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-
             let addBtnHtml = `
                 <div class="flex items-center justify-between bg-purple-900/40 p-3 rounded-2xl border border-purple-500/50 flex-wrap gap-2">
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-black text-purple-300">⏱️ العد التنازلي لإنتهاء المزاد (30 دقيقة):</span>
-                        <span id="auctionCountdownDisplay" class="bg-emerald-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow animate-pulse">${timeStr}</span>
+                        <span id="auctionCountdownDisplay" class="bg-emerald-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow animate-pulse">30:00</span>
                     </div>
                     <button onclick="openAddAuctionItemModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-plus-circle"></i> أضف منتجك للمزاد (بين 10 و 500 د.م) 🏷️
@@ -1559,19 +1559,24 @@
                 return;
             }
 
+            // تحديد ما إذا كان العد التنازلي قد انتهى (في نموذجنا الحالي يعتبر الجانب الحي مستمراً حتى تدوير الجولة)
+            const now = new Date();
+            const totalSecsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const remainingSecs = 1800 - (totalSecsToday % 1800);
+            const isAuctionFinished = remainingSecs <= 5; // قرب انتهاء الجولة
+
             container.innerHTML = `
                 ${addBtnHtml}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    ${activeAuctionBatch.map((item, idx) => {
+                    ${activeAuctionBatch.map((item) => {
                         const seller = allProfiles[String(item.userId)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
-                        const bidder = item.highestBidderName || 'لا توجد مزايدات بعد';
-                        const isMyHighest = currentAccount && String(item.highestBidderId) === String(currentAccount.id);
-                        
-                        // التحقق هل أنا صاحب المنتج المعروض في المزاد؟
+                        const bids = item.bidsHistory || [];
+                        const highestBid = bids.length > 0 ? bids[bids.length - 1] : null;
+                        const isMyHighest = currentAccount && highestBid && String(highestBid.userId) === String(currentAccount.id);
                         const isMyItemInAuction = currentAccount && String(item.userId) === String(currentAccount.id);
 
                         return `
-                            <div class="bg-slate-900/90 rounded-2xl p-4 border-2 ${isMyHighest ? 'border-amber-400 shadow-amber-500/20' : 'border-purple-500/40'} space-y-3 flex flex-col justify-between shadow-xl">
+                            <div class="bg-slate-900/90 rounded-2xl p-4 border-2 ${isMyHighest && isAuctionFinished ? 'border-amber-400 shadow-amber-500/20' : 'border-purple-500/40'} space-y-3 flex flex-col justify-between shadow-xl">
                                 <div class="flex items-center gap-2 border-b border-purple-900/60 pb-2">
                                     <img src="${seller.avatar_url}" class="w-8 h-8 rounded-full object-cover border border-purple-400">
                                     <span class="text-xs font-bold text-slate-200">${seller.full_name}</span>
@@ -1586,8 +1591,21 @@
                                         <span class="text-[10px] text-purple-300 font-bold">الثمن الحالي للمنتج:</span>
                                         <span class="text-amber-400 font-black text-sm">${item.currentPrice || item.startPrice} درهم</span>
                                     </div>
-                                    <p class="text-[10px] text-slate-400">أعلى مزايد: <strong class="${isMyHighest ? 'text-amber-400' : 'text-emerald-400'}">${bidder} ${isMyHighest ? '(أنت 👑)' : ''}</strong></p>
+                                    
+                                    <!-- عرض قائمة جميع الأشخاص الذين تزايدوا تحت كل منتج -->
+                                    <div class="bg-slate-950/60 p-2 rounded-xl border border-slate-800 space-y-1 max-h-24 overflow-y-auto">
+                                        <span class="text-[9px] text-slate-400 font-bold block">سجل المزايدات لكل المشاركين:</span>
+                                        ${bids.length === 0 ? '<p class="text-[10px] text-slate-500">لا توجد مزايدات بعد</p>' : bids.map(b => `
+                                            <div class="flex items-center justify-between text-[10px] text-slate-300 border-b border-slate-900/50 pb-0.5">
+                                                <span>👤 ${b.userName}</span>
+                                                <strong class="text-amber-400">${b.price} د.م</strong>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+
+                                    <p class="text-[10px] text-slate-400 pt-1">أعلى مزايد حالي: <strong class="text-emerald-400">${highestBid ? highestBid.userName : 'لا يوجد'}</strong></p>
                                 </div>
+
                                 <div class="space-y-2 pt-2 border-t border-purple-900/50">
                                     ${isMyItemInAuction ? `
                                         <div class="bg-amber-500/10 border border-amber-400/30 p-2 rounded-xl text-center">
@@ -1595,17 +1613,23 @@
                                         </div>
                                     ` : `
                                         <div class="flex gap-1.5 items-center">
-                                            <input type="number" id="bidInput_${item.id}" placeholder="اكتب الثمن (بزيادة 5 دراهم أو أكثر)" class="w-full bg-slate-800 border border-purple-400/50 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                            <input type="number" id="bidInput_${item.id}" placeholder="اكتب الثمن (بزيادة 5 د.م أو أكثر)" class="w-full bg-slate-800 border border-purple-400/50 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-amber-400">
                                             <button onclick="placeCustomBid('${item.id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow transition cursor-pointer whitespace-nowrap">
                                                 مزايدة ⚡
                                             </button>
                                         </div>
                                     `}
-                                    ${isMyHighest ? `
+                                    
+                                    <!-- لا يظهر زر فتح الشات إلا بعد انتهاء العد التنازلي الحي وإعلان الفائز -->
+                                    ${isAuctionFinished && isMyHighest ? `
                                         <button onclick="openAuctionChat('${item.id}')" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black py-2.5 rounded-xl text-xs shadow-lg transition cursor-pointer flex items-center justify-center gap-1.5 animate-bounce">
-                                            <i class="fa-solid fa-comments"></i> فتح الشات للتنسيق (الموعد والمكان) 💬
+                                            <i class="fa-solid fa-comments"></i> مبروك أنت الفائز! فتح الشات للتنسيق 💬
                                         </button>
-                                    ` : ''}
+                                    ` : `
+                                        <div class="text-center text-[10px] text-slate-400 font-medium bg-purple-950/40 p-1.5 rounded-lg">
+                                            🔒 سيتم إعلان الفائز وفتح الشات فور انتهاء العد التنازلي الحي
+                                        </div>
+                                    `}
                                 </div>
                             </div>
                         `;
@@ -1644,12 +1668,16 @@
             }
 
             item.currentPrice = enteredPrice;
-            item.highestBidderId = currentAccount.id;
-            item.highestBidderName = currentAccount.full_name;
+            if(!item.bidsHistory) item.bidsHistory = [];
+            item.bidsHistory.push({
+                userId: currentAccount.id,
+                userName: currentAccount.full_name,
+                price: enteredPrice
+            });
 
             localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
             renderFridayAuctionInterface();
-            showFloatingNotification(`⚡ مزايدة ناجحة بـ ${enteredPrice} درهم على (${item.title})!`);
+            showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح بـ ${enteredPrice} درهم! (في انتظار انتهاء العد التنازلي لإعلان الفائز)`);
         }
 
         function openAuctionChat(itemId) {
