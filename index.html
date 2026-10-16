@@ -800,7 +800,15 @@
                 }
             }
 
-            if(currentAccount && checkUserBannedOrPenalized(currentAccount.phone)) {
+            if(currentAccount) {
+                const { data: latestProfile } = await _supabase.from('profiles').select('*').eq('id', currentAccount.id).single();
+                if(latestProfile) {
+                    currentAccount = latestProfile;
+                    localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
+                }
+            }
+
+            if(currentAccount && await checkUserBannedOrPenalizedCloud(currentAccount)) {
                 return;
             }
 
@@ -808,6 +816,26 @@
             setupRealtimeSubscriptions();
             setInterval(rotatePromoSlider, 5000);
         };
+
+        async function checkUserBannedOrPenalizedCloud(acc) {
+            const { data: profile } = await _supabase.from('profiles').select('*').eq('id', acc.id).single();
+            if (!profile) return false;
+
+            const localBanned = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
+            if (profile.is_banned || localBanned.includes(profile.phone)) {
+                showBannedModal();
+                return true;
+            }
+
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const localPen = penalties[profile.phone];
+            const cloudPenExpiry = profile.penalty_expiry ? new Date(profile.penalty_expiry) : null;
+
+            if ((cloudPenExpiry && new Date() < cloudPenExpiry) || (localPen && new Date() < new Date(localPen.expiryDate))) {
+                return false; 
+            }
+            return false;
+        }
 
         function checkUserBannedOrPenalized(phone) {
             const bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
@@ -875,7 +903,14 @@
                 .subscribe();
 
             _supabase.channel('public:profiles_and_ratings')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => { fetchProfilesAndData(); })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, async payload => {
+                    if (currentAccount && String(payload.new.id) === String(currentAccount.id)) {
+                        if (payload.new.is_banned) {
+                            showBannedModal();
+                        }
+                    }
+                    fetchProfilesAndData(); 
+                })
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => { fetchProfilesAndData(); })
                 .subscribe();
         }
@@ -1044,11 +1079,10 @@
         function getUserRatingStats(userId) {
             const userRats = allRatings.filter(r => String(r.rated_user_id) === String(userId));
             
-            // العقوبات النشطة للمستخدم تؤثر بشكل واضح وتخفض النقاط والمستوى
             const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
             const userProfile = allProfiles[String(userId)] || {};
             const userPhone = userProfile.phone;
-            const hasPenalty = userPhone && penalties[userPhone] && new Date() < new Date(penalties[userPhone].expiryDate);
+            const hasPenalty = (userProfile.penalty_expiry && new Date() < new Date(userProfile.penalty_expiry)) || (userPhone && penalties[userPhone] && new Date() < new Date(penalties[userPhone].expiryDate));
 
             if(userRats.length === 0) {
                 return {
@@ -1062,12 +1096,11 @@
 
             let sum = userRats.reduce((acc, curr) => acc + Number(curr.rating), 0);
             if(hasPenalty) {
-                sum = Math.max(1, sum - 2); // خصم تأثير واضح عند العقوبة
+                sum = Math.max(1, sum - 2); 
             }
 
             const avgNum = Number((sum / userRats.length).toFixed(1));
             
-            // تحديد النجوم المكتملة بناءً على المتوسط العقلاني لتعطي الشكل المطابق تماماً لصورة الحساب
             let starsStr = '';
             for(let i=1; i<=5; i++) {
                 if(i <= Math.round(avgNum)) {
@@ -1077,7 +1110,6 @@
                 }
             }
 
-            // تحديد الدرع والمستوى بناءً على عدد التقييمات والمتوسط والانضباط
             let shieldName = 'درع المستوى الأول 🛡️';
             let shieldClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
 
@@ -1136,7 +1168,7 @@
             }
             const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
             const p = penalties[currentAccount.phone];
-            if(p && new Date() < new Date(p.expiryDate)) {
+            if((currentAccount.penalty_expiry && new Date() < new Date(currentAccount.penalty_expiry)) || (p && new Date() < new Date(p.expiryDate))) {
                 showModalAlert("تنبيه", "حسابك موقوف مؤقتاً بسبب عقوبة إدارية. لا يمكنك المشاركة حالياً.", "error");
                 return;
             }
@@ -1322,9 +1354,10 @@
             let penaltyHtml = '';
             let isPenalized = false;
 
-            if(p && new Date() < new Date(p.expiryDate)) {
+            const cloudExpiry = currentAccount.penalty_expiry ? new Date(currentAccount.penalty_expiry) : null;
+            if((cloudExpiry && new Date() < cloudExpiry) || (p && new Date() < new Date(p.expiryDate))) {
                 isPenalized = true;
-                const expiryTime = new Date(p.expiryDate).getTime();
+                const expiryTime = cloudExpiry ? cloudExpiry.getTime() : new Date(p.expiryDate).getTime();
                 const now = new Date().getTime();
                 const diffTime = expiryTime - now;
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -1752,7 +1785,7 @@
             }
 
             const { data, error } = await _supabase.from('profiles').insert([{
-                full_name, phone, city, password, avatar_url
+                full_name, phone, city, password, avatar_url, is_banned: false
             }]).select();
 
             if(error) {
@@ -1772,13 +1805,6 @@
             const phone = document.getElementById('loginPhone').value.trim();
             const password = document.getElementById('loginPass').value;
 
-            const bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
-            if(bannedPhones.includes(phone)) {
-                closeModal('authModal');
-                showBannedModal();
-                return;
-            }
-
             const { data, error } = await _supabase.from('profiles').select('*').eq('phone', phone).eq('password', password);
 
             if(error || !data || data.length === 0) {
@@ -1789,7 +1815,7 @@
             currentAccount = data[0];
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             
-            if(checkUserBannedOrPenalized(currentAccount.phone)) {
+            if(await checkUserBannedOrPenalizedCloud(currentAccount)) {
                 return;
             }
 
@@ -1946,7 +1972,7 @@
 
             const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
             const p = penalties[currentAccount.phone];
-            if(p && new Date() < new Date(p.expiryDate)) {
+            if((currentAccount.penalty_expiry && new Date() < new Date(currentAccount.penalty_expiry)) || (p && new Date() < new Date(p.expiryDate))) {
                 showModalAlert("تنبيه", "حسابك موقوف مؤقتاً بسبب عقوبة إدارية. لا يمكنك نشر العروض حالياً.", "error");
                 return;
             }
@@ -2136,7 +2162,7 @@
 
             const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
             const p = penalties[currentAccount.phone];
-            if(p && new Date() < new Date(p.expiryDate)) {
+            if((currentAccount.penalty_expiry && new Date() < new Date(currentAccount.penalty_expiry)) || (p && new Date() < new Date(p.expiryDate))) {
                 showModalAlert("تنبيه", "حسابك موقوف مؤقتاً بسبب عقوبة إدارية. لا يمكنك إرسال طلبات المقايضة حالياً.", "error");
                 return;
             }
@@ -2302,7 +2328,7 @@
 
             const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
             const p = penalties[currentAccount.phone];
-            if(p && new Date() < new Date(p.expiryDate)) {
+            if((currentAccount.penalty_expiry && new Date() < new Date(currentAccount.penalty_expiry)) || (p && new Date() < new Date(p.expiryDate))) {
                 showModalAlert("تنبيه", "حسابك موقوف مؤقتاً بسبب عقوبة إدارية. لا يمكنك نشر العروض حالياً.", "error");
                 return;
             }
