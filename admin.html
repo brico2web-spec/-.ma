@@ -175,7 +175,7 @@
                             <th class="p-3">المنتج / العنوان</th>
                             <th class="p-3">المدينة</th>
                             <th class="p-3">نوع التبادل</th>
-                            <th class="p-3">الحالة</th>
+                            <th class="p-3">الحالة والوقت</th>
                             <th class="p-3 text-center">إجراءات الأدمين</th>
                         </tr>
                     </thead>
@@ -186,7 +186,7 @@
             </div>
         </div>
 
-        <!-- Section: Manage Users (مع خانة البحث السريع وزر الحظر) -->
+        <!-- Section: Manage Users (مع خانة البحث السريع وزر الحظر والعقوبات) -->
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b pb-4">
                 <h3 class="font-black text-base text-slate-900">إدارة المستخدمين المسجلين 👥</h3>
@@ -202,7 +202,7 @@
                             <th class="p-3">الاسم الكامل</th>
                             <th class="p-3">رقم الهاتف</th>
                             <th class="p-3">المدينة</th>
-                            <th class="p-3 text-center">إجراءات الأدمين</th>
+                            <th class="p-3 text-center">إجراءات الأدمين والعقوبات</th>
                         </tr>
                     </thead>
                     <tbody id="adminUsersTableBody">
@@ -212,18 +212,54 @@
             </div>
         </div>
 
+        <!-- NEW SECTION: خانة الحسابات المحظورة والمخالفة على حدى -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-200 space-y-4">
+            <div class="flex items-center justify-between border-b pb-4">
+                <h3 class="font-black text-base text-rose-700 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> الحسابات المحظورة والمعاقبة 🚫
+                </h3>
+                <span id="bannedCountBadge" class="bg-rose-100 text-rose-800 text-xs font-black px-3 py-1 rounded-full">0 حساب محظور</span>
+            </div>
+            <div class="max-h-[350px] overflow-y-auto border border-slate-100 rounded-2xl">
+                <table class="w-full text-right text-xs">
+                    <thead class="sticky top-0 bg-rose-50 shadow-sm z-10">
+                        <tr class="text-slate-600 border-b">
+                            <th class="p-3">اسم المستخدم</th>
+                            <th class="p-3">رقم الهاتف</th>
+                            <th class="p-3">سبب وحالة العقوبة</th>
+                            <th class="p-3 text-center">الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminBannedUsersTableBody">
+                        <tr><td colspan="4" class="text-center py-6 text-slate-400">لا توجد حسابات محظورة حالياً</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </main>
 
-    <!-- MODAL: عرض تفاصيل المنتج الكاملة للأدمين عند الضغط على الصورة -->
+    <!-- MODAL: عرض تفاصيل العرض الكاملة مع بيانات صاحب العرض -->
     <div id="adminProductDetailsModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right slide-fade max-h-[90vh] overflow-y-auto">
             <button onclick="document.getElementById('adminProductDetailsModal').classList.add('hidden')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             <div class="text-center space-y-1 border-b pb-3">
-                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full">تفاصيل العرض الكاملة 🔍</span>
+                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full">تفاصيل العرض وصاحبه 🔍</span>
                 <h3 id="admModalTitle" class="font-black text-lg text-slate-900"></h3>
             </div>
             <div class="space-y-3">
-                <img id="admModalImage" src="" class="w-full h-56 object-cover rounded-2xl border shadow-md">
+                <!-- بيانات صاحب العرض -->
+                <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border">
+                    <img id="admOwnerAvatar" src="" class="w-12 h-12 rounded-full object-cover border-2 border-emerald-500">
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold block">صاحب العرض:</span>
+                        <h4 id="admOwnerName" class="font-black text-sm text-slate-900"></h4>
+                        <p id="admOwnerPhone" class="text-xs text-emerald-700 font-bold"></p>
+                    </div>
+                </div>
+
+                <img id="admModalImage" src="" class="w-full h-48 object-cover rounded-2xl border shadow-md">
+                
                 <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-2xl border">
                     <div><strong>المدينة:</strong> <span id="admModalCity" class="text-slate-600"></span></div>
                     <div><strong>نوع التبادل:</strong> <span id="admModalTrade" class="text-emerald-700 font-bold"></span></div>
@@ -283,6 +319,8 @@
         }
 
         async function loadAdminData() {
+            checkExpiredBans();
+
             // 1. جلب العروض
             const { data: listings } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
             cachedListings = listings || [];
@@ -308,9 +346,10 @@
             // تحديث التقرير الشامل
             renderComprehensiveAnalytics(cachedListings, cachedUsers, requests);
 
-            // تعبئة جداول العروض والمستخدمين
+            // تعبئة جداول العروض والمستخدمين والحسابات المحظورة
             renderAdminListings(cachedListings);
             renderAdminUsers(cachedUsers);
+            renderBannedUsersTable(cachedUsers);
         }
 
         function renderAdminListings(listings) {
@@ -319,22 +358,48 @@
                 listingsBody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد عروض حالياً</td></tr>`;
                 return;
             }
-            listingsBody.innerHTML = listings.map(item => `
-                <tr class="border-b hover:bg-slate-50 transition">
-                    <td class="p-3 flex items-center gap-2">
-                        <img src="${item.image_url}" onclick="openAdminProductDetails('${item.id}')" class="w-10 h-10 rounded-xl object-cover border cursor-pointer hover:scale-110 transition shadow-sm" title="اضغط لعرض كافة التفاصيل">
-                        <span class="font-black text-slate-900 line-clamp-1">${item.title}</span>
-                    </td>
-                    <td class="p-3 font-bold text-slate-600">${item.city}</td>
-                    <td class="p-3"><span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-bold">${item.trade_type}</span></td>
-                    <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-bold">${item.status || 'active'}</span></td>
-                    <td class="p-3 text-center">
-                        <button onclick="adminDeleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">
-                            <i class="fa-solid fa-trash"></i> حذف
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+            listingsBody.innerHTML = listings.map(item => {
+                let rawStatus = (item.status || 'active').toLowerCase();
+                let statusBadgeClass = "bg-emerald-100 text-emerald-800 font-bold";
+                let statusText = "ACTIVE";
+
+                if(rawStatus === 'completed') {
+                    statusBadgeClass = "bg-blue-100 text-blue-800 font-bold";
+                    statusText = "COMPLETED";
+                } else if(rawStatus === 'annulé' || rawStatus === 'cancelled' || rawStatus === 'rejected') {
+                    statusBadgeClass = "bg-yellow-100 text-yellow-800 font-bold";
+                    statusText = "Annulé";
+                } else if(rawStatus === 'violation') {
+                    statusBadgeClass = "bg-rose-100 text-rose-800 font-bold";
+                    statusText = "Violation";
+                } else {
+                    statusText = "ACTIVE";
+                }
+
+                // وقت الحالة أو توقيت النشر
+                const dateObj = item.created_at ? new Date(item.created_at) : new Date();
+                const timeString = dateObj.toLocaleString('ar-MA');
+
+                return `
+                    <tr class="border-b hover:bg-slate-50 transition">
+                        <td class="p-3 flex items-center gap-2">
+                            <img src="${item.image_url}" onclick="openAdminProductDetails('${item.id}')" class="w-10 h-10 rounded-xl object-cover border cursor-pointer hover:scale-110 transition shadow-sm" title="اضغط لعرض كافة التفاصيل">
+                            <span class="font-black text-slate-900 line-clamp-1">${item.title}</span>
+                        </td>
+                        <td class="p-3 font-bold text-slate-600">${item.city}</td>
+                        <td class="p-3"><span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-bold">${item.trade_type}</span></td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-md text-[11px] ${statusBadgeClass}">${statusText}</span>
+                            <span class="block text-[9px] text-slate-400 mt-0.5">${timeString}</span>
+                        </td>
+                        <td class="p-3 text-center">
+                            <button onclick="adminDeleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">
+                                <i class="fa-solid fa-trash"></i> حذف
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function openAdminProductDetails(id) {
@@ -343,10 +408,16 @@
 
             document.getElementById('admModalTitle').textContent = item.title;
             document.getElementById('admModalImage').src = item.image_url;
+            
+            // بيانات صاحب العرض
+            const owner = cachedUsers.find(u => String(u.id) === String(item.user_id)) || { full_name: 'مستخدم غير معروف', phone: item.phone || 'غير متاح', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+            document.getElementById('admOwnerName').textContent = owner.full_name;
+            document.getElementById('admOwnerPhone').textContent = `الهاتف: ${owner.phone}`;
+            document.getElementById('admOwnerAvatar').src = owner.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
+
             document.getElementById('admModalCity').textContent = item.city || 'غير محددة';
             document.getElementById('admModalTrade').textContent = item.trade_type || 'راس فـ راس';
             
-            // حساب وتنسيق توقيت النشر ومدة النشر
             const createdDate = item.created_at ? new Date(item.created_at) : new Date();
             document.getElementById('admModalCreatedAt').textContent = createdDate.toLocaleString('ar-MA');
             
@@ -368,11 +439,12 @@
                 return;
             }
 
-            // جلب قائمة الهواتف المحظورة من localStorage
-            const bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
 
             usersBody.innerHTML = users.map(u => {
-                const isBanned = bannedPhones.includes(u.phone);
+                const p = penalties[u.phone];
+                const isBanned = p && new Date() < new Date(p.expiryDate);
+
                 return `
                     <tr class="border-b hover:bg-slate-50 transition">
                         <td class="p-3 flex items-center gap-2">
@@ -382,16 +454,102 @@
                         <td class="p-3 font-bold text-slate-600">${u.phone}</td>
                         <td class="p-3 text-emerald-600 font-bold">${u.city || 'غير محدد'}</td>
                         <td class="p-3 text-center space-x-1 space-x-reverse">
-                            <button onclick="toggleUserBan('${u.phone}')" class="${isBanned ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-amber-50 text-amber-600 hover:bg-amber-100'} font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">
-                                <i class="fa-solid ${isBanned ? 'fa-user-check' : 'fa-ban'}"></i> ${isBanned ? 'إلغاء الحظر' : 'حظر'}
+                            <button onclick="applyPenalty('${u.phone}', 15)" class="bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold px-2 py-1.5 rounded-xl transition text-[10px] cursor-pointer" title="عقوبة 15 يوم">
+                                ⏳ 15 يوم
                             </button>
-                            <button onclick="adminDeleteUser('${u.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">
-                                <i class="fa-solid fa-user-slash"></i> حذف
+                            <button onclick="applyPenalty('${u.phone}', 30)" class="bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold px-2 py-1.5 rounded-xl transition text-[10px] cursor-pointer" title="عقوبة شهر">
+                                ⏳ شهر
+                            </button>
+                            <button onclick="toggleUserBan('${u.phone}')" class="${isBanned ? 'bg-rose-100 text-rose-700' : 'bg-rose-50 text-rose-600'} font-bold px-2.5 py-1.5 rounded-xl transition text-[10px] cursor-pointer">
+                                ${isBanned ? 'محظور 🚫' : 'حظر تام'}
+                            </button>
+                            <button onclick="adminDeleteUser('${u.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-xl transition text-[10px] cursor-pointer">
+                                حذف
                             </button>
                         </td>
                     </tr>
                 `;
             }).join('');
+        }
+
+        function renderBannedUsersTable(users) {
+            const tbody = document.getElementById('adminBannedUsersTableBody');
+            const badge = document.getElementById('bannedCountBadge');
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
+
+            const bannedUsersList = users.filter(u => bannedPhones.includes(u.phone) || (penalties[u.phone] && new Date() < new Date(penalties[u.phone].expiryDate)));
+
+            badge.textContent = `${bannedUsersList.length} حساب محظور أو معاقب`;
+
+            if(bannedUsersList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">لا توجد حسابات محظورة حالياً</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = bannedUsersList.map(u => {
+                const p = penalties[u.phone];
+                let reasonText = "حظر إداري تام";
+                if(p) {
+                    const expiry = new Date(p.expiryDate).toLocaleString('ar-MA');
+                    reasonText = `عقوبة مؤقتة تنتهي في: ${expiry}`;
+                }
+
+                return `
+                    <tr class="border-b hover:bg-rose-50/50 transition">
+                        <td class="p-3 font-black text-slate-900">${u.full_name}</td>
+                        <td class="p-3 font-bold text-slate-600">${u.phone}</td>
+                        <td class="p-3 text-rose-600 font-bold text-[11px]">${reasonText}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="liftBan('${u.phone}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1 rounded-xl text-[10px] transition cursor-pointer">
+                                رفع الحظر والعقوبة ✅
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function applyPenalty(phone, days) {
+            let penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const expiry = new Date();
+            expiry.setDate(expiry.getDate() + days);
+
+            penalties[phone] = { expiryDate: expiry.toISOString() };
+            localStorage.setItem('badal_user_penalties', JSON.stringify(penalties));
+            alert(`تم تطبيق عقوبة لمدة ${days} يوم على صاحب الرقم ${phone} بنجاح!`);
+            loadAdminData();
+        }
+
+        function liftBan(phone) {
+            let penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            let bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
+
+            delete penalties[phone];
+            bannedPhones = bannedPhones.filter(p => p !== phone);
+
+            localStorage.setItem('badal_user_penalties', JSON.stringify(penalties));
+            localStorage.setItem('badal_banned_phones', JSON.stringify(bannedPhones));
+
+            alert(`تم رفع العقوبة والحظر عن الرقم ${phone} وإعادة الحساب للعمل.`);
+            loadAdminData();
+        }
+
+        function checkExpiredBans() {
+            let penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            let updated = false;
+            const now = new Date();
+
+            Object.keys(penalties).forEach(phone => {
+                if(now >= new Date(penalties[phone].expiryDate)) {
+                    delete penalties[phone];
+                    updated = true;
+                }
+            });
+
+            if(updated) {
+                localStorage.setItem('badal_user_penalties', JSON.stringify(penalties));
+            }
         }
 
         function filterAdminUsers() {
@@ -407,13 +565,13 @@
             let bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
             if(bannedPhones.includes(phone)) {
                 bannedPhones = bannedPhones.filter(p => p !== phone);
-                alert(`تم إلغاء الحظر عن الرقم: ${phone}`);
+                alert(`تم إلغاء الحظر التام عن الرقم: ${phone}`);
             } else {
                 bannedPhones.push(phone);
-                alert(`تم حظر المستخدم صاحب الرقم: ${phone} بنجاح!`);
+                alert(`تم حظر المستخدم صاحب الرقم: ${phone} نهائياً!`);
             }
             localStorage.setItem('badal_banned_phones', JSON.stringify(bannedPhones));
-            renderAdminUsers(cachedUsers);
+            loadAdminData();
         }
 
         function renderOnlineUsersSection(users) {
