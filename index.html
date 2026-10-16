@@ -83,25 +83,8 @@
                     <!-- Injected via JS -->
                 </div>
 
-                <div class="space-y-1.5 pt-2 text-xs">
-                    <a href="#" onclick="openMenuSection('my-account'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
-                        <i class="fa-solid fa-user-gear text-emerald-600 text-base"></i> حسابي
-                    </a>
-                    <a href="#" onclick="openMenuSection('active-listings'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
-                        <i class="fa-solid fa-box-open text-emerald-600 text-base"></i> عروضي النشطة
-                    </a>
-                    <a href="#" onclick="openMenuSection('current-requests'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
-                        <i class="fa-solid fa-bell text-emerald-600 text-base"></i> الطلبات الجارية
-                    </a>
-                    <a href="#" onclick="openMenuSection('successful-trades'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
-                        <i class="fa-solid fa-handshake text-emerald-600 text-base"></i> المقايضة الناجحة
-                    </a>
-                    <a href="#" onclick="openMenuSection('deal-chats'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
-                        <i class="fa-solid fa-comments text-emerald-600 text-base"></i> دردشة الصفقة
-                    </a>
-                    <a href="#" onclick="closeRightMenu(); openTradeWheelGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 text-white font-black transition shadow-md animate-pulse">
-                        <i class="fa-solid fa-dice text-base"></i> لعبة عجلة الحظ للمقايضة 🎲
-                    </a>
+                <div id="drawerMenuLinks" class="space-y-1.5 pt-2 text-xs">
+                    <!-- Injected via JS (Disabled if under penalty/ban) -->
                 </div>
             </div>
 
@@ -177,7 +160,7 @@
 
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
-        <!-- قسم المقايضات الناجحة المعلنة على الصفحة الرئيسية (مبتكر وجذاب) -->
+        <!-- قسم المقايضات الناجحة المعلنة على الصفحة الرئيسية -->
         <section id="homepageCompletedTradesSection" class="bg-gradient-to-r from-amber-500/10 via-pink-500/10 to-emerald-500/10 p-5 rounded-3xl border-2 border-amber-400/40 shadow-xl space-y-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -243,7 +226,6 @@
                 </div>
             </div>
 
-            <!-- شبكة عرض بطاقتين جنباً إلى جنب على شاشة الهاتف -->
             <div id="listingsGrid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 <p class="col-span-full text-center py-12 text-slate-400 font-bold">جاري تحميل العروض الحقيقية...</p>
             </div>
@@ -275,7 +257,6 @@
             <button onclick="closeModal('authModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
             <h3 class="font-black text-base text-slate-900">تسجيل الدخول / حساب جديد</h3>
 
-            <!-- الرسالة المطلوبة والتحذير في نافذة تسجيل الدخول -->
             <div class="bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 p-3.5 rounded-2xl text-white shadow-lg space-y-1.5 text-right">
                 <p class="font-black text-xs flex items-center gap-1.5 text-amber-200">
                     <i class="fa-solid fa-sparkles text-sm animate-spin"></i> أهلاً بيك فـ بدل.ma!
@@ -342,7 +323,6 @@
                     <input type="password" id="regPass" required placeholder="أدخل كلمة السر" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
 
-                <!-- الخانة الجديدة لاتفاق فتح الحساب مع عبارة بسم الله -->
                 <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 p-3 rounded-2xl border-2 border-emerald-400 space-y-1.5 shadow-inner">
                     <div class="flex items-center gap-2">
                         <input type="checkbox" id="regAgreementCheck" required class="w-4 h-4 accent-emerald-600 cursor-pointer">
@@ -370,7 +350,6 @@
                 <p class="text-xs text-slate-300">كون راجل وعند كلمتك! هذي غير حظ خفيف ضريف وممتعة بين ولاد بلادك بكل روح رياضية.</p>
             </div>
 
-            <!-- اختيار المنتج الخاص بالمستخدم للمشاركة في اللعبة -->
             <div id="gameSelectorStep" class="space-y-3">
                 <label class="block font-bold text-xs text-amber-300">اختر من عروضك النشطة للمشاركة في العجلة:</label>
                 <div id="myGameListingsDropdown" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-1 bg-slate-800/80 rounded-2xl border border-slate-700">
@@ -381,9 +360,8 @@
                 </button>
             </div>
 
-            <!-- نافذة العرض المتحرك أثناء وبعد التدوير -->
             <div id="gameSpinnerResultArea" class="hidden bg-slate-800/90 border-2 border-pink-500/80 rounded-3xl p-5 text-center space-y-4 shadow-2xl">
-                <!-- سيتم حقن نتيجة التدويير الخرافية هنا -->
+                <!-- Injected via JS -->
             </div>
         </div>
     </div>
@@ -418,7 +396,6 @@
                     </div>
                 </div>
 
-                <!-- الخانة الجديدة المبتكرة والجذابة للعبة الحظ -->
                 <div class="bg-gradient-to-r from-amber-100 via-pink-100 to-purple-100 p-4 rounded-2xl border-2 border-pink-400 space-y-2 shadow-inner">
                     <div class="flex items-center justify-between">
                         <label for="participateGameCheck" class="font-black text-pink-900 cursor-pointer flex items-center gap-2 text-xs">
@@ -661,7 +638,7 @@
         </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Footer بالنسخة الموالية المطلوبة -->
     <footer class="bg-slate-900 text-slate-300 py-10 border-t border-slate-800 mt-12 text-right">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-xs">
             <div class="space-y-3">
@@ -694,7 +671,7 @@
                     <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> نظام تقييمات لضمان المصداقية والثقة.</li>
                 </ul>
                 <div class="pt-2 text-[10px] text-slate-500 font-bold">
-                    جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية 🎁)
+                    جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الموالية الاحترافية 🎁)
                 </div>
             </div>
         </div>
@@ -715,11 +692,9 @@
         let currentFeaturedProfileIndex = 0;
         let featuredInterval = null;
 
-        // متغيرات خاصة بلعبة عجلة الحظ
         let selectedGameListingId = null;
         let sessionExcludedGameListingIds = [];
 
-        // Custom Modal replacement for alert & confirm
         function showModalAlert(title, message, type = 'info') {
             document.getElementById('customAlertTitle').textContent = title;
             document.getElementById('customAlertMessage').textContent = message;
@@ -793,10 +768,49 @@
                 }
             }
 
+            // فحص حالة الحظر التام عند فتح الموقع
+            if(currentAccount && checkUserBannedOrPenalized(currentAccount.phone)) {
+                return;
+            }
+
             await fetchProfilesAndData();
             setupRealtimeSubscriptions();
             setInterval(rotatePromoSlider, 5000);
         };
+
+        // التحقق من الحظر النهائي أو العقوبة المؤقتة
+        function checkUserBannedOrPenalized(phone) {
+            const bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
+            if(bannedPhones.includes(phone)) {
+                showBannedModal();
+                return true;
+            }
+            return false;
+        }
+
+        function showBannedModal() {
+            const modalHtml = `
+                <div id="bannedOverlayModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[200] flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border-2 border-rose-500 slide-fade">
+                        <div class="w-14 h-14 rounded-2xl bg-rose-600 text-white flex items-center justify-center mx-auto text-2xl shadow-lg">
+                            <i class="fa-solid fa-ban"></i>
+                        </div>
+                        <h3 class="font-black text-lg text-slate-900">تم حظر الحساب 🚫</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed font-medium">
+                            لقد تم حظر الحساب لأسباب عدم احترام قوانين الموقع. لأي إستفسار عبر البريد الإلكتروني: <br>
+                            <a href="mailto:contact@badel.ma" class="text-emerald-700 font-bold underline">contact@badel.ma</a><br>
+                            <span class="text-[10px] text-slate-400 mt-2 block">للتواصل عبر الوتساب قريبا ...</span>
+                        </p>
+                        <button onclick="handleLogout(); window.location.reload();" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition cursor-pointer">
+                            مفهوم وتسجيل الخروج 🚪
+                        </button>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = modalHtml;
+            document.body.appendChild(div);
+        }
 
         function setupRealtimeSubscriptions() {
             _supabase.channel('public:trade_requests')
@@ -1024,13 +1038,20 @@
             }
         }
 
-        // --- دوال لعبة عجلة حظ المقايضة التلقائية الشفافة ---
         function openTradeWheelGameModal() {
             if(!currentAccount) {
                 showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً للمشاركة في لعبة الحظ!", "info");
                 openModal('authModal');
                 return;
             }
+            // التحقق مما إذا كان الحساب معاقباً أو موقوفاً
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const p = penalties[currentAccount.phone];
+            if(p && new Date() < new Date(p.expiryDate)) {
+                showModalAlert("تنبيه", "حسابك موقوف مؤقتاً بسبب عقوبة إدارية. لا يمكنك المشاركة حالياً.", "error");
+                return;
+            }
+
             sessionExcludedGameListingIds = [];
             selectedGameListingId = null;
             renderGameListingsSelector();
@@ -1158,7 +1179,7 @@
             if(req) {
                 openChatModal(req.id);
             } else {
-                showModalAlert("تنبيه", "جارِ فتح نافذة التنسيق للاتفاق على وقت ومكان اللقاء (السبت، الأحد أو أيام العطلة)...", "info");
+                showModalAlert("تنبيه", "جارِ فتح نافذة التنسيق للاتفاق على وقت ومكان اللقاء...", "info");
                 openMenuSection('deal-chats');
             }
         }
@@ -1167,12 +1188,12 @@
             await _supabase.from('listings').update({ status: 'completed' }).eq('id', myListing.id);
             await _supabase.from('listings').update({ status: 'completed' }).eq('id', opponentListing.id);
 
-            const { data: newReq } = await _supabase.from('trade_requests').insert([{
+            await _supabase.from('trade_requests').insert([{
                 sender_id: String(currentAccount.id),
                 receiver_id: String(opponentListing.user_id),
                 listing_id: String(opponentListing.id),
                 status: 'accepted'
-            }]).select();
+            }]);
 
             await fetchRequests();
             renderHomepageCompletedTrades();
@@ -1201,20 +1222,84 @@
             }).join('');
         }
 
+        // --- تحديث معلومات الموني مع العد التنازلي للعقوبات تحت الصورة ---
         function updateDrawerUserInfo() {
             if(!currentAccount) return;
             const avatar = currentAccount.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
             const stats = getUserRatingStats(currentAccount.id);
             const city = currentAccount.city || 'المغرب';
 
+            // فحص العقوبة المؤقتة وتحديد وقت العد التنازلي
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const p = penalties[currentAccount.phone];
+            let penaltyHtml = '';
+            let isPenalized = false;
+
+            if(p && new Date() < new Date(p.expiryDate)) {
+                isPenalized = true;
+                const expiryTime = new Date(p.expiryDate).getTime();
+                const now = new Date().getTime();
+                const diffTime = expiryTime - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                penaltyHtml = `
+                    <div class="mt-2 bg-rose-50 border border-rose-200 p-2.5 rounded-xl text-center space-y-1 w-full">
+                        <p class="text-[11px] font-black text-rose-700 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-triangle-exclamation"></i> لقد تم توقيف حسابك مؤقتاً
+                        </p>
+                        <p class="text-[10px] font-bold text-slate-600">
+                            متبقي حتى استئناف العمل: <strong class="text-rose-600">${diffDays} أيام</strong>
+                        </p>
+                        <p class="text-[9px] text-slate-500">تم توقيف نشر العروض والمقايضة حتى انتهاء العد التنازلي.</p>
+                    </div>
+                `;
+            }
+
             document.getElementById('drawerUserInfo').innerHTML = `
-                <img src="${avatar}" class="w-16 h-16 rounded-full object-cover border-2 border-emerald-500 shadow-md">
+                <img src="${avatar}" class="w-16 h-16 rounded-full object-cover border-4 border-emerald-500 shadow-md">
                 <h4 class="font-black text-slate-900 text-sm">${currentAccount.full_name}</h4>
                 <p class="text-[11px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-emerald-600 ml-1"></i> ${city}</p>
                 <div class="bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
                     ⭐ ${stats.avg} (${stats.count} تقييم)
                 </div>
+                ${penaltyHtml}
             `;
+
+            // تحديث روابط القائمة الجانبية (تعطيل النشر والمقايضة في حال العقوبة)
+            const linksContainer = document.getElementById('drawerMenuLinks');
+            if(isPenalized) {
+                linksContainer.innerHTML = `
+                    <div class="p-3 bg-slate-100 rounded-xl text-slate-400 font-bold text-center text-xs space-y-1">
+                        <i class="fa-solid fa-lock text-rose-500 text-base block"></i>
+                        <span>الحساب موقوف مؤقتاً من الإدارة</span>
+                        <p class="text-[9px]">عروض المقايضة والنشر معطلة مؤقتاً حتى نهاية العقوبة.</p>
+                    </div>
+                    <a href="#" onclick="openMenuSection('my-account'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-user-gear text-emerald-600 text-base"></i> حسابي
+                    </a>
+                `;
+            } else {
+                linksContainer.innerHTML = `
+                    <a href="#" onclick="openMenuSection('my-account'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-user-gear text-emerald-600 text-base"></i> حسابي
+                    </a>
+                    <a href="#" onclick="openMenuSection('active-listings'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-box-open text-emerald-600 text-base"></i> عروضي النشطة
+                    </a>
+                    <a href="#" onclick="openMenuSection('current-requests'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-bell text-emerald-600 text-base"></i> الطلبات الجارية
+                    </a>
+                    <a href="#" onclick="openMenuSection('successful-trades'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-handshake text-emerald-600 text-base"></i> المقايضة الناجحة
+                    </a>
+                    <a href="#" onclick="openMenuSection('deal-chats'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                        <i class="fa-solid fa-comments text-emerald-600 text-base"></i> دردشة الصفقة
+                    </a>
+                    <a href="#" onclick="closeRightMenu(); openTradeWheelGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 text-white font-black transition shadow-md animate-pulse">
+                        <i class="fa-solid fa-dice text-base"></i> لعبة عجلة الحظ للمقايضة 🎲
+                    </a>
+                `;
+            }
         }
 
         function openRightMenu() {
@@ -1480,6 +1565,14 @@
             const phone = document.getElementById('loginPhone').value.trim();
             const password = document.getElementById('loginPass').value;
 
+            // فحص هل الرقم محظور نهائياً
+            const bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
+            if(bannedPhones.includes(phone)) {
+                closeModal('authModal');
+                showBannedModal();
+                return;
+            }
+
             const { data, error } = await _supabase.from('profiles').select('*').eq('phone', phone).eq('password', password);
 
             if(error || !data || data.length === 0) {
@@ -1489,6 +1582,11 @@
 
             currentAccount = data[0];
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
+            
+            if(checkUserBannedOrPenalized(currentAccount.phone)) {
+                return;
+            }
+
             await fetchProfilesAndData();
             closeModal('authModal');
             showModalAlert("نجاح", `أهلاً بك مجدداً يا ${currentAccount.full_name}!`, "success");
@@ -1614,6 +1712,15 @@
                 openModal('authModal');
                 return;
             }
+
+            // فحص هل الحساب معاقب
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const p = penalties[currentAccount.phone];
+            if(p && new Date() < new Date(p.expiryDate)) {
+                showModalAlert("تنبيه", "حسابك موقوف مؤقتاً بسبب عقوبة إدارية. لا يمكنك نشر العروض حالياً.", "error");
+                return;
+            }
+
             const formEl = document.getElementById('addItemForm');
             if(formEl) formEl.reset();
 
@@ -1791,6 +1898,14 @@
                 openModal('authModal');
                 return;
             }
+
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const p = penalties[currentAccount.phone];
+            if(p && new Date() < new Date(p.expiryDate)) {
+                showModalAlert("تنبيه", "حسابك موقوف مؤقتاً بسبب عقوبة إدارية. لا يمكنك إرسال طلبات المقايضة حالياً.", "error");
+                return;
+            }
+
             if(String(currentAccount.id) === String(receiverId)) {
                 showModalAlert("تنبيه", "لا يمكنك مقايضة عرضك!", "error");
                 return;
@@ -1944,6 +2059,13 @@
         async function handleAddItem(e) {
             e.preventDefault();
             if(!currentAccount) return;
+
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const p = penalties[currentAccount.phone];
+            if(p && new Date() < new Date(p.expiryDate)) {
+                showModalAlert("تنبيه", "حسابك موقوف مؤقتاً بسبب عقوبة إدارية. لا يمكنك نشر العروض حالياً.", "error");
+                return;
+            }
 
             const file = document.getElementById('addImageFile').files[0];
             const fileName = `${Date.now()}.${file.name.split('.').pop()}`;
