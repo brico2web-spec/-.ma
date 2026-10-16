@@ -908,7 +908,7 @@
                 </ul>
                 <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                     <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.3</span>
+                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.4</span>
                 </div>
             </div>
         </div>
@@ -932,7 +932,7 @@
         let selectedGameListingId = null;
         let sessionExcludedGameListingIds = [];
 
-        let auctionItems = JSON.parse(localStorage.getItem('badal_auction_items') || '[]');
+        let auctionItems = [];
         let auctionTimerInterval = null;
 
         let typingTimeout = null;
@@ -1002,6 +1002,7 @@
             }
 
             await fetchProfilesAndData();
+            await fetchAuctionsData();
             setupRealtimeSubscriptions();
             setInterval(rotatePromoSlider, 5000);
             
@@ -1095,6 +1096,12 @@
                 })
                 .subscribe();
 
+            _supabase.channel('public:auctions')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'auctions' }, payload => {
+                    fetchAuctionsData();
+                })
+                .subscribe();
+
             _supabase.channel('public:messages')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, payload => {
                     const msg = payload.new;
@@ -1137,6 +1144,14 @@
                 })
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => { fetchProfilesAndData(); })
                 .subscribe();
+        }
+
+        async function fetchAuctionsData() {
+            const { data, error } = await _supabase.from('auctions').select('*').order('created_at', { ascending: false });
+            if(!error && data) {
+                auctionItems = data;
+                renderFridayAuctionInterface();
+            }
         }
 
         async function handleTypingSignal() {
@@ -1430,28 +1445,10 @@
                 if (timerEl) {
                     timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
                 }
-                
-                if (remainingSecs <= 1) {
-                    rotateAuctionGroup();
-                }
             }
             
             updateTimer();
             auctionTimerInterval = setInterval(updateTimer, 1000);
-        }
-
-        function rotateAuctionGroup() {
-            if (auctionItems.length > 0) {
-                const finishedBatch = auctionItems.splice(0, 3);
-                localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
-                
-                finishedBatch.forEach(item => {
-                    if (item.highestBidderId) {
-                        showModalAlert("انتهت الجلسة 🎉", `انتهت مدة المزاد للسلعة (${item.title}). رسى المزاد على السعر النهائي: ${item.currentPrice} درهم لصالح ${item.highestBidderName}!`, "success");
-                    }
-                });
-                renderFridayAuctionInterface();
-            }
         }
 
         function openAddAuctionItemModal() {
@@ -1494,7 +1491,7 @@
             openModal('addAuctionItemModal');
         }
 
-        function submitListingToAuction() {
+        async function submitListingToAuction() {
             if(!currentAccount) return;
             const selectedRadio = document.querySelector('input[name="selectedAuctionListing"]:checked');
             if(!selectedRadio) {
@@ -1514,21 +1511,22 @@
 
             const newAuctionItem = {
                 id: 'auc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
-                listingId: listing.id,
-                userId: currentAccount.id,
+                userId: String(currentAccount.id),
                 title: listing.title,
                 imageUrl: listing.image_url,
                 startPrice: startPriceInput,
                 currentPrice: startPriceInput,
-                bidsHistory: [] // حفظ جميع المزايدات والأشخاص لكل منتج
+                bidsHistory: []
             };
 
-            auctionItems.unshift(newAuctionItem);
-            localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
-
-            closeModal('addAuctionItemModal');
-            renderFridayAuctionInterface();
-            showModalAlert("نجاح", "تم طرح منتجك في المزاد بنجاح! 🔨 (ملاحظة: لا يمكن حذفه أو تغييره بعد النشر).", "success");
+            const { error } = await _supabase.from('auctions').insert([newAuctionItem]);
+            if(!error) {
+                await fetchAuctionsData();
+                closeModal('addAuctionItemModal');
+                showModalAlert("نجاح", "تم طرح منتجك في المزاد بنجاح على المباشر لجميع المستخدمين! 🔨", "success");
+            } else {
+                showModalAlert("خطأ", "تعذر نشر المنتج في المزاد: " + error.message, "error");
+            }
         }
 
         function renderFridayAuctionInterface() {
@@ -1559,11 +1557,10 @@
                 return;
             }
 
-            // تحديد ما إذا كان العد التنازلي قد انتهى (في نموذجنا الحالي يعتبر الجانب الحي مستمراً حتى تدوير الجولة)
             const now = new Date();
             const totalSecsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
             const remainingSecs = 1800 - (totalSecsToday % 1800);
-            const isAuctionFinished = remainingSecs <= 5; // قرب انتهاء الجولة
+            const isAuctionFinished = remainingSecs <= 5;
 
             container.innerHTML = `
                 ${addBtnHtml}
@@ -1592,7 +1589,6 @@
                                         <span class="text-amber-400 font-black text-sm">${item.currentPrice || item.startPrice} درهم</span>
                                     </div>
                                     
-                                    <!-- عرض قائمة جميع الأشخاص الذين تزايدوا تحت كل منتج -->
                                     <div class="bg-slate-950/60 p-2 rounded-xl border border-slate-800 space-y-1 max-h-24 overflow-y-auto">
                                         <span class="text-[9px] text-slate-400 font-bold block">سجل المزايدات لكل المشاركين:</span>
                                         ${bids.length === 0 ? '<p class="text-[10px] text-slate-500">لا توجد مزايدات بعد</p>' : bids.map(b => `
@@ -1620,7 +1616,6 @@
                                         </div>
                                     `}
                                     
-                                    <!-- لا يظهر زر فتح الشات إلا بعد انتهاء العد التنازلي الحي وإعلان الفائز -->
                                     ${isAuctionFinished && isMyHighest ? `
                                         <button onclick="openAuctionChat('${item.id}')" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black py-2.5 rounded-xl text-xs shadow-lg transition cursor-pointer flex items-center justify-center gap-1.5 animate-bounce">
                                             <i class="fa-solid fa-comments"></i> مبروك أنت الفائز! فتح الشات للتنسيق 💬
@@ -1638,7 +1633,7 @@
             `;
         }
 
-        function placeCustomBid(itemId) {
+        async function placeCustomBid(itemId) {
             if(!currentAccount) {
                 showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً للمزايدة!", "info");
                 openModal('authModal');
@@ -1667,17 +1662,24 @@
                 return;
             }
 
-            item.currentPrice = enteredPrice;
-            if(!item.bidsHistory) item.bidsHistory = [];
-            item.bidsHistory.push({
-                userId: currentAccount.id,
+            const updatedBids = item.bidsHistory ? [...item.bidsHistory] : [];
+            updatedBids.push({
+                userId: String(currentAccount.id),
                 userName: currentAccount.full_name,
                 price: enteredPrice
             });
 
-            localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
-            renderFridayAuctionInterface();
-            showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح بـ ${enteredPrice} درهم! (في انتظار انتهاء العد التنازلي لإعلان الفائز)`);
+            const { error } = await _supabase.from('auctions').update({
+                currentPrice: enteredPrice,
+                bidsHistory: updatedBids
+            }).eq('id', itemId);
+
+            if(!error) {
+                await fetchAuctionsData();
+                showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح على المباشر بـ ${enteredPrice} درهم!`);
+            } else {
+                showModalAlert("خطأ", "تعذر حفظ المزايدة: " + error.message, "error");
+            }
         }
 
         function openAuctionChat(itemId) {
