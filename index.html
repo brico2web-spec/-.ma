@@ -171,7 +171,7 @@
                 </div>
                 <span class="text-[10px] bg-amber-500 text-white font-black px-3 py-1 rounded-full shadow">تم التبادل بنجاح 100%</span>
             </div>
-            <div id="homepageCompletedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div id="homepageCompletedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <p class="text-xs text-slate-500 font-medium text-center py-2 col-span-full">جاري تحميل المقايضات الناجحة...</p>
             </div>
         </section>
@@ -1389,18 +1389,12 @@
                         <i class="fa-solid fa-bars text-lg"></i>
                         ${(activeChatsCount > 0 || pendingRequestsCount > 0) ? `<span class="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow animate-bounce" title="لديك طلبات مقايضة جديدة">${pendingRequestsCount > 0 ? pendingRequestsCount : activeChatsCount}</span>` : ''}
                     </button>
-                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-gavel"></i> المزاد الحصري 🔨
-                    </button>
                 `;
                 updateDrawerUserInfo();
             } else {
                 container.innerHTML = `
                     <button onclick="openModal('authModal')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer border border-emerald-200">
                         <i class="fa-solid fa-right-to-bracket ml-1"></i> دخول / حساب جديد
-                    </button>
-                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-gavel"></i> المزاد الحصري 🔨
                     </button>
                 `;
             }
@@ -1739,18 +1733,46 @@
             const completedItems = allListings.filter(l => l.status === 'completed');
 
             if(!completedItems || completedItems.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500 font-medium text-center py-2 col-span-full">لا توجد مقايضات مكتملة مؤخراً عبر العجلة. كن أول من يلعب ويلتقي!</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500 font-medium text-center py-2 col-span-full">لا توجد مقايضات مكتملة مؤخراً. كن أول من يبادل!</p>`;
                 return;
             }
 
-            container.innerHTML = completedItems.slice(0, 3).map(item => {
+            container.innerHTML = completedItems.slice(0, 4).map(item => {
+                const isGame = item.wanted && item.wanted.includes('لعبة');
+                const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
+                const isAuction = item.id && item.id.startsWith('auc_');
+
+                let cardBgClass = "bg-white/90 border-emerald-300";
+                let badgeClass = "bg-emerald-100 text-emerald-800";
+                let badgeText = "مقايدة عادية 🤝";
+                let iconSymbol = "fa-handshake";
+
+                if (isGame) {
+                    cardBgClass = "bg-gradient-to-br from-pink-50 via-purple-50 to-white border-pink-400 shadow-pink-100";
+                    badgeClass = "bg-gradient-to-r from-amber-500 to-pink-600 text-white animate-pulse";
+                    badgeText = "مقايضة عن طريق لعبة 🎲";
+                    iconSymbol = "fa-dice";
+                } else if (isHemza) {
+                    cardBgClass = "bg-gradient-to-br from-amber-50 via-yellow-50 to-white border-amber-400 shadow-amber-100";
+                    badgeClass = "bg-amber-500 text-white font-black";
+                    badgeText = "همزة المقايضة ⚡";
+                    iconSymbol = "fa-bolt";
+                } else if (isAuction) {
+                    cardBgClass = "bg-gradient-to-br from-purple-50 via-indigo-50 to-white border-purple-400 shadow-purple-100";
+                    badgeClass = "bg-purple-600 text-white";
+                    badgeText = "المزاد الحصري 🔨";
+                    iconSymbol = "fa-gavel";
+                }
+
                 return `
-                    <div onclick="openSuccessTradeModal('${item.id}')" class="bg-white/90 backdrop-blur p-3 rounded-2xl border border-amber-300 shadow-md flex items-center gap-3 cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1">
+                    <div onclick="openSuccessTradeModal('${item.id}')" class="${cardBgClass} backdrop-blur p-3.5 rounded-2xl border-2 shadow-md flex items-center gap-3 cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1">
                         <img src="${item.image_url}" class="w-14 h-14 rounded-xl object-cover border-2 border-emerald-500 flex-shrink-0">
-                        <div class="overflow-hidden text-right">
-                            <span class="bg-emerald-100 text-emerald-800 text-[9px] font-black px-2 py-0.5 rounded-full inline-block mb-0.5">تمت المقايضة بنجاح 🎉</span>
+                        <div class="overflow-hidden text-right flex-grow">
+                            <span class="${badgeClass} text-[9px] font-black px-2 py-0.5 rounded-full inline-block mb-1 shadow-sm">
+                                <i class="fa-solid ${iconSymbol} ml-1"></i> ${badgeText}
+                            </span>
                             <h4 class="font-black text-xs text-slate-900 line-clamp-1">${item.title}</h4>
-                            <p class="text-[10px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-emerald-600"></i> ${item.city}</p>
+                            <p class="text-[10px] text-slate-500 font-bold mt-0.5"><i class="fa-solid fa-location-dot text-emerald-600"></i> ${item.city}</p>
                         </div>
                     </div>
                 `;
