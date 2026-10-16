@@ -507,40 +507,6 @@
             <div id="fridayAuctionContainer" class="space-y-4">
                 <!-- Injected via JS -->
             </div>
-
-            <div class="border-t border-purple-900/80 pt-4 text-center">
-                <button onclick="openAddAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-6 py-3 rounded-2xl text-xs shadow-lg transition cursor-pointer">
-                    <i class="fa-solid fa-plus-circle ml-1"></i> أضف منتجك للمزاد الحصري (10 إلى 500 درهم) 🏷️
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: إضافة منتج للمزاد -->
-    <div id="addAuctionModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[130] hidden flex items-center justify-center p-4">
-        <div class="bg-white text-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right">
-            <button onclick="closeModal('addAuctionModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
-            <h3 class="font-black text-base text-purple-900">إضافة سلعة للمزاد الحصري يوم الجمعة 🏷️</h3>
-            <form onsubmit="handlePostAuctionItem(event)" class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">عنوان المنتج *</label>
-                    <input type="text" id="aucTitle" required placeholder="مثلاً: ساعة أصلية أو بلايستيشن" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">السعر الابتدائي (بالدرهم) *</label>
-                    <input type="number" id="aucStartPrice" min="10" max="500" required placeholder="بين 10 و 500 درهم" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
-                    <span class="text-[10px] text-slate-400 mt-1 block">القواعد: الحد الأدنى 10 دراهم، والحد الأقصى 500 درهم.</span>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">صورة المنتج *</label>
-                    <input type="file" id="aucImageFile" accept="image/*" required class="w-full bg-slate-50 border p-2 rounded-xl text-xs">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">وصف المنتج</label>
-                    <textarea id="aucDesc" rows="2" placeholder="حالة المنتج..." class="w-full bg-slate-50 border p-3 rounded-xl font-bold"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer">نشر في المزاد الحصري 🚀</button>
-            </form>
         </div>
     </div>
 
@@ -1410,7 +1376,7 @@
             if (day === 5 && totalMins >= 795 && totalMins <= 1440) {
                 return true;
             }
-            return false;
+            return true; // متاح للتجربة طوال الوقت أو طيلة يوم الجمعة
         }
 
         function openFridayExclusiveAuctionModal() {
@@ -1443,10 +1409,16 @@
 
         function rotateAuctionGroup() {
             if (auctionItems.length > 0) {
-                const currentTop = auctionItems[0];
-                if (currentTop.highestBidderId) {
-                    showModalAlert("انتهت الجلسة 🎉", `انتهت مدة المزاد للسلعة (${currentTop.title}). الفائز بأعلى مزايدة هو صاحب السعر: ${currentTop.currentPrice} درهم! سيتم فتح الدردشة فوراً.`, "success");
-                }
+                const finishedBatch = auctionItems.splice(0, 3);
+                localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
+                
+                finishedBatch.forEach(item => {
+                    if (item.highestBidderId) {
+                        showModalAlert("انتهت الجلسة 🎉", `انتهت مدة المزاد للسلعة (${item.title}). رسى المزاد على السعر النهائي: ${item.currentPrice} درهم لصالح ${item.highestBidderName}!`, "success");
+                    }
+                });
+                auctionTimerSeconds = 1800;
+                renderFridayAuctionInterface();
             }
         }
 
@@ -1463,7 +1435,7 @@
                     <div class="text-center py-12 space-y-3 bg-slate-900/60 rounded-3xl border border-purple-500/40">
                         <i class="fa-solid fa-gavel text-5xl text-purple-400"></i>
                         <h4 class="font-black text-white text-base">لا توجد منتجات معروضة في المزاد حالياً</h4>
-                        <p class="text-xs text-purple-200">كن أول المشاركين وأضف منتجك بين 10 دراهم و 500 درهم!</p>
+                        <p class="text-xs text-purple-200">المرجوا ترقب المنتجات القادمة في ساحة المزاد الحصري يوم الجمعة!</p>
                     </div>
                 `;
                 return;
@@ -1471,32 +1443,51 @@
 
             container.innerHTML = `
                 <div class="flex items-center justify-between bg-purple-900/40 p-3 rounded-2xl border border-purple-500/50">
-                    <span class="text-xs font-black text-purple-300">⏱️ عداد الدفعة الحالية (3 منتجات لمدة 30 دقيقة):</span>
-                    <span id="auctionCountdownDisplay" class="bg-emerald-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow">${timeStr}</span>
+                    <span class="text-xs font-black text-purple-300">⏱️ العد التنازلي لإنتهاء المزاد (30 دقيقة):</span>
+                    <span id="auctionCountdownDisplay" class="bg-emerald-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow animate-pulse">${timeStr}</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     ${activeAuctionBatch.map((item, idx) => {
                         const seller = allProfiles[String(item.userId)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
                         const bidder = item.highestBidderName || 'لا توجد مزايدات بعد';
+                        const isMyHighest = currentAccount && String(item.highestBidderId) === String(currentAccount.id);
+                        
+                        // التحقق هل أنا صاحب المنتج المعروض في المزاد؟
+                        const isMyItemInAuction = currentAccount && String(item.userId) === String(currentAccount.id);
+
                         return `
-                            <div class="bg-slate-900/90 rounded-2xl p-4 border border-purple-500/40 space-y-3 flex flex-col justify-between shadow-xl">
+                            <div class="bg-slate-900/90 rounded-2xl p-4 border-2 ${isMyHighest ? 'border-amber-400 shadow-amber-500/20' : 'border-purple-500/40'} space-y-3 flex flex-col justify-between shadow-xl">
                                 <div class="flex items-center gap-2 border-b border-purple-900/60 pb-2">
                                     <img src="${seller.avatar_url}" class="w-8 h-8 rounded-full object-cover border border-purple-400">
                                     <span class="text-xs font-bold text-slate-200">${seller.full_name}</span>
                                 </div>
                                 <div class="relative h-32 rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center">
                                     <img src="${item.imageUrl}" class="w-full h-full object-cover">
-                                    <span class="absolute top-2 right-2 bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">سعر ابتدائي: ${item.startPrice} د.م</span>
+                                    <span class="absolute top-2 right-2 bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">سعر ابدائي: ${item.startPrice} د.م</span>
                                 </div>
                                 <div class="space-y-1">
                                     <h5 class="font-black text-sm text-white line-clamp-1">${item.title}</h5>
-                                    <p class="text-[11px] text-purple-300 font-bold">السعر الحالي: <span class="text-amber-400 font-black">${item.currentPrice || item.startPrice} درهم</span></p>
-                                    <p class="text-[10px] text-slate-400">أعلى مزايد: <strong class="text-emerald-400">${bidder}</strong></p>
+                                    <p class="text-[11px] text-purple-300 font-bold">السعر الحالي: <span class="text-amber-400 font-black text-sm">${item.currentPrice || item.startPrice} درهم</span></p>
+                                    <p class="text-[10px] text-slate-400">أعلى مزايد: <strong class="${isMyHighest ? 'text-amber-400' : 'text-emerald-400'}">${bidder} ${isMyHighest ? '(أنت 👑)' : ''}</strong></p>
                                 </div>
-                                <div class="pt-2">
-                                    <button onclick="placeBid('${item.id}')" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-black py-2.5 rounded-xl text-xs shadow transition cursor-pointer">
-                                        زايد الآن (+10 درهم) ⚡
-                                    </button>
+                                <div class="space-y-2 pt-2 border-t border-purple-900/50">
+                                    ${isMyItemInAuction ? `
+                                        <div class="bg-amber-500/10 border border-amber-400/30 p-2 rounded-xl text-center">
+                                            <span class="text-[10px] text-amber-300 font-bold">هذا منتجك المعروض للمزايدة من طرف زوار المنصة 🏷️</span>
+                                        </div>
+                                    ` : `
+                                        <div class="flex gap-1.5 items-center">
+                                            <input type="number" id="bidInput_${item.id}" placeholder="اكتب الثمن (فرق 5 دراهم كحد أدنى)" class="w-full bg-slate-800 border border-purple-400/50 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                            <button onclick="placeCustomBid('${item.id}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow transition cursor-pointer whitespace-nowrap">
+                                                مزايدة ⚡
+                                            </button>
+                                        </div>
+                                    `}
+                                    ${isMyHighest ? `
+                                        <button onclick="openAuctionChat('${item.id}')" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black py-2.5 rounded-xl text-xs shadow-lg transition cursor-pointer flex items-center justify-center gap-1.5 animate-bounce">
+                                            <i class="fa-solid fa-comments"></i> فتح الشات للتنسيق (الموعد والمكان) 💬
+                                        </button>
+                                    ` : ''}
                                 </div>
                             </div>
                         `;
@@ -1505,52 +1496,7 @@
             `;
         }
 
-        function openAddAuctionModal() {
-            if(!currentAccount) {
-                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً لإضافة منتج للمزاد!", "info");
-                openModal('authModal');
-                return;
-            }
-            openModal('addAuctionModal');
-        }
-
-        async function handlePostAuctionItem(e) {
-            e.preventDefault();
-            const title = document.getElementById('aucTitle').value.trim();
-            const startPrice = Number(document.getElementById('aucStartPrice').value);
-            const desc = document.getElementById('aucDesc').value.trim();
-            const file = document.getElementById('aucImageFile').files[0];
-
-            if(startPrice < 10 || startPrice > 500) {
-                showModalAlert("تنبيه", "السعر الابتدائي يجب أن يكون بين 10 دراهم كحد أدنى و 500 درهم كحد أقصى!", "error");
-                return;
-            }
-
-            const fileName = `auction_${Date.now()}.${file.name.split('.').pop()}`;
-            await _supabase.storage.from('product-images').upload(fileName, file);
-            const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-
-            const newItem = {
-                id: 'auc_' + Date.now(),
-                title,
-                startPrice,
-                currentPrice: startPrice,
-                description: desc,
-                imageUrl,
-                userId: currentAccount.id,
-                highestBidderId: null,
-                highestBidderName: null
-            };
-
-            auctionItems.push(newItem);
-            localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
-
-            closeModal('addAuctionModal');
-            showModalAlert("نجاح", "تمت إضافة منتجك بنجاح إلى ساحة المزاد الحصري يوم الجمعة! 🔨", "success");
-            renderFridayAuctionInterface();
-        }
-
-        function placeBid(itemId) {
+        function placeCustomBid(itemId) {
             if(!currentAccount) {
                 showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً للمزايدة!", "info");
                 openModal('authModal');
@@ -1565,13 +1511,36 @@
                 return;
             }
 
-            item.currentPrice = (Number(item.currentPrice) || item.startPrice) + 10;
+            const inputEl = document.getElementById('bidInput_' + itemId);
+            const enteredPrice = Number(inputEl.value);
+            const currentHighest = Number(item.currentPrice) || item.startPrice;
+
+            if(isNaN(enteredPrice) || enteredPrice <= currentHighest) {
+                showModalAlert("خطأ في الثمن", `الثمن المدخل يجب أن يكون أكبر من السعر الحالي (${currentHighest} درهم)!`, "error");
+                return;
+            }
+
+            if((enteredPrice - currentHighest) < 5) {
+                showModalAlert("تنبيه", "فرق المزايدة يجب ألا يقل عن 5 دراهم كحد أدنى!", "error");
+                return;
+            }
+
+            item.currentPrice = enteredPrice;
             item.highestBidderId = currentAccount.id;
             item.highestBidderName = currentAccount.full_name;
 
             localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
             renderFridayAuctionInterface();
-            showFloatingNotification(`⚡ مزايدة ناجحة بـ ${item.currentPrice} درهم على (${item.title})!`);
+            showFloatingNotification(`⚡ مزايدة ناجحة بـ ${enteredPrice} درهم على (${item.title})!`);
+        }
+
+        function openAuctionChat(itemId) {
+            if(!currentAccount) return;
+            const item = auctionItems.find(i => i.id === itemId);
+            if(!item) return;
+
+            closeModal('fridayAuctionModal');
+            showModalAlert("فتح الشات 🎉", `تم فتح نافذة التنسيق الخاصة بالمزاد مع البائع لتحديد موعد ومكان اللقاء بنجاح!`, "success");
         }
 
         function openTradeWheelGameModal() {
