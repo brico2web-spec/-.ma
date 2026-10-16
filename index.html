@@ -153,7 +153,6 @@
                     <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer animate-pulse">
                         <i class="fa-solid fa-dice"></i> لعبة عجلة الحظ 🎲
                     </button>
-                    <!-- تعديل زر المزاد الحصري في السلايدر (بدون حركة animate-bounce ولون متناسق مع الموقع مثل emerald/teal) -->
                     <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-gavel"></i> المزاد الحصري يوم الجمعة 🔨
                     </button>
@@ -185,7 +184,6 @@
                     <p class="text-xs sm:text-sm text-slate-300 mt-1 font-light">مقايضة مباشرة بـ 0 درهم بين أطراف التبادل عبر المنصة.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <!-- تعديل زر المزاد الحصري في واجهة الهيرو (بدون حركة animate-bounce ولون متناسق emerald-700) -->
                     <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
                         <i class="fa-solid fa-gavel text-base"></i> المزاد الحصري يوم الجمعة 🔨
                     </button>
@@ -276,16 +274,7 @@
                 </p>
             </div>
 
-            <button onclick="handleGoogleLogin()" class="w-full bg-white hover:bg-slate-50 text-slate-700 font-bold py-3 rounded-xl border border-slate-300 shadow-sm transition flex items-center justify-center gap-2 text-xs cursor-pointer">
-                <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-                متابعة باستخدام حساب Google 🌐
-            </button>
-
-            <div class="relative flex py-1 items-center">
-                <div class="flex-grow border-t border-slate-200"></div>
-                <span class="flex-shrink mx-3 text-slate-400 text-[10px] font-bold">أو بالطريقة العادية</span>
-                <div class="flex-grow border-t border-slate-200"></div>
-            </div>
+            <!-- تم حذف زر Google نهائياً بناءً على طلبك -->
 
             <div class="flex border-b border-slate-200">
                 <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="w-1/2 py-2 text-sm font-bold text-emerald-600 border-b-2 border-emerald-600">تسجيل الدخول</button>
@@ -328,6 +317,10 @@
                 <div>
                     <label class="font-bold text-slate-700 block mb-1">كلمة السر *</label>
                     <input type="password" id="regPass" required placeholder="أدخل كلمة السر" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="font-bold text-slate-700 block mb-1">تكرار كلمة السر (التحقق) *</label>
+                    <input type="password" id="regPassConfirm" required placeholder="أعد إدخال كلمة السر" class="w-full bg-slate-50 border p-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
 
                 <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 p-3 rounded-2xl border-2 border-emerald-400 space-y-1.5 shadow-inner">
@@ -841,30 +834,9 @@
         let currentSlideIndex = 0;
 
         window.onload = async function() {
-            const { data: { session } } = await _supabase.auth.getSession();
-            if (session && session.user) {
-                const user = session.user;
-                let { data: profile } = await _supabase.from('profiles').select('*').eq('id', user.id).single();
-                
-                if (!profile) {
-                    const newProfile = {
-                        id: user.id,
-                        full_name: user.user_metadata.full_name || user.email.split('@')[0],
-                        phone: user.user_metadata.phone || '0600000000',
-                        city: 'القنيطرة',
-                        avatar_url: user.user_metadata.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg',
-                        password: 'google_oauth_user'
-                    };
-                    await _supabase.from('profiles').insert([newProfile]);
-                    profile = newProfile;
-                }
-                currentAccount = profile;
-                localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
-            } else {
-                const savedAcc = localStorage.getItem('badal_auth_account');
-                if(savedAcc) {
-                    currentAccount = JSON.parse(savedAcc);
-                }
+            const savedAcc = localStorage.getItem('badal_auth_account');
+            if(savedAcc) {
+                currentAccount = JSON.parse(savedAcc);
             }
 
             if(currentAccount) {
@@ -875,7 +847,6 @@
                 }
             }
 
-            // [إصلاح حاسم]: التحقق الفوري من الحظر والعقوبة السحابية والمحلية وإيقاف التنفيذ فوراً إن وجد
             if(currentAccount && await checkUserBannedOrPenalizedCloud(currentAccount)) {
                 return;
             }
@@ -889,12 +860,10 @@
             const { data: profile } = await _supabase.from('profiles').select('*').eq('id', acc.id).single();
             if (!profile) return false;
 
-            // تحديث الحساب المحلي بالبيانات الجديدة القادمة من قاعدة البيانات لضمان المزامنة
             currentAccount = profile;
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
 
             const localBanned = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
-            // التحقق السحابي والمحلي من الحظر (is_banned أو رقم الهاتف في قائمة المحظورين)
             if (profile.is_banned === true || profile.is_banned === 'true' || localBanned.includes(profile.phone)) {
                 showBannedModal();
                 return true;
@@ -904,9 +873,7 @@
             const localPen = penalties[profile.phone];
             const cloudPenExpiry = profile.penalty_expiry ? new Date(profile.penalty_expiry) : null;
 
-            // التحقق من العقوبة (توقيف مؤقت)
             if ((cloudPenExpiry && new Date() < cloudPenExpiry) || (localPen && new Date() < new Date(localPen.expiryDate))) {
-                // الحساب غير محظور كلياً ولكن تحت عقوبة مؤقتة، نتركه يدخل مع إظهار تنبيه العقوبة في حسابي
                 return false; 
             }
             return false;
@@ -1045,16 +1012,6 @@
             setTimeout(() => notif.remove(), 4000);
         }
 
-        async function handleGoogleLogin() {
-            const { error } = await _supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: { redirectTo: window.location.origin + window.location.pathname }
-            });
-            if (error) {
-                showModalAlert("خطأ", "خطأ أثناء تسجيل الدخول بـ Google: " + error.message, 'error');
-            }
-        }
-
         function rotatePromoSlider() {
             currentSlideIndex = (currentSlideIndex + 1) % promoSlides.length;
             const slide = promoSlides[currentSlideIndex];
@@ -1079,7 +1036,6 @@
                     currentAccount = allProfiles[String(currentAccount.id)] || currentAccount;
                     localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
                     
-                    // التحقق الفوري من حالة الحظر عند جلب وتحديث البيانات
                     if(currentAccount.is_banned === true || currentAccount.is_banned === 'true') {
                         showBannedModal();
                         return;
@@ -1214,7 +1170,6 @@
                         <i class="fa-solid fa-bars text-lg"></i>
                         ${activeChatsCount > 0 ? `<span class="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow animate-pulse">${activeChatsCount}</span>` : ''}
                     </button>
-                    <!-- تعديل زر المزاد الحصري في الهيدر (بدون حركة ولون متناسق emerald-700) -->
                     <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-gavel"></i> المزاد الحصري 🔨
                     </button>
@@ -1225,7 +1180,6 @@
                     <button onclick="openModal('authModal')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer border border-emerald-200">
                         <i class="fa-solid fa-right-to-bracket ml-1"></i> دخول / حساب جديد
                     </button>
-                    <!-- تعديل زر المزاد الحصري في الهيدر للزوار (بدون حركة ولون متناسق emerald-700) -->
                     <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer">
                         <i class="fa-solid fa-gavel"></i> المزاد الحصري 🔨
                     </button>
@@ -1233,15 +1187,13 @@
             }
         }
 
-        // --- منطق المزاد الحصري يوم الجمعة ---
         function checkIsFridayAuctionActive() {
             const now = new Date();
-            const day = now.getDay(); // الجمعة هو 5
+            const day = now.getDay(); 
             const hours = now.getHours();
             const minutes = now.getMinutes();
             const totalMins = hours * 60 + minutes;
 
-            // الجمعة (5) ابتداءً من 13:15 (أي 795 دقيقة) حتى منتصف الليل (00:00 أي 1440 دقيقة)
             if (day === 5 && totalMins >= 795 && totalMins <= 1440) {
                 return true;
             }
@@ -1264,7 +1216,7 @@
             auctionTimerInterval = setInterval(() => {
                 auctionTimerSeconds--;
                 if (auctionTimerSeconds <= 0) {
-                    auctionTimerSeconds = 1800; // إعادة ضبط الدفعة لـ 30 دقيقة وانتقال تلقائي
+                    auctionTimerSeconds = 1800; 
                     rotateAuctionGroup();
                 }
                 const timerEl = document.getElementById('auctionCountdownDisplay');
@@ -1677,7 +1629,6 @@
                             ${unreadMessagesCount > 0 ? `<span class="w-5 h-5 rounded-full bg-emerald-500 text-white font-black text-[9px] flex items-center justify-center border border-white shadow">${unreadMessagesCount}</span>` : ''}
                         </div>
                     </a>
-                    <!-- تعديل زر المزاد الحصري في القائمة الجانبية (بدون حركة ولون متناسق emerald-700) -->
                     <a href="#" onclick="closeRightMenu(); openFridayExclusiveAuctionModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-emerald-700 text-white font-black transition shadow-md">
                         <i class="fa-solid fa-gavel text-base"></i> المزاد الحصري يوم الجمعة 🔨
                     </a>
@@ -2019,6 +1970,7 @@
             const phone = document.getElementById('regPhone').value.trim();
             const city = document.getElementById('regCity').value;
             const password = document.getElementById('regPass').value;
+            const passwordConfirm = document.getElementById('regPassConfirm').value;
             const avatar_url = 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
 
             if(phone.length < 10) {
@@ -2027,6 +1979,10 @@
             }
             if(password.length < 6) {
                 showModalAlert("تنبيه", "كلمة السر يجب أن تكون من 6 أحرف أو أرقام على الأقل.", "error");
+                return;
+            }
+            if(password !== passwordConfirm) {
+                showModalAlert("تنبيه", "كلمة السر وتكرارها غير متطابقين! المرجو التحقق.", "error");
                 return;
             }
 
@@ -2068,7 +2024,6 @@
             currentAccount = data[0];
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             
-            // التحقق الفوري من الحظر والعقوبة عند تسجيل الدخول
             if(await checkUserBannedOrPenalizedCloud(currentAccount)) {
                 return;
             }
@@ -2079,7 +2034,6 @@
         }
 
         async function handleLogout() {
-            await _supabase.auth.signOut();
             localStorage.removeItem('badal_auth_account');
             currentAccount = null;
             updateHeaderUI();
