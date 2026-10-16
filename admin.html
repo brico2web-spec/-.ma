@@ -126,7 +126,7 @@
                     <span id="liveOnlineCountBadge" class="bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1 rounded-full">0 متواجد حالياً</span>
                 </div>
                 <div id="liveOnlineUsersList" class="space-y-2.5 max-h-64 overflow-y-auto">
-                    <p class="text-xs text-slate-400 text-center py-4">جاري رصد متשعلي المنصة أونلاين...</p>
+                    <p class="text-xs text-slate-400 text-center py-4">جاري رصد مستخدمي المنصة أونلاين...</p>
                 </div>
             </div>
 
@@ -162,16 +162,16 @@
             </div>
         </div>
 
-        <!-- Section: Manage Listings -->
+        <!-- Section: Manage Listings (مع ارتفاع محدود وخاصية التمرير للهبوط) -->
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
             <div class="flex items-center justify-between border-b pb-4">
                 <h3 class="font-black text-base text-slate-900">إدارة عروض المنتجات والخدمات 📦</h3>
-                <span class="text-xs text-slate-400 font-bold">تحكم كامل في الحذف والتعديل</span>
+                <span class="text-xs text-slate-400 font-bold">اضغط على صورة المنتج لعرض كافة التفاصيل</span>
             </div>
-            <div class="overflow-x-auto">
+            <div class="max-h-[400px] overflow-y-auto border border-slate-100 rounded-2xl">
                 <table class="w-full text-right text-xs">
-                    <thead>
-                        <tr class="bg-slate-50 text-slate-500 border-b">
+                    <thead class="sticky top-0 bg-slate-50 shadow-sm z-10">
+                        <tr class="text-slate-500 border-b">
                             <th class="p-3">المنتج / العنوان</th>
                             <th class="p-3">المدينة</th>
                             <th class="p-3">نوع التبادل</th>
@@ -186,20 +186,23 @@
             </div>
         </div>
 
-        <!-- Section: Manage Users -->
+        <!-- Section: Manage Users (مع خانة البحث السريع وزر الحظر) -->
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
-            <div class="flex items-center justify-between border-b pb-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b pb-4">
                 <h3 class="font-black text-base text-slate-900">إدارة المستخدمين المسجلين 👥</h3>
-                <span class="text-xs text-slate-400 font-bold">أعضاء المنصة</span>
+                <div class="relative w-full sm:w-72">
+                    <i class="fa-solid fa-search absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="adminUserSearchInput" oninput="filterAdminUsers()" placeholder="بحث سريع بالاسم أو الهاتف..." class="w-full pr-10 pl-4 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs">
+                </div>
             </div>
-            <div class="overflow-x-auto">
+            <div class="max-h-[400px] overflow-y-auto border border-slate-100 rounded-2xl">
                 <table class="w-full text-right text-xs">
-                    <thead>
-                        <tr class="bg-slate-50 text-slate-500 border-b">
+                    <thead class="sticky top-0 bg-slate-50 shadow-sm z-10">
+                        <tr class="text-slate-500 border-b">
                             <th class="p-3">الاسم الكامل</th>
                             <th class="p-3">رقم الهاتف</th>
                             <th class="p-3">المدينة</th>
-                            <th class="p-3 text-center">إجراءات</th>
+                            <th class="p-3 text-center">إجراءات الأدمين</th>
                         </tr>
                     </thead>
                     <tbody id="adminUsersTableBody">
@@ -211,6 +214,37 @@
 
     </main>
 
+    <!-- MODAL: عرض تفاصيل المنتج الكاملة للأدمين عند الضغط على الصورة -->
+    <div id="adminProductDetailsModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right slide-fade max-h-[90vh] overflow-y-auto">
+            <button onclick="document.getElementById('adminProductDetailsModal').classList.add('hidden')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <div class="text-center space-y-1 border-b pb-3">
+                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full">تفاصيل العرض الكاملة 🔍</span>
+                <h3 id="admModalTitle" class="font-black text-lg text-slate-900"></h3>
+            </div>
+            <div class="space-y-3">
+                <img id="admModalImage" src="" class="w-full h-56 object-cover rounded-2xl border shadow-md">
+                <div class="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-2xl border">
+                    <div><strong>المدينة:</strong> <span id="admModalCity" class="text-slate-600"></span></div>
+                    <div><strong>نوع التبادل:</strong> <span id="admModalTrade" class="text-emerald-700 font-bold"></span></div>
+                    <div><strong>توقيت النشر:</strong> <span id="admModalCreatedAt" class="text-slate-600"></span></div>
+                    <div><strong>مدة النشر:</strong> <span id="admModalDuration" class="text-amber-600 font-bold"></span></div>
+                </div>
+                <div>
+                    <strong>المطلوب في المقايضة:</strong>
+                    <p id="admModalWanted" class="p-2.5 bg-emerald-50 text-slate-800 rounded-xl text-xs font-bold border border-emerald-100 mt-1"></p>
+                </div>
+                <div>
+                    <strong>الوصف التفصيلي:</strong>
+                    <p id="admModalDesc" class="p-2.5 bg-slate-50 text-slate-600 rounded-xl text-xs border mt-1"></p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('adminProductDetailsModal').classList.add('hidden')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition cursor-pointer">
+                إغلاق النافذة ✖️
+            </button>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs mt-12 border-t border-slate-800">
         جميع الحقوق محفوظة © 2026 - لوحة تحكم أدمين بدل.ma 🛡️
@@ -218,6 +252,9 @@
 
     <!-- Admin Dashboard Logic -->
     <script>
+        let cachedUsers = [];
+        let cachedListings = [];
+
         window.onload = async function() {
             const isAdminLoggedIn = localStorage.getItem('badal_admin_logged');
             if(isAdminLoggedIn === 'true') {
@@ -248,54 +285,95 @@
         async function loadAdminData() {
             // 1. جلب العروض
             const { data: listings } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
+            cachedListings = listings || [];
+            
             // 2. جلب المستخدمين
             const { data: users } = await _supabase.from('profiles').select('*');
+            cachedUsers = users || [];
+
             // 3. جلب الطلبات
             const { data: requests } = await _supabase.from('trade_requests').select('*');
 
             // تحديث الإحصائيات
-            document.getElementById('statTotalListings').textContent = listings ? listings.length : 0;
-            document.getElementById('statTotalUsers').textContent = users ? users.length : 0;
+            document.getElementById('statTotalListings').textContent = cachedListings.length;
+            document.getElementById('statTotalUsers').textContent = cachedUsers.length;
             document.getElementById('statTotalRequests').textContent = requests ? requests.length : 0;
 
             // تحديث قسم المتواجدين أونلاين
-            renderOnlineUsersSection(users);
+            renderOnlineUsersSection(cachedUsers);
 
             // تحديث تحليل المدن وتوزيع النشاط
-            renderCityActivityStats(listings, users);
+            renderCityActivityStats(cachedListings, cachedUsers);
 
             // تحديث التقرير الشامل
-            renderComprehensiveAnalytics(listings, users, requests);
+            renderComprehensiveAnalytics(cachedListings, cachedUsers, requests);
 
-            // تعبئة جدول العروض
+            // تعبئة جداول العروض والمستخدمين
+            renderAdminListings(cachedListings);
+            renderAdminUsers(cachedUsers);
+        }
+
+        function renderAdminListings(listings) {
             const listingsBody = document.getElementById('adminListingsTableBody');
             if(!listings || listings.length === 0) {
                 listingsBody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد عروض حالياً</td></tr>`;
-            } else {
-                listingsBody.innerHTML = listings.map(item => `
-                    <tr class="border-b hover:bg-slate-50 transition">
-                        <td class="p-3 flex items-center gap-2">
-                            <img src="${item.image_url}" class="w-9 h-9 rounded-lg object-cover border">
-                            <span class="font-black text-slate-900 line-clamp-1">${item.title}</span>
-                        </td>
-                        <td class="p-3 font-bold text-slate-600">${item.city}</td>
-                        <td class="p-3"><span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-bold">${item.trade_type}</span></td>
-                        <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-bold">${item.status || 'active'}</span></td>
-                        <td class="p-3 text-center">
-                            <button onclick="adminDeleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">
-                                <i class="fa-solid fa-trash"></i> حذف
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
+                return;
             }
+            listingsBody.innerHTML = listings.map(item => `
+                <tr class="border-b hover:bg-slate-50 transition">
+                    <td class="p-3 flex items-center gap-2">
+                        <img src="${item.image_url}" onclick="openAdminProductDetails('${item.id}')" class="w-10 h-10 rounded-xl object-cover border cursor-pointer hover:scale-110 transition shadow-sm" title="اضغط لعرض كافة التفاصيل">
+                        <span class="font-black text-slate-900 line-clamp-1">${item.title}</span>
+                    </td>
+                    <td class="p-3 font-bold text-slate-600">${item.city}</td>
+                    <td class="p-3"><span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-bold">${item.trade_type}</span></td>
+                    <td class="p-3"><span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-bold">${item.status || 'active'}</span></td>
+                    <td class="p-3 text-center">
+                        <button onclick="adminDeleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">
+                            <i class="fa-solid fa-trash"></i> حذف
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
 
-            // تعبئة جدول المستخدمين
+        function openAdminProductDetails(id) {
+            const item = cachedListings.find(l => String(l.id) === String(id));
+            if(!item) return;
+
+            document.getElementById('admModalTitle').textContent = item.title;
+            document.getElementById('admModalImage').src = item.image_url;
+            document.getElementById('admModalCity').textContent = item.city || 'غير محددة';
+            document.getElementById('admModalTrade').textContent = item.trade_type || 'راس فـ راس';
+            
+            // حساب وتنسيق توقيت النشر ومدة النشر
+            const createdDate = item.created_at ? new Date(item.created_at) : new Date();
+            document.getElementById('admModalCreatedAt').textContent = createdDate.toLocaleString('ar-MA');
+            
+            const diffTime = Math.abs(new Date() - createdDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById('admModalDuration').textContent = diffDays > 0 ? `${diffDays} أيام و ${diffHours} ساعات` : `${diffHours} ساعات`;
+
+            document.getElementById('admModalWanted').textContent = item.wanted || 'غير محدد';
+            document.getElementById('admModalDesc').textContent = item.description || 'لا يوجد وصف إضافي.';
+
+            document.getElementById('adminProductDetailsModal').classList.remove('hidden');
+        }
+
+        function renderAdminUsers(users) {
             const usersBody = document.getElementById('adminUsersTableBody');
             if(!users || users.length === 0) {
                 usersBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">لا يوجد مستخدمون مسجلون</td></tr>`;
-            } else {
-                usersBody.innerHTML = users.map(u => `
+                return;
+            }
+
+            // جلب قائمة الهواتف المحظورة من localStorage
+            const bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
+
+            usersBody.innerHTML = users.map(u => {
+                const isBanned = bannedPhones.includes(u.phone);
+                return `
                     <tr class="border-b hover:bg-slate-50 transition">
                         <td class="p-3 flex items-center gap-2">
                             <img src="${u.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg'}" class="w-8 h-8 rounded-full object-cover border">
@@ -303,14 +381,39 @@
                         </td>
                         <td class="p-3 font-bold text-slate-600">${u.phone}</td>
                         <td class="p-3 text-emerald-600 font-bold">${u.city || 'غير محدد'}</td>
-                        <td class="p-3 text-center">
+                        <td class="p-3 text-center space-x-1 space-x-reverse">
+                            <button onclick="toggleUserBan('${u.phone}')" class="${isBanned ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-amber-50 text-amber-600 hover:bg-amber-100'} font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">
+                                <i class="fa-solid ${isBanned ? 'fa-user-check' : 'fa-ban'}"></i> ${isBanned ? 'إلغاء الحظر' : 'حظر'}
+                            </button>
                             <button onclick="adminDeleteUser('${u.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-3 py-1.5 rounded-xl transition cursor-pointer">
-                                <i class="fa-solid fa-user-slash"></i> حذف الحساب
+                                <i class="fa-solid fa-user-slash"></i> حذف
                             </button>
                         </td>
                     </tr>
-                `).join('');
+                `;
+            }).join('');
+        }
+
+        function filterAdminUsers() {
+            const query = document.getElementById('adminUserSearchInput').value.toLowerCase().trim();
+            const filtered = cachedUsers.filter(u => 
+                (u.full_name && u.full_name.toLowerCase().includes(query)) || 
+                (u.phone && u.phone.includes(query))
+            );
+            renderAdminUsers(filtered);
+        }
+
+        function toggleUserBan(phone) {
+            let bannedPhones = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
+            if(bannedPhones.includes(phone)) {
+                bannedPhones = bannedPhones.filter(p => p !== phone);
+                alert(`تم إلغاء الحظر عن الرقم: ${phone}`);
+            } else {
+                bannedPhones.push(phone);
+                alert(`تم حظر المستخدم صاحب الرقم: ${phone} بنجاح!`);
             }
+            localStorage.setItem('badal_banned_phones', JSON.stringify(bannedPhones));
+            renderAdminUsers(cachedUsers);
         }
 
         function renderOnlineUsersSection(users) {
@@ -322,7 +425,6 @@
                 return;
             }
 
-            // محاكاة الأونلاين النشط (أحدث المستخدمين أو عينة افتراضية نشطة)
             const onlineUsers = users.slice(0, 5); 
             countEl.textContent = `${onlineUsers.length} مستخدم نشط أونلاين`;
 
