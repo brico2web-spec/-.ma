@@ -908,7 +908,7 @@
                 </ul>
                 <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                     <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.6</span>
+                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.7</span>
                 </div>
             </div>
         </div>
@@ -1002,7 +1002,6 @@
             }
 
             await fetchProfilesAndData();
-            await fetchAuctionsData();
             setupRealtimeSubscriptions();
             setInterval(rotatePromoSlider, 5000);
             
@@ -1096,12 +1095,6 @@
                 })
                 .subscribe();
 
-            _supabase.channel('public:auctions')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'auctions' }, payload => {
-                    fetchAuctionsData();
-                })
-                .subscribe();
-
             _supabase.channel('public:messages')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, payload => {
                     const msg = payload.new;
@@ -1144,17 +1137,6 @@
                 })
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => { fetchProfilesAndData(); })
                 .subscribe();
-        }
-
-        async function fetchAuctionsData() {
-            const { data, error } = await _supabase.from('auctions').select('*').order('created_at', { ascending: false });
-            if(!error && data) {
-                auctionItems = data;
-                renderFridayAuctionInterface();
-            } else {
-                auctionItems = [];
-                renderFridayAuctionInterface();
-            }
         }
 
         async function handleTypingSignal() {
@@ -1461,15 +1443,15 @@
                 return;
             }
 
-            const activeBatch = auctionItems.slice(0, 3);
-            const alreadyHasItem = activeBatch.some(item => String(item.userId) === String(currentAccount.id));
+            const activeBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed').slice(0, 3);
+            const alreadyHasItem = activeBatch.some(item => String(item.user_id) === String(currentAccount.id));
 
             if(alreadyHasItem) {
                 showModalAlert("تنبيه", "لديك بالفعل منتج معروض في هذه الجولة النشطة للمزاد! يسمح بمنتج واحد فقط لكل مستخدم في الجولة.", "error");
                 return;
             }
 
-            const myActiveListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed');
+            const myActiveListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed' && !l.is_auction);
             const container = document.getElementById('myAuctionActiveListingsDropdown');
 
             if(myActiveListings.length === 0) {
@@ -1503,38 +1485,31 @@
             }
 
             const listingId = selectedRadio.value;
-            const listing = allListings.find(l => String(l.id) === String(listingId));
-            if(!listing) return;
-
             const startPriceInput = Number(document.getElementById('auctionStartPriceInput').value);
             if(isNaN(startPriceInput) || startPriceInput < 10 || startPriceInput > 500) {
                 showModalAlert("خطأ في الثمن", "السعر الابتدائي يجب أن يكون محصوراً بين 10 دراهم و 500 درهم!", "error");
                 return;
             }
 
-            const newAuctionItem = {
-                id: 'auc_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
-                userId: String(currentAccount.id),
-                title: listing.title,
-                imageUrl: listing.image_url,
-                startPrice: startPriceInput,
-                currentPrice: startPriceInput,
-                bidsHistory: []
-            };
+            const { error } = await _supabase.from('listings').update({
+                is_auction: true,
+                start_price: startPriceInput,
+                current_price: startPriceInput,
+                bids_history: []
+            }).eq('id', listingId);
 
-            const { error } = await _supabase.from('auctions').insert([newAuctionItem]);
             if(!error) {
-                await fetchAuctionsData();
+                await fetchListings();
                 closeModal('addAuctionItemModal');
                 showModalAlert("نجاح", "تم طرح منتجك في المزاد بنجاح على المباشر لجميع المستخدمين! 🔨", "success");
             } else {
-                showModalAlert("خطأ", "تعذر نشر المنتج في المزاد (تأكد من إنشاء جدول auctions في قاعدة البيانات Supabase): " + error.message, "error");
+                showModalAlert("خطأ", "تعذر نشر المنتج في المزاد: " + error.message, "error");
             }
         }
 
         function renderFridayAuctionInterface() {
             const container = document.getElementById('fridayAuctionContainer');
-            const activeAuctionBatch = auctionItems.slice(0, 3);
+            const activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed').slice(0, 3);
 
             let addBtnHtml = `
                 <div class="flex items-center justify-between bg-purple-900/40 p-3 rounded-2xl border border-purple-500/50 flex-wrap gap-2">
@@ -1569,11 +1544,13 @@
                 ${addBtnHtml}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     ${activeAuctionBatch.map((item) => {
-                        const seller = allProfiles[String(item.userId)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
-                        const bids = item.bidsHistory || [];
+                        const seller = allProfiles[String(item.user_id)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+                        const bids = item.bids_history || [];
                         const highestBid = bids.length > 0 ? bids[bids.length - 1] : null;
                         const isMyHighest = currentAccount && highestBid && String(highestBid.userId) === String(currentAccount.id);
-                        const isMyItemInAuction = currentAccount && String(item.userId) === String(currentAccount.id);
+                        const isMyItemInAuction = currentAccount && String(item.user_id) === String(currentAccount.id);
+                        const startPrice = item.start_price || 50;
+                        const currentPrice = item.current_price || startPrice;
 
                         return `
                             <div class="bg-slate-900/90 rounded-2xl p-4 border-2 ${isMyHighest && isAuctionFinished ? 'border-amber-400 shadow-amber-500/20' : 'border-purple-500/40'} space-y-3 flex flex-col justify-between shadow-xl">
@@ -1582,14 +1559,14 @@
                                     <span class="text-xs font-bold text-slate-200">${seller.full_name}</span>
                                 </div>
                                 <div class="relative h-32 rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center">
-                                    <img src="${item.imageUrl}" class="w-full h-full object-cover">
-                                    <span class="absolute top-2 right-2 bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">سعر ابدائي: ${item.startPrice} د.م</span>
+                                    <img src="${item.image_url}" class="w-full h-full object-cover">
+                                    <span class="absolute top-2 right-2 bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">سعر ابدائي: ${startPrice} د.م</span>
                                 </div>
                                 <div class="space-y-1">
                                     <h5 class="font-black text-sm text-white line-clamp-1">${item.title}</h5>
                                     <div class="bg-purple-950/80 p-2 rounded-xl border border-purple-500/30 flex items-center justify-between">
                                         <span class="text-[10px] text-purple-300 font-bold">الثمن الحالي للمنتج:</span>
-                                        <span class="text-amber-400 font-black text-sm">${item.currentPrice || item.startPrice} درهم</span>
+                                        <span class="text-amber-400 font-black text-sm">${currentPrice} درهم</span>
                                     </div>
                                     
                                     <div class="bg-slate-950/60 p-2 rounded-xl border border-slate-800 space-y-1 max-h-24 overflow-y-auto">
@@ -1643,17 +1620,17 @@
                 return;
             }
 
-            const item = auctionItems.find(i => i.id === itemId);
+            const item = allListings.find(i => i.id === itemId);
             if(!item) return;
 
-            if(String(item.userId) === String(currentAccount.id)) {
+            if(String(item.user_id) === String(currentAccount.id)) {
                 showModalAlert("تنبيه", "لا يمكنك المزايدة على منتجك الخاص!", "error");
                 return;
             }
 
             const inputEl = document.getElementById('bidInput_' + itemId);
             const enteredPrice = Number(inputEl.value);
-            const currentHighest = Number(item.currentPrice) || item.startPrice;
+            const currentHighest = Number(item.current_price) || item.start_price || 50;
 
             if(isNaN(enteredPrice) || enteredPrice <= currentHighest) {
                 showModalAlert("خطأ في الثمن", `الثمن المدخل يجب أن يكون أكبر من السعر الحالي (${currentHighest} درهم)!`, "error");
@@ -1665,20 +1642,20 @@
                 return;
             }
 
-            const updatedBids = item.bidsHistory ? [...item.bidsHistory] : [];
+            const updatedBids = item.bids_history ? [...item.bids_history] : [];
             updatedBids.push({
                 userId: String(currentAccount.id),
                 userName: currentAccount.full_name,
                 price: enteredPrice
             });
 
-            const { error } = await _supabase.from('auctions').update({
-                currentPrice: enteredPrice,
-                bidsHistory: updatedBids
+            const { error } = await _supabase.from('listings').update({
+                current_price: enteredPrice,
+                bids_history: updatedBids
             }).eq('id', itemId);
 
             if(!error) {
-                await fetchAuctionsData();
+                await fetchListings();
                 showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح على المباشر بـ ${enteredPrice} درهم!`);
             } else {
                 showModalAlert("خطأ", "تعذر حفظ المزايدة: " + error.message, "error");
@@ -1687,7 +1664,7 @@
 
         function openAuctionChat(itemId) {
             if(!currentAccount) return;
-            const item = auctionItems.find(i => i.id === itemId);
+            const item = allListings.find(i => i.id === itemId);
             if(!item) return;
 
             closeModal('fridayAuctionModal');
@@ -1860,7 +1837,7 @@
             container.innerHTML = completedItems.slice(0, 4).map(item => {
                 const isGame = item.wanted && item.wanted.includes('لعبة');
                 const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
-                const isAuction = item.id && item.id.startsWith('auc_');
+                const isAuction = item.is_auction === true;
 
                 let cardBgClass = "bg-white/90 border-emerald-300";
                 let badgeClass = "bg-emerald-100 text-emerald-800";
@@ -2521,6 +2498,9 @@
             if(countEl) countEl.textContent = activeListings.length;
             renderListings(activeListings);
             renderHomepageCompletedTrades();
+            if(document.getElementById('fridayAuctionModal') && !document.getElementById('fridayAuctionModal').classList.contains('hidden')) {
+                renderFridayAuctionInterface();
+            }
         }
 
         function shareOnWhatsApp(itemId) {
