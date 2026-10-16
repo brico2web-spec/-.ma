@@ -146,12 +146,15 @@
                 </span>
                 <h3 id="sliderTitle" class="text-xl sm:text-3xl font-black text-white slide-fade drop-shadow-md leading-tight">بدل داكشي اللي ما محتاجوش، وربح جديد فبلاش!</h3>
                 <p id="sliderDesc" class="text-xs sm:text-sm text-slate-200 font-medium slide-fade drop-shadow leading-relaxed">المقايضة المباشرة راس فـ راس بـ 0 درهم بين ولاد بلادك بكل أمان وثقة.</p>
-                <div class="pt-1 flex items-center gap-2">
+                <div class="pt-1 flex items-center gap-2 flex-wrap">
                     <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-arrows-rotate"></i> ابدأ المقايضة الآن
                     </button>
                     <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer animate-pulse">
                         <i class="fa-solid fa-dice"></i> لعبة عجلة الحظ 🎲
+                    </button>
+                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer animate-bounce">
+                        <i class="fa-solid fa-gavel"></i> المزاد الحصري يوم الجمعة 🔨
                     </button>
                 </div>
             </div>
@@ -181,7 +184,10 @@
                     <p class="text-xs sm:text-sm text-slate-300 mt-1 font-light">مقايضة مباشرة بـ 0 درهم بين أطراف التبادل عبر المنصة.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer animate-bounce">
+                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer animate-bounce">
+                        <i class="fa-solid fa-gavel text-base"></i> المزاد الحصري يوم الجمعة 🔨
+                    </button>
+                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap">
                         <i class="fa-solid fa-dice text-base"></i> لعبة عجلة الحظ 🎲
                     </button>
                     <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
@@ -362,6 +368,60 @@
             <div id="gameSpinnerResultArea" class="hidden bg-slate-800/90 border-2 border-pink-500/80 rounded-3xl p-5 text-center space-y-4 shadow-2xl">
                 <!-- Injected via JS -->
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL: المزاد الحصري يوم الجمعة -->
+    <div id="fridayAuctionModal" class="fixed inset-0 bg-slate-900/85 backdrop-blur-md z-[120] hidden flex items-center justify-center p-4">
+        <div class="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl relative border-2 border-purple-400 text-right slide-fade overflow-hidden max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('fridayAuctionModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center justify-center transition z-20">&times;</button>
+            
+            <div class="text-center space-y-1.5 border-b border-purple-900/80 pb-4">
+                <span class="bg-gradient-to-r from-purple-500 to-pink-600 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-lg inline-flex items-center gap-1.5 animate-pulse">
+                    <i class="fa-solid fa-gavel text-yellow-300"></i> المزاد الحصري يوم الجمعة 🔨
+                </span>
+                <h3 class="font-black text-2xl text-white">ساحة المزايدة الحية (حصرية يوم الجمعة)</h3>
+                <p class="text-xs text-purple-200">الافتتاح من بعد صلاة الظهر بـ 15 دقيقة (13:15) إلى منتصف الليل (00:00). 3 منتجات كل 30 دقيقة!</p>
+            </div>
+
+            <!-- عرض حالة المزاد أو منتجات المزاد -->
+            <div id="fridayAuctionContainer" class="space-y-4">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="border-t border-purple-900/80 pt-4 text-center">
+                <button onclick="openAddAuctionModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-3 rounded-2xl text-xs shadow-lg transition cursor-pointer">
+                    <i class="fa-solid fa-plus-circle ml-1"></i> أضف منتجك للمزاد الحصري (10 إلى 500 درهم) 🏷️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: إضافة منتج للمزاد -->
+    <div id="addAuctionModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[130] hidden flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right">
+            <button onclick="closeModal('addAuctionModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <h3 class="font-black text-base text-purple-900">إضافة سلعة للمزاد الحصري يوم الجمعة 🏷️</h3>
+            <form onsubmit="handlePostAuctionItem(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">عنوان المنتج *</label>
+                    <input type="text" id="aucTitle" required placeholder="مثلاً: ساعة أصلية أو بلايستيشن" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">السعر الابتدائي (بالدرهم) *</label>
+                    <input type="number" id="aucStartPrice" min="10" max="500" required placeholder="بين 10 و 500 درهم" class="w-full bg-slate-50 border p-3 rounded-xl font-bold">
+                    <span class="text-[10px] text-slate-400 mt-1 block">القواعد: الحد الأدنى 10 دراهم، والحد الأقصى 500 درهم.</span>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">صورة المنتج *</label>
+                    <input type="file" id="aucImageFile" accept="image/*" required class="w-full bg-slate-50 border p-2 rounded-xl text-xs">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">وصف المنتج</label>
+                    <textarea id="aucDesc" rows="2" placeholder="حالة المنتج..." class="w-full bg-slate-50 border p-3 rounded-xl font-bold"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer">نشر في المزاد الحصري 🚀</button>
+            </form>
         </div>
     </div>
 
@@ -727,6 +787,11 @@
         let selectedGameListingId = null;
         let sessionExcludedGameListingIds = [];
 
+        // متغيرات المزاد الحصري يوم الجمعة
+        let auctionItems = JSON.parse(localStorage.getItem('badal_auction_items') || '[]');
+        let auctionTimerSeconds = 1800; // 30 دقيقة
+        let auctionTimerInterval = null;
+
         function showModalAlert(title, message, type = 'info') {
             document.getElementById('customAlertTitle').textContent = title;
             document.getElementById('customAlertMessage').textContent = message;
@@ -870,7 +935,6 @@
             document.body.appendChild(div);
         }
 
-        // --- التحديث الشامل والفوري بدون تحديث الصفحة (Real-time Subscriptions) ---
         function setupRealtimeSubscriptions() {
             _supabase.channel('public:trade_requests')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'trade_requests' }, payload => {
@@ -1075,10 +1139,8 @@
             updateHeaderUI();
         }
 
-        // نظام الحساب العقلاني للتقييمات والدرع والمستوى بناءً على التقييمات والعقوبات والانضباط
         function getUserRatingStats(userId) {
             const userRats = allRatings.filter(r => String(r.rated_user_id) === String(userId));
-            
             const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
             const userProfile = allProfiles[String(userId)] || {};
             const userPhone = userProfile.phone;
@@ -1095,12 +1157,9 @@
             }
 
             let sum = userRats.reduce((acc, curr) => acc + Number(curr.rating), 0);
-            if(hasPenalty) {
-                sum = Math.max(1, sum - 2); 
-            }
+            if(hasPenalty) { sum = Math.max(1, sum - 2); }
 
             const avgNum = Number((sum / userRats.length).toFixed(1));
-            
             let starsStr = '';
             for(let i=1; i<=5; i++) {
                 if(i <= Math.round(avgNum)) {
@@ -1124,13 +1183,7 @@
                 shieldClass = 'bg-rose-50 text-rose-700 border-rose-300';
             }
 
-            return {
-                avg: avgNum.toFixed(1),
-                count: userRats.length,
-                starsHtml: starsStr,
-                shieldName: shieldName,
-                shieldClass: shieldClass
-            };
+            return { avg: avgNum.toFixed(1), count: userRats.length, starsHtml: starsStr, shieldName: shieldName, shieldClass: shieldClass };
         }
 
         function updateHeaderUI() {
@@ -1143,8 +1196,8 @@
                         <i class="fa-solid fa-bars text-lg"></i>
                         ${activeChatsCount > 0 ? `<span class="absolute -top-1 -right-1 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow animate-pulse">${activeChatsCount}</span>` : ''}
                     </button>
-                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer animate-pulse">
-                        <i class="fa-solid fa-dice animate-spin"></i> لعبة الحظ 🎲
+                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer animate-bounce">
+                        <i class="fa-solid fa-gavel"></i> المزاد الحصري 🔨
                     </button>
                 `;
                 updateDrawerUserInfo();
@@ -1153,11 +1206,190 @@
                     <button onclick="openModal('authModal')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer border border-emerald-200">
                         <i class="fa-solid fa-right-to-bracket ml-1"></i> دخول / حساب جديد
                     </button>
-                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer animate-pulse">
-                        <i class="fa-solid fa-dice animate-spin"></i> لعبة الحظ 🎲
+                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black text-xs px-3.5 py-2.5 rounded-2xl shadow transition flex items-center gap-1.5 cursor-pointer animate-bounce">
+                        <i class="fa-solid fa-gavel"></i> المزاد الحصري 🔨
                     </button>
                 `;
             }
+        }
+
+        // --- منطق المزاد الحصري يوم الجمعة ---
+        function checkIsFridayAuctionActive() {
+            const now = new Date();
+            const day = now.getDay(); // الجمعة هو 5
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const totalMins = hours * 60 + minutes;
+
+            // الجمعة (5) ابتداءً من 13:15 (أي 795 دقيقة) حتى منتصف الليل (00:00 أي 1440 دقيقة)
+            // للتجربة والاستعراض الفوري يمكنك إزالة شرط (day === 5) أو جعله متاحاً دائماً، لكن سنلتزم بالشرط المطلوب: يوم الجمعة حصرياً من 13:15 إلى 00:00
+            // ملاحظة: للاختبار المؤقت يمكنك تفعيل السطر التالي: return true;
+            if (day === 5 && totalMins >= 795 && totalMins <= 1440) {
+                return true;
+            }
+            return false;
+        }
+
+        function openFridayExclusiveAuctionModal() {
+            if (!checkIsFridayAuctionActive()) {
+                showModalAlert("المزاد مغلق 🔒", "المزاد الحصري مفتوح حصرياً يوم الجمعة فقط (ابتداءً من بعد صلاة الظهر بـ 15 دقيقة، أي الساعة 13:15 ويستمر حتى منتصف الليل 00:00). مرجوا العودة في الوقت المحدد!", "error");
+                return;
+            }
+
+            renderFridayAuctionInterface();
+            openModal('fridayAuctionModal');
+            startAuctionTimer();
+        }
+
+        function startAuctionTimer() {
+            if (auctionTimerInterval) clearInterval(auctionTimerInterval);
+            auctionTimerInterval = setInterval(() => {
+                auctionTimerSeconds--;
+                if (auctionTimerSeconds <= 0) {
+                    auctionTimerSeconds = 1800; // إعادة ضبط الدفعة لـ 30 دقيقة وانتقال تلقائي
+                    rotateAuctionGroup();
+                }
+                const timerEl = document.getElementById('auctionCountdownDisplay');
+                if (timerEl) {
+                    const mins = Math.floor(auctionTimerSeconds / 60);
+                    const secs = auctionTimerSeconds % 60;
+                    timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function rotateAuctionGroup() {
+            // تدوير أو تصفية المنتجات المنتهية وفتح دردشة لصاحب أعلى مزايدة
+            if (auctionItems.length > 0) {
+                const currentTop = auctionItems[0];
+                if (currentTop.highestBidderId) {
+                    showModalAlert("انتهت الجلسة 🎉", `انتهت مدة المزاد للسلعة (${currentTop.title}). الفائز بأعلى مزايدة هو صاحب السعر: ${currentTop.currentPrice} درهم! سيتم فتح الدردشة فوراً.`, "success");
+                }
+            }
+        }
+
+        function renderFridayAuctionInterface() {
+            const container = document.getElementById('fridayAuctionContainer');
+            const activeAuctionBatch = auctionItems.slice(0, 3); // عرض 3 منتجات في كل دفعة
+
+            let mins = Math.floor(auctionTimerSeconds / 60);
+            let secs = auctionTimerSeconds % 60;
+            let timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+            if (activeAuctionBatch.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 space-y-3 bg-slate-900/60 rounded-3xl border border-purple-500/40">
+                        <i class="fa-solid fa-gavel text-5xl text-purple-400 animate-bounce"></i>
+                        <h4 class="font-black text-white text-base">لا توجد منتجات معروضة في المزاد حالياً</h4>
+                        <p class="text-xs text-purple-200">كن أول المشاركين وأضف منتجك بين 10 دراهم و 500 درهم!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="flex items-center justify-between bg-purple-900/40 p-3 rounded-2xl border border-purple-500/50">
+                    <span class="text-xs font-black text-purple-300">⏱️ عداد الدفعة الحالية (3 منتجات لمدة 30 دقيقة):</span>
+                    <span id="auctionCountdownDisplay" class="bg-pink-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow animate-pulse">${timeStr}</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    ${activeAuctionBatch.map((item, idx) => {
+                        const seller = allProfiles[String(item.userId)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+                        const bidder = item.highestBidderName || 'لا توجد مزايدات بعد';
+                        return `
+                            <div class="bg-slate-900/90 rounded-2xl p-4 border border-purple-500/40 space-y-3 flex flex-col justify-between shadow-xl">
+                                <div class="flex items-center gap-2 border-b border-purple-900/60 pb-2">
+                                    <img src="${seller.avatar_url}" class="w-8 h-8 rounded-full object-cover border border-purple-400">
+                                    <span class="text-xs font-bold text-slate-200">${seller.full_name}</span>
+                                </div>
+                                <div class="relative h-32 rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center">
+                                    <img src="${item.imageUrl}" class="w-full h-full object-cover">
+                                    <span class="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">سعر ابتدائي: ${item.startPrice} د.م</span>
+                                </div>
+                                <div class="space-y-1">
+                                    <h5 class="font-black text-sm text-white line-clamp-1">${item.title}</h5>
+                                    <p class="text-[11px] text-purple-300 font-bold">السعر الحالي: <span class="text-amber-400 font-black">${item.currentPrice || item.startPrice} درهم</span></p>
+                                    <p class="text-[10px] text-slate-400">أعلى مزايد: <strong class="text-emerald-400">${bidder}</strong></p>
+                                </div>
+                                <div class="pt-2">
+                                    <button onclick="placeBid('${item.id}')" class="w-full bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black py-2.5 rounded-xl text-xs shadow transition cursor-pointer">
+                                        زايد الآن (+10 درهم) ⚡
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function openAddAuctionModal() {
+            if(!currentAccount) {
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً لإضافة منتج للمزاد!", "info");
+                openModal('authModal');
+                return;
+            }
+            openModal('addAuctionModal');
+        }
+
+        async function handlePostAuctionItem(e) {
+            e.preventDefault();
+            const title = document.getElementById('aucTitle').value.trim();
+            const startPrice = Number(document.getElementById('aucStartPrice').value);
+            const desc = document.getElementById('aucDesc').value.trim();
+            const file = document.getElementById('aucImageFile').files[0];
+
+            if(startPrice < 10 || startPrice > 500) {
+                showModalAlert("تنبيه", "السعر الابتدائي يجب أن يكون بين 10 دراهم كحد أدنى و 500 درهم كحد أقصى!", "error");
+                return;
+            }
+
+            const fileName = `auction_${Date.now()}.${file.name.split('.').pop()}`;
+            await _supabase.storage.from('product-images').upload(fileName, file);
+            const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+
+            const newItem = {
+                id: 'auc_' + Date.now(),
+                title,
+                startPrice,
+                currentPrice: startPrice,
+                description: desc,
+                imageUrl,
+                userId: currentAccount.id,
+                highestBidderId: null,
+                highestBidderName: null
+            };
+
+            auctionItems.push(newItem);
+            localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
+
+            closeModal('addAuctionModal');
+            showModalAlert("نجاح", "تمت إضافة منتجك بنجاح إلى ساحة المزاد الحصري يوم الجمعة! 🔨", "success");
+            renderFridayAuctionInterface();
+        }
+
+        function placeBid(itemId) {
+            if(!currentAccount) {
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً للمزايدة!", "info");
+                openModal('authModal');
+                return;
+            }
+
+            const item = auctionItems.find(i => i.id === itemId);
+            if(!item) return;
+
+            if(String(item.userId) === String(currentAccount.id)) {
+                showModalAlert("تنبيه", "لا يمكنك المزايدة على منتجك الخاص!", "error");
+                return;
+            }
+
+            item.currentPrice = (Number(item.currentPrice) || item.startPrice) + 10;
+            item.highestBidderId = currentAccount.id;
+            item.highestBidderName = currentAccount.full_name;
+
+            localStorage.setItem('badal_auction_items', JSON.stringify(auctionItems));
+            renderFridayAuctionInterface();
+            showFloatingNotification(`⚡ مزايدة ناجحة بـ ${item.currentPrice} درهم على (${item.title})!`);
         }
 
         function openTradeWheelGameModal() {
@@ -1427,6 +1659,9 @@
                             ${acceptedDealsCount > 0 ? `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 font-black text-[10px] flex items-center justify-center border border-white shadow animate-pulse" title="العروض المتفق عليها">⭐${acceptedDealsCount}</span>` : ''}
                             ${unreadMessagesCount > 0 ? `<span class="w-5 h-5 rounded-full bg-emerald-500 text-white font-black text-[9px] flex items-center justify-center border border-white shadow">${unreadMessagesCount}</span>` : ''}
                         </div>
+                    </a>
+                    <a href="#" onclick="closeRightMenu(); openFridayExclusiveAuctionModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-black transition shadow-md animate-bounce">
+                        <i class="fa-solid fa-gavel text-base"></i> المزاد الحصري يوم الجمعة 🔨
                     </a>
                     <a href="#" onclick="closeRightMenu(); openTradeWheelGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 text-white font-black transition shadow-md animate-pulse">
                         <i class="fa-solid fa-dice text-base"></i> لعبة عجلة الحظ للمقايضة 🎲
