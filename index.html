@@ -527,7 +527,7 @@
                     <h4 id="accModalName" class="font-black text-base text-slate-800"></h4>
                     <p id="accModalPhone" class="text-xs text-slate-500 font-bold"></p>
                     <p id="accModalCity" class="text-xs text-emerald-600 font-bold"></p>
-                    <div id="accRatingBadge" class="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
+                    <div id="accRatingBadge" class="flex flex-col items-center gap-1.5 bg-amber-50 p-3 rounded-2xl border border-amber-200 text-xs font-bold text-amber-700 w-full">
                         <!-- Injected via JS -->
                     </div>
                 </div>
@@ -701,8 +701,9 @@
                     <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> إشعارات فورية ودردشة مباشرة بين الأطراف.</li>
                     <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> نظام تقييمات لضمان المصداقية والثقة.</li>
                 </ul>
-                <div class="pt-2 text-[10px] text-slate-500 font-bold">
-                    جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الموالية الاحترافية 🎁)
+                <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
+                    <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
+                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.1</span>
                 </div>
             </div>
         </div>
@@ -843,7 +844,6 @@
 
         // --- التحديث الشامل والفوري بدون تحديث الصفحة (Real-time Subscriptions) ---
         function setupRealtimeSubscriptions() {
-            // الاستماع لتغييرات الطلبات (إضافة، تعديل، حذف)
             _supabase.channel('public:trade_requests')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'trade_requests' }, payload => {
                     fetchRequests();
@@ -856,7 +856,6 @@
                 })
                 .subscribe();
 
-            // الاستماع لتغييرات الرسائل (لظهور الرسالة فوراً في الدردشة)
             _supabase.channel('public:messages')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
                     const newMsg = payload.new;
@@ -869,14 +868,12 @@
                 })
                 .subscribe();
 
-            // الاستماع لتغييرات العروض (إضافة عرض، تعديل، أو إتمام المقايضة)
             _supabase.channel('public:listings')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'listings' }, payload => {
                     fetchListings();
                 })
                 .subscribe();
 
-            // الاستماع لتغييرات البروفايلات والتقييمات
             _supabase.channel('public:profiles_and_ratings')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => { fetchProfilesAndData(); })
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'ratings' }, () => { fetchProfilesAndData(); })
@@ -1017,16 +1014,16 @@
                 <div class="bg-slate-800/90 border border-emerald-500/50 rounded-3xl p-5 flex items-center gap-4 shadow-2xl slide-fade backdrop-blur-md">
                     <div class="relative flex-shrink-0">
                         <img src="${avatar}" class="w-16 h-16 rounded-full object-cover border-2 border-emerald-400 shadow-lg">
-                        <span class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-white">⭐ ${stats.avg}</span>
                     </div>
-                    <div class="flex-grow space-y-1 text-right">
+                    <div class="flex-grow space-y-1.5 text-right">
                         <span class="bg-emerald-500/20 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-block">شريك موثوق هذا الأسبوع 🌟</span>
                         <h4 class="font-black text-white text-base">${profile.full_name}</h4>
                         <p class="text-xs text-slate-300 font-bold flex items-center gap-1">
                             <i class="fa-solid fa-location-dot text-emerald-400"></i> ${city}
-                            <span class="mx-1 text-slate-500">•</span>
-                            <span class="text-amber-400 font-bold">${stats.count} تقييم ناجح</span>
                         </p>
+                        <div class="flex items-center gap-1 text-sm tracking-wider py-0.5">
+                            ${stats.starsHtml}
+                        </div>
                     </div>
                 </div>
             `;
@@ -1043,11 +1040,65 @@
             updateHeaderUI();
         }
 
+        // نظام الحساب العقلاني للتقييمات والدرع والمستوى بناءً على التقييمات والعقوبات والانضباط
         function getUserRatingStats(userId) {
             const userRats = allRatings.filter(r => String(r.rated_user_id) === String(userId));
-            if(userRats.length === 0) return { avg: '5.0', count: 0 };
-            const sum = userRats.reduce((acc, curr) => acc + Number(curr.rating), 0);
-            return { avg: (sum / userRats.length).toFixed(1), count: userRats.length };
+            
+            // العقوبات النشطة للمستخدم تؤثر بشكل واضح وتخفض النقاط والمستوى
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const userProfile = allProfiles[String(userId)] || {};
+            const userPhone = userProfile.phone;
+            const hasPenalty = userPhone && penalties[userPhone] && new Date() < new Date(penalties[userPhone].expiryDate);
+
+            if(userRats.length === 0) {
+                return {
+                    avg: '0.0',
+                    count: 0,
+                    starsHtml: '<span class="text-slate-300 text-lg">★ ★ ★ ★ ★</span>',
+                    shieldName: 'درع المستوى الأول 🛡️',
+                    shieldClass: 'bg-slate-100 text-slate-600 border-slate-300'
+                };
+            }
+
+            let sum = userRats.reduce((acc, curr) => acc + Number(curr.rating), 0);
+            if(hasPenalty) {
+                sum = Math.max(1, sum - 2); // خصم تأثير واضح عند العقوبة
+            }
+
+            const avgNum = Number((sum / userRats.length).toFixed(1));
+            
+            // تحديد النجوم المكتملة بناءً على المتوسط العقلاني لتعطي الشكل المطابق تماماً لصورة الحساب
+            let starsStr = '';
+            for(let i=1; i<=5; i++) {
+                if(i <= Math.round(avgNum)) {
+                    starsStr += '<span class="text-amber-400 text-lg">★</span>';
+                } else {
+                    starsStr += '<span class="text-slate-300 text-lg">★</span>';
+                }
+            }
+
+            // تحديد الدرع والمستوى بناءً على عدد التقييمات والمتوسط والانضباط
+            let shieldName = 'درع المستوى الأول 🛡️';
+            let shieldClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+
+            if(avgNum >= 4.5 && userRats.length >= 10 && !hasPenalty) {
+                shieldName = 'الدرع الماسي (المستوى الاحترافي 💎)';
+                shieldClass = 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 border-indigo-300';
+            } else if(avgNum >= 4.0 && userRats.length >= 5 && !hasPenalty) {
+                shieldName = 'درع المستوى الذهبي ⭐';
+                shieldClass = 'bg-amber-50 text-amber-800 border-amber-300';
+            } else if(hasPenalty) {
+                shieldName = 'تحت المراقبة (عقوبة نشطة ⚠️)';
+                shieldClass = 'bg-rose-50 text-rose-700 border-rose-300';
+            }
+
+            return {
+                avg: avgNum.toFixed(1),
+                count: userRats.length,
+                starsHtml: starsStr,
+                shieldName: shieldName,
+                shieldClass: shieldClass
+            };
         }
 
         function updateHeaderUI() {
@@ -1291,11 +1342,14 @@
             }
 
             document.getElementById('drawerUserInfo').innerHTML = `
-                <img src="${avatar}" class="w-16 h-16 rounded-full object-cover border-4 border-emerald-500 shadow-md">
-                <h4 class="font-black text-slate-900 text-sm">${currentAccount.full_name}</h4>
-                <p class="text-[11px] text-slate-500 font-bold"><i class="fa-solid fa-location-dot text-emerald-600 ml-1"></i> ${city}</p>
-                <div class="bg-amber-50 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-700">
-                    ⭐ ${stats.avg} (${stats.count} تقييم)
+                <img src="${avatar}" class="w-20 h-20 rounded-full object-cover border-4 border-emerald-500 shadow-md">
+                <h4 class="font-black text-slate-900 text-base">${currentAccount.full_name}</h4>
+                <p class="text-xs text-emerald-600 font-bold"><i class="fa-solid fa-location-dot ml-1"></i> ${city}</p>
+                <div class="flex items-center justify-center gap-1 py-1">
+                    ${stats.starsHtml}
+                </div>
+                <div class="text-[10px] font-black px-3 py-1.5 rounded-full border ${stats.shieldClass} shadow-sm">
+                    ${stats.shieldName} (${stats.avg} - ${stats.count} تقييم)
                 </div>
                 ${penaltyHtml}
             `;
@@ -1380,7 +1434,10 @@
                 document.getElementById('accModalPhone').textContent = `الهاتف: ${currentAccount.phone}`;
                 document.getElementById('accModalCity').textContent = `المدينة: ${currentAccount.city || 'غير محددة'}`;
                 const stats = getUserRatingStats(currentAccount.id);
-                document.getElementById('accRatingBadge').innerHTML = `⭐ ${stats.avg} (${stats.count} تقييم من المستخدمين)`;
+                document.getElementById('accRatingBadge').innerHTML = `
+                    <div class="flex items-center gap-1 text-lg">${stats.starsHtml}</div>
+                    <span class="font-black px-3 py-1 rounded-full border ${stats.shieldClass} mt-1">${stats.shieldName} (${stats.avg} - ${stats.count} تقييم)</span>
+                `;
                 openModal('modalMyAccount');
 
             } else if(sectionKey === 'active-listings') {
@@ -1419,8 +1476,8 @@
                 openModal('modalActiveListings');
 
             } else if(sectionKey === 'current-requests') {
-                const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id) && r.status !== 'rejected');
-                const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id) && r.status !== 'rejected');
+                const myReceived = allRequests.filter(r => String(r.receiver_id) === String(currentAccount.id));
+                const mySent = allRequests.filter(r => String(r.sender_id) === String(currentAccount.id));
                 const container = document.getElementById('currentRequestsContent');
 
                 if(myReceived.length === 0 && mySent.length === 0) {
@@ -1439,6 +1496,20 @@
                             const sender = allProfiles[String(req.sender_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
                             const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
                             const reqDate = req.created_at ? new Date(req.created_at).toLocaleString('ar-MA') : 'وقت غير محدد';
+
+                            if(req.status === 'rejected') {
+                                return `
+                                    <div class="bg-rose-50/50 p-3.5 rounded-2xl border border-rose-200 shadow-sm space-y-2 text-xs mb-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-black text-rose-800">لقد رفض ${currentAccount.full_name} المقايضة</span>
+                                            <span class="text-[9px] text-slate-400 font-bold">📅 ${reqDate}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 pt-1">
+                                            <button onclick="deleteRequestRecord('${req.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">حذف الطلب 🗑️</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
 
                             return `
                                 <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs mb-2">
@@ -1476,8 +1547,24 @@
                     if(mySent.length > 0) {
                         html += `<p class="font-bold text-xs text-blue-700 mt-4 mb-1">طلباتك المرسلة:</p>`;
                         html += mySent.map(req => {
-                            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
+                            const receiver = allProfiles[String(req.receiver_id)] || { full_name: 'المستقبل' };
+                            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض', id: req.listing_id };
                             const reqDate = req.created_at ? new Date(req.created_at).toLocaleString('ar-MA') : 'وقت غير محدد';
+
+                            if(req.status === 'rejected') {
+                                return `
+                                    <div class="bg-rose-50/60 p-3.5 rounded-2xl border border-rose-200 shadow-sm space-y-2 text-xs mb-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-black text-rose-800">لقد رفض ${receiver.full_name} المقايضة</span>
+                                            <span class="text-[9px] text-slate-400 font-bold">📅 ${reqDate}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 pt-1">
+                                            <button onclick="deleteRequestRecord('${req.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">حذف الطلب 🗑️</button>
+                                            <button onclick="resendTradeRequest('${listing.id}', '${req.receiver_id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">إعادة إرسال طلب مقايضة 🔄</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
 
                             return `
                                 <div class="bg-blue-50/40 p-3.5 rounded-2xl border border-blue-100 shadow-sm space-y-2 text-xs mb-2">
@@ -1566,6 +1653,26 @@
                 }).join('');
                 openModal('modalAgreedDealsList');
             }
+        }
+
+        async function deleteRequestRecord(reqId) {
+            await _supabase.from('trade_requests').delete().eq('id', reqId);
+            await fetchRequests();
+            closeModal('modalCurrentRequests');
+            openMenuSection('current-requests');
+        }
+
+        async function resendTradeRequest(listingId, receiverId) {
+            await _supabase.from('trade_requests').insert([{
+                sender_id: String(currentAccount.id),
+                receiver_id: String(receiverId),
+                listing_id: String(listingId),
+                status: 'pending'
+            }]);
+            await fetchRequests();
+            closeModal('modalCurrentRequests');
+            showModalAlert("نجاح", "تمت إعادة إرسال طلب المقايضة بنجاح 🔄", "success");
+            openMenuSection('current-requests');
         }
 
         async function cancelTradeDueToNoResponse(reqId) {
@@ -1909,7 +2016,9 @@
                                 <img src="${author.avatar_url}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border-2 ${isRandomWanted ? 'border-pink-500' : 'border-emerald-500'}">
                                 <span class="text-[11px] sm:text-xs font-black text-slate-800 line-clamp-1">${author.full_name}</span>
                             </div>
-                            <span class="text-[9px] sm:text-[10px] bg-amber-50 text-amber-700 px-1.5 sm:px-2 py-0.5 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg}</span>
+                            <div class="flex items-center gap-1 text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-bold border border-amber-200">
+                                <span>⭐ ${authorStats.avg}</span>
+                            </div>
                         </div>
 
                         <div onclick="openProductModal('${item.id}')" class="cursor-pointer">
@@ -1983,7 +2092,10 @@
                             <h4 class="font-black text-sm text-slate-900">${author.full_name}</h4>
                         </div>
                     </div>
-                    <span class="text-xs bg-amber-50 text-amber-700 px-3 py-1 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg} (${authorStats.count})</span>
+                    <div class="flex flex-col items-end">
+                        <span class="text-xs bg-amber-50 text-amber-700 px-3 py-1 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg} (${authorStats.count} تقييم)</span>
+                        <span class="text-[10px] font-bold text-slate-500 mt-1">${authorStats.shieldName}</span>
+                    </div>
                 </div>
                 <div class="relative rounded-2xl overflow-hidden bg-slate-100 shadow-md h-72 flex items-center justify-center">
                     <img src="${item.image_url}" class="w-full h-full object-contain object-center">
