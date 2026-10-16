@@ -765,7 +765,7 @@
                 </ul>
                 <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                     <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.1</span>
+                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 0.2</span>
                 </div>
             </div>
         </div>
@@ -875,6 +875,7 @@
                 }
             }
 
+            // [إصلاح حاسم]: التحقق الفوري من الحظر والعقوبة السحابية والمحلية وإيقاف التنفيذ فوراً إن وجد
             if(currentAccount && await checkUserBannedOrPenalizedCloud(currentAccount)) {
                 return;
             }
@@ -888,8 +889,13 @@
             const { data: profile } = await _supabase.from('profiles').select('*').eq('id', acc.id).single();
             if (!profile) return false;
 
+            // تحديث الحساب المحلي بالبيانات الجديدة القادمة من قاعدة البيانات لضمان المزامنة
+            currentAccount = profile;
+            localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
+
             const localBanned = JSON.parse(localStorage.getItem('badal_banned_phones') || '[]');
-            if (profile.is_banned || localBanned.includes(profile.phone)) {
+            // التحقق السحابي والمحلي من الحظر (is_banned أو رقم الهاتف في قائمة المحظورين)
+            if (profile.is_banned === true || profile.is_banned === 'true' || localBanned.includes(profile.phone)) {
                 showBannedModal();
                 return true;
             }
@@ -898,7 +904,9 @@
             const localPen = penalties[profile.phone];
             const cloudPenExpiry = profile.penalty_expiry ? new Date(profile.penalty_expiry) : null;
 
+            // التحقق من العقوبة (توقيف مؤقت)
             if ((cloudPenExpiry && new Date() < cloudPenExpiry) || (localPen && new Date() < new Date(localPen.expiryDate))) {
+                // الحساب غير محظور كلياً ولكن تحت عقوبة مؤقتة، نتركه يدخل مع إظهار تنبيه العقوبة في حسابي
                 return false; 
             }
             return false;
@@ -971,7 +979,9 @@
             _supabase.channel('public:profiles_and_ratings')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, async payload => {
                     if (currentAccount && String(payload.new.id) === String(currentAccount.id)) {
-                        if (payload.new.is_banned) {
+                        currentAccount = payload.new;
+                        localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
+                        if (payload.new.is_banned === true || payload.new.is_banned === 'true') {
                             showBannedModal();
                         }
                     }
@@ -1068,6 +1078,12 @@
                 if(currentAccount) {
                     currentAccount = allProfiles[String(currentAccount.id)] || currentAccount;
                     localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
+                    
+                    // التحقق الفوري من حالة الحظر عند جلب وتحديث البيانات
+                    if(currentAccount.is_banned === true || currentAccount.is_banned === 'true') {
+                        showBannedModal();
+                        return;
+                    }
                 }
             }
             await fetchRatings();
@@ -2052,6 +2068,7 @@
             currentAccount = data[0];
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             
+            // التحقق الفوري من الحظر والعقوبة عند تسجيل الدخول
             if(await checkUserBannedOrPenalizedCloud(currentAccount)) {
                 return;
             }
