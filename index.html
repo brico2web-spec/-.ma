@@ -299,7 +299,7 @@
                         </div>
                         <div onclick="filterCategoryBySub('أحذية وحقائب نسائية')" class="bg-slate-50 p-3 rounded-xl border border-slate-200 hover:border-pink-500 hover:bg-pink-50/50 cursor-pointer transition">
                             <strong class="text-pink-700 block mb-1">👜 أحذية وحقائب نسائية:</strong>
-                            <p class="text-slate-600">(حقائب يد، حقائب ظهر، أحذية كعب عالي، أحذية رياضية "سنيكرز"، صندل).</p>
+                            <p class="text-slate-600">(حقائب يد، حقائب ظهر، أحذية كعب عالي، أحذية رياضية "سنيكرز", صندل).</p>
                         </div>
                         <div onclick="filterCategoryBySub('مجوهرات وإكسسوارات')" class="bg-slate-50 p-3 rounded-xl border border-slate-200 hover:border-pink-500 hover:bg-pink-50/50 cursor-pointer transition">
                             <strong class="text-pink-700 block mb-1">💍 مجوهرات وإكسسوارات:</strong>
@@ -2283,8 +2283,8 @@
             document.getElementById('editTradeType').value = item.trade_type || 'راس فـ راس';
             document.getElementById('editWanted').value = item.wanted;
             document.getElementById('editDesc').value = item.description || '';
-            if(item.sub_category) {
-                document.getElementById('editSubCategory').value = item.sub_category;
+            if(item.category) {
+                document.getElementById('editSubCategory').value = item.category;
             }
 
             const isRandom = item.wanted && item.wanted.includes('باغي لي كان');
@@ -2305,13 +2305,13 @@
             e.preventDefault();
             const id = document.getElementById('editListingId').value;
             const title = document.getElementById('editTitle').value;
-            const sub_category = document.getElementById('editSubCategory').value;
+            const categoryVal = document.getElementById('editSubCategory').value;
             const trade_type = document.getElementById('editTradeType').value;
             const wanted = document.getElementById('editWanted').value;
             const description = document.getElementById('editDesc').value;
 
             const { error } = await _supabase.from('listings').update({
-                title, category: sub_category, sub_category, trade_type, wanted, description
+                title, category: categoryVal, trade_type, wanted, description
             }).eq('id', id);
 
             if(!error) {
@@ -2367,7 +2367,12 @@
         async function fetchListings() {
             const grid = document.getElementById('listingsGrid');
             const countEl = document.getElementById('products-count');
-            const { data } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
+            const { data, error } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
+
+            if(error) {
+                console.error("Error fetching listings:", error);
+                return;
+            }
 
             allListings = data || [];
             const activeListings = allListings.filter(p => p.status !== 'completed');
@@ -2698,17 +2703,25 @@
             if(!currentAccount) return;
 
             const file = document.getElementById('addImageFile').files[0];
-            const fileName = `${Date.now()}.${file.name.split('.').pop()}`;
-            await _supabase.storage.from('product-images').upload(fileName, file);
-            const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+            if(!file) {
+                showModalAlert("تنبيه", "المرجو اختيار صورة للمنتج!", "error");
+                return;
+            }
 
+            const fileName = `${Date.now()}.${file.name.split('.').pop()}`;
+            const { error: uploadError } = await _supabase.storage.from('product-images').upload(fileName, file);
+            if(uploadError) {
+                showModalAlert("خطأ", "خطأ في رفع الصورة: " + uploadError.message, "error");
+                return;
+            }
+
+            const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
             const participateGame = document.getElementById('participateGameCheck').checked;
             const subCategoryVal = document.getElementById('addSubCategory').value;
 
-            await _supabase.from('listings').insert([{
+            const { error: insertError } = await _supabase.from('listings').insert([{
                 title: document.getElementById('addTitle').value,
                 category: subCategoryVal,
-                sub_category: subCategoryVal,
                 city: currentAccount.city,
                 trade_type: document.getElementById('addTradeType').value,
                 wanted: document.getElementById('addWanted').value,
@@ -2719,8 +2732,13 @@
                 status: 'active'
             }]);
 
+            if(insertError) {
+                showModalAlert("خطأ", "خطأ في نشر العرض: " + insertError.message, "error");
+                return;
+            }
+
             closeModal('addModal');
-            fetchListings();
+            await fetchListings();
             showModalAlert("نجاح", participateGame ? "تم نشر عرضك ومشاركته في لعبة حظ المقايضة بنجاح! 🎁🎲" : "تم نشر عرضك بنجاح! 🎉", "success");
         }
 
@@ -2737,7 +2755,7 @@
 
         function filterProducts() {
             const q = document.getElementById('search-input').value.toLowerCase();
-            renderListings(allListings.filter(p => p.status !== 'completed' && (p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || (p.sub_category && p.sub_category.toLowerCase().includes(q)))));
+            renderListings(allListings.filter(p => p.status !== 'completed' && (p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || (p.category && p.category.toLowerCase().includes(q)))));
         }
 
         function filterCategory(c) {
@@ -2754,13 +2772,13 @@
                 }
             });
 
-            renderListings(c === 'الكل' ? activeListings : activeListings.filter(p => p.category === c || p.sub_category === c));
+            renderListings(c === 'الكل' ? activeListings : activeListings.filter(p => p.category === c));
         }
 
         function filterCategoryBySub(subName) {
             closeModal('categoriesModal');
             const activeListings = allListings.filter(p => p.status !== 'completed');
-            const filtered = activeListings.filter(p => p.sub_category === subName || p.category === subName);
+            const filtered = activeListings.filter(p => p.category === subName);
             renderListings(filtered);
             showFloatingNotification(`📂 تم فلترة العروض حسب شريحة: (${subName})`);
         }
