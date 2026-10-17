@@ -171,7 +171,6 @@
                 <h3 id="sliderTitle" class="text-xl sm:text-3xl font-black text-white slide-fade drop-shadow-md leading-tight">بدل داكشي اللي ما محتاجوش، وربح جديد فبلاش!</h3>
                 <p id="sliderDesc" class="text-xs sm:text-sm text-slate-200 font-medium slide-fade drop-shadow leading-relaxed">المقايضة المباشرة راس fـ راس بـ 0 درهم بين ولاد بلادك بكل أمان وثقة.</p>
                 
-                <!-- أزرار السلايدر بتنسيق متناسق ومنظم -->
                 <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <button onclick="handleOpenAddModal()" class="w-full sm:w-1/3 bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
                         <i class="fa-solid fa-arrows-rotate text-amber-300 text-lg"></i>
@@ -181,7 +180,6 @@
                         <i class="fa-solid fa-dice text-yellow-200 text-lg animate-spin"></i>
                         <span class="text-xs sm:text-sm slide-fade">لعبة عجلة الحظ 🎲</span>
                     </button>
-                    <!-- الزر المعدل للون البنفسجي المتناسق -->
                     <button onclick="openFridayExclusiveAuctionModal()" class="w-full sm:w-1/3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
                         <i class="fa-solid fa-gavel text-amber-300 text-lg animate-pulse"></i>
                         <span class="text-xs sm:text-sm slide-fade">ساحة المزايدة المباشرة 🔨</span>
@@ -194,7 +192,6 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
         
-        <!-- الوحدة الأفقية المعدلة بالعنوان الجديد وشاملة كل الخدمات مع بدل.ma -->
         <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-5 rounded-3xl border-2 border-emerald-400/60 shadow-xl relative overflow-hidden space-y-4">
             <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2">
                 <div class="flex items-center gap-2">
@@ -205,26 +202,23 @@
             
             <!-- زر إتصال بي حرفي في مدينة بكل سهولة -->
             <div class="w-full">
-                <button onclick="showModalAlert('إتصال بي حرفي في مدينة 🛠️', 'خدمة ربط سريع بأقرب الحرفيين المحترفين في مدينتك (نجار، صباغ، كهربائي، رصاص...) لإنجاز أعمالك بكل سهولة وأمان عبر بدل.ma.', 'success')" class="w-full bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.01]">
+                <button onclick="openArtisanServicesModal()" class="w-full bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.01]">
                     <i class="fa-solid fa-hammer text-yellow-200 text-lg animate-bounce"></i>
                     <span class="text-xs sm:text-sm slide-fade">إتصال بي حرفي في مدينة بكل سهولة 🛠️</span>
                 </button>
             </div>
 
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
-                <!-- زر الجمعيات الخيرية -->
                 <button onclick="showModalAlert('جمعيات خيرية 🤝', 'نعمل بشراكة مع جمعيات خيرية رائدة لجمع الأغراض والملابس غير المستخدمة وتوزيعها على المحتاجين بكل أمان.', 'success')" class="w-full sm:w-1/3 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
                     <i class="fa-solid fa-hand-holding-heart text-amber-300 text-lg animate-bounce"></i>
                     <span class="text-xs sm:text-sm slide-fade">شراكة مع الجمعيات الخيرية لمد يد العون</span>
                 </button>
 
-                <!-- زر أصحاب تدوير النفايات -->
                 <button onclick="showModalAlert('تدوير النفايات من الزنقة ♻️', 'مبادرة لربط الصلة بأصحاب تدوير النفايات لجمع وترحيل المواد القابلة للتدوير من الشوارع لحماية البيئة.', 'success')" class="w-full sm:w-1/3 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
                     <i class="fa-solid fa-recycle text-yellow-300 text-lg animate-spin"></i>
                     <span class="text-xs sm:text-sm slide-fade">أصحاب تدوير النفايات ( جامِعِي النفايات )</span>
                 </button>
 
-                <!-- زر المقايضة بين الشركات و المقاولات -->
                 <button onclick="showModalAlert('المقايضة بين الشركات و المقاولات 🏭', 'منصة مخصصة لتسهيل التبادل التجاري والمقايضة البينية بين الشركات والمقاولات بمرونة وفعالية عبر بدل.ma.', 'success')" class="w-full sm:w-1/3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
                     <i class="fa-solid fa-building text-amber-300 text-lg animate-pulse"></i>
                     <span class="text-xs sm:text-sm slide-fade">المقايضة بين الشركات و المقاولات</span>
@@ -282,7 +276,6 @@
                 </div>
             </div>
 
-            <!-- العنوان -->
             <div class="flex items-center justify-between" id="listingsSectionTitleAnchor">
                 <div>
                     <h3 class="text-xl font-black text-slate-800">العروض المتاحة للمقايضة</h3>
@@ -297,12 +290,65 @@
                 <p class="col-span-full text-center py-12 text-slate-400 font-bold">جاري تحميل العروض الحقيقية...</p>
             </div>
 
-            <!-- Pagination Container -->
             <div id="paginationContainer" class="flex items-center justify-center gap-3 pt-4 pb-2">
                 <!-- Injected via JS -->
             </div>
         </section>
     </main>
+
+    <!-- Modal: Artisan Services Window (نافذة محايدة لخدمات الحرفيين متناسقة مع ستايل اللوغو بدل.ma) -->
+    <div id="artisanServicesModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[160] hidden flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right slide-fade">
+            <button onclick="closeModal('artisanServicesModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <div class="border-b pb-3">
+                <div class="flex items-center gap-1.5 mb-1">
+                    <span class="text-sm font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></span>
+                    <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full">خدمات الحرفيين 🛠️</span>
+                </div>
+                <h3 class="font-black text-xl text-slate-900">إتصال بي حرفي في مدينة بكل سهولة</h3>
+                <p class="text-xs text-slate-500">اختر الخدمة المطلوبة لربط الاتصال السريع بأقرب الحرفيين المحترفين:</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 max-h-[60vh] overflow-y-auto p-1">
+                <button onclick="selectArtisanService('البناء')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition text-right font-bold text-xs flex items-center justify-between cursor-pointer shadow-sm">
+                    <span>🧱 البناء</span>
+                    <i class="fa-solid fa-chevron-left text-[10px] text-emerald-600"></i>
+                </button>
+                <button onclick="selectArtisanService('منظفي المنازل')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition text-right font-bold text-xs flex items-center justify-between cursor-pointer shadow-sm">
+                    <span>🧹 منظفي المنازل</span>
+                    <i class="fa-solid fa-chevron-left text-[10px] text-emerald-600"></i>
+                </button>
+                <button onclick="selectArtisanService('بلومبي')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition text-right font-bold text-xs flex items-center justify-between cursor-pointer shadow-sm">
+                    <span>🔧 بلومبي</span>
+                    <i class="fa-solid fa-chevron-left text-[10px] text-emerald-600"></i>
+                </button>
+                <button onclick="selectArtisanService('تريسيان')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition text-right font-bold text-xs flex items-center justify-between cursor-pointer shadow-sm">
+                    <span>⚡ تريسيان</span>
+                    <i class="fa-solid fa-chevron-left text-[10px] text-emerald-600"></i>
+                </button>
+                <button onclick="selectArtisanService('صباغ')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition text-right font-bold text-xs flex items-center justify-between cursor-pointer shadow-sm">
+                    <span>🎨 صباغ</span>
+                    <i class="fa-solid fa-chevron-left text-[10px] text-emerald-600"></i>
+                </button>
+                <button onclick="selectArtisanService('نجارة الألومينيوم')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition text-right font-bold text-xs flex items-center justify-between cursor-pointer shadow-sm">
+                    <span>🪟 نجارة الألومينيوم</span>
+                    <i class="fa-solid fa-chevron-left text-[10px] text-emerald-600"></i>
+                </button>
+                <button onclick="selectArtisanService('نجارة الخشب')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition text-right font-bold text-xs flex items-center justify-between cursor-pointer shadow-sm">
+                    <span>🪚 نجارة الخشب</span>
+                    <i class="fa-solid fa-chevron-left text-[10px] text-emerald-600"></i>
+                </button>
+                <button onclick="selectArtisanService('تسريح واد الحار')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition text-right font-bold text-xs flex items-center justify-between cursor-pointer shadow-sm">
+                    <span>🚿 تسريح واد الحار</span>
+                    <i class="fa-solid fa-chevron-left text-[10px] text-emerald-600"></i>
+                </button>
+            </div>
+
+            <button onclick="closeModal('artisanServicesModal')" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl text-xs shadow transition cursor-pointer">
+                إغلاق 👍
+            </button>
+        </div>
+    </div>
 
     <!-- Modal: City Filter Window -->
     <div id="cityFilterModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[145] hidden flex items-center justify-center p-4">
@@ -358,7 +404,6 @@
 
             <div class="space-y-3" id="categoriesAccordionContainer">
                 
-                <!-- 1. الرجال -->
                 <div class="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50">
                     <button onclick="toggleCategoryAccordion('cat-men')" class="w-full flex items-center justify-between p-4 font-black text-sm text-slate-900 bg-white hover:bg-emerald-50 transition cursor-pointer">
                         <span class="flex items-center gap-2"><i class="fa-solid fa-shirt text-emerald-600"></i> 1. الفئات الرئيسية للرجال (موضة وأناقة رجالية)</span>
@@ -384,7 +429,6 @@
                     </div>
                 </div>
 
-                <!-- 2. النساء -->
                 <div class="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50">
                     <button onclick="toggleCategoryAccordion('cat-women')" class="w-full flex items-center justify-between p-4 font-black text-sm text-slate-900 bg-white hover:bg-emerald-50 transition cursor-pointer">
                         <span class="flex items-center gap-2"><i class="fa-solid fa-vest text-pink-600"></i> 2. الفئات الرئيسية للنساء (موضة وأناقة نسائية)</span>
@@ -414,7 +458,6 @@
                     </div>
                 </div>
 
-                <!-- 3. الأطفال والرضع -->
                 <div class="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50">
                     <button onclick="toggleCategoryAccordion('cat-kids')" class="w-full flex items-center justify-between p-4 font-black text-sm text-slate-900 bg-white hover:bg-emerald-50 transition cursor-pointer">
                         <span class="flex items-center gap-2"><i class="fa-solid fa-child text-amber-600"></i> 3. فئات الأطفال والرضع (الأولاد والبنات)</span>
@@ -432,7 +475,6 @@
                     </div>
                 </div>
 
-                <!-- 4. الفئات العامة -->
                 <div class="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50">
                     <button onclick="toggleCategoryAccordion('cat-general')" class="w-full flex items-center justify-between p-4 font-black text-sm text-slate-900 bg-white hover:bg-emerald-50 transition cursor-pointer">
                         <span class="flex items-center gap-2"><i class="fa-solid fa-box-archive text-indigo-600"></i> 4. الفئات العامة للمنصة (لجميع الشرائح)</span>
@@ -932,7 +974,6 @@
 
             <div id="chatProductBanner" class="bg-gradient-to-r from-amber-500/20 via-pink-600/20 to-purple-600/20 px-4 py-2.5 border-b border-pink-500/30 flex items-center gap-3 text-xs"></div>
 
-            <!-- Chat Messages Box -->
             <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-4 bg-slate-950/60 text-xs relative"></div>
 
             <div class="bg-slate-900/90 px-3 py-1.5 border-t border-purple-900/60 flex items-center gap-2 overflow-x-auto text-base">
@@ -1036,7 +1077,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 5.1</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 5.2</span>
                     </div>
                 </div>
             </div>
@@ -1153,6 +1194,15 @@
                 });
             }
         };
+
+        function openArtisanServicesModal() {
+            document.getElementById('artisanServicesModal').classList.remove('hidden');
+        }
+
+        function selectArtisanService(serviceName) {
+            closeModal('artisanServicesModal');
+            showModalAlert("خدمة الحرفيين 🛠️", `تم اختيار خدمة (${serviceName}). جارِ ربطك بأقرب الحرفيين المحترفين في مدينتك بكل سهولة عبر بدل.ma!`, "success");
+        }
 
         function openCityFilterModal() {
             document.getElementById('cityFilterModal').classList.remove('hidden');
