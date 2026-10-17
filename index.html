@@ -187,7 +187,7 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
         
-        <!-- الوحدة الأفقية الجديدة البارزة للمقايضات المكتملة (واحدة تلو الأخرى مع تأثير الإختفاء والظهور) -->
+        <!-- الوحدة الأفقية الجديدة البارزة للمقايضات المكتملة -->
         <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-5 rounded-3xl border-2 border-emerald-400/60 shadow-xl relative overflow-hidden">
             <div class="flex items-center justify-between mb-3 border-b border-emerald-800/60 pb-2">
                 <div class="flex items-center gap-2">
@@ -222,14 +222,13 @@
                 </div>
             </div>
 
-            <!-- زر فتح نافذة الفئات الشاملة -->
+            <!-- Search and Filter Bar -->
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div class="w-full md:w-80 space-y-2">
                     <div class="relative w-full">
                         <i class="fa-solid fa-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن هاتف، أثاث، ساعة، ملابس..." class="w-full pr-12 pl-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs sm:text-sm">
                     </div>
-                    <!-- زر فلترة المدن المضاف حديثاً تحت خانة البحث مباشرة -->
                     <button onclick="openCityFilterModal()" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-2.5 px-4 rounded-2xl border border-emerald-200 transition flex items-center justify-between cursor-pointer shadow-sm">
                         <span class="flex items-center gap-2">
                             <i class="fa-solid fa-location-dot text-emerald-600"></i>
@@ -239,7 +238,6 @@
                     </button>
                 </div>
 
-                <!-- زر تصفح جميع الفئات بتصميم متطابق مع زر المدن -->
                 <div class="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end flex-wrap">
                     <button onclick="openCategoriesModal()" class="w-full md:w-auto bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-3 px-5 rounded-2xl border border-emerald-200 transition flex items-center justify-between md:justify-center gap-3 cursor-pointer shadow-sm">
                         <span class="flex items-center gap-2">
@@ -285,7 +283,7 @@
         </section>
     </main>
 
-    <!-- Modal: City Filter Window (نافذة اختيار وفلترة المدن لتقريب التقايض) -->
+    <!-- Modal: City Filter Window -->
     <div id="cityFilterModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[145] hidden flex items-center justify-center p-4">
         <div class="bg-white text-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right slide-fade">
             <button onclick="closeModal('cityFilterModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
@@ -459,7 +457,6 @@
             </div>
 
             <div class="relative overflow-hidden py-4 flex items-center justify-center">
-                <!-- تم إضافة فئة animate-fade-in-out هنا لضمان سلاسة حركة الظهور والإختفاء -->
                 <div id="featuredSingleProfileContainer" class="w-full max-w-sm animate-fade-in-out">
                     <div class="text-center py-6 text-slate-400 text-xs">جاري تحميل الأشخاص المتميزون...</div>
                 </div>
@@ -536,7 +533,7 @@
                     <div class="flex items-center gap-2">
                         <input type="checkbox" id="regAgreementCheck" required class="w-4 h-4 accent-emerald-600 cursor-pointer">
                         <label for="regAgreementCheck" class="font-bold text-[11px] text-slate-700 cursor-pointer leading-tight">
-                            <span class="text-emerald-700 font-black text-xs">بسم الله</span> أوافق على اتفاق فتح الحساب ومنطق المعقول، مستهلاً رحلتي في بدل.ma لأستنفذ أو يستنفذ غيري بالخير والتعاون (النسخة الأولى 🌟)
+                            <span class="text-emerald-700 font-black text-xs">بسم الله</span> أوافق على اتفاق فتح الحساب ومنطق المعقول، مستهلاً رحلتي في بدل.ma لأستنفذ أو يستنفذ غيري بالخير والتعاون (النسخة الاحترافية 🌟)
                         </label>
                     </div>
                 </div>
@@ -575,7 +572,7 @@
         </div>
     </div>
 
-    <!-- MODAL: ساحة المزايدة الحية (الكل مباشر) -->
+    <!-- MODAL: ساحة المزايدة الحية -->
     <div id="fridayAuctionModal" class="fixed inset-0 bg-slate-900/85 backdrop-blur-md z-[120] hidden flex items-center justify-center p-4">
         <div class="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl relative border-2 border-purple-400 text-right slide-fade overflow-hidden max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('fridayAuctionModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center justify-center transition z-20">&times;</button>
@@ -661,7 +658,6 @@
                     </select>
                 </div>
 
-                <!-- إضافة خيار المزاد المباشر في نافذة نشر عرض جديد (مستوحى من الصورة المرفقة) -->
                 <div class="bg-gradient-to-r from-purple-50 via-indigo-50 to-purple-100 p-4 rounded-2xl border-2 border-purple-400 space-y-2.5 shadow-inner">
                     <div class="flex items-center justify-between">
                         <label for="addAuctionToggle" class="font-black text-purple-900 cursor-pointer flex items-center gap-2 text-xs">
@@ -913,59 +909,60 @@
         </div>
     </div>
 
-    <!-- Modal: Professional Chat & Meetup Window -->
-    <div id="chatModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-100 rounded-3xl max-w-lg w-full shadow-2xl relative border border-slate-200 text-right flex flex-col h-[90vh] overflow-hidden">
-            <div class="bg-white p-3 flex items-center justify-between border-b border-slate-200 shadow-sm z-10">
+    <!-- Modal: Professional Chat & Meetup Window (بألوان لعبة الحظ المخصصة) -->
+    <div id="chatModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl max-w-lg w-full shadow-2xl relative border-2 border-amber-400 text-right flex flex-col h-[90vh] overflow-hidden">
+            <div class="bg-slate-950/90 p-3 flex items-center justify-between border-b border-purple-900/60 shadow-md z-10">
                 <div class="flex items-center gap-3">
-                    <img id="chatPartnerAvatar" src="" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
+                    <img id="chatPartnerAvatar" src="" class="w-10 h-10 rounded-full object-cover border-2 border-pink-500">
                     <div>
-                        <h4 id="chatPartnerName" class="font-black text-xs text-slate-900"></h4>
-                        <span id="chatTypingIndicator" class="text-[9px] text-emerald-600 font-bold flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> متصل الآن للتنسيق
+                        <h4 id="chatPartnerName" class="font-black text-xs text-white"></h4>
+                        <span id="chatTypingIndicator" class="text-[9px] text-amber-300 font-bold flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> حظك ينتظرك - متصل الآن للتنسيق ⚡
                         </span>
                     </div>
                 </div>
-                <button onclick="closeModal('chatModal')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+                <button onclick="closeModal('chatModal')" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center justify-center transition">&times;</button>
             </div>
 
-            <div id="chatProductBanner" class="bg-emerald-50 px-4 py-2 border-b border-emerald-100 flex items-center gap-3 text-xs"></div>
+            <div id="chatProductBanner" class="bg-gradient-to-r from-amber-500/20 via-pink-600/20 to-purple-600/20 px-4 py-2.5 border-b border-pink-500/30 flex items-center gap-3 text-xs"></div>
 
             <!-- Chat Messages Box -->
-            <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-4 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] text-xs relative"></div>
+            <div id="chatMessagesBox" class="flex-grow overflow-y-auto space-y-3 p-4 bg-slate-950/60 text-xs relative"></div>
 
-            <div class="bg-white px-3 py-1.5 border-t border-slate-200 flex items-center gap-2 overflow-x-auto text-base">
+            <div class="bg-slate-900/90 px-3 py-1.5 border-t border-purple-900/60 flex items-center gap-2 overflow-x-auto text-base">
                 <button onclick="addEmoji('😊')" class="hover:scale-125 transition">😊</button>
+                <button onclick="addEmoji('🎲')" class="hover:scale-125 transition">🎲</button>
+                <button onclick="addEmoji('🎁')" class="hover:scale-125 transition">🎁</button>
                 <button onclick="addEmoji('🤝')" class="hover:scale-125 transition">🤝</button>
                 <button onclick="addEmoji('📍')" class="hover:scale-125 transition">📍</button>
                 <button onclick="addEmoji('🚗')" class="hover:scale-125 transition">🚗</button>
                 <button onclick="addEmoji('⌚')" class="hover:scale-125 transition">⌚</button>
-                <button onclick="addEmoji('👍')" class="hover:scale-125 transition">👍</button>
                 <button onclick="addEmoji('🔥')" class="hover:scale-125 transition">🔥</button>
-                <button onclick="addEmoji('🇲🇦')" class="hover:scale-125 transition">🇲🇦</button>
             </div>
 
-            <div class="bg-white p-3 space-y-2 border-t border-slate-200">
+            <div class="bg-slate-950 p-3 space-y-2 border-t border-purple-900/80">
                 <div class="flex gap-2 items-center">
-                    <label for="chatImageInput" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-2.5 rounded-2xl text-xs font-bold transition cursor-pointer flex items-center gap-1">
+                    <label for="chatImageInput" class="bg-pink-600/20 hover:bg-pink-600/40 text-pink-300 px-3 py-2.5 rounded-2xl text-xs font-bold transition cursor-pointer flex items-center gap-1 border border-pink-500/40">
                         <i class="fa-solid fa-camera text-sm"></i>
                     </label>
                     <input type="file" id="chatImageInput" accept="image/jpeg,image/jpg,image/png,image/heic,.jpeg,.jpg,.png,.heic" class="hidden" onchange="sendChatImage(event)">
                     
-                    <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك هنا... (اضغط Entrée للإرسال)" class="flex-grow bg-slate-100 border border-slate-200 p-2.5 rounded-2xl font-bold text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <button onclick="sendChatMessage()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-2xl text-xs transition shadow cursor-pointer flex items-center gap-1">
+                    <input type="text" id="chatInputMessage" placeholder="اكتب رسالتك للتنسيق على موعد اللقاء... (اضغط Entrée للإرسال)" class="flex-grow bg-slate-900 border border-slate-700 text-white p-2.5 rounded-2xl font-bold text-xs focus:outline-none focus:ring-2 focus:ring-pink-500">
+                    <button onclick="sendChatMessage()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-bold px-4 py-2.5 rounded-2xl text-xs transition shadow cursor-pointer flex items-center gap-1">
                         <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
                 
-                <div class="bg-amber-50 border-2 border-amber-300 p-2.5 rounded-2xl text-center shadow-sm">
-                    <p class="text-[11px] font-black text-amber-900 leading-snug">
-                        ⚠️ تنبيه مهم جداً: تأكد أولاً من تلاقيكما وأن المقايضة تمت بنجاح تام بينكما قبل الضغط على زر تأكيد الإتمام أدناه:
+                <div class="bg-amber-500/10 border border-amber-400/40 p-2.5 rounded-2xl text-center shadow-sm">
+                    <p class="text-[11px] font-black text-amber-300 leading-snug">
+                        🎲 حظك ينتظرك: تأكد أولاً من التواصل مع الشريك وتحديد موعد اللقاء قبل الضغط على زر إتمام الصفقة أدناه:
                     </p>
                 </div>
 
-                <button onclick="completeTradeSuccess()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black py-3 rounded-xl text-xs shadow-lg transition cursor-pointer flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-check text-base"></i> تأكيد إتمام المقايضة بنجاح وتوثيقها 🎉
+                <!-- زر إتمام الصفقة وإزالة المنتوجات من عروضي النشطة -->
+                <button onclick="completeTradeSuccess()" class="w-full bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 hover:from-amber-600 hover:to-purple-700 text-white font-black py-3 rounded-xl text-xs shadow-xl transition cursor-pointer flex items-center justify-center gap-2 animate-pulse">
+                    <i class="fa-solid fa-circle-check text-base"></i> تمت بنجاح 🎉 (إتمام الصفقة وإزالة المنتوجات من عروضي النشطة)
                 </button>
             </div>
         </div>
@@ -974,7 +971,6 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-300 py-10 border-t border-slate-800 mt-12 text-right">
         <div class="max-w-7xl mx-auto px-4 space-y-8">
-            <!-- قسم إخلاء المسؤولية والتوجيهات الأمنية (مضاف حديثاً بشكل عصري وجذاب) -->
             <div class="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 p-5 rounded-3xl border-2 border-amber-500/40 shadow-xl space-y-3">
                 <div class="flex items-center gap-2 text-amber-400 font-black text-sm">
                     <i class="fa-solid fa-triangle-exclamation text-base"></i> إخلاء المسؤولية وإرشادات الأمان لتفادي المشاكل ⚠️
@@ -1002,7 +998,6 @@
                     </p>
                 </div>
 
-                <!-- خانة شاركونا اقتراحاتكم المحدثة بخانات متكاملة (الاسم الكامل، العنوان، رقم الهاتف، والرسالة) -->
                 <div class="space-y-3 bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
                     <h4 class="font-black text-amber-400 text-sm flex items-center gap-1.5">
                         <i class="fa-solid fa-comments"></i> شاركونا اقتراحاتكم ورسائلكم ✉️
@@ -1036,8 +1031,8 @@
                         <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> نظام تقييمات لضمان المصداقية والثقة.</li>
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
-                        <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.2</span>
+                        <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.3</span>
                     </div>
                 </div>
             </div>
@@ -1344,9 +1339,9 @@
             const indicatorEl = document.getElementById('chatTypingIndicator');
             if(!indicatorEl) return;
             if(isTyping) {
-                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span> <strong class="text-amber-600">الطرف الآخر يكتب رسالة الآن... ✍️</strong>`;
+                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> <strong class="text-amber-300">الطرف الآخر يكتب رسالة الآن... ✍️</strong>`;
             } else {
-                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> متصل الآن للتنسيق`;
+                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> حظك ينتظرك - متصل الآن للتنسيق ⚡`;
             }
         }
 
@@ -1642,7 +1637,6 @@
                 return;
             }
 
-            // التحديث في Supabase مباشرة
             const { error } = await _supabase.from('listings').update({
                 is_auction: true,
                 start_price: startPriceInput,
@@ -1797,7 +1791,6 @@
                 price: enteredPrice
             });
 
-            // التحديث في Supabase مباشرة
             const { error } = await _supabase.from('listings').update({
                 current_price: enteredPrice,
                 bids_history: updatedBids
@@ -2126,13 +2119,42 @@
                         ${acceptedDealsCount > 0 ? `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 font-black text-[10px] flex items-center justify-center border border-white shadow animate-pulse" title="العروض المتفق عليها">⭐${acceptedDealsCount}</span>` : ''}
                     </div>
                 </a>
-                <a href="#" onclick="closeRightMenu(); openFridayExclusiveAuctionModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-emerald-700 text-white font-black transition shadow-md">
-                    <i class="fa-solid fa-gavel text-base"></i> ساحة المزايدة المباشرة 🔨
+                <!-- زر لعبة عجلة الحظ للمقايضة -->
+                <a href="#" onclick="closeRightMenu(); openTradeWheelGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                    <i class="fa-solid fa-dice text-emerald-600 text-base"></i> لعبة عجلة الحظ للمقايضة 🎲
                 </a>
-                <a href="#" onclick="closeRightMenu(); openTradeWheelGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 text-white font-black transition shadow-md animate-pulse">
-                    <i class="fa-solid fa-dice text-base"></i> لعبة عجلة الحظ للمقايضة 🎲
+                <!-- زر لحظ ديالك واجد بدون خلفية (شكل عادي مثل عروضي، الطلبات...) تحته تماماً -->
+                <a href="#" onclick="closeRightMenu(); openLuckyChanceGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                    <i class="fa-solid fa-gift text-emerald-600 text-base"></i> لحظ ديالك واجد 🎁
+                </a>
+                <a href="#" onclick="closeRightMenu(); openFridayExclusiveAuctionModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
+                    <i class="fa-solid fa-gavel text-emerald-600 text-base"></i> ساحة المزايدة المباشرة 🔨
                 </a>
             `;
+        }
+
+        // دالة فتح نافذة "لحظ ديالك واجد" التي تفتح نافذة رسائل خاص للعبة الحظ بالألوان التابعة للعبة الحظ
+        function openLuckyChanceGameModal() {
+            if(!currentAccount) {
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً!", "info");
+                openModal('authModal');
+                return;
+            }
+
+            const myGameListing = allListings.find(l => String(l.user_id) === String(currentAccount.id) && l.participate_game === true && l.status !== 'completed');
+            const acceptedReq = allRequests.find(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted');
+
+            if(!acceptedReq && !myGameListing) {
+                showModalAlert("حظك ينتظرك 🎁", "لم تقم بعد بمشاركة منتج في لعبة الحظ أو لم تطبقا أي دورة مطابقة. قم بنشر عرض وفعل خيار لعبة الحظ لتبدأ!", "info");
+                openTradeWheelGameModal();
+                return;
+            }
+
+            if(acceptedReq) {
+                openChatModal(acceptedReq.id);
+            } else {
+                openTradeWheelGameModal();
+            }
         }
 
         function openRightMenu() {
@@ -2940,10 +2962,10 @@
             document.getElementById('chatPartnerAvatar').src = partner.avatar_url;
             document.getElementById('chatPartnerName').textContent = partner.full_name;
             document.getElementById('chatProductBanner').innerHTML = `
-                <img src="${listing.image_url}" class="w-10 h-10 rounded-lg object-cover">
+                <img src="${listing.image_url}" class="w-10 h-10 rounded-lg object-cover border-2 border-pink-500">
                 <div class="flex-grow">
-                    <span class="text-[10px] text-emerald-800 font-bold block">منتج المقايضة:</span>
-                    <h5 class="font-black text-slate-900 text-xs">${listing.title}</h5>
+                    <span class="text-[10px] text-amber-300 font-bold block">حظك ينتظرك - منتج المقايضة:</span>
+                    <h5 class="font-black text-white text-xs">${listing.title}</h5>
                 </div>
             `;
 
@@ -2957,7 +2979,7 @@
             
             const box = document.getElementById('chatMessagesBox');
             if(!data || data.length === 0) {
-                box.innerHTML = `<div class="text-center py-6 text-slate-400 font-bold text-xs"><p>🤝 مرحباً بكم في دردشة المقايضة! تفقو على الوقت (السبت، الأحد أو أيام العطلة) والمكان بكل راحة.</p></div>`;
+                box.innerHTML = `<div class="text-center py-6 text-amber-200 font-bold text-xs"><p>🎲 حظك ينتظرك! تواصل مع الطرف الثاني للاتفاق على وقت ومكان اللقاء بكل روح رياضية.</p></div>`;
                 return;
             }
 
@@ -2965,7 +2987,7 @@
                 const isMe = String(m.sender_id) === String(currentAccount.id);
                 return `
                     <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1">
-                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs shadow-sm ${isMe ? 'bg-emerald-600 text-white' : 'bg-white text-slate-800 border'}">
+                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs shadow-sm ${isMe ? 'bg-gradient-to-r from-amber-500 to-pink-600 text-white font-bold' : 'bg-slate-800 text-slate-100 border border-slate-700'}">
                             ${m.message ? `<p>${m.message}</p>` : ''}
                             ${m.image_url ? `<img src="${m.image_url}" class="w-48 h-40 object-cover rounded-xl mt-1">` : ''}
                         </div>
@@ -3014,6 +3036,7 @@
             document.getElementById('chatInputMessage').value += emoji;
         }
 
+        // إتمام الصفقة وإزالة المنتوجات من عروضي النشطة
         async function completeTradeSuccess() {
             const req = allRequests.find(r => String(r.id) === String(activeChatRequestId));
             if(!req) return;
@@ -3025,7 +3048,7 @@
             await fetchRequests();
             closeModal('chatModal');
             
-            showModalAlert("نجاح تام", "🎉 تم تأكيد إتمام المقايضة بنجاح! تم نقلها تلقائياً للمقايضات الناجحة.", "success");
+            showModalAlert("نجاح تام", "🎉 تمت بنجاح! تم إتمام الصفقة وتوثيقها وإزالة المنتوجات تلقائياً من عروضي النشطة.", "success");
             openRatingModal(String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id);
         }
 
