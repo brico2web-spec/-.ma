@@ -592,27 +592,6 @@
         </div>
     </div>
 
-    <!-- Modal: اختيار منتج من عروضك النشطة للمزاد (بدون خانة السعر في النافذة) -->
-    <div id="addAuctionItemModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[130] hidden flex items-center justify-center p-4">
-        <div class="bg-white text-slate-900 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right slide-fade max-h-[90vh] overflow-y-auto">
-            <button onclick="closeModal('addAuctionItemModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
-            <div class="border-b pb-3">
-                <span class="bg-purple-100 text-purple-800 text-xs font-black px-3 py-1 rounded-full">🔨 طرح منتج في المزاد المباشر</span>
-                <h3 class="font-black text-xl text-slate-900 mt-1">اختر من عروضك المفعلة للمزايدة</h3>
-                <p class="text-xs text-slate-500">المنتجات الظاهرة أدناه هي فقط التي تم تفعيل خاصية المزايدة المباشرة لها عند إضافتها:</p>
-            </div>
-            
-            <div class="space-y-3">
-                <div id="myAuctionActiveListingsDropdown" class="grid grid-cols-1 gap-2 max-h-52 overflow-y-auto p-1 bg-slate-50 rounded-2xl border border-slate-200">
-                    <!-- Injected via JS -->
-                </div>
-                <button onclick="submitListingToAuction()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-black py-3.5 rounded-xl text-xs shadow-lg transition cursor-pointer">
-                    تأكيد ونشر المنتج في ساحة المزاد المباشر 🚀
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal: Add Item -->
     <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto shadow-2xl relative border border-slate-100">
@@ -662,7 +641,7 @@
                         </label>
                         <input type="checkbox" id="addAuctionToggle" onchange="toggleAddAuctionPriceBox(this)" class="w-5 h-5 accent-purple-600 cursor-pointer">
                     </div>
-                    <p class="text-[10px] text-slate-700 font-bold">فعل هذا الخيار لتتمكن لاحقاً من اختيار هذا المنتج في ساحة المزاد الحية.</p>
+                    <p class="text-[10px] text-slate-700 font-bold">فعل هذا الخيار ليظهر منتجك بشكل عشوائي في ساحة المزاد الحية مع منتوجات المشتركين.</p>
                     
                     <div id="auctionPriceContainer" class="hidden pt-2 border-t border-purple-200 space-y-1">
                         <label class="block font-bold text-purple-900 text-[11px]">حدد السعر الابتدائي للمزايدة (بين 10 و 500 درهم كحد أقصى) *:</label>
@@ -1037,7 +1016,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.8</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.9</span>
                     </div>
                 </div>
             </div>
@@ -1575,7 +1554,7 @@
                             <i class="fa-solid fa-box text-purple-600 text-xs"></i>
                             <span class="text-slate-800 font-black">${allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed').length}</span>
                         </div>
-                        <div onclick="openFridayExclusiveAuctionModal()" class="flex flex-col items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-1 rounded-xl border border-purple-300 cursor-pointer hover:opacity-90 transition shadow-sm ${hasAuctionWonNotification ? 'animate-bounce' : ''}" title="ساحة المزايدة المباشرة وأيقونة المطرقة">
+                        <div id="auctionHeaderIconBadge" onclick="openFridayExclusiveAuctionModal()" class="flex flex-col items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-1 rounded-xl border border-purple-300 cursor-pointer hover:opacity-90 transition shadow-sm ${hasAuctionWonNotification ? 'animate-bounce' : ''}" title="ساحة المزايدة المباشرة وأيقونة المطرقة">
                             <i class="fa-solid fa-gavel text-xs text-yellow-200"></i>
                             <span class="font-black text-white">${hasAuctionWonNotification ? '🔨 فاز!' : 'ساحة'}</span>
                         </div>
@@ -1667,102 +1646,42 @@
             await fetchRequests();
         }
 
-        function openAddAuctionItemModal() {
-            if(!currentAccount) {
-                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً لطرح منتج في المزاد المباشر!", "info");
-                openModal('authModal');
-                return;
-            }
-
-            const myAuctionEligible = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed' && l.is_auction === true);
-            const container = document.getElementById('myAuctionActiveListingsDropdown');
-
-            if(myAuctionEligible.length === 0) {
-                container.innerHTML = `<p class="text-center text-slate-400 text-xs py-4">ليس لديك أي منتج مفعل له خاصية "المزايدة المباشرة" في عروضك. أضف عرضاً جديداً وفعل خيار المزايدة أولاً!</p>`;
-                openModal('addAuctionItemModal');
-                return;
-            }
-
-            container.innerHTML = myAuctionEligible.map(item => `
-                <div class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-200 bg-white hover:border-purple-500 transition">
-                    <input type="radio" name="selectedAuctionListing" value="${item.id}" id="auc_radio_${item.id}" class="accent-purple-600 cursor-pointer">
-                    <img src="${item.image_url}" class="w-12 h-12 rounded-lg object-cover">
-                    <div class="text-right overflow-hidden flex-grow">
-                        <label for="auc_radio_${item.id}" class="font-black text-slate-800 text-xs line-clamp-1 cursor-pointer">${item.title}</label>
-                        <span class="text-[10px] text-emerald-600 font-bold">${item.city} - السعر الابتدائي المسجل: ${item.start_price || 50} د.م</span>
-                    </div>
-                </div>
-            `).join('');
-
-            openModal('addAuctionItemModal');
-        }
-
-        async function submitListingToAuction() {
-            if(!currentAccount) return;
-            const selectedRadio = document.querySelector('input[name="selectedAuctionListing"]:checked');
-            if(!selectedRadio) {
-                showModalAlert("تنبيه", "المرجو اختيار منتج واحد من عروضك المفعلة للمزاد!", "error");
-                return;
-            }
-
-            const listingId = selectedRadio.value;
-            const item = allListings.find(i => i.id === listingId);
-            if(!item) return;
-
-            const safeBids = Array.isArray(item.bids_history) ? item.bids_history : [];
-
-            const { error } = await _supabase.from('listings').update({
-                is_auction: true,
-                current_price: item.start_price || 50,
-                bids_history: safeBids
-            }).eq('id', listingId);
-
-            if(error) {
-                showModalAlert("خطأ", "تعذر طرح المنتج في المزاد: " + error.message, "error");
-                return;
-            }
-
-            await fetchListings();
-            closeModal('addAuctionItemModal');
-            showModalAlert("نجاح", "تم طرح منتجك في ساحة المزاد المباشر بنجاح مع منتوجات المشتركين! 🔨", "success");
-            renderFridayAuctionInterface();
-        }
-
         function renderFridayAuctionInterface() {
             const container = document.getElementById('fridayAuctionContainer');
-            const activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed').slice(0, 3);
+            // الروبوت يجلب منتجات عشوائية من كل المشتركين المفعلة لهم خاصية المزايدة
+            const eligibleAuctionItems = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
+            
+            // خلط المنتجات عشوائياً لضمان ظهور منتجات المشتركين بشكل عشوائي في الساحة
+            let shuffledBatch = [...eligibleAuctionItems].sort(() => 0.5 - Math.random()).slice(0, 3);
 
-            let addBtnHtml = `
+            let countdownHeaderHtml = `
                 <div class="flex items-center justify-between bg-purple-900/40 p-3 rounded-2xl border border-purple-500/50 flex-wrap gap-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-black text-purple-300">⏱️ العد التنازلي للجولة (مشتركين الموقع كافّة):</span>
+                        <span class="text-xs font-black text-purple-300">⏱️ العد التنازلي لجولة المزايدة (عشوائي من المشتركين):</span>
                         <span id="auctionCountdownDisplay" class="bg-emerald-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow animate-pulse">30:00</span>
                     </div>
-                    <button onclick="openAddAuctionItemModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-plus-circle"></i> أضف منتجك للمزاد المباشر 🏷️
-                    </button>
+                    <span class="text-[11px] font-bold text-amber-300 bg-amber-500/10 px-3 py-1 rounded-xl border border-amber-400/30">🤖 الروبوت يجلب منتجات عشوائية</span>
                 </div>
             `;
 
-            if (activeAuctionBatch.length === 0) {
+            if (shuffledBatch.length === 0) {
                 container.innerHTML = `
-                    ${addBtnHtml}
+                    ${countdownHeaderHtml}
                     <div class="text-center py-12 space-y-3 bg-slate-900/60 rounded-3xl border border-purple-500/40">
                         <i class="fa-solid fa-gavel text-5xl text-purple-400"></i>
-                        <h4 class="font-black text-white text-base">لا توجد منتجات معروضة في المزاد حالياً</h4>
-                        <p class="text-xs text-purple-200">أضف منتجك المفعل للمزاد ليظهر في الساحة مع منتوجات المشتركين!</p>
+                        <h4 class="font-black text-white text-base">لا توجد منتجات مفعلة للمزاد في المنصة حالياً</h4>
+                        <p class="text-xs text-purple-200">قم بإضافة عرض جديد وفعل خيار المزايدة المباشرة ليظهر هنا تلقائياً!</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = `
-                ${addBtnHtml}
+                ${countdownHeaderHtml}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    ${activeAuctionBatch.map((item) => {
+                    ${shuffledBatch.map((item) => {
                         const seller = allProfiles[String(item.user_id)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
                         let bids = Array.isArray(item.bids_history) ? item.bids_history : [];
-                        const highestBid = bids.length > 0 ? bids[bids.length - 1] : null;
                         const isMyItemInAuction = currentAccount && String(item.user_id) === String(currentAccount.id);
                         const startPrice = item.start_price || 50;
                         const currentPrice = item.current_price || startPrice;
@@ -1809,7 +1728,7 @@
                                         </div>
                                     `}
                                     
-                                    <button onclick="openAuctionChat('${item.id}')" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black py-2.5 rounded-xl text-xs shadow-lg transition cursor-pointer flex items-center justify-center gap-1.5">
+                                    <button onclick="handleOpenAuctionChat('${item.id}')" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black py-2.5 rounded-xl text-xs shadow-lg transition cursor-pointer flex items-center justify-center gap-1.5">
                                         <i class="fa-solid fa-comments"></i> فتح الشات مع صاحب المنتج 💬
                                     </button>
                                 </div>
@@ -1871,17 +1790,72 @@
             showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح بـ ${enteredPrice} درهم!`);
         }
 
-        function openAuctionChat(itemId) {
+        // دالة فتح الشات مع التحقق من انتهاء العد التنازلي وكونك أنت صاحب أعلى قيمة
+        function handleOpenAuctionChat(itemId) {
             if(!currentAccount) {
                 showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً!", "info");
                 openModal('authModal');
                 return;
             }
+
             const item = allListings.find(i => i.id === itemId);
             if(!item) return;
 
+            let bids = Array.isArray(item.bids_history) ? item.bids_history : [];
+            const highestBid = bids.length > 0 ? bids[bids.length - 1] : null;
+
+            // حساب وقت انتهاء العد التنازلي للجولة الحالية (لكل 30 دقيقة)
+            const now = new Date();
+            const totalSecsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const remainingSecs = 1800 - (totalSecsToday % 1800);
+
+            // الشرط 1: هل انتهى العد التنازلي؟ (أو إذا اعتبرنا العد الجاري مستمراً، يتم التحقق إذا انتهى الوقت)
+            // بناءً على طلبك: "حتا إسالي العد التنازلي الى كنت أنا أعلى قيمة إعطيني إشعار فوق أيقونة لي فجنب الموني و ملي نضغط عليها إتفتح ليا الشات... و الى إنتهى العد التنازلي و ماشي أنا لي طالع في الأعلى ميتحلش ليا الشات"
+            // للتحقق الدقيق من انتهاء العد التنازلي للجولة:
+            if (remainingSecs > 5) {
+                // إذا لم ينته العد التنازلي بعد
+                showModalAlert("تنبيه المزاد ⏳", "لا يمكن فتح الشات حتى ينتهي العد التنازلي للجولة الحالية وتستقر المزايدات!", "error");
+                return;
+            }
+
+            // تحقق من كونك أنت الوحيد أو صاحب أعلى قيمة
+            if (!highestBid || String(highestBid.userId) !== String(currentAccount.id)) {
+                showModalAlert("عذراً ❌", "انتهى العد التنازلي ولست أنت من صعد في أعلى قيمة للمزايدة، لذلك لا يمكن فتح الشات معك!", "error");
+                return;
+            }
+
+            // إذا انتهى العد التنازلي وكنت أنت أعلى قيمة: إعطاء إشعار فوق الأيقونة وفتح الشات
             closeModal('fridayAuctionModal');
-            showModalAlert("شات الفائز 🎉", `تم فتح نافذة الشات المباشر مع صاحب المنتج بنجاح لإتمام عملية المزايدة!`, "success");
+            showModalAlert("مبروك الفوز بالمزاد! 🎉", "لقد انتهى العد التنازلي وكنت أنت صاحب أعلى قيمة في المزايدة! يتم فتح الشات الآن.", "success");
+            
+            // تفعيل إشعار فوق الأيقونة بجانب الموني
+            const iconBadge = document.getElementById('auctionHeaderIconBadge');
+            if(iconBadge) {
+                iconBadge.classList.add('animate-bounce');
+                iconBadge.innerHTML = `<i class="fa-solid fa-gavel text-xs text-yellow-200"></i><span class="font-black text-white">🔨 فاز!</span>`;
+            }
+
+            // فتح أو إنشاء طلب مقايضة/شات مقبول بين الفائز وصاحب المنتج
+            openOrCreateAuctionChatRequest(item);
+        }
+
+        async function openOrCreateAuctionChatRequest(item) {
+            // البحث عن طلب موجود أو إنشاؤه
+            let req = allRequests.find(r => String(r.listing_id) === String(item.id) && String(r.sender_id) === String(currentAccount.id));
+            if(!req) {
+                const { data, error } = await _supabase.from('trade_requests').insert([{
+                    sender_id: String(currentAccount.id),
+                    receiver_id: String(item.user_id),
+                    listing_id: String(item.id),
+                    status: 'accepted'
+                }]).select();
+                if(data && data.length > 0) {
+                    await fetchRequests();
+                    openChatModal(data[0].id);
+                }
+            } else {
+                openChatModal(req.id);
+            }
         }
 
         function openTradeWheelGameModal() {
@@ -3291,7 +3265,7 @@
 
             closeModal('addModal');
             await fetchListings();
-            showModalAlert("نجاح", isAuctionChecked ? "تم نشر العرض وتفعيل خاصية المزايدة المباشرة عليه بنجاح! 🔨" : participateGame ? "تم نشر عرضك ومشاركته في لعبة حظ المقايضة بنجاح! 🎁🎲" : "تم نشر عرضك بنجاح! 🎉", "success");
+            showModalAlert("نجاح", isAuctionChecked ? "تم نشر العرض وتفعيل خاصية المزايدة المباشرة عليه ليظهر عشوائياً في الساحة! 🔨" : participateGame ? "تم نشر عرضك ومشاركته في لعبة حظ المقايضة بنجاح! 🎁🎲" : "تم نشر عرضك بنجاح! 🎉", "success");
         }
 
         async function deleteListing(id) {
