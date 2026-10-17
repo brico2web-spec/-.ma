@@ -1037,7 +1037,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.0</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.2</span>
                     </div>
                 </div>
             </div>
@@ -1063,7 +1063,6 @@
         let selectedGameListingId = null;
         let sessionExcludedGameListingIds = [];
 
-        let auctionItems = [];
         let auctionTimerInterval = null;
 
         let typingTimeout = null;
@@ -1154,7 +1153,6 @@
             }
         };
 
-        // وظائف فلترة المدن
         function openCityFilterModal() {
             document.getElementById('cityFilterModal').classList.remove('hidden');
         }
@@ -1170,7 +1168,6 @@
             showFloatingNotification(`📍 تم تطبيق فلتر المدينة: (${cityName})`);
         }
 
-        // وظيفة إرسال الاقتراحات من الفوتر وحفظها في قاعدة البيانات لكي تظهر في صفحة الأدمين فوراً (محدثة لدعم الأجهزة المختلفة عبر Supabase والتخزين المحلي)
         async function handleFooterSuggestion(e) {
             e.preventDefault();
             const fullName = document.getElementById('suggestionFullName').value.trim();
@@ -1194,7 +1191,6 @@
                 created_at: new Date().toISOString()
             };
 
-            // محاولة الإرسال لعدة جداول محتملة في Supabase لتجنب أي خطأ في أسماء الجداول
             try {
                 await _supabase.from('contact_us').insert([suggestionPayload]);
             } catch (err1) {
@@ -1206,10 +1202,6 @@
                     } catch(err3) {}
                 }
             }
-
-            let savedSuggestions = JSON.parse(localStorage.getItem('badal_contact_messages') || '[]');
-            savedSuggestions.unshift(suggestionPayload);
-            localStorage.setItem('badal_contact_messages', JSON.stringify(savedSuggestions));
 
             document.getElementById('footerSuggestionForm').reset();
             showModalAlert("شكراً لك 🌟", "تم إرسال اقتراحك ورسالتك بنجاح إلى إدارة منصة بدل.ma! تذكر أن الأفكار والحلول التقنية الجيدة تؤهل أصحابها لهدايا قيمة تُرسل لعناوينهم مباشرة.", "success");
@@ -1243,14 +1235,6 @@
                 showBannedModal();
                 return true;
             }
-
-            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
-            const localPen = penalties[profile.phone];
-            const cloudPenExpiry = profile.penalty_expiry ? new Date(profile.penalty_expiry) : null;
-
-            if ((cloudPenExpiry && new Date() < cloudPenExpiry) || (localPen && new Date() < new Date(localPen.expiryDate))) {
-                return false; 
-            }
             return false;
         }
 
@@ -1264,8 +1248,7 @@
                         <h3 class="font-black text-lg text-slate-900">تم حظر الحساب 🚫</h3>
                         <p class="text-xs text-slate-600 leading-relaxed font-medium">
                             لقد تم حظر الحساب لأسباب عدم احترام قوانين الموقع. لأي إستفسار عبر البريد الإلكتروني: <br>
-                            <a href="mailto:contact@badel.ma" class="text-emerald-700 font-bold underline">contact@badel.ma</a><br>
-                            <span class="text-[10px] text-slate-400 mt-2 block">للتواصل عبر الوتساب قريبا ...</span>
+                            <a href="mailto:contact@badel.ma" class="text-emerald-700 font-bold underline">contact@badel.ma</a>
                         </p>
                         <button onclick="handleLogout(); window.location.reload();" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition cursor-pointer">
                             مفهوم وتسجيل الخروج 🚪
@@ -1361,7 +1344,7 @@
             const indicatorEl = document.getElementById('chatTypingIndicator');
             if(!indicatorEl) return;
             if(isTyping) {
-                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></i> <strong class="text-amber-600">الطرف الآخر يكتب رسالة الآن... ✍️</strong>`;
+                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span> <strong class="text-amber-600">الطرف الآخر يكتب رسالة الآن... ✍️</strong>`;
             } else {
                 indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> متصل الآن للتنسيق`;
             }
@@ -1487,7 +1470,6 @@
             const city = profile.city || 'المغرب';
             const avatar = profile.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
 
-            // تم إضافة فئة animate-fade-in-out هنا أيضاً عند تحديث العنصر داخلياً لضمان سلاسة الظهور والإختفاء
             container.innerHTML = `
                 <div class="bg-slate-800/90 border border-emerald-500/50 rounded-3xl p-5 flex items-center gap-4 shadow-2xl animate-fade-in-out backdrop-blur-md">
                     <div class="relative flex-shrink-0">
@@ -1520,10 +1502,9 @@
 
         function getUserRatingStats(userId) {
             const userRats = allRatings.filter(r => String(r.rated_user_id) === String(userId));
-            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
             const userProfile = allProfiles[String(userId)] || {};
             const userPhone = userProfile.phone;
-            const hasPenalty = (userProfile.penalty_expiry && new Date() < new Date(userProfile.penalty_expiry)) || (userPhone && penalties[userPhone] && new Date() < new Date(penalties[userPhone].expiryDate));
+            const hasPenalty = (userProfile.penalty_expiry && new Date() < new Date(userProfile.penalty_expiry));
 
             if(userRats.length === 0) {
                 return {
@@ -1661,22 +1642,18 @@
                 return;
             }
 
-            let bidsHistoryLocal = JSON.parse(localStorage.getItem('badal_auction_bids_' + listingId) || '[]');
-
-            let targetItem = allListings.find(l => String(l.id) === String(listingId));
-            if(targetItem) {
-                targetItem.is_auction = true;
-                targetItem.start_price = startPriceInput;
-                targetItem.current_price = startPriceInput;
-                targetItem.bids_history = bidsHistoryLocal;
-            }
-
-            localStorage.setItem('badal_auction_item_' + listingId, JSON.stringify({
+            // التحديث في Supabase مباشرة
+            const { error } = await _supabase.from('listings').update({
                 is_auction: true,
                 start_price: startPriceInput,
                 current_price: startPriceInput,
-                bids_history: bidsHistoryLocal
-            }));
+                bids_history: []
+            }).eq('id', listingId);
+
+            if(error) {
+                showModalAlert("خطأ", "تعذر نشر المنتج في المزاد: " + error.message, "error");
+                return;
+            }
 
             await fetchListings();
             closeModal('addAuctionItemModal');
@@ -1722,7 +1699,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     ${activeAuctionBatch.map((item) => {
                         const seller = allProfiles[String(item.user_id)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
-                        let bids = item.bids_history || JSON.parse(localStorage.getItem('badal_auction_bids_' + item.id) || '[]');
+                        let bids = item.bids_history || [];
                         const highestBid = bids.length > 0 ? bids[bids.length - 1] : null;
                         const isMyHighest = currentAccount && highestBid && String(highestBid.userId) === String(currentAccount.id);
                         const isMyItemInAuction = currentAccount && String(item.user_id) === String(currentAccount.id);
@@ -1813,22 +1790,25 @@
                 return;
             }
 
-            let updatedBids = item.bids_history ? [...item.bids_history] : JSON.parse(localStorage.getItem('badal_auction_bids_' + itemId) || '[]');
+            let updatedBids = item.bids_history ? [...item.bids_history] : [];
             updatedBids.push({
                 userId: String(currentAccount.id),
                 userName: currentAccount.full_name,
                 price: enteredPrice
             });
 
-            item.current_price = enteredPrice;
-            item.bids_history = updatedBids;
-            localStorage.setItem('badal_auction_bids_' + itemId, JSON.stringify(updatedBids));
+            // التحديث في Supabase مباشرة
+            const { error } = await _supabase.from('listings').update({
+                current_price: enteredPrice,
+                bids_history: updatedBids
+            }).eq('id', itemId);
 
-            let localSavedData = JSON.parse(localStorage.getItem('badal_auction_item_' + itemId) || '{}');
-            localSavedData.current_price = enteredPrice;
-            localSavedData.bids_history = updatedBids;
-            localStorage.setItem('badal_auction_item_' + itemId, JSON.stringify(localSavedData));
+            if(error) {
+                showModalAlert("خطأ", "تعذر تسجيل المزايدة: " + error.message, "error");
+                return;
+            }
 
+            await fetchListings();
             renderFridayAuctionInterface();
             showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح بـ ${enteredPrice} درهم!`);
         }
@@ -1863,8 +1843,7 @@
 
         function renderGameListingsSelector() {
             const container = document.getElementById('myGameListingsDropdown');
-            // استخدام التخزين المحلي أو خاصية المنتج لتحديد المشاركة في لعبة الحظ دون الحاجة لعمود في قاعدة البيانات
-            const myGameListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed' && (l.participate_game === true || localStorage.getItem('badal_game_item_' + l.id) === 'true') && !l.is_auction);
+            const myGameListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed' && l.participate_game === true && !l.is_auction);
 
             if(myGameListings.length === 0) {
                 container.innerHTML = `<p class="col-span-full text-center text-slate-400 text-xs py-4">ليس لديك أي عرض مفعل له خيار "شارك هذا المنتج في لعبة حظ المقايضة". قم بنشر عرض جديد وفعل الخيار!</p>`;
@@ -1904,7 +1883,7 @@
                 return;
             }
 
-            let availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && (l.participate_game === true || localStorage.getItem('badal_game_item_' + l.id) === 'true') && !l.is_auction && !sessionExcludedGameListingIds.includes(l.id));
+            let availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && l.participate_game === true && !l.is_auction && !sessionExcludedGameListingIds.includes(l.id));
 
             document.getElementById('gameSelectorStep').classList.add('hidden');
             const resultArea = document.getElementById('gameSpinnerResultArea');
@@ -1916,14 +1895,14 @@
                         <i class="fa-solid fa-dice text-white animate-spin"></i>
                     </div>
                     <div class="space-y-2">
-                        <h4 class="font-black text-base text-amber-300 animate-pulse">جاري البحث عن الطرف الثاني الحقيقي في اللعبة... 🔍</h4>
+                        <h4 class="font-black text-base text-amber-300 animate-pulse">جاري البحث عن الطرف الثاني الحقيقي في اللعبة عبر Supabase... 🔍</h4>
                         <p class="text-xs text-slate-300">السيستم يبحث عن شريك حقيقي دخل للعبة لربطكما معاً بالحظ الحقيقي...</p>
                     </div>
                 </div>
             `;
 
             setTimeout(() => {
-                availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && (l.participate_game === true || localStorage.getItem('badal_game_item_' + l.id) === 'true') && !l.is_auction && !sessionExcludedGameListingIds.includes(l.id));
+                availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && l.participate_game === true && !l.is_auction && !sessionExcludedGameListingIds.includes(l.id));
 
                 if(availableOpponents.length === 0) {
                     resultArea.innerHTML = `
@@ -2049,7 +2028,7 @@
             if(!container || rotatingTradesList.length === 0) return;
 
             const item = rotatingTradesList[currentRotatingTradeIndex];
-            const isGame = item.participate_game === true || localStorage.getItem('badal_game_item_' + item.id) === 'true';
+            const isGame = item.participate_game === true;
             const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
             const isAuction = item.is_auction === true;
 
@@ -2121,7 +2100,6 @@
 
             const pendingRequestsCount = allRequests.filter(r => (String(r.receiver_id) === String(currentAccount.id) || String(r.sender_id) === String(currentAccount.id)) && r.status === 'pending').length;
             const acceptedDealsCount = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted').length;
-            const unreadMessagesCount = 0;
 
             const linksContainer = document.getElementById('drawerMenuLinks');
             linksContainer.innerHTML = `
@@ -2146,7 +2124,6 @@
                     </div>
                     <div class="flex items-center gap-1">
                         ${acceptedDealsCount > 0 ? `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 font-black text-[10px] flex items-center justify-center border border-white shadow animate-pulse" title="العروض المتفق عليها">⭐${acceptedDealsCount}</span>` : ''}
-                        ${unreadMessagesCount > 0 ? `<span class="w-5 h-5 rounded-full bg-emerald-500 text-white font-black text-[9px] flex items-center justify-center border border-white shadow">${unreadMessagesCount}</span>` : ''}
                     </div>
                 </a>
                 <a href="#" onclick="closeRightMenu(); openFridayExclusiveAuctionModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-emerald-700 text-white font-black transition shadow-md">
@@ -2644,7 +2621,7 @@
 
             const isRandom = item.wanted && item.wanted.includes('باغي لي كان');
             document.getElementById('editRandomWantedCheck').checked = isRandom;
-            document.getElementById('editParticipateGameCheck').checked = item.participate_game === true || localStorage.getItem('badal_game_item_' + item.id) === 'true';
+            document.getElementById('editParticipateGameCheck').checked = item.participate_game === true;
             
             const wantedInput = document.getElementById('editWanted');
             if(isRandom) {
@@ -2668,14 +2645,8 @@
             const description = document.getElementById('editDesc').value;
             const participate_game = document.getElementById('editParticipateGameCheck').checked;
 
-            if(participate_game) {
-                localStorage.setItem('badal_game_item_' + id, 'true');
-            } else {
-                localStorage.removeItem('badal_game_item_' + id);
-            }
-
             const { error } = await _supabase.from('listings').update({
-                title, category: categoryVal, trade_type, wanted, description
+                title, category: categoryVal, trade_type, wanted, description, participate_game
             }).eq('id', id);
 
             if(!error) {
@@ -2734,7 +2705,6 @@
         }
 
         async function fetchListings() {
-            const grid = document.getElementById('listingsGrid');
             const countEl = document.getElementById('products-count');
             const { data, error } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
 
@@ -2744,23 +2714,6 @@
             }
 
             allListings = data || [];
-            allListings.forEach(item => {
-                if(localStorage.getItem('badal_game_item_' + item.id) === 'true') {
-                    item.participate_game = true;
-                }
-                let localAuctionItem = localStorage.getItem('badal_auction_item_' + item.id);
-                if(localAuctionItem) {
-                    let parsed = JSON.parse(localAuctionItem);
-                    item.is_auction = parsed.is_auction;
-                    item.start_price = parsed.start_price;
-                    item.current_price = parsed.current_price;
-                    item.bids_history = parsed.bids_history;
-                }
-                if(!item.bids_history) {
-                    let localBids = localStorage.getItem('badal_auction_bids_' + item.id);
-                    if(localBids) item.bids_history = JSON.parse(localBids);
-                }
-            });
 
             const activeListings = allListings.filter(p => p.status !== 'completed');
             if(countEl) countEl.textContent = activeListings.length;
@@ -2804,7 +2757,6 @@
                 const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
                 const isAuctionItem = item.is_auction === true;
 
-                // التعديل المطلوب: تطبيق فئات التوهج والألوان فقط إذا كان المنتج ملكي (isMyItem)
                 let cardClass = "bg-white border-slate-200";
                 if(isMyItem) {
                     if(isAuctionItem) {
@@ -3143,28 +3095,19 @@
                 description: document.getElementById('addDesc').value,
                 image_url: imageUrl,
                 user_id: String(currentAccount.id),
-                status: 'active'
+                status: 'active',
+                participate_game: participateGame,
+                is_auction: isAuctionChecked,
+                start_price: isAuctionChecked ? startPriceVal : null,
+                current_price: isAuctionChecked ? startPriceVal : null,
+                bids_history: isAuctionChecked ? [] : null
             };
 
-            const { error: insertError, data: insertedData } = await _supabase.from('listings').insert([listingPayload]).select();
+            const { error: insertError } = await _supabase.from('listings').insert([listingPayload]);
 
             if(insertError) {
                 showModalAlert("خطأ", "خطأ في نشر العرض: " + insertError.message, "error");
                 return;
-            }
-
-            if(insertedData && insertedData[0]) {
-                if(participateGame) {
-                    localStorage.setItem('badal_game_item_' + insertedData[0].id, 'true');
-                }
-                if(isAuctionChecked) {
-                    localStorage.setItem('badal_auction_item_' + insertedData[0].id, JSON.stringify({
-                        is_auction: true,
-                        start_price: startPriceVal,
-                        current_price: startPriceVal,
-                        bids_history: []
-                    }));
-                }
             }
 
             closeModal('addModal');
