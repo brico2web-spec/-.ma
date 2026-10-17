@@ -83,7 +83,8 @@
     <!-- Header Navigation -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <div id="authHeaderSection" class="flex items-center gap-2">
+            <!-- تم تعديل القسم ليضم أيقونة المنيو وبجانبها المستطيل المتناسق المقسوم إلى 4 مربعات إشعارات (مع إزالة البادجات القديمة فوق الأيقونة) -->
+            <div id="authHeaderSection" class="flex items-center gap-3">
                 <!-- Injected via JS -->
             </div>
             <div class="cursor-pointer flex flex-col items-end" onclick="switchTab('home')">
@@ -1032,7 +1033,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.3</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.4</span>
                     </div>
                 </div>
             </div>
@@ -1547,11 +1548,35 @@
                 const activeChatsCount = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted').length;
                 const pendingRequestsCount = allRequests.filter(r => (String(r.receiver_id) === String(currentAccount.id) || String(r.sender_id) === String(currentAccount.id)) && r.status === 'pending').length;
 
+                // حساب عدد الأشخاص الذين جاؤوا في منتجات المستخدم عبر لعبة الحظ (لإظهار الإشعار باللون الخاص בלعبة الحظ فوق أيقونة المنيو)
+                const myActiveListingsIds = allListings.filter(l => String(l.user_id) === String(currentAccount.id)).map(l => String(l.id));
+                const gameHitRequests = allRequests.filter(r => myActiveListingsIds.includes(String(r.listing_id)));
+                const gameHitCount = gameHitRequests.length;
+
                 container.innerHTML = `
-                    <button onclick="openRightMenu()" class="relative bg-emerald-50 hover:bg-emerald-100 text-emerald-700 w-11 h-11 rounded-2xl flex items-center justify-center transition border border-emerald-200 cursor-pointer shadow-sm">
+                    <button onclick="openRightMenu()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 w-11 h-11 rounded-2xl flex items-center justify-center transition border border-emerald-200 cursor-pointer shadow-sm relative">
                         <i class="fa-solid fa-bars text-lg"></i>
-                        ${(activeChatsCount > 0 || pendingRequestsCount > 0) ? `<span class="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white shadow animate-bounce" title="لديك طلبات مقايضة جديدة">${pendingRequestsCount > 0 ? pendingRequestsCount : activeChatsCount}</span>` : ''}
                     </button>
+                    <!-- مستطيل متناسق مع أيقونة المنيو مقسوم إلى 4 ديال الإشعارات -->
+                    <div class="grid grid-cols-4 gap-1.5 bg-slate-100 border border-slate-200 p-1.5 rounded-2xl text-[10px] font-black shadow-inner">
+                        <div onclick="openMenuSection('current-requests')" class="flex flex-col items-center justify-center bg-white p-1 rounded-xl border border-slate-200 cursor-pointer hover:bg-emerald-50 transition" title="الطلبات الجارية">
+                            <i class="fa-solid fa-bell text-emerald-600 text-xs"></i>
+                            <span class="text-slate-800 font-black">${pendingRequestsCount}</span>
+                        </div>
+                        <div onclick="openMenuSection('deal-chats')" class="flex flex-col items-center justify-center bg-white p-1 rounded-xl border border-slate-200 cursor-pointer hover:bg-emerald-50 transition" title="المحادثات المقبولة">
+                            <i class="fa-solid fa-comments text-blue-600 text-xs"></i>
+                            <span class="text-slate-800 font-black">${activeChatsCount}</span>
+                        </div>
+                        <div onclick="openMenuSection('active-listings')" class="flex flex-col items-center justify-center bg-white p-1 rounded-xl border border-slate-200 cursor-pointer hover:bg-emerald-50 transition" title="عروضي النشطة">
+                            <i class="fa-solid fa-box text-purple-600 text-xs"></i>
+                            <span class="text-slate-800 font-black">${allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed').length}</span>
+                        </div>
+                        <!-- خانة الإشعار التلقائي للعبة الحظ بلون لعبة الحظ (أصفر/وردي متألق) -->
+                        <div onclick="openLuckyChanceGameModal()" class="flex flex-col items-center justify-center bg-gradient-to-r from-amber-400 to-pink-500 text-white p-1 rounded-xl border border-amber-300 cursor-pointer hover:opacity-90 transition shadow-sm animate-pulse" title="الأشخاص الذين جاؤوا في منتجاتك عبر لعبة الحظ لتحديد اللقاء">
+                            <i class="fa-solid fa-dice text-xs text-yellow-100"></i>
+                            <span class="font-black text-white">${gameHitCount}</span>
+                        </div>
+                    </div>
                 `;
                 updateDrawerUserInfo();
             } else {
