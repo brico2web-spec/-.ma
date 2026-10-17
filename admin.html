@@ -67,7 +67,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="text-xl font-black tracking-wider">بدل<span class="text-emerald-500">.ma</span></h1>
-                        <span class="bg-emerald-600/30 text-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-md border border-emerald-500/40">V 0.2</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-md border border-emerald-500/40">V 0.3</span>
                     </div>
                     <p class="text-[10px] text-emerald-400 font-bold">لوحة تحكم الإدارة العامة</p>
                 </div>
@@ -160,6 +160,32 @@
             </div>
             <div id="comprehensiveSiteAnalytics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                 <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- NEW SECTION: إستقبال رسائل وإقترحات المستخدمين -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b pb-4">
+                <h3 class="font-black text-base text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-envelope-open-text text-emerald-600"></i> رسائل وإقترحات المستخدمين 📥
+                </h3>
+                <span id="messagesCountBadge" class="bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1 rounded-full">0 رسالة</span>
+            </div>
+            <div class="max-h-[400px] overflow-y-auto border border-slate-100 rounded-2xl">
+                <table class="w-full text-right text-xs">
+                    <thead class="sticky top-0 bg-slate-50 shadow-sm z-10">
+                        <tr class="text-slate-500 border-b">
+                            <th class="p-3">المُرسل / الهاتف</th>
+                            <th class="p-3">نوع الرسالة / الإقراح</th>
+                            <th class="p-3">نص الرسالة</th>
+                            <th class="p-3">التوقيت</th>
+                            <th class="p-3 text-center">إجراءات الأدمين</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminMessagesTableBody">
+                        <tr><td colspan="5" class="text-center py-6 text-slate-400">جاري تحميل الرسائل والإقترحات...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -284,13 +310,14 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs mt-12 border-t border-slate-800 flex flex-col items-center justify-center gap-1">
         <span>جميع الحقوق محفوظة © 2026 - لوحة تحكم أدمين بدل.ma 🛡️</span>
-        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40 text-[10px]">V 0.2</span>
+        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40 text-[10px]">V 0.3</span>
     </footer>
 
     <!-- Admin Dashboard Logic -->
     <script>
         let cachedUsers = [];
         let cachedListings = [];
+        let cachedMessages = [];
 
         window.onload = async function() {
             const isAdminLoggedIn = localStorage.getItem('badal_admin_logged');
@@ -330,6 +357,21 @@
 
             const { data: requests } = await _supabase.from('trade_requests').select('*');
 
+            // جلب رسائل وإقترحات المستخدمين من جدول contact_messages أو contact_us (مع دعم الاحتياط من localStorage)
+            let messages = [];
+            const { data: dbMessages, error: msgErr } = await _supabase.from('contact_messages').select('*').order('created_at', { ascending: false });
+            if(!msgErr && dbMessages) {
+                messages = dbMessages;
+            } else {
+                const { data: dbMessages2, error: msgErr2 } = await _supabase.from('contact_us').select('*').order('created_at', { ascending: false });
+                if(!msgErr2 && dbMessages2) {
+                    messages = dbMessages2;
+                } else {
+                    messages = JSON.parse(localStorage.getItem('badal_contact_messages') || '[]');
+                }
+            }
+            cachedMessages = messages;
+
             document.getElementById('statTotalListings').textContent = cachedListings.length;
             document.getElementById('statTotalUsers').textContent = cachedUsers.length;
             document.getElementById('statTotalRequests').textContent = requests ? requests.length : 0;
@@ -338,9 +380,64 @@
             renderCityActivityStats(cachedListings, cachedUsers);
             renderComprehensiveAnalytics(cachedListings, cachedUsers, requests);
 
+            renderAdminMessages(cachedMessages);
             renderAdminListings(cachedListings);
             renderAdminUsers(cachedUsers);
             renderBannedUsersTable(cachedUsers);
+        }
+
+        function renderAdminMessages(messages) {
+            const tbody = document.getElementById('adminMessagesTableBody');
+            const badge = document.getElementById('messagesCountBadge');
+            badge.textContent = `${messages.length} رسالة`;
+
+            if(!messages || messages.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">لا توجد رسائل أو إقترحات جديدة حالياً</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = messages.map((msg, index) => {
+                const dateObj = msg.created_at ? new Date(msg.created_at) : new Date();
+                const timeStr = dateObj.toLocaleString('ar-MA');
+                const senderName = msg.full_name || msg.name || 'زائر / مستخدم';
+                const senderPhone = msg.phone || 'غير متاح';
+                const msgType = msg.type || msg.subject || 'إقراح / استفسار';
+                const msgText = msg.message || msg.content || msg.text || 'بدون نص';
+                const msgId = msg.id || index;
+
+                return `
+                    <tr class="border-b hover:bg-slate-50 transition">
+                        <td class="p-3">
+                            <span class="font-black text-slate-900 block">${senderName}</span>
+                            <span class="text-[10px] text-emerald-700 font-bold">${senderPhone}</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-bold">${msgType}</span>
+                        </td>
+                        <td class="p-3 text-slate-700 font-medium max-w-xs truncate" title="${msgText}">${msgText}</td>
+                        <td class="p-3 text-[10px] text-slate-400">${timeStr}</td>
+                        <td class="p-3 text-center space-x-1 space-x-reverse">
+                            <a href="https://wa.me/${senderPhone.replace(/[^0-9]/g, '')}?text=مرحباً%20${encodeURIComponent(senderName)}،%20بخصوص%20رسالتك%20في%20منصة%20بدل.ma:" target="_blank" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-2.5 py-1.5 rounded-xl transition text-[10px] inline-flex items-center gap-1 cursor-pointer" title="إرسال رد عبر واتساب">
+                                <i class="fa-brands fa-whatsapp"></i> رد
+                            </a>
+                            <button onclick="adminDeleteMessage('${msgId}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-2.5 py-1.5 rounded-xl transition text-[10px] cursor-pointer" title="حذف الرسالة">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function adminDeleteMessage(id) {
+            if(confirm("هل أنت متأكد من حذف هذه الرسالة من لوحة التحكم؟")) {
+                await _supabase.from('contact_messages').delete().eq('id', id);
+                await _supabase.from('contact_us').delete().eq('id', id);
+                
+                cachedMessages = cachedMessages.filter(m => String(m.id) !== String(id));
+                localStorage.setItem('badal_contact_messages', JSON.stringify(cachedMessages));
+                renderAdminMessages(cachedMessages);
+            }
         }
 
         function renderAdminListings(listings) {
