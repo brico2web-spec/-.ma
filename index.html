@@ -89,7 +89,7 @@
             </div>
             <div class="cursor-pointer flex flex-col items-end" onclick="switchTab('home')">
                 <h1 class="text-2xl font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></h1>
-                <p class="text-[10px] text-slate-400 font-bold">منصة المقايضة المباشرة بـ 0 درهم</p>
+                <p class="text-[10px] text-slate-400 font-bold">منصة المقايضة</p>
             </div>
         </div>
     </header>
@@ -164,21 +164,27 @@
                 <img id="sliderImage" src="https://i.ibb.co/xqkYD5cw/851378121-1856877015481742-849615278726728125-n.jpg" class="w-full h-full object-cover object-center slider-img-anim transition-all duration-1000">
                 <div class="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-slate-900/40"></div>
             </div>
-            <div class="relative z-10 p-6 sm:p-10 max-w-2xl space-y-3">
+            <div class="relative z-10 p-6 sm:p-10 max-w-3xl space-y-3 w-full">
                 <span id="sliderBadge" class="bg-emerald-500/40 text-emerald-300 text-[11px] font-black px-3.5 py-1.5 rounded-full border border-emerald-400/50 backdrop-blur-md inline-flex items-center gap-1.5">
                     <i class="fa-solid fa-bolt text-amber-400"></i> همزة لا تُعوض
                 </span>
                 <h3 id="sliderTitle" class="text-xl sm:text-3xl font-black text-white slide-fade drop-shadow-md leading-tight">بدل داكشي اللي ما محتاجوش، وربح جديد فبلاش!</h3>
                 <p id="sliderDesc" class="text-xs sm:text-sm text-slate-200 font-medium slide-fade drop-shadow leading-relaxed">المقايضة المباشرة راس fـ راس بـ 0 درهم بين ولاد بلادك بكل أمان وثقة.</p>
-                <div class="pt-1 flex items-center gap-2 flex-wrap">
-                    <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-arrows-rotate"></i> ابدأ المقايضة الآن
+                
+                <!-- أزرار السلايدر بتنسيق متناسق ومنظم -->
+                <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <button onclick="handleOpenAddModal()" class="w-full sm:w-1/3 bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
+                        <i class="fa-solid fa-arrows-rotate text-amber-300 text-lg"></i>
+                        <span class="text-xs sm:text-sm slide-fade">ابدأ المقايضة الآن</span>
                     </button>
-                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer animate-pulse">
-                        <i class="fa-solid fa-dice"></i> لعبة عجلة الحظ 🎲
+                    <button onclick="openTradeWheelGameModal()" class="w-full sm:w-1/3 bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02] animate-pulse">
+                        <i class="fa-solid fa-dice text-yellow-200 text-lg animate-spin"></i>
+                        <span class="text-xs sm:text-sm slide-fade">لعبة عجلة الحظ 🎲</span>
                     </button>
-                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-gavel"></i> ساحة المزايدة المباشرة 🔨
+                    <!-- الزر المعدل للون البنفسجي المتناسق -->
+                    <button onclick="openFridayExclusiveAuctionModal()" class="w-full sm:w-1/3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
+                        <i class="fa-solid fa-gavel text-amber-300 text-lg animate-pulse"></i>
+                        <span class="text-xs sm:text-sm slide-fade">ساحة المزايدة المباشرة 🔨</span>
                     </button>
                 </div>
             </div>
@@ -188,41 +194,49 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
         
-        <!-- الوحدة الأفقية الجديدة البارزة للمقايضات المكتملة -->
-        <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-5 rounded-3xl border-2 border-emerald-400/60 shadow-xl relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3 border-b border-emerald-800/60 pb-2">
+        <!-- الوحدة الأفقية للشراكة مع الجمعيات الخيرية وأصحاب تدوير النفايات -->
+        <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-5 rounded-3xl border-2 border-emerald-400/60 shadow-xl relative overflow-hidden space-y-4">
+            <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2">
                 <div class="flex items-center gap-2">
                     <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
-                    <h3 class="font-black text-xs sm:text-sm text-emerald-300 tracking-wide">✨ أحدث المقايضات والعمليات المكتملة فورياً</h3>
+                    <h3 class="font-black text-xs sm:text-sm text-emerald-300 tracking-wide animate-pulse">🌟 شراكة تضامنية وبيئية: نحو بيئة نقية ومجتمع متكافل</h3>
                 </div>
-                <span class="text-[10px] font-bold text-emerald-400 bg-emerald-900/80 px-3 py-1 rounded-full border border-emerald-600">بث حي ⚡</span>
             </div>
             
-            <div id="rotatingCompletedTradeContainer" class="min-h-[90px] flex items-center justify-center">
+            <!-- زر إتصال بي حرفي في مدينة بكل سهولة (المضاف حديثاً فوق زر الجمعيات) -->
+            <div class="w-full">
+                <button onclick="showModalAlert('إتصال بي حرفي في مدينة 🛠️', 'خدمة ربط سريع بأقرب الحرفيين المحترفين في مدينتك (نجار، صباغ، كهربائي، رصاص...) لإنجاز أعمالك بكل سهولة وأمان.', 'success')" class="w-full bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.01]">
+                    <i class="fa-solid fa-hammer text-yellow-200 text-lg animate-bounce"></i>
+                    <span class="text-xs sm:text-sm slide-fade">إتصال بي حرفي في مدينة بكل سهولة 🛠️</span>
+                </button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <!-- زر الجمعيات الخيرية -->
+                <button onclick="showModalAlert('جمعيات خيرية 🤝', 'نعمل بشراكة مع جمعيات خيرية رائدة لجمع الأغراض والملابس غير المستخدمة وتوزيعها على المحتاجين بكل أمان.', 'success')" class="w-full sm:w-1/3 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
+                    <i class="fa-solid fa-hand-holding-heart text-amber-300 text-lg animate-bounce"></i>
+                    <span class="text-xs sm:text-sm slide-fade">شراكة مع الجمعيات الخيرية لمد يد العون</span>
+                </button>
+
+                <!-- زر أصحاب تدوير النفايات -->
+                <button onclick="showModalAlert('تدوير النفايات من الزنقة ♻️', 'مبادرة لربط الصلة بأصحاب تدوير النفايات لجمع وترحيل المواد القابلة للتدوير من الشوارع لحماية البيئة.', 'success')" class="w-full sm:w-1/3 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
+                    <i class="fa-solid fa-recycle text-yellow-300 text-lg animate-spin"></i>
+                    <span class="text-xs sm:text-sm slide-fade">أصحاب تدوير النفايات ( جامِعِي النفايات )</span>
+                </button>
+
+                <!-- زر المقايضة بين الشركات و المقاولات -->
+                <button onclick="showModalAlert('المقايضة بين الشركات و المقاولات 🏭', 'منصة مخصصة لتسهيل التبادل التجاري والمقايضة البينية بين الشركات والمقاولات بمرونة وفعالية.', 'success')" class="w-full sm:w-1/3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2.5 cursor-pointer transform hover:scale-[1.02]">
+                    <i class="fa-solid fa-building text-amber-300 text-lg animate-pulse"></i>
+                    <span class="text-xs sm:text-sm slide-fade">المقايضة بين الشركات و المقاولات</span>
+                </button>
+            </div>
+
+            <div id="rotatingCompletedTradeContainer" class="min-h-[70px] flex items-center justify-center pt-2 border-t border-emerald-800/40">
                 <p class="text-xs text-emerald-300/80 font-medium text-center py-2">جاري جلب أحدث المقايضات الناجحة والمحدثة...</p>
             </div>
         </section>
 
         <section id="tab-home" class="space-y-6 tab-content">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-6 sm:p-8 rounded-3xl text-white shadow-xl border border-slate-800">
-                <div>
-                    <span class="bg-emerald-500/20 text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/30 inline-block mb-2">🇲🇦 المنصة المغربية الرسمية للمقايضة</span>
-                    <h2 class="text-2xl sm:text-3xl font-black">بدل داكشي اللي ما محتاجوش</h2>
-                    <p class="text-xs sm:text-sm text-slate-300 mt-1 font-light">مقايضة مباشرة بـ 0 درهم بين أطراف التبادل عبر المنصة.</p>
-                </div>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
-                        <i class="fa-solid fa-gavel text-base"></i> ساحة المزايدة المباشرة 🔨
-                    </button>
-                    <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap">
-                        <i class="fa-solid fa-dice text-base"></i> لعبة عجلة الحظ 🎲
-                    </button>
-                    <button onclick="handleOpenAddModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
-                        <i class="fa-solid fa-plus-circle text-base"></i> أضف عرضك الجديد
-                    </button>
-                </div>
-            </div>
-
             <!-- Search and Filter Bar -->
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div class="w-full md:w-80 space-y-2">
@@ -668,7 +682,7 @@
                 <div class="bg-gradient-to-r from-amber-50 to-pink-50 p-4 rounded-2xl border-2 border-amber-300 space-y-2 shadow-inner">
                     <div class="flex items-center justify-between">
                         <label for="randomWantedCheck" class="font-black text-amber-900 cursor-pointer flex items-center gap-2 text-xs">
-                            <i class="fa-solid fa-gift text-pink-600 text-base animate-bounce"></i> همزة للطرفين (باغي لي كان 🎁)
+                            <i class="fa-solid fa-gift text-pink-600 text-base animate-bounce"></i> همزة للطرفين (باغي لي كان)
                         </label>
                         <input type="checkbox" id="randomWantedCheck" onchange="toggleRandomWanted(this)" class="w-5 h-5 accent-pink-600 cursor-pointer">
                     </div>
@@ -757,7 +771,7 @@
                 <div class="bg-gradient-to-r from-amber-50 to-pink-50 p-4 rounded-2xl border-2 border-amber-300 space-y-2 shadow-inner">
                     <div class="flex items-center justify-between">
                         <label for="editRandomWantedCheck" class="font-black text-amber-900 cursor-pointer flex items-center gap-2 text-xs">
-                            <i class="fa-solid fa-gift text-pink-600 text-base animate-bounce"></i> همزة للطرفين (باغي لي كان 🎁)
+                            <i class="fa-solid fa-gift text-pink-600 text-base animate-bounce"></i> همزة للطرفين (باغي لي كان)
                         </label>
                         <input type="checkbox" id="editRandomWantedCheck" onchange="toggleEditRandomWanted(this)" class="w-5 h-5 accent-pink-600 cursor-pointer">
                     </div>
@@ -981,7 +995,7 @@
                 <div class="space-y-3">
                     <div class="flex flex-col">
                         <h2 class="text-2xl font-black text-white tracking-wider">بدل<span class="text-emerald-500">.ma</span></h2>
-                        <p class="text-xs text-emerald-400 font-bold mt-0.5">منصة المقايضة المباشرة بـ 0 درهم فالمغرب 🇲🇦</p>
+                        <p class="text-xs text-emerald-400 font-bold mt-0.5">منصة المقايضة فالمغرب 🇲🇦</p>
                     </div>
                     <p class="text-slate-400 leading-relaxed font-light">
                         بدل داكشي اللي ما محتاجوش، وستفد من عروض لا تُعوض مع ولاد بلادك بكل ثقة، أمان وسرعة وبدون أي رسوم وسيطة.
@@ -1022,7 +1036,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 4.3</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 5.0</span>
                     </div>
                 </div>
             </div>
@@ -1055,7 +1069,6 @@
         let currentRotatingTradeIndex = 0;
         let rotatingTradesInterval = null;
 
-        // متغيرات التنقل (التالي / السابق)
         let currentPage = 1;
         const itemsPerPage = 14;
 
@@ -3020,7 +3033,6 @@
 
         function changePage(targetPage) {
             currentPage = targetPage;
-            // استخدام المصفوفة المفلترة الحالية بدلاً من إعادة جلب كل المنتجات غير المفلترة لتفادي خطأ تثبيتها في 1
             const q = document.getElementById('search-input').value.toLowerCase();
             const activeListings = allListings.filter(p => p.status !== 'completed');
             let filtered = activeListings.filter(p => {
