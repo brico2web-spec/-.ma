@@ -38,6 +38,20 @@
             50% { transform: rotate(180deg) scale(1.1); opacity: 1; }
             100% { transform: rotate(360deg) scale(1); opacity: 1; }
         }
+        /* حركة شريط المقايضات المكتملة الحي */
+        @keyframes tickerScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-ticker {
+            display: flex;
+            width: max-content;
+            animation: tickerScroll 25s linear infinite;
+        }
+        .animate-ticker:hover {
+            animation-play-state: paused;
+        }
+
         .slide-fade { animation: fadeIn 0.6s ease-in-out; }
         .slider-img-anim { animation: sliderZoom 8s infinite ease-in-out; }
         .wheel-anim { animation: wheelSpinAnim 2.5s cubic-bezier(0.15, 0.85, 0.35, 1) forwards; }
@@ -163,16 +177,20 @@
 
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
-        <section id="homepageCompletedTradesSection" class="bg-gradient-to-r from-amber-500/10 via-pink-500/10 to-emerald-500/10 p-5 rounded-3xl border-2 border-amber-400/40 shadow-xl space-y-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
-                    <h3 class="font-black text-sm text-slate-900">🎉 أحدث المقايضات المكتملة عبر منصة بدل.ma</h3>
+        <!-- قسم أحدث المقايضات المكتملة بصيغة شريط حركي حي (Live Ticker Stream) بتصميم مفتوح ومشرق ومتناسق -->
+        <section id="homepageCompletedTradesSection" class="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-3xl border-2 border-emerald-300 shadow-xl space-y-4 overflow-hidden relative">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <h3 class="font-black text-sm sm:text-base text-emerald-900 tracking-wide">⚡ شريط الحركة الحي: أحدث المقايضات المكتملة فورياً عبر بدل.ma</h3>
                 </div>
-                <span class="text-[10px] bg-amber-500 text-white font-black px-3 py-1 rounded-full shadow">تم التبادل بنجاح 100%</span>
+                <span class="text-[11px] font-black text-emerald-700 bg-white px-3 py-1 rounded-full border border-emerald-200 shadow-sm">تحديث مباشر ✨</span>
             </div>
-            <div id="homepageCompletedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <p class="text-xs text-slate-500 font-medium text-center py-2 col-span-full">جاري تحميل المقايضات الناجحة...</p>
+            <!-- الشريط الحركي المتفاعل بتصميم ناصع ومشرق -->
+            <div class="relative overflow-hidden bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-emerald-200 shadow-lg">
+                <div id="homepageCompletedGrid" class="flex gap-4 animate-ticker">
+                    <p class="text-xs text-slate-500 font-medium text-center py-2">جاري جلب أحدث المقايضات الناجحة والمحدثة من السيستم...</p>
+                </div>
             </div>
         </section>
 
@@ -198,14 +216,29 @@
 
             <!-- زر فتح نافذة الفئات الشاملة -->
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div class="relative w-full md:w-80">
-                    <i class="fa-solid fa-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن هاتف، أثاث، ساعة، ملابس..." class="w-full pr-12 pl-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs sm:text-sm">
+                <div class="w-full md:w-80 space-y-2">
+                    <div class="relative w-full">
+                        <i class="fa-solid fa-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن هاتف، أثاث، ساعة، ملابس..." class="w-full pr-12 pl-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs sm:text-sm">
+                    </div>
+                    <!-- زر فلترة المدن المضاف حديثاً تحت خانة البحث مباشرة -->
+                    <button onclick="openCityFilterModal()" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-2.5 px-4 rounded-2xl border border-emerald-200 transition flex items-center justify-between cursor-pointer shadow-sm">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-location-dot text-emerald-600"></i>
+                            <span id="selectedCityFilterLabel">اختر مدينتك لتقريب التقايض 🇲🇦</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                    </button>
                 </div>
 
+                <!-- زر تصفح جميع الفئات بتصميم متطابق مع زر المدن -->
                 <div class="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end flex-wrap">
-                    <button onclick="openCategoriesModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-5 py-3 rounded-2xl shadow transition flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-list-check text-base"></i> تصفح جميع الفئات والشرائح 📂
+                    <button onclick="openCategoriesModal()" class="w-full md:w-auto bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-3 px-5 rounded-2xl border border-emerald-200 transition flex items-center justify-between md:justify-center gap-3 cursor-pointer shadow-sm">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-emerald-600 text-base"></i>
+                            <span>تصفح جميع الفئات والشرائح 📂</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
                     </button>
                 </div>
                 
@@ -243,6 +276,48 @@
             </div>
         </section>
     </main>
+
+    <!-- Modal: City Filter Window (نافذة اختيار وفلترة المدن لتقريب التقايض) -->
+    <div id="cityFilterModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[145] hidden flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right slide-fade">
+            <button onclick="closeModal('cityFilterModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
+            <div class="border-b pb-3">
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1 rounded-full">📍 فلترة المدن لتقريب التقايض</span>
+                <h3 class="font-black text-xl text-slate-900 mt-1">اختر مدينتك المفضلة</h3>
+                <p class="text-xs text-slate-500">حدد المدينة لعرض العروض القريبة منك وتسهيل عملية اللقاء والمقايضة:</p>
+            </div>
+
+            <div class="space-y-2 max-h-60 overflow-y-auto p-1">
+                <div onclick="selectCityFilter('الكل')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition cursor-pointer flex items-center justify-between font-bold text-xs">
+                    <span>🌟 جميع المدن المغربية (الكل)</span>
+                    <i class="fa-solid fa-globe text-emerald-600"></i>
+                </div>
+                <div onclick="selectCityFilter('القنيطرة')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition cursor-pointer flex items-center justify-between font-bold text-xs">
+                    <span>📍 القنيطرة</span>
+                    <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">المدينة الرئيسية</span>
+                </div>
+                <div onclick="selectCityFilter('الرباط')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition cursor-pointer flex items-center justify-between font-bold text-xs">
+                    <span>📍 الرباط</span>
+                </div>
+                <div onclick="selectCityFilter('الدار البيضاء')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition cursor-pointer flex items-center justify-between font-bold text-xs">
+                    <span>📍 الدار البيضاء</span>
+                </div>
+                <div onclick="selectCityFilter('فاس')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition cursor-pointer flex items-center justify-between font-bold text-xs">
+                    <span>📍 فاس</span>
+                </div>
+                <div onclick="selectCityFilter('طنجة')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition cursor-pointer flex items-center justify-between font-bold text-xs">
+                    <span>📍 طنجة</span>
+                </div>
+                <div onclick="selectCityFilter('سلا')" class="p-3 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-500 transition cursor-pointer flex items-center justify-between font-bold text-xs">
+                    <span>📍 سلا</span>
+                </div>
+            </div>
+
+            <button onclick="closeModal('cityFilterModal')" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl text-xs shadow transition cursor-pointer">
+                إغلاق 👍
+            </button>
+        </div>
+    </div>
 
     <!-- Modal: Categories & Subcategories Window -->
     <div id="categoriesModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[140] hidden flex items-center justify-center p-4">
@@ -873,39 +948,68 @@
 
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-300 py-10 border-t border-slate-800 mt-12 text-right">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-xs">
-            <div class="space-y-3">
-                <div class="flex flex-col">
-                    <h2 class="text-2xl font-black text-white tracking-wider">بدل<span class="text-emerald-500">.ma</span></h2>
-                    <p class="text-xs text-emerald-400 font-bold mt-0.5">منصة المقايضة المباشرة بـ 0 درهم فالمغرب 🇲🇦</p>
+        <div class="max-w-7xl mx-auto px-4 space-y-8">
+            <!-- قسم إخلاء المسؤولية والتوجيهات الأمنية (مضاف حديثاً بشكل عصري وجذاب) -->
+            <div class="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 p-5 rounded-3xl border-2 border-amber-500/40 shadow-xl space-y-3">
+                <div class="flex items-center gap-2 text-amber-400 font-black text-sm">
+                    <i class="fa-solid fa-triangle-exclamation text-base"></i> إخلاء المسؤولية وإرشادات الأمان لتفادي المشاكل ⚠️
                 </div>
-                <p class="text-slate-400 leading-relaxed font-light">
-                    بدل داكشي اللي ما محتاجوش، وستفد من عروض لا تُعوض مع ولاد بلادك بكل ثقة، أمان وسرعة وبدون أي رسوم وسيطة.
-                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-200 font-medium leading-relaxed">
+                    <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-amber-500/20 flex items-start gap-2.5">
+                        <i class="fa-solid fa-shield-halved text-emerald-400 mt-0.5 text-sm"></i>
+                        <p><strong>إخلاء المسؤولية:</strong> الموقع غير مسؤول نهائياً عن التقاء الطرفين عند تبادل المنتوجات أو مكان الإلتقاء، ويبقى اللقاء وتجربة المنتوج تحت المسؤولية الكاملة للمشاركين.</p>
+                    </div>
+                    <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-amber-500/20 flex items-start gap-2.5">
+                        <i class="fa-solid fa-id-card text-amber-400 mt-0.5 text-sm"></i>
+                        <p><strong>توصية أمنية للمنتوجات ذات القيمة المالية:</strong> في حالة كان المنتج ذو قيمة مادية مهمة، وتفادياً لأي مشاكل، نطلب منك طلب نسخة من البطاقة الوطنية للطرف الآخر أو المطالبة بإلتزام إداري خاص بالمنتوج عند الضرورة.</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="space-y-2 bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
-                <h4 class="font-black text-amber-400 text-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-shield-halved"></i> قانون وإرشادات المقايضة الآمنة
-                </h4>
-                <p class="text-slate-300 text-[11px] leading-relaxed">
-                    ⚠️ <strong>إخلاء مسؤولية:</strong> إدارة المنصة غير مسؤولة نهائياً عن المكان المحدد أو طريقة اللقاء بين الطرفين.
-                </p>
-                <p class="text-slate-300 text-[11px] leading-relaxed">
-                    💡 <strong>تنبيه أمني:</strong> حين يكون المنتج غالياً في السوق أو شككت في هوية الشخص، نوصي بشدة بطلب نسخة من <strong>البطاقة الوطنية (CIN)</strong> للطرف الآخر واللقاء في مكان عام آمن ومضاء.
-                </p>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs">
+                <div class="space-y-3">
+                    <div class="flex flex-col">
+                        <h2 class="text-2xl font-black text-white tracking-wider">بدل<span class="text-emerald-500">.ma</span></h2>
+                        <p class="text-xs text-emerald-400 font-bold mt-0.5">منصة المقايضة المباشرة بـ 0 درهم فالمغرب 🇲🇦</p>
+                    </div>
+                    <p class="text-slate-400 leading-relaxed font-light">
+                        بدل داكشي اللي ما محتاجوش، وستفد من عروض لا تُعوض مع ولاد بلادك بكل ثقة، أمان وسرعة وبدون أي رسوم وسيطة.
+                    </p>
+                </div>
 
-            <div class="space-y-3">
-                <h4 class="font-black text-white text-sm">لماذا منصة بدل.ma؟ ✨</h4>
-                <ul class="space-y-1.5 text-slate-400 text-[11px]">
-                    <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> مقايضة 100% مجانية (0 درهم).</li>
-                    <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> إشعارات فورية ودردشة مباشرة بين الأطراف.</li>
-                    <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> نظام تقييمات لضمان المصداقية والثقة.</li>
-                </ul>
-                <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
-                    <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                    <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 1.1</span>
+                <!-- خانة شاركونا اقتراحاتكم المحدثة بخانات متكاملة (الاسم الكامل، العنوان، رقم الهاتف، والرسالة) -->
+                <div class="space-y-3 bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+                    <h4 class="font-black text-amber-400 text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-comments"></i> شاركونا اقتراحاتكم ورسائلكم ✉️
+                    </h4>
+                    <form id="footerSuggestionForm" onsubmit="handleFooterSuggestion(event)" class="space-y-2">
+                        <div>
+                            <input type="text" id="suggestionFullName" required placeholder="الاسم الكامل *" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="suggestionAddress" required placeholder="العنوان / المدينة *" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <input type="tel" id="suggestionPhone" required placeholder="رقم الهاتف *" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <textarea id="suggestionMessage" rows="2" required placeholder="رسالتك أو اقتراحك للمنصة... *" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow cursor-pointer flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-paper-plane"></i> إرسال المقترح للإدارة 🚀
+                        </button>
+                    </form>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="font-black text-white text-sm">لماذا منصة بدل.ma؟ ✨</h4>
+                    <ul class="space-y-1.5 text-slate-400 text-[11px]">
+                        <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> مقايضة 100% مجانية (0 درهم).</li>
+                        <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> إشعارات فورية ودردشة مباشرة بين الأطراف.</li>
+                        <li><i class="fa-solid fa-check text-emerald-400 ml-1"></i> نظام تقييمات لضمان المصداقية والثقة.</li>
+                    </ul>
+                    <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
+                        <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 1.8</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -921,6 +1025,7 @@
         let activeChatRequestId = null;
         let selectedStarCount = 5;
         let ratingTargetUserId = null;
+        let currentCityFilter = 'الكل';
         
         let weeklyFeaturedList = [];
         let currentFeaturedProfileIndex = 0;
@@ -1015,6 +1120,43 @@
                 });
             }
         };
+
+        // وظائف فلترة المدن
+        function openCityFilterModal() {
+            document.getElementById('cityFilterModal').classList.remove('hidden');
+        }
+
+        function selectCityFilter(cityName) {
+            currentCityFilter = cityName;
+            const labelEl = document.getElementById('selectedCityFilterLabel');
+            if(labelEl) {
+                labelEl.textContent = cityName === 'الكل' ? 'جميع المدن المغربية (الكل)' : `مدينة: ${cityName}`;
+            }
+            closeModal('cityFilterModal');
+            filterProducts();
+            showFloatingNotification(`📍 تم تطبيق فلتر المدينة: (${cityName})`);
+        }
+
+        // وظيفة إرسال الاقتراحات من الفوتر
+        function handleFooterSuggestion(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('suggestionFullName').value.trim();
+            const address = document.getElementById('suggestionAddress').value.trim();
+            const phone = document.getElementById('suggestionPhone').value.trim();
+            const message = document.getElementById('suggestionMessage').value.trim();
+
+            if(!fullName || !address || !phone || !message) {
+                showModalAlert("تنبيه", "المرجو ملء جميع الخانات في نموذج الاقتراحات!", "error");
+                return;
+            }
+
+            let savedSuggestions = JSON.parse(localStorage.getItem('badal_user_suggestions') || '[]');
+            savedSuggestions.push({ fullName, address, phone, message, date: new Date().toISOString() });
+            localStorage.setItem('badal_user_suggestions', JSON.stringify(savedSuggestions));
+
+            document.getElementById('footerSuggestionForm').reset();
+            showModalAlert("شكراً لك 🌟", "تم إرسال اقتراحك ورسالتك بنجاح إلى إدارة منصة بدل.ma! نحن نقدر مشاركتك.", "success");
+        }
 
         function openCategoriesModal() {
             document.getElementById('categoriesModal').classList.remove('hidden');
@@ -1463,7 +1605,6 @@
 
             let bidsHistoryLocal = JSON.parse(localStorage.getItem('badal_auction_bids_' + listingId) || '[]');
 
-            // تحديث محلي وفوري لضمان ظهور المنتج لجميع المستخدمين دون الاعتماد على أعمدة Supabase المفقودة
             let targetItem = allListings.find(l => String(l.id) === String(listingId));
             if(targetItem) {
                 targetItem.is_auction = true;
@@ -1479,7 +1620,6 @@
                 bids_history: bidsHistoryLocal
             }));
 
-            // محاولة المزامنة مع قاعدة البيانات إن وجدت
             try {
                 await _supabase.from('listings').update({
                     is_auction: true,
@@ -1497,8 +1637,6 @@
 
         function renderFridayAuctionInterface() {
             const container = document.getElementById('fridayAuctionContainer');
-            
-            // جلب العروض المعروضة للمزاد من البيانات المحدثة محلياً أو من السيرفر
             const activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
 
             let addBtnHtml = `
@@ -1825,50 +1963,54 @@
             const completedItems = allListings.filter(l => l.status === 'completed');
 
             if(!completedItems || completedItems.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500 font-medium text-center py-2 col-span-full">لا توجد مقايضات مكتملة مؤخراً. كن أول من يبادل!</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500 font-medium text-center py-2 w-full">جاري البحث في السجل... لا توجد مقايضات مكتملة مؤخراً. كن أول من يبادل!</p>`;
                 return;
             }
 
-            container.innerHTML = completedItems.slice(0, 4).map(item => {
-                const isGame = item.wanted && item.wanted.includes('لعبة');
-                const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
-                const isAuction = item.is_auction === true;
+            const buildCardsHtml = (itemsList) => {
+                return itemsList.map(item => {
+                    const isGame = item.wanted && item.wanted.includes('لعبة');
+                    const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
+                    const isAuction = item.is_auction === true;
 
-                let cardBgClass = "bg-white/90 border-emerald-300";
-                let badgeClass = "bg-emerald-100 text-emerald-800";
-                let badgeText = "مقايدة عادية 🤝";
-                let iconSymbol = "fa-handshake";
+                    let cardBgClass = "bg-white border-emerald-200 shadow-sm";
+                    let badgeClass = "bg-emerald-100 text-emerald-800";
+                    let badgeText = "مقايدة عادية 🤝";
+                    let iconSymbol = "fa-handshake";
 
-                if (isGame) {
-                    cardBgClass = "bg-gradient-to-br from-pink-50 via-purple-50 to-white border-pink-400 shadow-pink-100";
-                    badgeClass = "bg-gradient-to-r from-amber-500 to-pink-600 text-white animate-pulse";
-                    badgeText = "مقايضة عن طريق لعبة 🎲";
-                    iconSymbol = "fa-dice";
-                } else if (isHemza) {
-                    cardBgClass = "bg-gradient-to-br from-amber-50 via-yellow-50 to-white border-amber-400 shadow-amber-100";
-                    badgeClass = "bg-amber-500 text-white font-black";
-                    badgeText = "همزة المقايضة ⚡";
-                    iconSymbol = "fa-bolt";
-                } else if (isAuction) {
-                    cardBgClass = "bg-gradient-to-br from-purple-50 via-indigo-50 to-white border-purple-400 shadow-purple-100";
-                    badgeClass = "bg-purple-600 text-white";
-                    badgeText = "المزاد المباشر 🔨";
-                    iconSymbol = "fa-gavel";
-                }
+                    if (isGame) {
+                        cardBgClass = "bg-gradient-to-br from-pink-50 via-purple-50 to-white border-pink-300 shadow-pink-100";
+                        badgeClass = "bg-gradient-to-r from-amber-500 to-pink-600 text-white animate-pulse";
+                        badgeText = "مقايضة عن طريق لعبة 🎲";
+                        iconSymbol = "fa-dice";
+                    } else if (isHemza) {
+                        cardBgClass = "bg-gradient-to-br from-amber-50 via-yellow-50 to-white border-amber-300 shadow-amber-100";
+                        badgeClass = "bg-amber-500 text-white font-black";
+                        badgeText = "همزة المقايضة ⚡";
+                        iconSymbol = "fa-bolt";
+                    } else if (isAuction) {
+                        cardBgClass = "bg-gradient-to-br from-purple-50 via-indigo-50 to-white border-purple-300 shadow-purple-100";
+                        badgeClass = "bg-purple-600 text-white";
+                        badgeText = "المزاد المباشر 🔨";
+                        iconSymbol = "fa-gavel";
+                    }
 
-                return `
-                    <div onclick="openSuccessTradeModal('${item.id}')" class="${cardBgClass} backdrop-blur p-3.5 rounded-2xl border-2 shadow-md flex items-center gap-3 cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1">
-                        <img src="${item.image_url}" class="w-14 h-14 rounded-xl object-cover border-2 border-emerald-500 flex-shrink-0">
-                        <div class="overflow-hidden text-right flex-grow">
-                            <span class="${badgeClass} text-[9px] font-black px-2 py-0.5 rounded-full inline-block mb-1 shadow-sm">
-                                <i class="fa-solid ${iconSymbol} ml-1"></i> ${badgeText}
-                            </span>
-                            <h4 class="font-black text-xs text-slate-900 line-clamp-1">${item.title}</h4>
-                            <p class="text-[10px] text-slate-500 font-bold mt-0.5"><i class="fa-solid fa-location-dot text-emerald-600"></i> ${item.city}</p>
+                    return `
+                        <div onclick="openSuccessTradeModal('${item.id}')" class="${cardBgClass} backdrop-blur p-3.5 rounded-2xl border-2 shadow-md flex items-center gap-3 cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1 flex-shrink-0 w-72">
+                            <img src="${item.image_url}" class="w-14 h-14 rounded-xl object-cover border-2 border-emerald-400 flex-shrink-0 shadow">
+                            <div class="overflow-hidden text-right flex-grow">
+                                <span class="${badgeClass} text-[9px] font-black px-2 py-0.5 rounded-full inline-block mb-1 shadow-sm">
+                                    <i class="fa-solid ${iconSymbol} ml-1"></i> ${badgeText}
+                                </span>
+                                <h4 class="font-black text-xs text-slate-900 line-clamp-1">${item.title}</h4>
+                                <p class="text-[10px] text-emerald-700 font-bold mt-0.5"><i class="fa-solid fa-location-dot text-emerald-600"></i> ${item.city} - تمت بنجاح ✅</p>
+                            </div>
                         </div>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            };
+
+            container.innerHTML = buildCardsHtml(completedItems) + buildCardsHtml(completedItems);
         }
 
         function updateDrawerUserInfo() {
@@ -2369,13 +2511,13 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3 items-center">
                         <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
-                            <img src="${currentAccount.avatar_url}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-emerald-500">
-                            <h5 class="font-black text-slate-900 text-xs">${currentAccount.full_name} (أنت)</h5>
+                            <img src="${currentAccount ? currentAccount.avatar_url : 'https://i.ibb.co/BVspypdG/1791985093664.jpg'}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-emerald-500">
+                            <h5 class="font-black text-slate-900 text-xs">${currentAccount ? currentAccount.full_name : 'أنت'}</h5>
                             <p class="text-[10px] text-slate-500 font-bold">${item.title}</p>
                             <img src="${item.image_url}" class="w-full h-24 object-cover rounded-lg mt-1">
                         </div>
                         <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
-                            <img src="${partner.avatar_url}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-blue-500">
+                            <img src="${partner.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg'}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-blue-500">
                             <h5 class="font-black text-slate-900 text-xs">${partner.full_name}</h5>
                             <p class="text-[10px] text-slate-500 font-bold">الشريك</p>
                             <div class="h-24 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-700 text-xs font-black border border-emerald-100">
@@ -2506,7 +2648,7 @@
 
             const activeListings = allListings.filter(p => p.status !== 'completed');
             if(countEl) countEl.textContent = activeListings.length;
-            renderListings(activeListings);
+            filterProducts();
             renderHomepageCompletedTrades();
             if(document.getElementById('fridayAuctionModal') && !document.getElementById('fridayAuctionModal').classList.contains('hidden')) {
                 renderFridayAuctionInterface();
@@ -2887,7 +3029,17 @@
 
         function filterProducts() {
             const q = document.getElementById('search-input').value.toLowerCase();
-            renderListings(allListings.filter(p => p.status !== 'completed' && (p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || (p.category && p.category.toLowerCase().includes(q)))));
+            const activeListings = allListings.filter(p => p.status !== 'completed');
+
+            let filtered = activeListings.filter(p => {
+                const matchesSearch = p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || (p.category && p.category.toLowerCase().includes(q));
+                const matchesCity = currentCityFilter === 'الكل' || p.city === currentCityFilter;
+                return matchesSearch && matchesCity;
+            });
+
+            const countEl = document.getElementById('products-count');
+            if(countEl) countEl.textContent = filtered.length;
+            renderListings(filtered);
         }
 
         function filterCategory(c) {
@@ -2904,13 +3056,33 @@
                 }
             });
 
-            renderListings(c === 'الكل' ? activeListings : activeListings.filter(p => p.category === c));
+            const q = document.getElementById('search-input').value.toLowerCase();
+            let filtered = activeListings.filter(p => {
+                const matchesSearch = p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || (p.category && p.category.toLowerCase().includes(q));
+                const matchesCity = currentCityFilter === 'الكل' || p.city === currentCityFilter;
+                const matchesCat = c === 'الكل' || p.category === c;
+                return matchesSearch && matchesCity && matchesCat;
+            });
+
+            const countEl = document.getElementById('products-count');
+            if(countEl) countEl.textContent = filtered.length;
+            renderListings(filtered);
         }
 
         function filterCategoryBySub(subName) {
             closeModal('categoriesModal');
             const activeListings = allListings.filter(p => p.status !== 'completed');
-            const filtered = activeListings.filter(p => p.category === subName);
+            const q = document.getElementById('search-input').value.toLowerCase();
+            
+            let filtered = activeListings.filter(p => {
+                const matchesSearch = p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q);
+                const matchesCity = currentCityFilter === 'الكل' || p.city === currentCityFilter;
+                const matchesSub = p.category === subName;
+                return matchesSearch && matchesCity && matchesSub;
+            });
+
+            const countEl = document.getElementById('products-count');
+            if(countEl) countEl.textContent = filtered.length;
             renderListings(filtered);
             showFloatingNotification(`📂 تم فلترة العروض حسب شريحة: (${subName})`);
         }
