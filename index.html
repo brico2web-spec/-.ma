@@ -560,7 +560,7 @@
             </div>
 
             <div id="gameSelectorStep" class="space-y-3">
-                <label class="block font-bold text-xs text-amber-300">اختر من عروضك النشطة للمشاركة في العجلة:</label>
+                <label class="block font-bold text-xs text-amber-300">اختر من عروضك النشطة المشاركة في لعبة الحظ للمشاركة في العجلة:</label>
                 <div id="myGameListingsDropdown" class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-1 bg-slate-800/80 rounded-2xl border border-slate-700">
                     <!-- Injected via JS -->
                 </div>
@@ -1037,7 +1037,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 2.7</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.0</span>
                     </div>
                 </div>
             </div>
@@ -1863,10 +1863,11 @@
 
         function renderGameListingsSelector() {
             const container = document.getElementById('myGameListingsDropdown');
-            const myGameListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed');
+            // استخدام التخزين المحلي أو خاصية المنتج لتحديد المشاركة في لعبة الحظ دون الحاجة لعمود في قاعدة البيانات
+            const myGameListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed' && (l.participate_game === true || localStorage.getItem('badal_game_item_' + l.id) === 'true') && !l.is_auction);
 
             if(myGameListings.length === 0) {
-                container.innerHTML = `<p class="col-span-full text-center text-slate-400 text-xs py-4">ليس لديك أي عروض نشطة حالياً. أضف عرضاً جديداً أولاً!</p>`;
+                container.innerHTML = `<p class="col-span-full text-center text-slate-400 text-xs py-4">ليس لديك أي عرض مفعل له خيار "شارك هذا المنتج في لعبة حظ المقايضة". قم بنشر عرض جديد وفعل الخيار!</p>`;
                 document.getElementById('startSpinWheelActionBtn').disabled = true;
                 document.getElementById('startSpinWheelActionBtn').classList.add('opacity-50', 'cursor-not-allowed');
                 return;
@@ -1903,7 +1904,7 @@
                 return;
             }
 
-            let availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && !sessionExcludedGameListingIds.includes(l.id));
+            let availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && (l.participate_game === true || localStorage.getItem('badal_game_item_' + l.id) === 'true') && !l.is_auction && !sessionExcludedGameListingIds.includes(l.id));
 
             document.getElementById('gameSelectorStep').classList.add('hidden');
             const resultArea = document.getElementById('gameSpinnerResultArea');
@@ -1922,7 +1923,7 @@
             `;
 
             setTimeout(() => {
-                availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && !sessionExcludedGameListingIds.includes(l.id));
+                availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && (l.participate_game === true || localStorage.getItem('badal_game_item_' + l.id) === 'true') && !l.is_auction && !sessionExcludedGameListingIds.includes(l.id));
 
                 if(availableOpponents.length === 0) {
                     resultArea.innerHTML = `
@@ -2048,7 +2049,7 @@
             if(!container || rotatingTradesList.length === 0) return;
 
             const item = rotatingTradesList[currentRotatingTradeIndex];
-            const isGame = item.wanted && item.wanted.includes('لعبة');
+            const isGame = item.participate_game === true || localStorage.getItem('badal_game_item_' + item.id) === 'true';
             const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
             const isAuction = item.is_auction === true;
 
@@ -2643,6 +2644,8 @@
 
             const isRandom = item.wanted && item.wanted.includes('باغي لي كان');
             document.getElementById('editRandomWantedCheck').checked = isRandom;
+            document.getElementById('editParticipateGameCheck').checked = item.participate_game === true || localStorage.getItem('badal_game_item_' + item.id) === 'true';
+            
             const wantedInput = document.getElementById('editWanted');
             if(isRandom) {
                 wantedInput.disabled = true;
@@ -2663,6 +2666,13 @@
             const trade_type = document.getElementById('editTradeType').value;
             const wanted = document.getElementById('editWanted').value;
             const description = document.getElementById('editDesc').value;
+            const participate_game = document.getElementById('editParticipateGameCheck').checked;
+
+            if(participate_game) {
+                localStorage.setItem('badal_game_item_' + id, 'true');
+            } else {
+                localStorage.removeItem('badal_game_item_' + id);
+            }
 
             const { error } = await _supabase.from('listings').update({
                 title, category: categoryVal, trade_type, wanted, description
@@ -2735,6 +2745,9 @@
 
             allListings = data || [];
             allListings.forEach(item => {
+                if(localStorage.getItem('badal_game_item_' + item.id) === 'true') {
+                    item.participate_game = true;
+                }
                 let localAuctionItem = localStorage.getItem('badal_auction_item_' + item.id);
                 if(localAuctionItem) {
                     let parsed = JSON.parse(localAuctionItem);
@@ -2791,19 +2804,22 @@
                 const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
                 const isAuctionItem = item.is_auction === true;
 
+                // التعديل المطلوب: تطبيق فئات التوهج والألوان فقط إذا كان المنتج ملكي (isMyItem)
                 let cardClass = "bg-white border-slate-200";
-                if(isAuctionItem) {
-                    cardClass = "auction-card";
-                } else if(isRandomWanted) {
-                    cardClass = "hemza-card";
+                if(isMyItem) {
+                    if(isAuctionItem) {
+                        cardClass = "auction-card";
+                    } else if(isRandomWanted) {
+                        cardClass = "hemza-card";
+                    }
                 }
 
                 return `
                 <div id="product-${item.id}" class="border rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition flex flex-col justify-between group ${cardClass}">
                     <div>
-                        <div class="flex items-center justify-between p-2 sm:p-3 border-b ${isAuctionItem ? 'bg-purple-100/70 border-purple-200' : isRandomWanted ? 'bg-gradient-to-r from-amber-100 to-pink-100 border-amber-200' : 'border-slate-100 bg-slate-50/50'}">
+                        <div class="flex items-center justify-between p-2 sm:p-3 border-b ${isMyItem && isAuctionItem ? 'bg-purple-100/70 border-purple-200' : isMyItem && isRandomWanted ? 'bg-gradient-to-r from-amber-100 to-pink-100 border-amber-200' : 'border-slate-100 bg-slate-50/50'}">
                             <div class="flex items-center gap-1.5 sm:gap-2">
-                                <img src="${author.avatar_url}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border-2 ${isAuctionItem ? 'border-purple-500' : isRandomWanted ? 'border-pink-500' : 'border-emerald-500'}">
+                                <img src="${author.avatar_url}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border-2 ${isMyItem && isAuctionItem ? 'border-purple-500' : isMyItem && isRandomWanted ? 'border-pink-500' : 'border-emerald-500'}">
                                 <span class="text-[11px] sm:text-xs font-black text-slate-800 line-clamp-1">${author.full_name}</span>
                             </div>
                             <div class="flex items-center gap-1 text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-bold border border-amber-200">
@@ -2821,19 +2837,19 @@
                                     <i class="fa-solid fa-location-dot"></i> ${item.city}
                                 </span>
                                 ${isAuctionItem ? `
-                                    <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-purple-600 text-white text-[9px] sm:text-[10px] font-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full animate-pulse shadow-lg flex items-center gap-1 border border-white">
+                                    <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-purple-600 text-white text-[9px] sm:text-[10px] font-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ${isMyItem ? 'animate-pulse' : ''} shadow-lg flex items-center gap-1 border border-white">
                                         <i class="fa-solid fa-gavel text-yellow-200"></i> مزاد مباشر 🔨
                                     </span>
                                 ` : isRandomWanted ? `
-                                    <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-gradient-to-r from-amber-500 to-pink-600 text-white text-[9px] sm:text-[10px] font-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full animate-bounce shadow-lg flex items-center gap-1 border border-white">
+                                    <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-gradient-to-r from-amber-500 to-pink-600 text-white text-[9px] sm:text-[10px] font-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ${isMyItem ? 'animate-bounce' : ''} shadow-lg flex items-center gap-1 border border-white">
                                         <i class="fa-solid fa-bolt text-yellow-200"></i> همزة 🎁
                                     </span>
                                 ` : ''}
                             </div>
                             <div class="p-2.5 sm:p-4 space-y-1.5 sm:space-y-2">
                                 <h3 class="font-black text-slate-900 text-xs sm:text-sm line-clamp-1">${item.title}</h3>
-                                <div class="p-2 sm:p-3 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs border ${isAuctionItem ? 'bg-purple-100/80 border-purple-300 text-purple-950 font-black shadow-inner' : isRandomWanted ? 'bg-gradient-to-r from-amber-100/90 to-pink-100/90 border-amber-300 text-pink-900 font-black shadow-inner' : 'bg-emerald-50 border-emerald-100 text-slate-700'}">
-                                    <span class="font-bold block mb-0.5 ${isAuctionItem ? 'text-purple-800 flex items-center gap-1' : isRandomWanted ? 'text-pink-700 flex items-center gap-1' : 'text-emerald-800'}">
+                                <div class="p-2 sm:p-3 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs border ${isMyItem && isAuctionItem ? 'bg-purple-100/80 border-purple-300 text-purple-950 font-black shadow-inner' : isMyItem && isRandomWanted ? 'bg-gradient-to-r from-amber-100/90 to-pink-100/90 border-amber-300 text-pink-900 font-black shadow-inner' : 'bg-emerald-50 border-emerald-100 text-slate-700'}">
+                                    <span class="font-bold block mb-0.5 ${isMyItem && isAuctionItem ? 'text-purple-800 flex items-center gap-1' : isMyItem && isRandomWanted ? 'text-pink-700 flex items-center gap-1' : 'text-emerald-800'}">
                                         ${isAuctionItem ? '<i class="fa-solid fa-gavel"></i> متوفر للمزاد المباشر:' : isRandomWanted ? '<i class="fa-solid fa-gift"></i> همزة مفتوحة:' : 'باغي مقابلها:'}
                                     </span>
                                     <p class="font-semibold line-clamp-2">${item.wanted}</p>
@@ -2904,8 +2920,8 @@
                 <div class="space-y-2">
                     <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block"><i class="fa-solid fa-location-dot"></i> ${item.city}</span>
                     <h3 class="font-black text-xl text-slate-900">${item.title}</h3>
-                    <div class="p-3 rounded-2xl border text-xs ${isAuctionItem ? 'bg-purple-100 border-purple-300 text-purple-950 font-black' : isRandomWanted ? 'bg-gradient-to-r from-amber-100 to-pink-100 border-amber-300 text-pink-900 font-black' : 'bg-emerald-50 border-emerald-100 text-slate-800'}">
-                        <span class="font-bold block mb-1 ${isAuctionItem ? 'text-purple-800' : isRandomWanted ? 'text-pink-700' : 'text-emerald-800'}">الشيء المطلوب للمقايضة:</span>
+                    <div class="p-3 rounded-2xl border text-xs ${isMyItem && isAuctionItem ? 'bg-purple-100 border-purple-300 text-purple-950 font-black' : isMyItem && isRandomWanted ? 'bg-gradient-to-r from-amber-100 to-pink-100 border-amber-300 text-pink-900 font-black' : 'bg-emerald-50 border-emerald-100 text-slate-800'}">
+                        <span class="font-bold block mb-1 ${isMyItem && isAuctionItem ? 'text-purple-800' : isMyItem && isRandomWanted ? 'text-pink-700' : 'text-emerald-800'}">الشيء المطلوب للمقايضة:</span>
                         <p class="font-bold text-sm">${item.wanted}</p>
                     </div>
                     <p class="text-xs text-slate-600 leading-relaxed">${item.description || ''}</p>
@@ -3117,7 +3133,6 @@
             const startPriceVal = isAuctionChecked ? Number(document.getElementById('addAuctionStartPrice').value) : 50;
             const subCategoryVal = document.getElementById('addSubCategory').value;
 
-            // إرسال الحقول الأساسية فقط لجدول listings لتجنب أي خطأ في أعمدة المزاد غير الموجودة في قاعدة البيانات
             const listingPayload = {
                 title: document.getElementById('addTitle').value,
                 category: subCategoryVal,
@@ -3138,13 +3153,18 @@
                 return;
             }
 
-            if(isAuctionChecked && insertedData && insertedData[0]) {
-                localStorage.setItem('badal_auction_item_' + insertedData[0].id, JSON.stringify({
-                    is_auction: true,
-                    start_price: startPriceVal,
-                    current_price: startPriceVal,
-                    bids_history: []
-                }));
+            if(insertedData && insertedData[0]) {
+                if(participateGame) {
+                    localStorage.setItem('badal_game_item_' + insertedData[0].id, 'true');
+                }
+                if(isAuctionChecked) {
+                    localStorage.setItem('badal_auction_item_' + insertedData[0].id, JSON.stringify({
+                        is_auction: true,
+                        start_price: startPriceVal,
+                        current_price: startPriceVal,
+                        bids_history: []
+                    }));
+                }
             }
 
             closeModal('addModal');
