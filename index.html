@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بدل.ma - المنصة المغربية للمقايضة</title>
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss-cdn@3.4.1"></script>
     <!-- FontAwesome 6 Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts (Tajawal) -->
@@ -39,11 +39,6 @@
                 box-shadow: 0 0 35px rgba(147, 51, 234, 0.8), 0 0 60px rgba(168, 85, 247, 0.5); 
                 border-color: rgba(168, 85, 247, 1);
             }
-        }
-        @keyframes sliderZoom {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.06); }
-            100% { transform: scale(1); }
         }
         @keyframes wheelSpinAnim {
             0% { transform: rotate(0deg) scale(0.9); opacity: 0.5; }
@@ -83,7 +78,6 @@
     <!-- Header Navigation -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <!-- تم تعديل القسم ليضم أيقونة المنيو وبجانبها المستطيل المتناسق المقسوم إلى 4 مربعات إشعارات (مع إزالة البادجات القديمة فوق الأيقونة) -->
             <div id="authHeaderSection" class="flex items-center gap-3">
                 <!-- Injected via JS -->
             </div>
@@ -291,7 +285,7 @@
             <div class="border-b pb-3">
                 <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1 rounded-full">📍 فلترة المدن لتقريب التقايض</span>
                 <h3 class="font-black text-xl text-slate-900 mt-1">اختر مدينتك المفضلة</h3>
-                <p class="text-xs text-slate-500">حدد المدينة لعرض العروض القريبة منك وتسهيل عملية اللقاء والمقايضة:</p>
+                <p class="text-xs text-slate-500">حدد المدينة لعرض العروض القريبة منك وتسهيل اللقاء والمقايضة:</p>
             </div>
 
             <div class="space-y-2 max-h-60 overflow-y-auto p-1">
@@ -787,12 +781,12 @@
         </div>
     </div>
 
-    <!-- Modal: Successful Trade Details -->
+    <!-- Modal: Successful Trade Details (المحدثة خصيصاً) -->
     <div id="successTradeModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right overflow-hidden">
+        <div id="successTradeModalBox" class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border-2 border-emerald-500 text-right overflow-hidden transition-all duration-300">
             <button onclick="closeModal('successTradeModal')" class="absolute top-4 left-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition z-10">&times;</button>
-            <div class="text-center space-y-1 border-b pb-3">
-                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full">🎉 مقايضة ناجحة وموثقة</span>
+            <div class="text-center space-y-1.5 border-b pb-3">
+                <span id="successTradeBadge" class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full">🎉 مقايضة ناجحة وموثقة</span>
                 <h3 class="font-black text-lg text-slate-900">تفاصيل عملية التبادل</h3>
             </div>
             <div id="successTradeContent" class="space-y-4 max-h-[70vh] overflow-y-auto pt-2">
@@ -910,7 +904,7 @@
         </div>
     </div>
 
-    <!-- Modal: Professional Chat & Meetup Window (بألوان لعبة الحظ المخصصة) -->
+    <!-- Modal: Professional Chat & Meetup Window -->
     <div id="chatModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl max-w-lg w-full shadow-2xl relative border-2 border-amber-400 text-right flex flex-col h-[90vh] overflow-hidden">
             <div class="bg-slate-950/90 p-3 flex items-center justify-between border-b border-purple-900/60 shadow-md z-10">
@@ -961,7 +955,6 @@
                     </p>
                 </div>
 
-                <!-- زر إتمام الصفقة وإزالة المنتوجات من عروضي النشطة -->
                 <button onclick="completeTradeSuccess()" class="w-full bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 hover:from-amber-600 hover:to-purple-700 text-white font-black py-3 rounded-xl text-xs shadow-xl transition cursor-pointer flex items-center justify-center gap-2 animate-pulse">
                     <i class="fa-solid fa-circle-check text-base"></i> تمت بنجاح 🎉 (إتمام الصفقة وإزالة المنتوجات من عروضي النشطة)
                 </button>
@@ -1033,7 +1026,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.4</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.5</span>
                     </div>
                 </div>
             </div>
@@ -1060,7 +1053,6 @@
         let sessionExcludedGameListingIds = [];
 
         let auctionTimerInterval = null;
-
         let typingTimeout = null;
 
         let rotatingTradesList = [];
@@ -1499,7 +1491,6 @@
         function getUserRatingStats(userId) {
             const userRats = allRatings.filter(r => String(r.rated_user_id) === String(userId));
             const userProfile = allProfiles[String(userId)] || {};
-            const userPhone = userProfile.phone;
             const hasPenalty = (userProfile.penalty_expiry && new Date() < new Date(userProfile.penalty_expiry));
 
             if(userRats.length === 0) {
@@ -1548,7 +1539,6 @@
                 const activeChatsCount = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted').length;
                 const pendingRequestsCount = allRequests.filter(r => (String(r.receiver_id) === String(currentAccount.id) || String(r.sender_id) === String(currentAccount.id)) && r.status === 'pending').length;
 
-                // حساب عدد الأشخاص الذين جاؤوا في منتجات المستخدم عبر لعبة الحظ (لإظهار الإشعار باللون الخاص בלعبة الحظ فوق أيقونة المنيو)
                 const myActiveListingsIds = allListings.filter(l => String(l.user_id) === String(currentAccount.id)).map(l => String(l.id));
                 const gameHitRequests = allRequests.filter(r => myActiveListingsIds.includes(String(r.listing_id)));
                 const gameHitCount = gameHitRequests.length;
@@ -1557,7 +1547,6 @@
                     <button onclick="openRightMenu()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 w-11 h-11 rounded-2xl flex items-center justify-center transition border border-emerald-200 cursor-pointer shadow-sm relative">
                         <i class="fa-solid fa-bars text-lg"></i>
                     </button>
-                    <!-- مستطيل متناسق مع أيقونة المنيو مقسوم إلى 4 ديال الإشعارات -->
                     <div class="grid grid-cols-4 gap-1.5 bg-slate-100 border border-slate-200 p-1.5 rounded-2xl text-[10px] font-black shadow-inner">
                         <div onclick="openMenuSection('current-requests')" class="flex flex-col items-center justify-center bg-white p-1 rounded-xl border border-slate-200 cursor-pointer hover:bg-emerald-50 transition" title="الطلبات الجارية">
                             <i class="fa-solid fa-bell text-emerald-600 text-xs"></i>
@@ -1571,7 +1560,6 @@
                             <i class="fa-solid fa-box text-purple-600 text-xs"></i>
                             <span class="text-slate-800 font-black">${allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed').length}</span>
                         </div>
-                        <!-- خانة الإشعار التلقائي للعبة الحظ بلون لعبة الحظ (أصفر/وردي متألق) -->
                         <div onclick="openLuckyChanceGameModal()" class="flex flex-col items-center justify-center bg-gradient-to-r from-amber-400 to-pink-500 text-white p-1 rounded-xl border border-amber-300 cursor-pointer hover:opacity-90 transition shadow-sm animate-pulse" title="الأشخاص الذين جاؤوا في منتجاتك عبر لعبة الحظ لتحديد اللقاء">
                             <i class="fa-solid fa-dice text-xs text-yellow-100"></i>
                             <span class="font-black text-white">${gameHitCount}</span>
@@ -2072,8 +2060,6 @@
                 iconSymbol = "fa-gavel";
             }
 
-            const seller = allProfiles[String(item.user_id)] || { full_name: 'مشارِك' };
-
             container.innerHTML = `
                 <div onclick="openSuccessTradeModal('${item.id}')" class="${cardBg} backdrop-blur-md rounded-2xl p-4 border-2 shadow-xl flex items-center justify-between gap-3 w-full max-w-xl cursor-pointer hover:scale-[1.01] transition animate-fade-in-out">
                     <div class="flex items-center gap-3.5 overflow-hidden">
@@ -2144,11 +2130,9 @@
                         ${acceptedDealsCount > 0 ? `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 font-black text-[10px] flex items-center justify-center border border-white shadow animate-pulse" title="العروض المتفق عليها">⭐${acceptedDealsCount}</span>` : ''}
                     </div>
                 </a>
-                <!-- زر لعبة عجلة الحظ للمقايضة -->
                 <a href="#" onclick="closeRightMenu(); openTradeWheelGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
                     <i class="fa-solid fa-dice text-emerald-600 text-base"></i> لعبة عجلة الحظ للمقايضة 🎲
                 </a>
-                <!-- زر لحظ ديالك واجد بدون خلفية (شكل عادي مثل عروضي، الطلبات...) تحته تماماً -->
                 <a href="#" onclick="closeRightMenu(); openLuckyChanceGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
                     <i class="fa-solid fa-gift text-emerald-600 text-base"></i> لحظ ديالك واجد 🎁
                 </a>
@@ -2158,7 +2142,6 @@
             `;
         }
 
-        // دالة فتح نافذة "لحظ ديالك واجد" التي تفتح نافذة رسائل خاص للعبة الحظ بالألوان التابعة للعبة الحظ
         function openLuckyChanceGameModal() {
             if(!currentAccount) {
                 showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً!", "info");
@@ -2616,37 +2599,144 @@
             }
         }
 
+        // ==========================================
+        // الدالة المحدثة كلياً: تفاصيل عملية التبادل بالاستايل والألوان واللوغو الاحترافي لكل عملية
+        // ==========================================
         async function openSuccessTradeModal(listingId) {
             const item = allListings.find(l => String(l.id) === String(listingId));
             if(!item) return;
 
             const req = allRequests.find(r => String(r.listing_id) === String(listingId) && r.status === 'accepted');
-            const partnerId = req ? (String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id) : null;
-            const partner = partnerId ? (allProfiles[String(partnerId)] || { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' }) : { full_name: 'شريك', avatar_url: '' };
-            const tradeDate = item.updated_at ? new Date(item.updated_at).toLocaleString('ar-MA') : 'تاريخ موثق';
+            const partnerId = req ? (String(req.sender_id) === String(currentAccount?.id) ? req.receiver_id : req.sender_id) : null;
+            const partner = partnerId ? (allProfiles[String(partnerId)] || { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' }) : { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+            const owner = allProfiles[String(item.user_id)] || { full_name: 'صاحب المنتج', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+            
+            const tradeDate = item.updated_at ? new Date(item.updated_at).toLocaleString('ar-MA') : 'تاريخ موثق 📅';
 
+            // تحديد نوع العملية وستايلها وألوانها حسب الطلب الدقيق
+            const isGame = item.participate_game === true;
+            const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
+            const isAuction = item.is_auction === true;
+
+            const modalBox = document.getElementById('successTradeModalBox');
+            const badgeEl = document.getElementById('successTradeBadge');
             const content = document.getElementById('successTradeContent');
-            content.innerHTML = `
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-                    <div class="flex items-center justify-between text-xs text-slate-500 font-bold border-b pb-2">
-                        <span>📍 مدينة التبادل: <strong class="text-emerald-700">${item.city}</strong></span>
-                        <span>📅 تاريخ التبادل: <strong class="text-slate-800">${tradeDate}</strong></span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 items-center">
-                        <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
-                            <img src="${currentAccount ? currentAccount.avatar_url : 'https://i.ibb.co/BVspypdG/1791985093664.jpg'}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-emerald-500">
-                            <h5 class="font-black text-slate-900 text-xs">${currentAccount ? currentAccount.full_name : 'أنت'}</h5>
-                            <p class="text-[10px] text-slate-500 font-bold">${item.title}</p>
-                            <img src="${item.image_url}" class="w-full h-24 object-cover rounded-lg mt-1">
-                        </div>
-                        <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
-                            <img src="${partner.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg'}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-blue-500">
-                            <h5 class="font-black text-slate-900 text-xs">${partner.full_name}</h5>
-                            <p class="text-[10px] text-slate-500 font-bold">الشريك</p>
-                            <div class="h-24 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-700 text-xs font-black border border-emerald-100">
-                                تم التبادل بنجاح 🤝
+
+            let typeName = "مقايضة عادية 🤝";
+            let boxBorderClass = "border-2 border-emerald-500";
+            let badgeClass = "bg-emerald-100 text-emerald-800 text-[10px] font-black px-3 py-1 rounded-full";
+            let leftCardHtml = "";
+
+            // اللوغو الاحترافي للموقع لدمجه في طريقة احترافية
+            const siteLogoHtml = `
+                <div class="flex items-center justify-center gap-1 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl shadow-sm mb-2">
+                    <span class="text-xs font-black text-slate-900 tracking-wider">بدل<span class="text-emerald-600">.ma</span></span>
+                    <i class="fa-solid fa-shield-halved text-emerald-600 text-xs"></i>
+                </div>
+            `;
+
+            if(isGame) {
+                // لعبة الحظ: تأثير خاص وألوان خاصة (وردي/أصفر متألق) مع صورتين للمشتركين وصور المنتوجات
+                typeName = "لعبة حظ المقايضة التلقائية 🎲";
+                boxBorderClass = "border-2 border-pink-500 shadow-pink-500/30";
+                badgeClass = "bg-gradient-to-r from-amber-500 to-pink-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow animate-pulse";
+                
+                leftCardHtml = `
+                    <div class="text-center space-y-2 bg-gradient-to-b from-slate-900 to-indigo-950 text-white p-4 rounded-2xl border-2 border-pink-500 shadow-xl">
+                        ${siteLogoHtml}
+                        <img src="${partner.avatar_url}" class="w-16 h-16 rounded-full object-cover mx-auto border-2 border-pink-400 shadow-md">
+                        <h5 class="font-black text-xs text-amber-300">${partner.full_name}</h5>
+                        <div class="space-y-1">
+                            <span class="text-[9px] text-slate-300 font-bold block">منتج الطرف الثاني:</span>
+                            <div class="h-24 bg-slate-800 rounded-xl overflow-hidden border border-pink-400/50 flex items-center justify-center">
+                                <img src="${item.image_url}" class="w-full h-full object-cover">
                             </div>
                         </div>
+                    </div>
+                `;
+            } else if(isHemza) {
+                // الهمزة: لون جذاّب ومثير وخط خاص (ذهبي وردي متألق "همزة-كارد")
+                typeName = "همزة لا تُعوض ⚡";
+                boxBorderClass = "border-2 border-amber-500 hemza-card";
+                badgeClass = "bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow animate-bounce";
+
+                leftCardHtml = `
+                    <div class="text-center space-y-2 bg-gradient-to-b from-amber-50 to-pink-50 p-4 rounded-2xl border-2 border-amber-400 shadow-xl">
+                        ${siteLogoHtml}
+                        <img src="${partner.avatar_url}" class="w-16 h-16 rounded-full object-cover mx-auto border-2 border-pink-500 shadow-md">
+                        <h5 class="font-black text-xs text-slate-900">${partner.full_name}</h5>
+                        <div class="bg-gradient-to-r from-amber-500 to-pink-600 text-white p-3 rounded-xl shadow-md space-y-1 animate-pulse">
+                            <i class="fa-solid fa-gift text-yellow-200 text-base"></i>
+                            <p class="font-black text-[11px] leading-tight">مثير! راك ديتي الهمزة بصحتك 🎉</p>
+                        </div>
+                    </div>
+                `;
+            } else if(isAuction) {
+                // المزايدة: ستايل وألوان خاصة (بنفسجي متألق "أكشن-كارد") مع صورة صاحب المنتج وصورة المنتج مع صورة الطرف الثاني مع ذكر الثمن النهائي
+                typeName = "المزايدة المباشرة 🔨";
+                boxBorderClass = "border-2 border-purple-500 auction-card";
+                badgeClass = "bg-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow";
+
+                const finalAuctionPrice = item.current_price || item.start_price || 50;
+
+                leftCardHtml = `
+                    <div class="text-center space-y-2 bg-gradient-to-b from-purple-50 to-slate-900 text-white p-4 rounded-2xl border-2 border-purple-400 shadow-xl">
+                        ${siteLogoHtml}
+                        <img src="${partner.avatar_url}" class="w-16 h-16 rounded-full object-cover mx-auto border-2 border-purple-400 shadow-md">
+                        <h5 class="font-black text-xs text-purple-200">${partner.full_name} (المزايد الفائز)</h5>
+                        <div class="bg-purple-950 p-2.5 rounded-xl border border-purple-400 text-center">
+                            <span class="text-[10px] text-purple-300 font-bold block">الثمن النهائي للمنتج:</span>
+                            <strong class="text-amber-400 text-sm font-black">${finalAuctionPrice} درهم ⚡</strong>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // المقايضة العادية: باللون الأخضر وخليها عادية
+                typeName = "المقايضة العادية 🤝";
+                boxBorderClass = "border-2 border-emerald-500 shadow-emerald-500/20";
+                badgeClass = "bg-emerald-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow";
+
+                leftCardHtml = `
+                    <div class="text-center space-y-2 bg-emerald-50/70 p-4 rounded-2xl border-2 border-emerald-300 shadow-inner">
+                        ${siteLogoHtml}
+                        <img src="${partner.avatar_url}" class="w-16 h-16 rounded-full object-cover mx-auto border-2 border-emerald-500 shadow-md">
+                        <h5 class="font-black text-xs text-emerald-900">${partner.full_name}</h5>
+                        <div class="bg-emerald-600 text-white py-3 px-2 rounded-xl shadow-md text-center">
+                            <strong class="font-black text-xs block">تمت بنجاح ✅</strong>
+                        </div>
+                    </div>
+                `;
+            }
+
+            modalBox.className = `bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative ${boxBorderClass} text-right overflow-hidden transition-all duration-300 slide-fade`;
+            badgeEl.className = badgeClass;
+            badgeEl.innerHTML = `🎉 ${typeName}`;
+
+            content.innerHTML = `
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between text-xs text-slate-600 font-bold border-b pb-2">
+                        <span class="flex items-center gap-1">📍 مدينة التبادل: <strong class="text-emerald-700">${item.city}</strong></span>
+                        <span class="flex items-center gap-1">📅 تاريخ وتوقيت العملية: <strong class="text-slate-900">${tradeDate}</strong></span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 items-center">
+                        <!-- الطرف الأول (صاحب المنتج) -->
+                        <div class="text-center space-y-2 bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-center gap-1 text-[10px] text-emerald-700 font-black">
+                                <i class="fa-solid fa-crown text-amber-500"></i> صاحب المنتج
+                            </div>
+                            <img src="${owner.avatar_url}" class="w-16 h-16 rounded-full object-cover mx-auto border-2 border-emerald-500 shadow-md">
+                            <h5 class="font-black text-slate-900 text-xs">${owner.full_name}</h5>
+                            <div class="space-y-1">
+                                <span class="text-[9px] text-slate-500 font-bold block">${item.title}</span>
+                                <div class="h-24 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 flex items-center justify-center">
+                                    <img src="${item.image_url}" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- الطرف الثاني (حسب نوع العملية) -->
+                        ${leftCardHtml}
                     </div>
                 </div>
             `;
@@ -3061,7 +3151,6 @@
             document.getElementById('chatInputMessage').value += emoji;
         }
 
-        // إتمام الصفقة وإزالة المنتوجات من عروضي النشطة
         async function completeTradeSuccess() {
             const req = allRequests.find(r => String(r.id) === String(activeChatRequestId));
             if(!req) return;
