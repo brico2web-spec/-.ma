@@ -30,6 +30,16 @@
                 border-color: rgba(236, 72, 153, 1);
             }
         }
+        @keyframes auctionGlow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(168, 85, 247, 0.6), 0 0 40px rgba(147, 51, 234, 0.3); 
+                border-color: rgba(168, 85, 247, 1);
+            }
+            50% { 
+                box-shadow: 0 0 35px rgba(147, 51, 234, 0.8), 0 0 60px rgba(168, 85, 247, 0.5); 
+                border-color: rgba(168, 85, 247, 1);
+            }
+        }
         @keyframes sliderZoom {
             0% { transform: scale(1); }
             50% { transform: scale(1.06); }
@@ -52,6 +62,12 @@
             animation: hemzaGlow 2.5s infinite ease-in-out; 
             background: linear-gradient(135deg, #fffbeb 0%, #fdf2f8 50%, #ffffff 100%); 
             border-width: 2px;
+        }
+        .auction-card {
+            animation: auctionGlow 2.5s infinite ease-in-out;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #ffffff 100%);
+            border-width: 2px;
+            border-color: #c084fc;
         }
     </style>
 </head>
@@ -160,8 +176,7 @@
                     <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer animate-pulse">
                         <i class="fa-solid fa-dice"></i> لعبة عجلة الحظ 🎲
                     </button>
-                    <!-- تم تغيير لون زر ساحة المزايدة إلى البنفسجي ليتمازج مع لون الموقع -->
-                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
+                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-gavel"></i> ساحة المزايدة المباشرة 🔨
                     </button>
                 </div>
@@ -172,7 +187,7 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
         
-        <!-- الوحدة الأفقية الجديدة البارزة للمقايضات المكتملة -->
+        <!-- الوحدة الأفقية الجديدة البارزة للمقايضات المكتملة (واحدة تلو الأخرى مع تأثير الإختفاء والظهور) -->
         <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-5 rounded-3xl border-2 border-emerald-400/60 shadow-xl relative overflow-hidden">
             <div class="flex items-center justify-between mb-3 border-b border-emerald-800/60 pb-2">
                 <div class="flex items-center gap-2">
@@ -195,8 +210,7 @@
                     <p class="text-xs sm:text-sm text-slate-300 mt-1 font-light">مقايضة مباشرة بـ 0 درهم بين أطراف التبادل عبر المنصة.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <!-- تم تغيير لون زر ساحة المزايدة إلى البنفسجي ليتمازج مع لون الموقع -->
-                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
+                    <button onclick="openFridayExclusiveAuctionModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap cursor-pointer">
                         <i class="fa-solid fa-gavel text-base"></i> ساحة المزايدة المباشرة 🔨
                     </button>
                     <button onclick="openTradeWheelGameModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs sm:text-sm px-5 py-3.5 rounded-2xl shadow-lg transition flex items-center gap-2 whitespace-nowrap">
@@ -215,6 +229,7 @@
                         <i class="fa-solid fa-search absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="search-input" oninput="filterProducts()" placeholder="ابحث عن هاتف، أثاث، ساعة، ملابس..." class="w-full pr-12 pl-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium text-xs sm:text-sm">
                     </div>
+                    <!-- زر فلترة المدن المضاف حديثاً تحت خانة البحث مباشرة -->
                     <button onclick="openCityFilterModal()" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-2.5 px-4 rounded-2xl border border-emerald-200 transition flex items-center justify-between cursor-pointer shadow-sm">
                         <span class="flex items-center gap-2">
                             <i class="fa-solid fa-location-dot text-emerald-600"></i>
@@ -224,6 +239,7 @@
                     </button>
                 </div>
 
+                <!-- زر تصفح جميع الفئات بتصميم متطابق مع زر المدن -->
                 <div class="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end flex-wrap">
                     <button onclick="openCategoriesModal()" class="w-full md:w-auto bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-3 px-5 rounded-2xl border border-emerald-200 transition flex items-center justify-between md:justify-center gap-3 cursor-pointer shadow-sm">
                         <span class="flex items-center gap-2">
@@ -269,7 +285,7 @@
         </section>
     </main>
 
-    <!-- Modal: City Filter Window -->
+    <!-- Modal: City Filter Window (نافذة اختيار وفلترة المدن لتقريب التقايض) -->
     <div id="cityFilterModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[145] hidden flex items-center justify-center p-4">
         <div class="bg-white text-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-100 text-right slide-fade">
             <button onclick="closeModal('cityFilterModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition">&times;</button>
@@ -443,6 +459,7 @@
             </div>
 
             <div class="relative overflow-hidden py-4 flex items-center justify-center">
+                <!-- تم إضافة فئة animate-fade-in-out هنا لضمان سلاسة حركة الظهور والإختفاء -->
                 <div id="featuredSingleProfileContainer" class="w-full max-w-sm animate-fade-in-out">
                     <div class="text-center py-6 text-slate-400 text-xs">جاري تحميل الأشخاص المتميزون...</div>
                 </div>
@@ -558,13 +575,13 @@
         </div>
     </div>
 
-    <!-- MODAL: ساحة المزايدة الحية -->
+    <!-- MODAL: ساحة المزايدة الحية (الكل مباشر) -->
     <div id="fridayAuctionModal" class="fixed inset-0 bg-slate-900/85 backdrop-blur-md z-[120] hidden flex items-center justify-center p-4">
         <div class="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl relative border-2 border-purple-400 text-right slide-fade overflow-hidden max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('fridayAuctionModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center justify-center transition z-20">&times;</button>
             
             <div class="text-center space-y-1.5 border-b border-purple-900/80 pb-4">
-                <span class="bg-purple-600 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-lg inline-flex items-center gap-1.5">
+                <span class="bg-emerald-700 text-white text-xs font-black px-4 py-1.5 rounded-full shadow-lg inline-flex items-center gap-1.5">
                     <i class="fa-solid fa-gavel text-yellow-300"></i> ساحة المزايدة المباشرة 🔨
                 </span>
                 <h3 class="font-black text-2xl text-white">المزايدة الحية للجميع في وقت واحد ⚡</h3>
@@ -644,7 +661,7 @@
                     </select>
                 </div>
 
-                <!-- خانة ساحة المزايدة المباشرة تحت شريحة الفئة -->
+                <!-- إضافة خيار المزاد المباشر في نافذة نشر عرض جديد (مستوحى من الصورة المرفقة) -->
                 <div class="bg-gradient-to-r from-purple-50 via-indigo-50 to-purple-100 p-4 rounded-2xl border-2 border-purple-400 space-y-2.5 shadow-inner">
                     <div class="flex items-center justify-between">
                         <label for="addAuctionToggle" class="font-black text-purple-900 cursor-pointer flex items-center gap-2 text-xs">
@@ -957,6 +974,7 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-300 py-10 border-t border-slate-800 mt-12 text-right">
         <div class="max-w-7xl mx-auto px-4 space-y-8">
+            <!-- قسم إخلاء المسؤولية والتوجيهات الأمنية (مضاف حديثاً بشكل عصري وجذاب) -->
             <div class="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 p-5 rounded-3xl border-2 border-amber-500/40 shadow-xl space-y-3">
                 <div class="flex items-center gap-2 text-amber-400 font-black text-sm">
                     <i class="fa-solid fa-triangle-exclamation text-base"></i> إخلاء المسؤولية وإرشادات الأمان لتفادي المشاكل ⚠️
@@ -984,6 +1002,7 @@
                     </p>
                 </div>
 
+                <!-- خانة شاركونا اقتراحاتكم المحدثة بخانات متكاملة (الاسم الكامل، العنوان، رقم الهاتف، والرسالة) -->
                 <div class="space-y-3 bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
                     <h4 class="font-black text-amber-400 text-sm flex items-center gap-1.5">
                         <i class="fa-solid fa-comments"></i> شاركونا اقتراحاتكم ورسائلكم ✉️
@@ -1018,7 +1037,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 2.8</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 2.7</span>
                     </div>
                 </div>
             </div>
@@ -1135,6 +1154,7 @@
             }
         };
 
+        // وظائف فلترة المدن
         function openCityFilterModal() {
             document.getElementById('cityFilterModal').classList.remove('hidden');
         }
@@ -1150,6 +1170,7 @@
             showFloatingNotification(`📍 تم تطبيق فلتر المدينة: (${cityName})`);
         }
 
+        // وظيفة إرسال الاقتراحات من الفوتر وحفظها في قاعدة البيانات لكي تظهر في صفحة الأدمين فوراً (محدثة لدعم الأجهزة المختلفة عبر Supabase والتخزين المحلي)
         async function handleFooterSuggestion(e) {
             e.preventDefault();
             const fullName = document.getElementById('suggestionFullName').value.trim();
@@ -1173,6 +1194,7 @@
                 created_at: new Date().toISOString()
             };
 
+            // محاولة الإرسال لعدة جداول محتملة في Supabase لتجنب أي خطأ في أسماء الجداول
             try {
                 await _supabase.from('contact_us').insert([suggestionPayload]);
             } catch (err1) {
@@ -1221,6 +1243,14 @@
                 showBannedModal();
                 return true;
             }
+
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const localPen = penalties[profile.phone];
+            const cloudPenExpiry = profile.penalty_expiry ? new Date(profile.penalty_expiry) : null;
+
+            if ((cloudPenExpiry && new Date() < cloudPenExpiry) || (localPen && new Date() < new Date(localPen.expiryDate))) {
+                return false; 
+            }
             return false;
         }
 
@@ -1235,6 +1265,7 @@
                         <p class="text-xs text-slate-600 leading-relaxed font-medium">
                             لقد تم حظر الحساب لأسباب عدم احترام قوانين الموقع. لأي إستفسار عبر البريد الإلكتروني: <br>
                             <a href="mailto:contact@badel.ma" class="text-emerald-700 font-bold underline">contact@badel.ma</a><br>
+                            <span class="text-[10px] text-slate-400 mt-2 block">للتواصل عبر الوتساب قريبا ...</span>
                         </p>
                         <button onclick="handleLogout(); window.location.reload();" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-xs transition cursor-pointer">
                             مفهوم وتسجيل الخروج 🚪
@@ -1265,9 +1296,23 @@
                     const msg = payload.new;
                     if (activeChatRequestId && msg && String(msg.request_id) === String(activeChatRequestId)) {
                         loadChatMessages();
+                        if(msg.sender_id && currentAccount && String(msg.sender_id) !== String(currentAccount.id)) {
+                            showTypingIndicatorInUI(false);
+                        }
                     } else if (payload.eventType === 'INSERT' && currentAccount && String(payload.new.sender_id) !== String(currentAccount.id)) {
                         showFloatingNotification("💬 رسالة جديدة في دردشة المقايضة!");
                         fetchRequests();
+                    }
+                })
+                .subscribe();
+
+            _supabase.channel('public:typing')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'typing_signals' }, payload => {
+                    const sig = payload.new;
+                    if (activeChatRequestId && sig && String(sig.request_id) === String(activeChatRequestId)) {
+                        if (sig.user_id && currentAccount && String(sig.user_id) !== String(currentAccount.id)) {
+                            showTypingIndicatorInUI(sig.is_typing);
+                        }
                     }
                 })
                 .subscribe();
@@ -1310,6 +1355,16 @@
                     }, { onConflict: 'request_id,user_id' });
                 }, 2000);
             } catch(err) {}
+        }
+
+        function showTypingIndicatorInUI(isTyping) {
+            const indicatorEl = document.getElementById('chatTypingIndicator');
+            if(!indicatorEl) return;
+            if(isTyping) {
+                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></i> <strong class="text-amber-600">الطرف الآخر يكتب رسالة الآن... ✍️</strong>`;
+            } else {
+                indicatorEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> متصل الآن للتنسيق`;
+            }
         }
 
         function showInstantTradePopup(req) {
@@ -1432,6 +1487,7 @@
             const city = profile.city || 'المغرب';
             const avatar = profile.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
 
+            // تم إضافة فئة animate-fade-in-out هنا أيضاً عند تحديث العنصر داخلياً لضمان سلاسة الظهور والإختفاء
             container.innerHTML = `
                 <div class="bg-slate-800/90 border border-emerald-500/50 rounded-3xl p-5 flex items-center gap-4 shadow-2xl animate-fade-in-out backdrop-blur-md">
                     <div class="relative flex-shrink-0">
@@ -1464,6 +1520,11 @@
 
         function getUserRatingStats(userId) {
             const userRats = allRatings.filter(r => String(r.rated_user_id) === String(userId));
+            const penalties = JSON.parse(localStorage.getItem('badal_user_penalties') || '{}');
+            const userProfile = allProfiles[String(userId)] || {};
+            const userPhone = userProfile.phone;
+            const hasPenalty = (userProfile.penalty_expiry && new Date() < new Date(userProfile.penalty_expiry)) || (userPhone && penalties[userPhone] && new Date() < new Date(penalties[userPhone].expiryDate));
+
             if(userRats.length === 0) {
                 return {
                     avg: '0.0',
@@ -1475,6 +1536,8 @@
             }
 
             let sum = userRats.reduce((acc, curr) => acc + Number(curr.rating), 0);
+            if(hasPenalty) { sum = Math.max(1, sum - 2); }
+
             const avgNum = Number((sum / userRats.length).toFixed(1));
             let starsStr = '';
             for(let i=1; i<=5; i++) {
@@ -1488,12 +1551,15 @@
             let shieldName = 'درع المستوى الأول 🛡️';
             let shieldClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
 
-            if(avgNum >= 4.5 && userRats.length >= 10) {
+            if(avgNum >= 4.5 && userRats.length >= 10 && !hasPenalty) {
                 shieldName = 'الدرع الماسي (المستوى الاحترافي 💎)';
                 shieldClass = 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 border-indigo-300';
-            } else if(avgNum >= 4.0 && userRats.length >= 5) {
+            } else if(avgNum >= 4.0 && userRats.length >= 5 && !hasPenalty) {
                 shieldName = 'درع المستوى الذهبي ⭐';
                 shieldClass = 'bg-amber-50 text-amber-800 border-amber-300';
+            } else if(hasPenalty) {
+                shieldName = 'تحت المراقبة (عقوبة نشطة ⚠️)';
+                shieldClass = 'bg-rose-50 text-rose-700 border-rose-300';
             }
 
             return { avg: avgNum.toFixed(1), count: userRats.length, starsHtml: starsStr, shieldName: shieldName, shieldClass: shieldClass };
@@ -1521,31 +1587,10 @@
             }
         }
 
-        // ==========================================
-        // تعديلات ساحة المزايدة المباشرة المطلوبة بالكامل:
-        // ==========================================
         function openFridayExclusiveAuctionModal() {
-            autoInjectAndStartRobotAuction();
             renderFridayAuctionInterface();
             openModal('fridayAuctionModal');
             startAuctionTimer();
-        }
-
-        // الروبو الأوتوماتيكي يعزل 3 منتجات عشوائياً مفعل لهم المزايدة عند الدخول للساحة
-        function autoInjectAndStartRobotAuction() {
-            const eligibleListings = allListings.filter(l => l.status !== 'completed' && l.is_auction === true);
-            let activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
-
-            if (activeAuctionBatch.length === 0 && eligibleListings.length > 0) {
-                // اختيار 3 منتجات عشوائياً بواسطة الروبو
-                let shuffled = [...eligibleListings].sort(() => 0.5 - Math.random());
-                let selectedThree = shuffled.slice(0, 3);
-                selectedThree.forEach(item => {
-                    item.is_auction = true;
-                    item.start_price = item.start_price || 50;
-                    item.current_price = item.current_price || item.start_price;
-                });
-            }
         }
 
         function startAuctionTimer() {
@@ -1554,7 +1599,7 @@
             function updateTimer() {
                 const now = new Date();
                 const totalSecsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-                const remainingSecs = 1800 - (totalSecsToday % 1800); // 30 دقيقة
+                const remainingSecs = 1800 - (totalSecsToday % 1800);
                 
                 const mins = Math.floor(remainingSecs / 60);
                 const secs = remainingSecs % 60;
@@ -1563,46 +1608,10 @@
                 if (timerEl) {
                     timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
                 }
-
-                // إذا انتهت مدة 30 دقيقة للمزاد، يتم فتح الشات تلقائياً مع صاحب المنتج بدون موافقته ووضع المنتج في موني الحساب
-                if (remainingSecs <= 1 && currentAccount) {
-                    checkAndFinalizeAuctionsOnExpiry();
-                }
             }
             
             updateTimer();
             auctionTimerInterval = setInterval(updateTimer, 1000);
-        }
-
-        function checkAndFinalizeAuctionsOnExpiry() {
-            const activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
-            activeAuctionBatch.forEach(item => {
-                let bids = item.bids_history || [];
-                if (bids.length > 0) {
-                    const winningBid = bids[bids.length - 1];
-                    // إذا ربح المستخدم الحالي المزاد
-                    if (currentAccount && String(winningBid.userId) === String(currentAccount.id)) {
-                        item.status = 'completed';
-                        // فتح شات تلقائي مع صاحب المنتوج بدون موافقة صاحب المنتوج
-                        triggerAutomaticAuctionChat(item, winningBid);
-                    }
-                }
-            });
-        }
-
-        async function triggerAutomaticAuctionChat(item, winningBid) {
-            // إنشاء طلب مقايضة مقبول أوتوماتيكياً لفتح الشات مباشرة
-            const { data: newReq } = await _supabase.from('trade_requests').insert([{
-                sender_id: String(winningBid.userId),
-                receiver_id: String(item.user_id),
-                listing_id: String(item.id),
-                status: 'accepted'
-            }]).select();
-
-            if (newReq && newReq[0]) {
-                showFloatingNotification(`🎉 مبروك! لقد فزت بالمزاد على منتج: ${item.title}`);
-                openChatModal(newReq[0].id);
-            }
         }
 
         function openAddAuctionItemModal() {
@@ -1652,22 +1661,22 @@
                 return;
             }
 
+            let bidsHistoryLocal = JSON.parse(localStorage.getItem('badal_auction_bids_' + listingId) || '[]');
+
             let targetItem = allListings.find(l => String(l.id) === String(listingId));
             if(targetItem) {
                 targetItem.is_auction = true;
                 targetItem.start_price = startPriceInput;
                 targetItem.current_price = startPriceInput;
-                targetItem.bids_history = [];
+                targetItem.bids_history = bidsHistoryLocal;
             }
 
-            try {
-                await _supabase.from('listings').update({
-                    is_auction: true,
-                    start_price: startPriceInput,
-                    current_price: startPriceInput,
-                    bids_history: []
-                }).eq('id', listingId);
-            } catch(e) {}
+            localStorage.setItem('badal_auction_item_' + listingId, JSON.stringify({
+                is_auction: true,
+                start_price: startPriceInput,
+                current_price: startPriceInput,
+                bids_history: bidsHistoryLocal
+            }));
 
             await fetchListings();
             closeModal('addAuctionItemModal');
@@ -1677,18 +1686,12 @@
 
         function renderFridayAuctionInterface() {
             const container = document.getElementById('fridayAuctionContainer');
-            let activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
-
-            // إذا لم تكن هناك منتجات، الروبو يختار تلقائياً 3 منتجات عشوائية مفعل لهم المزايدة
-            if(activeAuctionBatch.length === 0) {
-                autoInjectAndStartRobotAuction();
-                activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed').slice(0, 3);
-            }
+            const activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
 
             let addBtnHtml = `
                 <div class="flex items-center justify-between bg-purple-900/40 p-3 rounded-2xl border border-purple-500/50 flex-wrap gap-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-black text-purple-300">⏱️ العد التنازلي للجولة (30 دقيقة):</span>
+                        <span class="text-xs font-black text-purple-300">⏱️ العد التنازلي للجولة:</span>
                         <span id="auctionCountdownDisplay" class="bg-emerald-600 text-white font-black px-4 py-1 rounded-xl text-sm shadow animate-pulse">30:00</span>
                     </div>
                     <button onclick="openAddAuctionItemModal()" class="bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer">
@@ -1709,19 +1712,25 @@
                 return;
             }
 
+            const now = new Date();
+            const totalSecsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const remainingSecs = 1800 - (totalSecsToday % 1800);
+            const isAuctionFinished = remainingSecs <= 5;
+
             container.innerHTML = `
                 ${addBtnHtml}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     ${activeAuctionBatch.map((item) => {
                         const seller = allProfiles[String(item.user_id)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
-                        let bids = item.bids_history || [];
+                        let bids = item.bids_history || JSON.parse(localStorage.getItem('badal_auction_bids_' + item.id) || '[]');
                         const highestBid = bids.length > 0 ? bids[bids.length - 1] : null;
+                        const isMyHighest = currentAccount && highestBid && String(highestBid.userId) === String(currentAccount.id);
                         const isMyItemInAuction = currentAccount && String(item.user_id) === String(currentAccount.id);
                         const startPrice = item.start_price || 50;
                         const currentPrice = item.current_price || startPrice;
 
                         return `
-                            <div class="bg-slate-900/90 rounded-2xl p-4 border-2 border-purple-500/40 space-y-3 flex flex-col justify-between shadow-xl">
+                            <div class="bg-slate-900/90 rounded-2xl p-4 border-2 ${isMyHighest && isAuctionFinished ? 'border-amber-400 shadow-amber-500/20' : 'border-purple-500/40'} space-y-3 flex flex-col justify-between shadow-xl">
                                 <div class="flex items-center gap-2 border-b border-purple-900/60 pb-2">
                                     <img src="${seller.avatar_url}" class="w-8 h-8 rounded-full object-cover border border-purple-400">
                                     <span class="text-xs font-bold text-slate-200">${seller.full_name}</span>
@@ -1746,6 +1755,7 @@
                                             </div>
                                         `).join('')}
                                     </div>
+
                                     <p class="text-[10px] text-slate-400 pt-1">أعلى مزايد حالي: <strong class="text-emerald-400">${highestBid ? highestBid.userName : 'لا يوجد'}</strong></p>
                                 </div>
 
@@ -1798,7 +1808,12 @@
                 return;
             }
 
-            let updatedBids = item.bids_history ? [...item.bids_history] : [];
+            if((enteredPrice - currentHighest) < 5) {
+                showModalAlert("تنبيه", "فرق المزايدة يجب أن يكون 5 دراهم أو أكثر فوق السعر الحالي!", "error");
+                return;
+            }
+
+            let updatedBids = item.bids_history ? [...item.bids_history] : JSON.parse(localStorage.getItem('badal_auction_bids_' + itemId) || '[]');
             updatedBids.push({
                 userId: String(currentAccount.id),
                 userName: currentAccount.full_name,
@@ -1807,19 +1822,18 @@
 
             item.current_price = enteredPrice;
             item.bids_history = updatedBids;
+            localStorage.setItem('badal_auction_bids_' + itemId, JSON.stringify(updatedBids));
 
-            try {
-                await _supabase.from('listings').update({
-                    current_price: enteredPrice,
-                    bids_history: updatedBids
-                }).eq('id', itemId);
-            } catch(e) {}
+            let localSavedData = JSON.parse(localStorage.getItem('badal_auction_item_' + itemId) || '{}');
+            localSavedData.current_price = enteredPrice;
+            localSavedData.bids_history = updatedBids;
+            localStorage.setItem('badal_auction_item_' + itemId, JSON.stringify(localSavedData));
 
             renderFridayAuctionInterface();
             showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح بـ ${enteredPrice} درهم!`);
         }
 
-        async function openAuctionChat(itemId) {
+        function openAuctionChat(itemId) {
             if(!currentAccount) {
                 showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً!", "info");
                 openModal('authModal');
@@ -1828,20 +1842,8 @@
             const item = allListings.find(i => i.id === itemId);
             if(!item) return;
 
-            // فتح شات تلقائي مع صاحب المنتوج بدون موافقة صاحب المنتوج
-            const { data: newReq } = await _supabase.from('trade_requests').insert([{
-                sender_id: String(currentAccount.id),
-                receiver_id: String(item.user_id),
-                listing_id: String(item.id),
-                status: 'accepted'
-            }]).select();
-
             closeModal('fridayAuctionModal');
-            if (newReq && newReq[0]) {
-                openChatModal(newReq[0].id);
-            } else {
-                showModalAlert("تنبيه", "تم فتح نافذة التنسيق الخاصة بالمزاد المباشر بنجاح!", "success");
-            }
+            showModalAlert("فتح الشات 🎉", `تم فتح نافذة التنسيق الخاصة بالمزاد المباشر مع البائع لتحديد موعد ومكان اللقاء بنجاح!`, "success");
         }
 
         function openTradeWheelGameModal() {
@@ -1960,15 +1962,19 @@
                         <div class="grid grid-cols-2 gap-3 items-center bg-slate-900/90 p-3 rounded-2xl border border-pink-500/60">
                             <div class="text-center space-y-1">
                                 <span class="text-[10px] text-slate-400 font-bold block">سلعتك (أنت)</span>
-                                <img src="${myListing.image_url}" class="w-20 h-20 rounded-2xl object-cover mx-auto border-2 border-emerald-500 shadow-xl">
+                                <img src="${myListing.image_url}" class="w-20 h-20 rounded-2xl object-cover mx-auto border-2 border-emerald-500 shadow-xl transform hover:scale-105 transition">
                                 <h5 class="font-black text-xs text-white line-clamp-1">${myListing.title}</h5>
                             </div>
                             <div class="text-center space-y-1">
                                 <span class="text-[10px] text-pink-300 font-bold block">سلعة ${partner.full_name}</span>
-                                <img src="${chosenOpponentListing.image_url}" class="w-20 h-20 rounded-2xl object-cover mx-auto border-2 border-pink-500 shadow-xl animate-pulse">
+                                <img src="${chosenOpponentListing.image_url}" class="w-20 h-20 rounded-2xl object-cover mx-auto border-2 border-pink-500 shadow-xl transform hover:scale-105 transition animate-pulse">
                                 <h5 class="font-black text-xs text-white line-clamp-1">${chosenOpponentListing.title}</h5>
                             </div>
                         </div>
+
+                        <p class="text-[11px] text-amber-300 font-bold leading-relaxed">
+                            🔥 <strong>كون راجل وعند كلمتك!</strong> تم ربطك بنجاح مع طرف حقيقي عبر عجلة الحظ. تواصل دابا مع الشريك وحدد وقت اللقاء بكل روح رياضية!
+                        </p>
 
                         <div class="space-y-2 pt-1">
                             <button onclick="closeModal('tradeWheelGameModal'); openChatFromGame('${chosenOpponentListing.id}');" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black py-3.5 rounded-2xl text-xs shadow-xl transition cursor-pointer flex items-center justify-center gap-2 animate-bounce">
@@ -1976,6 +1982,9 @@
                             </button>
                             <button onclick="closeModal('tradeWheelGameModal'); openSuccessTradeModal('${myListing.id}');" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-2xl text-xs transition cursor-pointer flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-circle-check"></i> معاينة تفاصيل العملية 🎉
+                            </button>
+                            <button onclick="openTradeWheelGameModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-pink-300 font-bold py-2 rounded-2xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5 border border-slate-700">
+                                <i class="fa-solid fa-rotate-right"></i> لعب دورة أخرى 🎲
                             </button>
                         </div>
                     </div>
@@ -1988,6 +1997,7 @@
             if(req) {
                 openChatModal(req.id);
             } else {
+                showModalAlert("تنبيه", "جارِ فتح نافذة التنسيق للاتفاق على وقت ومكان اللقاء...", "info");
                 openMenuSection('deal-chats');
             }
         }
@@ -2038,6 +2048,8 @@
             if(!container || rotatingTradesList.length === 0) return;
 
             const item = rotatingTradesList[currentRotatingTradeIndex];
+            const isGame = item.wanted && item.wanted.includes('لعبة');
+            const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
             const isAuction = item.is_auction === true;
 
             let cardBg = "bg-white/95 text-slate-900 border-emerald-300 shadow-emerald-500/10";
@@ -2045,12 +2057,24 @@
             let badgeText = "مقايضة عادية 🤝";
             let iconSymbol = "fa-handshake";
 
-            if(isAuction) {
+            if(isGame) {
+                cardBg = "bg-gradient-to-r from-slate-900 via-pink-950 to-slate-900 text-white border-pink-400 shadow-pink-500/20";
+                badgeBg = "bg-gradient-to-r from-amber-500 to-pink-600 text-white";
+                badgeText = "مقايضة عبر عجلة الحظ 🎲";
+                iconSymbol = "fa-dice";
+            } else if(isHemza) {
+                cardBg = "bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 text-white border-amber-400 shadow-amber-500/20";
+                badgeBg = "bg-amber-500 text-slate-950 font-black";
+                badgeText = "همزة المقايضة ⚡";
+                iconSymbol = "fa-bolt";
+            } else if(isAuction) {
                 cardBg = "bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 text-white border-purple-400 shadow-purple-500/20";
                 badgeBg = "bg-purple-600 text-white";
                 badgeText = "المزاد المباشر 🔨";
                 iconSymbol = "fa-gavel";
             }
+
+            const seller = allProfiles[String(item.user_id)] || { full_name: 'مشارِك' };
 
             container.innerHTML = `
                 <div onclick="openSuccessTradeModal('${item.id}')" class="${cardBg} backdrop-blur-md rounded-2xl p-4 border-2 shadow-xl flex items-center justify-between gap-3 w-full max-w-xl cursor-pointer hover:scale-[1.01] transition animate-fade-in-out">
@@ -2096,6 +2120,7 @@
 
             const pendingRequestsCount = allRequests.filter(r => (String(r.receiver_id) === String(currentAccount.id) || String(r.sender_id) === String(currentAccount.id)) && r.status === 'pending').length;
             const acceptedDealsCount = allRequests.filter(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted').length;
+            const unreadMessagesCount = 0;
 
             const linksContainer = document.getElementById('drawerMenuLinks');
             linksContainer.innerHTML = `
@@ -2104,10 +2129,6 @@
                 </a>
                 <a href="#" onclick="openMenuSection('active-listings'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
                     <i class="fa-solid fa-box-open text-emerald-600 text-base"></i> عروضي النشطة
-                </a>
-                <!-- تم تعديل خاصية المنتجات في المزاد في الموني للحساب ليظهر بها حصرياً المنتجات التي تمت بنجاح في ساحة المزاد -->
-                <a href="#" onclick="openMenuSection('auction-successful-items'); return false;" class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 font-bold text-purple-700 transition">
-                    <i class="fa-solid fa-gavel text-purple-600 text-base"></i> منتجات ساحة المزاد الناجحة 🔨
                 </a>
                 <a href="#" onclick="openMenuSection('current-requests'); return false;" class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-100 font-bold text-slate-700 transition">
                     <div class="flex items-center gap-3">
@@ -2122,10 +2143,12 @@
                     <div class="flex items-center gap-3">
                         <i class="fa-solid fa-comments text-emerald-600 text-base"></i> دردشة الصفقة
                     </div>
-                    ${acceptedDealsCount > 0 ? `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 font-black text-[10px] flex items-center justify-center border border-white shadow animate-pulse">⭐${acceptedDealsCount}</span>` : ''}
+                    <div class="flex items-center gap-1">
+                        ${acceptedDealsCount > 0 ? `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 font-black text-[10px] flex items-center justify-center border border-white shadow animate-pulse" title="العروض المتفق عليها">⭐${acceptedDealsCount}</span>` : ''}
+                        ${unreadMessagesCount > 0 ? `<span class="w-5 h-5 rounded-full bg-emerald-500 text-white font-black text-[9px] flex items-center justify-center border border-white shadow">${unreadMessagesCount}</span>` : ''}
+                    </div>
                 </a>
-                <!-- تم تغيير لون زر ساحة المزايدة إلى البنفسجي ليتمازج مع الموقع -->
-                <a href="#" onclick="closeRightMenu(); openFridayExclusiveAuctionModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-purple-600 text-white font-black transition shadow-md">
+                <a href="#" onclick="closeRightMenu(); openFridayExclusiveAuctionModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-emerald-700 text-white font-black transition shadow-md">
                     <i class="fa-solid fa-gavel text-base"></i> ساحة المزايدة المباشرة 🔨
                 </a>
                 <a href="#" onclick="closeRightMenu(); openTradeWheelGameModal(); return false;" class="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-amber-500 via-pink-600 to-purple-600 text-white font-black transition shadow-md animate-pulse">
@@ -2172,51 +2195,40 @@
                 `;
                 openModal('modalMyAccount');
 
-            } else if(sectionKey === 'auction-successful-items') {
-                // عرض حصري للمنتجات التي تمت بنجاح في ساحة المزاد في موني الحساب
-                const auctionSuccessItems = allListings.filter(p => (String(p.user_id) === String(currentAccount.id) || p.winner_id === String(currentAccount.id)) && p.is_auction === true && p.status === 'completed');
-                const container = document.getElementById('activeListingsContent');
-                if(auctionSuccessItems.length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center py-10 space-y-3 bg-purple-50 rounded-2xl border border-dashed border-purple-300">
-                            <i class="fa-solid fa-gavel text-4xl text-purple-400"></i>
-                            <h4 class="font-black text-purple-900 text-sm">لا توجد منتجات ناجحة في ساحة المزاد</h4>
-                            <p class="text-[11px] text-slate-500">المنتجات التي تتم بنجاح عبر ساحة المزاد ستظهر هنا تلقائياً.</p>
-                        </div>
-                    `;
-                } else {
-                    container.innerHTML = auctionSuccessItems.map(item => `
-                        <div class="flex items-center justify-between p-3 rounded-2xl border bg-purple-50/60 border-purple-200 text-xs">
-                            <div class="flex items-center gap-3">
-                                <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border">
-                                <div>
-                                    <h5 class="font-black text-purple-950 line-clamp-1">${item.title}</h5>
-                                    <span class="text-[10px] font-bold text-purple-700">تمت بنجاح في المزاد المباشر 🔨✅</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-                openModal('modalActiveListings');
-
             } else if(sectionKey === 'active-listings') {
                 const userItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status !== 'completed');
                 const container = document.getElementById('activeListingsContent');
                 if(userItems.length === 0) {
-                    container.innerHTML = `<div class="text-center py-10 text-slate-400 text-xs">عروضي النشطة فارغة حالياً</div>`;
-                } else {
-                    container.innerHTML = userItems.map(item => `
-                        <div class="flex items-center justify-between p-3 rounded-2xl border bg-slate-50 border-slate-200 text-xs">
-                            <div class="flex items-center gap-3 cursor-pointer flex-grow" onclick="closeModal('modalActiveListings'); openEditModal('${item.id}')">
-                                <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border">
-                                <div>
-                                    <h5 class="font-black text-slate-800 line-clamp-1">${item.title}</h5>
-                                    <span class="text-[10px] font-bold text-emerald-600">${item.trade_type} - اضغط للتعديل ✏️</span>
-                                </div>
-                            </div>
-                            <button onclick="deleteListing('${item.id}')" class="bg-rose-50 text-rose-600 p-2.5 rounded-xl cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                    container.innerHTML = `
+                        <div class="text-center py-10 space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                            <i class="fa-solid fa-box-open text-4xl text-slate-300"></i>
+                            <h4 class="font-black text-slate-700 text-sm">عروضي النشطة فارغة حالياً</h4>
+                            <p class="text-[11px] text-slate-400">لم تقم بإضافة أي عرض مقايضة بعد.</p>
                         </div>
-                    `).join('');
+                    `;
+                } else {
+                    container.innerHTML = userItems.map(item => {
+                        const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
+                        const isAuctionItem = item.is_auction === true;
+                        return `
+                            <div class="flex items-center justify-between p-3 rounded-2xl border ${isAuctionItem ? 'bg-purple-50/60 border-purple-200' : 'bg-slate-50 border-slate-200'} text-xs">
+                                <div class="flex items-center gap-3 cursor-pointer flex-grow" onclick="closeModal('modalActiveListings'); openEditModal('${item.id}')">
+                                    <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border">
+                                    <div>
+                                        <div class="flex items-center gap-1">
+                                            <h5 class="font-black text-slate-800 line-clamp-1">${item.title}</h5>
+                                            ${isRandomWanted ? '<span class="bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded-full">همزة 🎁</span>' : ''}
+                                            ${isAuctionItem ? '<span class="bg-purple-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">مزاد 🔨</span>' : ''}
+                                        </div>
+                                        <span class="text-[10px] font-bold text-emerald-600">${item.trade_type} - اضغط للتعديل الشامل ✏️</span>
+                                    </div>
+                                </div>
+                                <button onclick="deleteListing('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2.5 rounded-xl transition cursor-pointer">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
                 }
                 openModal('modalActiveListings');
 
@@ -2226,27 +2238,108 @@
                 const container = document.getElementById('currentRequestsContent');
 
                 if(myReceived.length === 0 && mySent.length === 0) {
-                    container.innerHTML = `<div class="text-center py-10 text-slate-400 text-xs">الطلبات الجارية فارغة</div>`;
+                    container.innerHTML = `
+                        <div class="text-center py-10 space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                            <i class="fa-solid fa-bell-slash text-4xl text-slate-300"></i>
+                            <h4 class="font-black text-slate-700 text-sm">الطلبات الجارية فارغة</h4>
+                            <p class="text-[11px] text-slate-400">لا توجد أي طلبات مقايضة واردة أو مرسلة حالياً.</p>
+                        </div>
+                    `;
                 } else {
                     let html = '';
                     if(myReceived.length > 0) {
+                        html += `<p class="font-bold text-xs text-emerald-700 mb-1">الطلبات الواردة إليك:</p>`;
                         html += myReceived.map(req => {
                             const sender = allProfiles[String(req.sender_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
                             const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض' };
+                            const reqDate = req.created_at ? new Date(req.created_at).toLocaleString('ar-MA') : 'وقت غير محدد';
+
+                            if(req.status === 'rejected') {
+                                return `
+                                    <div class="bg-rose-50/50 p-3.5 rounded-2xl border border-rose-200 shadow-sm space-y-2 text-xs mb-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-black text-rose-800">لقد رفض ${currentAccount.full_name} المقايضة</span>
+                                            <span class="text-[9px] text-slate-400 font-bold">📅 ${reqDate}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 pt-1">
+                                            <button onclick="deleteRequestRecord('${req.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">حذف الطلب 🗑️</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
                             return `
                                 <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs mb-2">
                                     <div class="flex items-center justify-between">
-                                        <span class="font-black text-slate-900">${sender.full_name} يريد مقايضة: <strong class="text-emerald-700">${listing.title}</strong></span>
+                                        <div class="flex items-center gap-2.5">
+                                            <img src="${sender.avatar_url}" class="w-9 h-9 rounded-full object-cover border-2 border-emerald-500">
+                                            <div>
+                                                <span class="font-black text-slate-900 block">${sender.full_name}</span>
+                                                <span class="text-[10px] text-slate-500 font-bold">يريد مقايضة منتجك: <strong class="text-emerald-700">${listing.title}</strong></span>
+                                            </div>
+                                        </div>
+                                        <span class="text-[9px] text-slate-400 font-bold">📅 ${reqDate}</span>
                                     </div>
-                                    <div class="flex items-center justify-between pt-2 border-t">
-                                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'}">${req.status === 'pending' ? '⏳ قيد الانتظار' : '🤝 موافق'}</span>
+                                    <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                                            ${req.status === 'pending' ? '⏳ جاري الانتظار' : '🤝 تمت الموافقة'}
+                                        </span>
                                         ${req.status === 'pending' ? `
-                                            <div class="flex gap-1.5">
-                                                <button onclick="respondTrade('${req.id}', 'accepted')" class="bg-emerald-600 text-white font-bold py-1.5 px-3 rounded-xl cursor-pointer">موافقة</button>
-                                                <button onclick="respondTrade('${req.id}', 'rejected')" class="bg-rose-50 text-rose-600 font-bold py-1.5 px-2 rounded-xl cursor-pointer">رفض</button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button onclick="respondTrade('${req.id}', 'accepted')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">موافقة وتنسيق</button>
+                                                <button onclick="respondTrade('${req.id}', 'rejected')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-2 rounded-xl transition cursor-pointer">رفض</button>
                                             </div>
                                         ` : `
-                                            <button onclick="closeModal('modalCurrentRequests'); openChatModal('${req.id}')" class="bg-blue-600 text-white font-bold py-1.5 px-3 rounded-xl cursor-pointer">فتح الدردشة 💬</button>
+                                            <div class="flex items-center gap-1.5">
+                                                <button onclick="closeModal('modalCurrentRequests'); openChatModal('${req.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">فتح الدردشة 💬</button>
+                                                <button onclick="cancelTradeDueToNoResponse('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-2.5 rounded-xl transition cursor-pointer text-[10px]">إلغاء لعدم الرد 🚫</button>
+                                            </div>
+                                        `}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+
+                    if(mySent.length > 0) {
+                        html += `<p class="font-bold text-xs text-blue-700 mt-4 mb-1">طلباتك المرسلة:</p>`;
+                        html += mySent.map(req => {
+                            const receiver = allProfiles[String(req.receiver_id)] || { full_name: 'المستقبل' };
+                            const listing = allListings.find(l => String(l.id) === String(req.listing_id)) || { title: 'عرض', id: req.listing_id };
+                            const reqDate = req.created_at ? new Date(req.created_at).toLocaleString('ar-MA') : 'وقت غير محدد';
+
+                            if(req.status === 'rejected') {
+                                return `
+                                    <div class="bg-rose-50/60 p-3.5 rounded-2xl border border-rose-200 shadow-sm space-y-2 text-xs mb-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-black text-rose-800">لقد رفض ${receiver.full_name} المقايضة</span>
+                                            <span class="text-[9px] text-slate-400 font-bold">📅 ${reqDate}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 pt-1">
+                                            <button onclick="deleteRequestRecord('${req.id}')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">حذف الطلب 🗑️</button>
+                                            <button onclick="resendTradeRequest('${listing.id}', '${req.receiver_id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">إعادة إرسال طلب مقايضة 🔄</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+
+                            return `
+                                <div class="bg-blue-50/40 p-3.5 rounded-2xl border border-blue-100 shadow-sm space-y-2 text-xs mb-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="font-black text-slate-900">أرسلت طلباً لعرض: <strong class="text-blue-700">${listing.title}</strong></span>
+                                        <span class="text-[9px] text-slate-400 font-bold">📅 ${reqDate}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-1">
+                                        <span class="text-[10px] px-2.5 py-1 rounded-full font-black ${req.status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                                            ${req.status === 'pending' ? '⏳ قيد الانتظار' : '✅ موافق'}
+                                        </span>
+                                        ${req.status === 'accepted' ? `
+                                            <div class="flex items-center gap-1.5">
+                                                <button onclick="closeModal('modalCurrentRequests'); openChatModal('${req.id}')" class="bg-blue-600 text-white font-bold py-1.5 px-3 rounded-xl transition cursor-pointer">دردشة الصفقة 💬</button>
+                                                <button onclick="cancelTradeDueToNoResponse('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-2 rounded-xl transition cursor-pointer text-[10px]">إلغاء لعدم الرد 🚫</button>
+                                            </div>
+                                        ` : `
+                                            <button onclick="cancelTradeDueToNoResponse('${req.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold py-1.5 px-2 rounded-xl transition cursor-pointer text-[10px]">إلغاء الطلب 🚫</button>
                                         `}
                                     </div>
                                 </div>
@@ -2261,20 +2354,30 @@
                 const successfulItems = allListings.filter(p => String(p.user_id) === String(currentAccount.id) && p.status === 'completed');
                 const container = document.getElementById('successfulTradesContent');
                 if(successfulItems.length === 0) {
-                    container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400 text-xs">قسم المقايضة الناجحة فارغ</div>`;
-                } else {
-                    container.innerHTML = successfulItems.map(item => `
-                        <div onclick="closeModal('modalSuccessfulTrades'); openSuccessTradeModal('${item.id}')" class="flex items-center justify-between p-3 rounded-2xl border bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-xs cursor-pointer">
-                            <div class="flex items-center gap-3">
-                                <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500">
-                                <div>
-                                    <h5 class="font-black text-slate-900 line-clamp-1">${item.title}</h5>
-                                    <span class="text-[9px] text-slate-500">تم التبادل بنجاح 100%</span>
-                                </div>
-                            </div>
-                            <i class="fa-solid fa-chevron-left text-emerald-600"></i>
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-10 space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                            <i class="fa-solid fa-handshake-slash text-4xl text-slate-300"></i>
+                            <h4 class="font-black text-slate-700 text-sm">قسم المقايضة الناجحة فارغ</h4>
+                            <p class="text-[11px] text-slate-400">ليس لديك أي عمليات تبادل مكتملة بعد.</p>
                         </div>
-                    `).join('');
+                    `;
+                } else {
+                    container.innerHTML = successfulItems.map(item => {
+                        const itemDate = item.updated_at ? new Date(item.updated_at).toLocaleString('ar-MA') : 'تاريخ موثق';
+                        return `
+                            <div onclick="closeModal('modalSuccessfulTrades'); openSuccessTradeModal('${item.id}')" class="flex items-center justify-between p-3 rounded-2xl border bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-xs cursor-pointer hover:shadow-md transition">
+                                <div class="flex items-center gap-3">
+                                    <img src="${item.image_url}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500">
+                                    <div>
+                                        <h5 class="font-black text-slate-900 line-clamp-1">${item.title}</h5>
+                                        <span class="text-[10px] font-bold text-emerald-700 block">📅 ${itemDate}</span>
+                                        <span class="text-[9px] text-slate-500">تم التبادل بنجاح 100%</span>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-chevron-left text-emerald-600"></i>
+                            </div>
+                        `;
+                    }).join('');
                 }
                 openModal('modalSuccessfulTrades');
 
@@ -2283,7 +2386,7 @@
                 const container = document.getElementById('agreedDealsListContent');
 
                 if(acceptedRequests.length === 0) {
-                    showModalAlert("تنبيه", "لا توجد أي صفقات متفق عليها حالياً للدردشة.", "info");
+                    showModalAlert("تنبيه", "لا توجد أي صفقات متفق عليها أو مقبولة حالياً للدردشة.", "info");
                     return;
                 }
 
@@ -2309,6 +2412,37 @@
             }
         }
 
+        async function deleteRequestRecord(reqId) {
+            await _supabase.from('trade_requests').delete().eq('id', reqId);
+            await fetchRequests();
+            closeModal('modalCurrentRequests');
+            openMenuSection('current-requests');
+        }
+
+        async function resendTradeRequest(listingId, receiverId) {
+            await _supabase.from('trade_requests').insert([{
+                sender_id: String(currentAccount.id),
+                receiver_id: String(receiverId),
+                listing_id: String(listingId),
+                status: 'pending'
+            }]);
+            await fetchRequests();
+            closeModal('modalCurrentRequests');
+            showModalAlert("نجاح", "تمت إعادة إرسال طلب المقايضة بنجاح 🔄", "success");
+            openMenuSection('current-requests');
+        }
+
+        async function cancelTradeDueToNoResponse(reqId) {
+            showModalConfirm("واش متأكد بغيتي تإلغي هاد المقايضة لعدم الرد؟", async (res) => {
+                if(res) {
+                    await _supabase.from('trade_requests').delete().eq('id', reqId);
+                    await fetchRequests();
+                    closeModal('modalCurrentRequests');
+                    showModalAlert("نجاح", "تم إلغاء الطلب بنجاح لعدم الرد 🚫", "success");
+                }
+            });
+        }
+
         function sendLocationOnWhatsApp() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
@@ -2318,10 +2452,10 @@
                     const text = `📍 *هذا هو موقعي الحالي للقاء إتمام المقايضة عبر منصة بدل.ma:*\n${mapUrl}`;
                     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
                 }, () => {
-                    showModalAlert("تنبيه", "تعذر الحصول على موقعك الحالي.", "error");
+                    showModalAlert("تنبيه", "تعذر الحصول على موقعك الحالي. تأكد من تفعيل خدمة تحديد الموقع (GPS).", "error");
                 });
             } else {
-                showModalAlert("تنبيه", "متصفحك لا يدعم تحديد الموقع.", "error");
+                showModalAlert("تنبيه", "متصفحك لا يدعم خاصية تحديد الموقع الجغرافي.", "error");
             }
         }
 
@@ -2360,11 +2494,22 @@
             const avatar_url = 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
 
             if(phone.length < 10) {
-                showModalAlert("تنبيه", "رقم الهاتف غير صحيح", "error");
+                showModalAlert("تنبيه", "المرجو إدخال رقم هاتف مغربي صحيح (مثلاً: 0600000000)", "error");
+                return;
+            }
+            if(password.length < 6) {
+                showModalAlert("تنبيه", "كلمة السر يجب أن تكون من 6 أحرف أو أرقام على الأقل.", "error");
                 return;
             }
             if(password !== passwordConfirm) {
-                showModalAlert("تنبيه", "كلمة السر غير متطابقة", "error");
+                showModalAlert("تنبيه", "كلمة السر وتكرارها غير متطابقين! المرجو التحقق.", "error");
+                return;
+            }
+
+            const { data: existingPhone } = await _supabase.from('profiles').select('*').eq('phone', phone);
+            if(existingPhone && existingPhone.length > 0) {
+                showModalAlert("تنبيه", "هذا الرقم مسجل مسبقاً في النظام!", "info");
+                switchAuthTab('login');
                 return;
             }
 
@@ -2373,7 +2518,7 @@
             }]).select();
 
             if(error) {
-                showModalAlert("خطأ", "خطأ في إنشاء الحساب", 'error');
+                showModalAlert("خطأ", "خطأ في إنشاء الحساب: " + error.message, 'error');
                 return;
             }
 
@@ -2381,7 +2526,7 @@
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
             await fetchProfilesAndData();
             closeModal('authModal');
-            showModalAlert("نجاح", `أهلاً بك يا ${currentAccount.full_name}!`, "success");
+            showModalAlert("نجاح", `🎉 أهلاً بك يا ${currentAccount.full_name}! تم إنشاء حسابك بنجاح.`, "success");
         }
 
         async function handleLoginSubmit(e) {
@@ -2398,6 +2543,7 @@
 
             currentAccount = data[0];
             localStorage.setItem('badal_auth_account', JSON.stringify(currentAccount));
+            
             await fetchProfilesAndData();
             closeModal('authModal');
             showModalAlert("نجاح", `أهلاً بك مجدداً يا ${currentAccount.full_name}!`, "success");
@@ -2415,9 +2561,11 @@
             if (checkbox.checked) {
                 wantedInput.value = "باغي لي كان - يقبل أي عرض 🎁";
                 wantedInput.disabled = true;
+                wantedInput.classList.add('bg-slate-200', 'text-pink-700', 'font-black');
             } else {
                 wantedInput.value = "";
                 wantedInput.disabled = false;
+                wantedInput.classList.remove('bg-slate-200', 'text-pink-700', 'font-black');
             }
         }
 
@@ -2426,9 +2574,11 @@
             if (checkbox.checked) {
                 wantedInput.value = "باغي لي كان - يقبل أي عرض 🎁";
                 wantedInput.disabled = true;
+                wantedInput.classList.add('bg-slate-200', 'text-pink-700', 'font-black');
             } else {
                 wantedInput.value = "";
                 wantedInput.disabled = false;
+                wantedInput.classList.remove('bg-slate-200', 'text-pink-700', 'font-black');
             }
         }
 
@@ -2445,12 +2595,34 @@
             const item = allListings.find(l => String(l.id) === String(listingId));
             if(!item) return;
 
+            const req = allRequests.find(r => String(r.listing_id) === String(listingId) && r.status === 'accepted');
+            const partnerId = req ? (String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id) : null;
+            const partner = partnerId ? (allProfiles[String(partnerId)] || { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' }) : { full_name: 'شريك', avatar_url: '' };
+            const tradeDate = item.updated_at ? new Date(item.updated_at).toLocaleString('ar-MA') : 'تاريخ موثق';
+
             const content = document.getElementById('successTradeContent');
             content.innerHTML = `
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 text-center">
-                    <img src="${item.image_url}" class="w-24 h-24 object-cover mx-auto rounded-2xl border-2 border-emerald-500 shadow">
-                    <h4 class="font-black text-slate-900 text-sm">${item.title}</h4>
-                    <p class="text-xs text-emerald-700 font-bold">تمت المقايضة بنجاح 100% بـ 0 درهم ✅</p>
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-bold border-b pb-2">
+                        <span>📍 مدينة التبادل: <strong class="text-emerald-700">${item.city}</strong></span>
+                        <span>📅 تاريخ التبادل: <strong class="text-slate-800">${tradeDate}</strong></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 items-center">
+                        <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
+                            <img src="${currentAccount ? currentAccount.avatar_url : 'https://i.ibb.co/BVspypdG/1791985093664.jpg'}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-emerald-500">
+                            <h5 class="font-black text-slate-900 text-xs">${currentAccount ? currentAccount.full_name : 'أنت'}</h5>
+                            <p class="text-[10px] text-slate-500 font-bold">${item.title}</p>
+                            <img src="${item.image_url}" class="w-full h-24 object-cover rounded-lg mt-1">
+                        </div>
+                        <div class="text-center space-y-1 bg-white p-3 rounded-xl border shadow-sm">
+                            <img src="${partner.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg'}" class="w-14 h-14 rounded-full object-cover mx-auto border-2 border-blue-500">
+                            <h5 class="font-black text-slate-900 text-xs">${partner.full_name}</h5>
+                            <p class="text-[10px] text-slate-500 font-bold">الشريك</p>
+                            <div class="h-24 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-700 text-xs font-black border border-emerald-100">
+                                تم التبادل بنجاح 🤝
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
             openModal('successTradeModal');
@@ -2465,6 +2637,21 @@
             document.getElementById('editTradeType').value = item.trade_type || 'راس فـ راس';
             document.getElementById('editWanted').value = item.wanted;
             document.getElementById('editDesc').value = item.description || '';
+            if(item.category) {
+                document.getElementById('editSubCategory').value = item.category;
+            }
+
+            const isRandom = item.wanted && item.wanted.includes('باغي لي كان');
+            document.getElementById('editRandomWantedCheck').checked = isRandom;
+            const wantedInput = document.getElementById('editWanted');
+            if(isRandom) {
+                wantedInput.disabled = true;
+                wantedInput.classList.add('bg-slate-200', 'text-pink-700', 'font-black');
+            } else {
+                wantedInput.disabled = false;
+                wantedInput.classList.remove('bg-slate-200', 'text-pink-700', 'font-black');
+            }
+
             openModal('editModal');
         }
 
@@ -2477,21 +2664,30 @@
             const wanted = document.getElementById('editWanted').value;
             const description = document.getElementById('editDesc').value;
 
-            await _supabase.from('listings').update({
+            const { error } = await _supabase.from('listings').update({
                 title, category: categoryVal, trade_type, wanted, description
             }).eq('id', id);
 
-            closeModal('editModal');
-            await fetchListings();
-            showModalAlert("نجاح", "تم تحديث العرض بنجاح! ✏️", "success");
+            if(!error) {
+                closeModal('editModal');
+                await fetchListings();
+                showModalAlert("نجاح", "تم تحديث العرض بنجاح! ✏️", "success");
+            }
         }
 
         async function handleAvatarUpload(e) {
             const file = e.target.files[0];
             if(!file) return;
 
-            const fileName = `avatar_${currentAccount.id}_${Date.now()}.${file.name.split('.').pop()}`;
-            await _supabase.storage.from('product-images').upload(fileName, file);
+            const fileExt = file.name.split('.').pop();
+            const fileName = `avatar_${currentAccount.id}_${Date.now()}.${fileExt}`;
+
+            const { error: uploadErr } = await _supabase.storage.from('product-images').upload(fileName, file);
+            if(uploadErr) {
+                showModalAlert("خطأ", "خطأ في الرفع: " + uploadErr.message, 'error');
+                return;
+            }
+
             const avatarUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
             await _supabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentAccount.id);
 
@@ -2504,69 +2700,170 @@
 
         function handleOpenAddModal() {
             if(!currentAccount) {
-                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً!", "info");
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً لإضافة عرضك!", "info");
                 openModal('authModal');
                 return;
             }
-            document.getElementById('addItemForm').reset();
+
+            const formEl = document.getElementById('addItemForm');
+            if(formEl) formEl.reset();
+
+            document.getElementById('randomWantedCheck').checked = false;
+            document.getElementById('participateGameCheck').checked = false;
+            const addAuctionToggle = document.getElementById('addAuctionToggle');
+            if(addAuctionToggle) addAuctionToggle.checked = false;
+            const auctionPriceBox = document.getElementById('auctionPriceContainer');
+            if(auctionPriceBox) auctionPriceBox.classList.add('hidden');
+
+            const wantedInput = document.getElementById('addWanted');
+            wantedInput.value = "";
+            wantedInput.disabled = false;
+            wantedInput.classList.remove('bg-slate-200', 'text-pink-700', 'font-black');
+
             openModal('addModal');
         }
 
         async function fetchListings() {
+            const grid = document.getElementById('listingsGrid');
             const countEl = document.getElementById('products-count');
-            const { data } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
+            const { data, error } = await _supabase.from('listings').select('*').order('created_at', { ascending: false });
+
+            if(error) {
+                console.error("Error fetching listings:", error);
+                return;
+            }
 
             allListings = data || [];
+            allListings.forEach(item => {
+                let localAuctionItem = localStorage.getItem('badal_auction_item_' + item.id);
+                if(localAuctionItem) {
+                    let parsed = JSON.parse(localAuctionItem);
+                    item.is_auction = parsed.is_auction;
+                    item.start_price = parsed.start_price;
+                    item.current_price = parsed.current_price;
+                    item.bids_history = parsed.bids_history;
+                }
+                if(!item.bids_history) {
+                    let localBids = localStorage.getItem('badal_auction_bids_' + item.id);
+                    if(localBids) item.bids_history = JSON.parse(localBids);
+                }
+            });
+
             const activeListings = allListings.filter(p => p.status !== 'completed');
             if(countEl) countEl.textContent = activeListings.length;
             filterProducts();
             renderCompletedTradesRotator();
+            if(document.getElementById('fridayAuctionModal') && !document.getElementById('fridayAuctionModal').classList.contains('hidden')) {
+                renderFridayAuctionInterface();
+            }
         }
 
         function shareOnWhatsApp(itemId) {
             const item = allListings.find(l => String(l.id) === String(itemId));
             if(!item) return;
-            const whatsappText = `🔥 *عرض نار فالمقايضة بـ 0 درهم!* 🔥\n\n🎯 العرض: *${item.title}*\n📍 المدينة: *${item.city}*\n\n✨ منصة بدل.ma`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappText)}`, '_blank');
+
+            const productUrl = window.location.href.split('#')[0] + '#product-' + item.id;
+            const whatsappText = `🔥 *عرض نار فالمقايضة بـ 0 درهم!* 🔥\n\n` +
+                                 `🎯 العرض: *${item.title}*\n` +
+                                 `📍 المدينة: *${item.city}*\n` +
+                                 `🔄 نوع التبادل: *${item.trade_type}*\n` +
+                                 `🎁 باغي مقابلها: *${item.wanted}*\n\n` +
+                                 `📸 *صورة السلعة:* ${item.image_url}\n\n` +
+                                 `👉 دخل بسرعة شوف التفاصيل وطلب المقايضة قبل ما يفوتك الحال:\n${productUrl}\n\n` +
+                                 `✨ منصة بدل.ma - بدل داكشي اللي ما محتاجوش!`;
+
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappText)}`;
+            window.open(whatsappUrl, '_blank');
         }
 
         function renderListings(list) {
             const grid = document.getElementById('listingsGrid');
             if(!list || list.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-12 font-bold">ما كاين حتا عرض دابا.</p>`;
+                grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-12 font-bold">ما كاين حتا عرض دابا. كن أول واحد يحط عرض!</p>`;
                 return;
             }
 
             grid.innerHTML = list.map(item => {
+                const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
                 const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
                 const authorStats = getUserRatingStats(item.user_id);
+                const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
                 const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
+                const isAuctionItem = item.is_auction === true;
+
+                let cardClass = "bg-white border-slate-200";
+                if(isAuctionItem) {
+                    cardClass = "auction-card";
+                } else if(isRandomWanted) {
+                    cardClass = "hemza-card";
+                }
 
                 return `
-                <div id="product-${item.id}" class="border rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition flex flex-col justify-between group ${isRandomWanted ? 'hemza-card' : 'bg-white border-slate-200'}">
+                <div id="product-${item.id}" class="border rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition flex flex-col justify-between group ${cardClass}">
                     <div>
-                        <div class="flex items-center justify-between p-2.5 border-b bg-slate-50">
-                            <div class="flex items-center gap-1.5">
-                                <img src="${author.avatar_url}" class="w-6 h-6 rounded-full object-cover">
-                                <span class="text-[11px] font-black text-slate-800 line-clamp-1">${author.full_name}</span>
+                        <div class="flex items-center justify-between p-2 sm:p-3 border-b ${isAuctionItem ? 'bg-purple-100/70 border-purple-200' : isRandomWanted ? 'bg-gradient-to-r from-amber-100 to-pink-100 border-amber-200' : 'border-slate-100 bg-slate-50/50'}">
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                <img src="${author.avatar_url}" class="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border-2 ${isAuctionItem ? 'border-purple-500' : isRandomWanted ? 'border-pink-500' : 'border-emerald-500'}">
+                                <span class="text-[11px] sm:text-xs font-black text-slate-800 line-clamp-1">${author.full_name}</span>
                             </div>
-                            <span class="text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-bold">⭐ ${authorStats.avg}</span>
+                            <div class="flex items-center gap-1 text-[10px] bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-bold border border-amber-200">
+                                <span>⭐ ${authorStats.avg}</span>
+                            </div>
                         </div>
 
                         <div onclick="openProductModal('${item.id}')" class="cursor-pointer">
-                            <div class="relative h-36 w-full bg-slate-100 overflow-hidden flex items-center justify-center">
-                                <img src="${item.image_url}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                                <span class="absolute top-2 right-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded-full">${item.trade_type}</span>
+                            <div class="relative h-36 sm:h-48 w-full bg-slate-100 overflow-hidden flex items-center justify-center">
+                                <img src="${item.image_url}" class="w-full h-full object-cover object-center group-hover:scale-105 transition duration-300">
+                                <span class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-slate-900/80 backdrop-blur text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow">
+                                    ${item.trade_type}
+                                </span>
+                                <span class="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-emerald-600 text-white text-[9px] sm:text-[10px] font-bold px-2 sm:px-2.5 py-0.5 rounded-md shadow">
+                                    <i class="fa-solid fa-location-dot"></i> ${item.city}
+                                </span>
+                                ${isAuctionItem ? `
+                                    <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-purple-600 text-white text-[9px] sm:text-[10px] font-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full animate-pulse shadow-lg flex items-center gap-1 border border-white">
+                                        <i class="fa-solid fa-gavel text-yellow-200"></i> مزاد مباشر 🔨
+                                    </span>
+                                ` : isRandomWanted ? `
+                                    <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-gradient-to-r from-amber-500 to-pink-600 text-white text-[9px] sm:text-[10px] font-black px-2 sm:px-3 py-0.5 sm:py-1 rounded-full animate-bounce shadow-lg flex items-center gap-1 border border-white">
+                                        <i class="fa-solid fa-bolt text-yellow-200"></i> همزة 🎁
+                                    </span>
+                                ` : ''}
                             </div>
-                            <div class="p-3 space-y-1">
-                                <h3 class="font-black text-slate-900 text-xs line-clamp-1">${item.title}</h3>
-                                <p class="text-[11px] text-emerald-700 font-bold line-clamp-2">باغي: ${item.wanted}</p>
+                            <div class="p-2.5 sm:p-4 space-y-1.5 sm:space-y-2">
+                                <h3 class="font-black text-slate-900 text-xs sm:text-sm line-clamp-1">${item.title}</h3>
+                                <div class="p-2 sm:p-3 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs border ${isAuctionItem ? 'bg-purple-100/80 border-purple-300 text-purple-950 font-black shadow-inner' : isRandomWanted ? 'bg-gradient-to-r from-amber-100/90 to-pink-100/90 border-amber-300 text-pink-900 font-black shadow-inner' : 'bg-emerald-50 border-emerald-100 text-slate-700'}">
+                                    <span class="font-bold block mb-0.5 ${isAuctionItem ? 'text-purple-800 flex items-center gap-1' : isRandomWanted ? 'text-pink-700 flex items-center gap-1' : 'text-emerald-800'}">
+                                        ${isAuctionItem ? '<i class="fa-solid fa-gavel"></i> متوفر للمزاد المباشر:' : isRandomWanted ? '<i class="fa-solid fa-gift"></i> همزة مفتوحة:' : 'باغي مقابلها:'}
+                                    </span>
+                                    <p class="font-semibold line-clamp-2">${item.wanted}</p>
+                                </div>
+                                <p class="text-[11px] sm:text-xs text-slate-500 line-clamp-1 sm:line-clamp-2">${item.description || ''}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="p-3 pt-0 space-y-1.5 border-t">
-                        <button onclick="handleRequestTrade('${item.id}', '${item.user_id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-xl transition cursor-pointer">
-                            طلب مقايضة 🤝
+                    <div class="p-2.5 sm:p-4 pt-0 space-y-1.5 sm:space-y-2 border-t border-slate-100 mt-2">
+                        <div class="flex gap-2">
+                            ${isMyItem ? `
+                                <button onclick="openEditModal('${item.id}')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] sm:text-xs py-2 sm:py-2.5 rounded-xl text-center transition cursor-pointer">
+                                    <i class="fa-solid fa-pen-to-square"></i> تعديل
+                                </button>
+                            ` : mySentReq ? `
+                                <button disabled class="w-full bg-slate-200 text-slate-600 font-bold text-[11px] sm:text-xs py-2 sm:py-2.5 rounded-xl text-center flex items-center justify-center gap-1 cursor-not-allowed">
+                                    <i class="fa-solid fa-check"></i> ${mySentReq.status === 'accepted' ? 'موافق 🤝' : 'قيد الانتظار ⏳'}
+                                </button>
+                            ` : isAuctionItem ? `
+                                <button onclick="openFridayExclusiveAuctionModal()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] sm:text-xs py-2 sm:py-2.5 rounded-xl text-center flex items-center justify-center gap-1 transition cursor-pointer shadow-lg animate-pulse">
+                                    <i class="fa-solid fa-gavel"></i> دخول ساحة المزاد 🔨
+                                </button>
+                            ` : `
+                                <button onclick="handleRequestTrade('${item.id}', '${item.user_id}')" class="w-full ${isRandomWanted ? 'bg-gradient-to-r from-amber-500 to-pink-600 hover:from-amber-600 hover:to-pink-700 shadow-lg' : 'bg-emerald-600 hover:bg-emerald-700'} text-white font-bold text-[11px] sm:text-xs py-2 sm:py-2.5 rounded-xl text-center flex items-center justify-center gap-1 transition cursor-pointer">
+                                    <i class="fa-solid ${isRandomWanted ? 'fa-bolt' : 'fa-arrows-rotate'}"></i> ${isRandomWanted ? 'اغتنم الهمزة ⚡' : 'طلب مقايضة'}
+                                </button>
+                            `}
+                        </div>
+                        <button onclick="shareOnWhatsApp('${item.id}')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] sm:text-xs py-1.5 sm:py-2 rounded-xl text-center flex items-center justify-center gap-1.5 border border-emerald-200 transition cursor-pointer">
+                            <i class="fa-brands fa-whatsapp text-xs sm:text-sm text-emerald-600"></i> بارطاجي 📲
                         </button>
                     </div>
                 </div>
@@ -2578,36 +2875,88 @@
             const item = allListings.find(p => String(p.id) === String(id));
             if(!item) return;
 
+            const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
+            const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+            const authorStats = getUserRatingStats(item.user_id);
+            const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
+            const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
+            const isAuctionItem = item.is_auction === true;
+
             document.getElementById('productModalContent').innerHTML = `
-                <div class="relative rounded-2xl overflow-hidden bg-slate-100 h-64 flex items-center justify-center">
-                    <img src="${item.image_url}" class="w-full h-full object-contain">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div class="flex items-center gap-3">
+                        <img src="${author.avatar_url}" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-500">
+                        <div>
+                            <span class="text-xs text-slate-400 block font-bold">صاحب العرض</span>
+                            <h4 class="font-black text-sm text-slate-900">${author.full_name}</h4>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-xs bg-amber-50 text-amber-700 px-3 py-1 rounded-full font-bold border border-amber-200">⭐ ${authorStats.avg} (${authorStats.count} تقييم)</span>
+                        <span class="text-[10px] font-bold text-slate-500 mt-1">${authorStats.shieldName}</span>
+                    </div>
                 </div>
-                <h3 class="font-black text-xl text-slate-900">${item.title}</h3>
-                <p class="text-xs text-slate-700 font-bold">المطلوب: ${item.wanted}</p>
-                <button onclick="closeModal('productModal'); handleRequestTrade('${item.id}', '${item.user_id}');" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl text-xs cursor-pointer">طلب مقايضة 🤝</button>
+                <div class="relative rounded-2xl overflow-hidden bg-slate-100 shadow-md h-72 flex items-center justify-center">
+                    <img src="${item.image_url}" class="w-full h-full object-contain object-center">
+                    <span class="absolute top-3 right-3 bg-slate-900/80 text-white text-xs font-bold px-3 py-1 rounded-full">${item.trade_type}</span>
+                    ${isAuctionItem ? `<span class="absolute top-3 left-3 bg-purple-600 text-white text-xs font-black px-3 py-1 rounded-full animate-pulse shadow-lg"><i class="fa-solid fa-gavel"></i> مزاد مباشر 🔨</span>` : isRandomWanted ? `<span class="absolute top-3 left-3 bg-gradient-to-r from-amber-500 to-pink-600 text-white text-xs font-black px-3 py-1 rounded-full animate-bounce shadow-lg"><i class="fa-solid fa-bolt"></i> همزة للطرفين 🎁</span>` : ''}
+                </div>
+                <div class="space-y-2">
+                    <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 inline-block"><i class="fa-solid fa-location-dot"></i> ${item.city}</span>
+                    <h3 class="font-black text-xl text-slate-900">${item.title}</h3>
+                    <div class="p-3 rounded-2xl border text-xs ${isAuctionItem ? 'bg-purple-100 border-purple-300 text-purple-950 font-black' : isRandomWanted ? 'bg-gradient-to-r from-amber-100 to-pink-100 border-amber-300 text-pink-900 font-black' : 'bg-emerald-50 border-emerald-100 text-slate-800'}">
+                        <span class="font-bold block mb-1 ${isAuctionItem ? 'text-purple-800' : isRandomWanted ? 'text-pink-700' : 'text-emerald-800'}">الشيء المطلوب للمقايضة:</span>
+                        <p class="font-bold text-sm">${item.wanted}</p>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">${item.description || ''}</p>
+                </div>
+                <div class="space-y-2 pt-2">
+                    ${isMyItem ? `
+                        <button onclick="closeModal('productModal'); openEditModal('${item.id}');" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl text-xs cursor-pointer">تعديل العرض</button>
+                    ` : mySentReq ? `
+                        <button disabled class="w-full bg-slate-200 text-slate-600 font-bold py-3 rounded-xl text-xs">تم إرسال الطلب</button>
+                    ` : isAuctionItem ? `
+                        <button onclick="closeModal('productModal'); openFridayExclusiveAuctionModal();" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl text-xs cursor-pointer shadow-lg animate-pulse">دخول ساحة المزاد 🔨</button>
+                    ` : `
+                        <button onclick="closeModal('productModal'); handleRequestTrade('${item.id}', '${item.user_id}');" class="w-full ${isRandomWanted ? 'bg-gradient-to-r from-amber-500 to-pink-600 shadow-lg' : 'bg-emerald-600'} text-white font-bold py-3 rounded-xl text-xs cursor-pointer">طلب مقايضة 🤝</button>
+                    `}
+                    <button onclick="shareOnWhatsApp('${item.id}')" class="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-xs py-2.5 rounded-xl text-center flex items-center justify-center gap-2 border border-emerald-200 transition cursor-pointer">
+                        <i class="fa-brands fa-whatsapp text-sm text-emerald-600"></i> بارطاجي العرض فـ WhatsApp 📲
+                    </button>
+                </div>
             `;
             openModal('productModal');
         }
 
         async function handleRequestTrade(listingId, receiverId) {
             if(!currentAccount) {
+                showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً!", "info");
                 openModal('authModal');
                 return;
             }
+
+            if(String(currentAccount.id) === String(receiverId)) {
+                showModalAlert("تنبيه", "لا يمكنك مقايضة عرضك!", "error");
+                return;
+            }
+
             await _supabase.from('trade_requests').insert([{
                 sender_id: String(currentAccount.id),
                 receiver_id: String(receiverId),
                 listing_id: String(listingId),
                 status: 'pending'
             }]);
-            fetchRequests();
+
+            await fetchRequests();
+            fetchListings();
             showModalAlert("نجاح", "تم إرسال طلب المقايضة بنجاح!", "success");
         }
 
         async function respondTrade(reqId, status) {
             await _supabase.from('trade_requests').update({ status }).eq('id', reqId);
-            fetchRequests();
+            await fetchRequests();
             closeModal('modalCurrentRequests');
+            openMenuSection('current-requests');
             if(status === 'accepted') openChatModal(reqId);
         }
 
@@ -2624,7 +2973,10 @@
             document.getElementById('chatPartnerName').textContent = partner.full_name;
             document.getElementById('chatProductBanner').innerHTML = `
                 <img src="${listing.image_url}" class="w-10 h-10 rounded-lg object-cover">
-                <div><h5 class="font-black text-xs">${listing.title}</h5></div>
+                <div class="flex-grow">
+                    <span class="text-[10px] text-emerald-800 font-bold block">منتج المقايضة:</span>
+                    <h5 class="font-black text-slate-900 text-xs">${listing.title}</h5>
+                </div>
             `;
 
             openModal('chatModal');
@@ -2637,7 +2989,7 @@
             
             const box = document.getElementById('chatMessagesBox');
             if(!data || data.length === 0) {
-                box.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">مرحباً بكم في دردشة المقايضة! تفقو على الوقت والمكان بكل راحة.</div>`;
+                box.innerHTML = `<div class="text-center py-6 text-slate-400 font-bold text-xs"><p>🤝 مرحباً بكم في دردشة المقايضة! تفقو على الوقت (السبت، الأحد أو أيام العطلة) والمكان بكل راحة.</p></div>`;
                 return;
             }
 
@@ -2645,8 +2997,9 @@
                 const isMe = String(m.sender_id) === String(currentAccount.id);
                 return `
                     <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1">
-                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs ${isMe ? 'bg-emerald-600 text-white' : 'bg-white text-slate-800 border'}">
+                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-xs shadow-sm ${isMe ? 'bg-emerald-600 text-white' : 'bg-white text-slate-800 border'}">
                             ${m.message ? `<p>${m.message}</p>` : ''}
+                            ${m.image_url ? `<img src="${m.image_url}" class="w-48 h-40 object-cover rounded-xl mt-1">` : ''}
                         </div>
                     </div>
                 `;
@@ -2659,12 +3012,33 @@
             const msg = input.value.trim();
             if(!msg || !activeChatRequestId) return;
 
-            await _supabase.from('messages').insert([{
+            const { error } = await _supabase.from('messages').insert([{
                 request_id: activeChatRequestId,
                 sender_id: String(currentAccount.id),
                 message: msg
             }]);
-            input.value = '';
+
+            if(!error) {
+                input.value = '';
+                loadChatMessages();
+            } else {
+                showModalAlert("خطأ", "تعذر إرسال الرسالة: " + error.message, "error");
+            }
+        }
+
+        async function sendChatImage(e) {
+            const file = e.target.files[0];
+            if(!file || !activeChatRequestId) return;
+
+            const fileName = `chat_${Date.now()}.${file.name.split('.').pop()}`;
+            await _supabase.storage.from('product-images').upload(fileName, file);
+            const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+
+            await _supabase.from('messages').insert([{
+                request_id: activeChatRequestId,
+                sender_id: String(currentAccount.id),
+                image_url: imageUrl
+            }]);
             loadChatMessages();
         }
 
@@ -2679,9 +3053,45 @@
             await _supabase.from('listings').update({ status: 'completed' }).eq('id', req.listing_id);
             await _supabase.from('trade_requests').delete().eq('id', activeChatRequestId);
 
-            fetchListings();
+            await fetchListings();
+            await fetchRequests();
             closeModal('chatModal');
-            showModalAlert("نجاح تام", "🎉 تم تأكيد إتمام المقايضة بنجاح!", "success");
+            
+            showModalAlert("نجاح تام", "🎉 تم تأكيد إتمام المقايضة بنجاح! تم نقلها تلقائياً للمقايضات الناجحة.", "success");
+            openRatingModal(String(req.sender_id) === String(currentAccount.id) ? req.receiver_id : req.sender_id);
+        }
+
+        function openRatingModal(userId) {
+            ratingTargetUserId = userId;
+            const partner = allProfiles[String(userId)] || { full_name: 'الشريك' };
+            document.getElementById('ratingTargetName').textContent = `تقييم: ${partner.full_name}`;
+            setRatingStars(5);
+            openModal('ratingModal');
+        }
+
+        function setRatingStars(count) {
+            selectedStarCount = count;
+            document.querySelectorAll('#starContainer .star').forEach((s, idx) => {
+                s.className = idx < count ? "star text-amber-400 cursor-pointer" : "star text-slate-300 cursor-pointer";
+            });
+        }
+
+        function appendRatingTag(tag) {
+            const input = document.getElementById('ratingCommentInput');
+            input.value = input.value ? input.value + ' - ' + tag : tag;
+        }
+
+        async function submitUserRating() {
+            if(!ratingTargetUserId || !currentAccount) return;
+            await _supabase.from('ratings').insert([{
+                rater_id: String(currentAccount.id),
+                rated_user_id: String(ratingTargetUserId),
+                rating: selectedStarCount,
+                comment: document.getElementById('ratingCommentInput').value
+            }]);
+            await fetchRatings();
+            closeModal('ratingModal');
+            showModalAlert("نجاح", "تم إرسال التقييم بنجاح! ⭐", "success");
         }
 
         async function handleAddItem(e) {
@@ -2689,16 +3099,28 @@
             if(!currentAccount) return;
 
             const file = document.getElementById('addImageFile').files[0];
+            if(!file) {
+                showModalAlert("تنبيه", "المرجو اختيار صورة للمنتج!", "error");
+                return;
+            }
+
             const fileName = `${Date.now()}.${file.name.split('.').pop()}`;
-            await _supabase.storage.from('product-images').upload(fileName, file);
+            const { error: uploadError } = await _supabase.storage.from('product-images').upload(fileName, file);
+            if(uploadError) {
+                showModalAlert("خطأ", "خطأ في رفع الصورة: " + uploadError.message, "error");
+                return;
+            }
+
             const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-
+            const participateGame = document.getElementById('participateGameCheck').checked;
             const isAuctionChecked = document.getElementById('addAuctionToggle').checked;
-            let startPriceVal = isAuctionChecked ? Number(document.getElementById('addAuctionStartPrice').value) : null;
+            const startPriceVal = isAuctionChecked ? Number(document.getElementById('addAuctionStartPrice').value) : 50;
+            const subCategoryVal = document.getElementById('addSubCategory').value;
 
-            await _supabase.from('listings').insert([{
+            // إرسال الحقول الأساسية فقط لجدول listings لتجنب أي خطأ في أعمدة المزاد غير الموجودة في قاعدة البيانات
+            const listingPayload = {
                 title: document.getElementById('addTitle').value,
-                category: document.getElementById('addSubCategory').value,
+                category: subCategoryVal,
                 city: currentAccount.city,
                 trade_type: document.getElementById('addTradeType').value,
                 wanted: document.getElementById('addWanted').value,
@@ -2706,16 +3128,28 @@
                 description: document.getElementById('addDesc').value,
                 image_url: imageUrl,
                 user_id: String(currentAccount.id),
-                status: 'active',
-                is_auction: isAuctionChecked,
-                start_price: startPriceVal,
-                current_price: startPriceVal,
-                bids_history: []
-            }]);
+                status: 'active'
+            };
+
+            const { error: insertError, data: insertedData } = await _supabase.from('listings').insert([listingPayload]).select();
+
+            if(insertError) {
+                showModalAlert("خطأ", "خطأ في نشر العرض: " + insertError.message, "error");
+                return;
+            }
+
+            if(isAuctionChecked && insertedData && insertedData[0]) {
+                localStorage.setItem('badal_auction_item_' + insertedData[0].id, JSON.stringify({
+                    is_auction: true,
+                    start_price: startPriceVal,
+                    current_price: startPriceVal,
+                    bids_history: []
+                }));
+            }
 
             closeModal('addModal');
-            fetchListings();
-            showModalAlert("نجاح", isAuctionChecked ? "تم نشر العرض وإدراجه في ساحة المزايدة! 🔨" : "تم نشر العرض بنجاح! 🎉", "success");
+            await fetchListings();
+            showModalAlert("نجاح", isAuctionChecked ? "تم نشر العرض وإدراجه في ساحة المزايدة المباشرة بنجاح! 🔨" : participateGame ? "تم نشر عرضك ومشاركته في لعبة حظ المقايضة بنجاح! 🎁🎲" : "تم نشر عرضك بنجاح! 🎉", "success");
         }
 
         async function deleteListing(id) {
@@ -2724,6 +3158,7 @@
                     await _supabase.from('listings').delete().eq('id', id);
                     closeModal('modalActiveListings');
                     fetchListings();
+                    showModalAlert("نجاح", "تم مسح العرض بنجاح", "success");
                 }
             });
         }
@@ -2733,32 +3168,62 @@
             const activeListings = allListings.filter(p => p.status !== 'completed');
 
             let filtered = activeListings.filter(p => {
-                const matchesSearch = p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q);
+                const matchesSearch = p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || (p.category && p.category.toLowerCase().includes(q));
                 const matchesCity = currentCityFilter === 'الكل' || p.city === currentCityFilter;
                 return matchesSearch && matchesCity;
             });
 
+            const countEl = document.getElementById('products-count');
+            if(countEl) countEl.textContent = filtered.length;
             renderListings(filtered);
         }
 
         function filterCategory(c) {
             const activeListings = allListings.filter(p => p.status !== 'completed');
+            const categories = ['الكل', 'إلكترونيات', 'أثاث', 'وسائل نقل', 'خدمات'];
+            categories.forEach(cat => {
+                const btn = document.getElementById('cat-btn-' + cat);
+                if(btn) {
+                    if(cat === c) {
+                        btn.className = "cat-chip px-4 py-2.5 rounded-2xl text-xs font-black bg-emerald-600 text-white whitespace-nowrap shadow-md transition flex items-center gap-1.5 cursor-pointer";
+                    } else {
+                        btn.className = "cat-chip px-4 py-2.5 rounded-2xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 whitespace-nowrap transition flex items-center gap-1.5 cursor-pointer border border-slate-200/60";
+                    }
+                }
+            });
+
+            const q = document.getElementById('search-input').value.toLowerCase();
             let filtered = activeListings.filter(p => {
+                const matchesSearch = p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q) || (p.category && p.category.toLowerCase().includes(q));
                 const matchesCity = currentCityFilter === 'الكل' || p.city === currentCityFilter;
                 const matchesCat = c === 'الكل' || p.category === c;
-                return matchesCity && matchesCat;
+                return matchesSearch && matchesCity && matchesCat;
             });
+
+            const countEl = document.getElementById('products-count');
+            if(countEl) countEl.textContent = filtered.length;
             renderListings(filtered);
         }
 
         function filterCategoryBySub(subName) {
             closeModal('categoriesModal');
             const activeListings = allListings.filter(p => p.status !== 'completed');
-            let filtered = activeListings.filter(p => p.category === subName);
+            const q = document.getElementById('search-input').value.toLowerCase();
+            
+            let filtered = activeListings.filter(p => {
+                const matchesSearch = p.title.toLowerCase().includes(q) || p.city.toLowerCase().includes(q);
+                const matchesCity = currentCityFilter === 'الكل' || p.city === currentCityFilter;
+                const matchesSub = p.category === subName;
+                return matchesSearch && matchesCity && matchesSub;
+            });
+
+            const countEl = document.getElementById('products-count');
+            if(countEl) countEl.textContent = filtered.length;
             renderListings(filtered);
+            showFloatingNotification(`📂 تم فلترة العروض حسب شريحة: (${subName})`);
         }
 
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function openModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     </script>
 </body>
