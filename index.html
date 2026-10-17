@@ -268,9 +268,10 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between">
+            <!-- تم حذف كلمة "الفورية" بناءً على طلبكم -->
+            <div class="flex items-center justify-between" id="listingsSectionTitleAnchor">
                 <div>
-                    <h3 class="text-xl font-black text-slate-800">العروض المتاحة للمقايضة الفورية</h3>
+                    <h3 class="text-xl font-black text-slate-800">العروض المتاحة للمقايضة</h3>
                     <p class="text-xs text-slate-500">اختر ما تحتاجه وتواصل مباشرة بـ 0 درهم</p>
                 </div>
                 <div class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
@@ -280,6 +281,11 @@
 
             <div id="listingsGrid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                 <p class="col-span-full text-center py-12 text-slate-400 font-bold">جاري تحميل العروض الحقيقية...</p>
+            </div>
+
+            <!-- Pagination Container (تم قلب السابق والتالي لتصبح: سابق في اليمين وتالي في اليسار مع ضبط العرض في حدود الرؤية) -->
+            <div id="paginationContainer" class="flex items-center justify-center gap-3 pt-4 pb-2">
+                <!-- Injected via JS -->
             </div>
         </section>
     </main>
@@ -1016,7 +1022,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.9</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 4.2</span>
                     </div>
                 </div>
             </div>
@@ -1048,6 +1054,10 @@
         let rotatingTradesList = [];
         let currentRotatingTradeIndex = 0;
         let rotatingTradesInterval = null;
+
+        // متغيرات التنقل (التالي / السابق)
+        let currentPage = 1;
+        const itemsPerPage = 14;
 
         function showModalAlert(title, message, type = 'info') {
             document.getElementById('customAlertTitle').textContent = title;
@@ -1137,6 +1147,7 @@
 
         function selectCityFilter(cityName) {
             currentCityFilter = cityName;
+            currentPage = 1;
             const labelEl = document.getElementById('selectedCityFilterLabel');
             if(labelEl) {
                 labelEl.textContent = cityName === 'الكل' ? 'جميع المدن المغربية (الكل)' : `مدينة: ${cityName}`;
@@ -1648,10 +1659,7 @@
 
         function renderFridayAuctionInterface() {
             const container = document.getElementById('fridayAuctionContainer');
-            // الروبوت يجلب منتجات عشوائية من كل المشتركين المفعلة لهم خاصية المزايدة
             const eligibleAuctionItems = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
-            
-            // خلط المنتجات عشوائياً لضمان ظهور منتجات المشتركين بشكل عشوائي في الساحة
             let shuffledBatch = [...eligibleAuctionItems].sort(() => 0.5 - Math.random()).slice(0, 3);
 
             let countdownHeaderHtml = `
@@ -1790,7 +1798,6 @@
             showFloatingNotification(`⚡ تم تسجيل مزايدتك بنجاح بـ ${enteredPrice} درهم!`);
         }
 
-        // دالة فتح الشات مع التحقق من انتهاء العد التنازلي وكونك أنت صاحب أعلى قيمة
         function handleOpenAuctionChat(itemId) {
             if(!currentAccount) {
                 showModalAlert("تنبيه", "المرجو تسجيل الدخول أولاً!", "info");
@@ -1804,43 +1811,33 @@
             let bids = Array.isArray(item.bids_history) ? item.bids_history : [];
             const highestBid = bids.length > 0 ? bids[bids.length - 1] : null;
 
-            // حساب وقت انتهاء العد التنازلي للجولة الحالية (لكل 30 دقيقة)
             const now = new Date();
             const totalSecsToday = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
             const remainingSecs = 1800 - (totalSecsToday % 1800);
 
-            // الشرط 1: هل انتهى العد التنازلي؟ (أو إذا اعتبرنا العد الجاري مستمراً، يتم التحقق إذا انتهى الوقت)
-            // بناءً على طلبك: "حتا إسالي العد التنازلي الى كنت أنا أعلى قيمة إعطيني إشعار فوق أيقونة لي فجنب الموني و ملي نضغط عليها إتفتح ليا الشات... و الى إنتهى العد التنازلي و ماشي أنا لي طالع في الأعلى ميتحلش ليا الشات"
-            // للتحقق الدقيق من انتهاء العد التنازلي للجولة:
             if (remainingSecs > 5) {
-                // إذا لم ينته العد التنازلي بعد
                 showModalAlert("تنبيه المزاد ⏳", "لا يمكن فتح الشات حتى ينتهي العد التنازلي للجولة الحالية وتستقر المزايدات!", "error");
                 return;
             }
 
-            // تحقق من كونك أنت الوحيد أو صاحب أعلى قيمة
             if (!highestBid || String(highestBid.userId) !== String(currentAccount.id)) {
                 showModalAlert("عذراً ❌", "انتهى العد التنازلي ولست أنت من صعد في أعلى قيمة للمزايدة، لذلك لا يمكن فتح الشات معك!", "error");
                 return;
             }
 
-            // إذا انتهى العد التنازلي وكنت أنت أعلى قيمة: إعطاء إشعار فوق الأيقونة وفتح الشات
             closeModal('fridayAuctionModal');
             showModalAlert("مبروك الفوز بالمزاد! 🎉", "لقد انتهى العد التنازلي وكنت أنت صاحب أعلى قيمة في المزايدة! يتم فتح الشات الآن.", "success");
             
-            // تفعيل إشعار فوق الأيقونة بجانب الموني
             const iconBadge = document.getElementById('auctionHeaderIconBadge');
             if(iconBadge) {
                 iconBadge.classList.add('animate-bounce');
                 iconBadge.innerHTML = `<i class="fa-solid fa-gavel text-xs text-yellow-200"></i><span class="font-black text-white">🔨 فاز!</span>`;
             }
 
-            // فتح أو إنشاء طلب مقايضة/شات مقبول بين الفائز وصاحب المنتج
             openOrCreateAuctionChatRequest(item);
         }
 
         async function openOrCreateAuctionChatRequest(item) {
-            // البحث عن طلب موجود أو إنشاؤه
             let req = allRequests.find(r => String(r.listing_id) === String(item.id) && String(r.sender_id) === String(currentAccount.id));
             if(!req) {
                 const { data, error } = await _supabase.from('trade_requests').insert([{
@@ -2179,7 +2176,7 @@
             const acceptedReq = allRequests.find(r => (String(r.sender_id) === String(currentAccount.id) || String(r.receiver_id) === String(currentAccount.id)) && r.status === 'accepted');
 
             if(!acceptedReq && !myGameListing) {
-                showModalAlert("حظك ينتظرك 🎁", "لم تقم بعد بمشاركة منتج في لعبة الحظ أو لم تطبقا أي دورة مطابقة. قم بنشر عرض وفعل خيار لعبة الحظ لتبدأ!", "info");
+                showModalAlert("حظك ينتظرس 🎁", "لم تقم بعد بمشاركة منتج في لعبة الحظ أو لم تطبقا أي دورة مطابقة. قم بنشر عرض وفعل خيار لعبة الحظ لتبدأ!", "info");
                 openTradeWheelGameModal();
                 return;
             }
@@ -2897,16 +2894,27 @@
 
         function renderListings(list) {
             const grid = document.getElementById('listingsGrid');
+            const paginationContainer = document.getElementById('paginationContainer');
+
             if(!list || list.length === 0) {
                 grid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-12 font-bold">ما كاين حتا عرض دابا. كن أول واحد يحط عرض!</p>`;
+                if(paginationContainer) paginationContainer.innerHTML = '';
                 return;
             }
 
-            grid.innerHTML = list.map(item => {
+            const totalPages = Math.ceil(list.length / itemsPerPage);
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedList = list.slice(startIndex, endIndex);
+
+            grid.innerHTML = paginatedList.map(item => {
                 const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
                 const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
                 const authorStats = getUserRatingStats(item.user_id);
-                const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
+                const mySentReq = currentAccount ? allRequests.filter(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
                 const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
                 const isAuctionItem = item.is_auction === true;
 
@@ -2990,6 +2998,38 @@
                 </div>
                 `;
             }).join('');
+
+            // تم قلب أزرار التالي والسابق بناءً على طلبكم (سابق في اليمين، تالي في اليسار)
+            // وجعل التوجيه يتم نحو بداية العروض (العروض المتاحة للمقايضة) بدقة عند الضغط
+            if (paginationContainer) {
+                if (list.length > itemsPerPage) {
+                    paginationContainer.innerHTML = `
+                        <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled class="px-4 py-2 rounded-xl text-xs font-black bg-slate-200 text-slate-400 cursor-not-allowed"' : 'class="px-4 py-2 rounded-xl text-xs font-black bg-slate-900 hover:bg-slate-800 text-white shadow transition cursor-pointer flex items-center gap-1"'}>
+                            <i class="fa-solid fa-chevron-right"></i> سابق
+                        </button>
+                        <span class="text-xs font-black text-slate-700 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-200">
+                            الصفحة ${currentPage} من ${totalPages}
+                        </span>
+                        <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled class="px-4 py-2 rounded-xl text-xs font-black bg-slate-200 text-slate-400 cursor-not-allowed"' : 'class="px-4 py-2 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow transition cursor-pointer flex items-center gap-1"'}>
+                            تالي <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                    `;
+                } else {
+                    paginationContainer.innerHTML = '';
+                }
+            }
+        }
+
+        function changePage(targetPage) {
+            currentPage = targetPage;
+            filterProducts();
+            // التوجيه نحو حدود الرؤية لبداية قسم العروض المتاحة للمقايضة
+            const anchorEl = document.getElementById('listingsSectionTitleAnchor');
+            if(anchorEl) {
+                anchorEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                window.scrollTo({ top: 400, behavior: 'smooth' });
+            }
         }
 
         function openProductModal(id) {
@@ -2999,7 +3039,7 @@
             const isMyItem = currentAccount && String(currentAccount.id) === String(item.user_id);
             const author = allProfiles[String(item.user_id)] || { full_name: 'مستخدم', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
             const authorStats = getUserRatingStats(item.user_id);
-            const mySentReq = currentAccount ? allRequests.find(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
+            const mySentReq = currentAccount ? allRequests.filter(r => String(r.sender_id) === String(currentAccount.id) && String(r.listing_id) === String(item.id)) : null;
             const isRandomWanted = item.wanted && item.wanted.includes('باغي لي كان');
             const isAuctionItem = item.is_auction === true;
 
@@ -3280,6 +3320,7 @@
         }
 
         function filterProducts() {
+            currentPage = 1;
             const q = document.getElementById('search-input').value.toLowerCase();
             const activeListings = allListings.filter(p => p.status !== 'completed');
 
@@ -3295,6 +3336,7 @@
         }
 
         function filterCategory(c) {
+            currentPage = 1;
             const activeListings = allListings.filter(p => p.status !== 'completed');
             const categories = ['الكل', 'إلكترونيات', 'أثاث', 'وسائل نقل', 'خدمات'];
             categories.forEach(cat => {
@@ -3323,6 +3365,7 @@
 
         function filterCategoryBySub(subName) {
             closeModal('categoriesModal');
+            currentPage = 1;
             const activeListings = allListings.filter(p => p.status !== 'completed');
             const q = document.getElementById('search-input').value.toLowerCase();
             
