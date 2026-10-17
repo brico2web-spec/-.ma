@@ -1037,7 +1037,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.6</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.7</span>
                     </div>
                 </div>
             </div>
@@ -1554,7 +1554,6 @@
                 const gameHitRequests = allRequests.filter(r => myActiveListingsIds.includes(String(r.listing_id)));
                 const gameHitCount = gameHitRequests.length;
 
-                // التحقق من فوز أي منتج خاص بي في المزاد بينما أنا لست داخل الساحة
                 const myAuctionWonListings = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.is_auction === true && l.status === 'completed');
                 const hasAuctionWonNotification = myAuctionWonListings.length > 0;
 
@@ -1614,7 +1613,6 @@
                     timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
                 }
 
-                // عند وصول 3 ثواني في العد التنازلي: إيقاف الكتابة وإظهار الدائرة الكبيرة المثيرة مع إعلان الفائزين بشكل Boom
                 if(remainingSecs <= 3 && remainingSecs > 0) {
                     triggerAuctionCountdownBoom(remainingSecs);
                 } else if(remainingSecs === 0) {
@@ -1654,11 +1652,9 @@
             for(let item of activeAuctionBatch) {
                 let bids = item.bids_history || [];
                 if(bids.length > 0) {
-                    const winningBid = bids[bids.length - 1]; // أعلى مزايد فائز
-                    // إتمام العملية وتحديث حالة المنتج لمكتمل وحذفه من عروضي النشطة
+                    const winningBid = bids[bids.length - 1];
                     await _supabase.from('listings').update({ status: 'completed' }).eq('id', item.id);
                     
-                    // فتح طلب أو شات تلقائي بين الفائز وصاحب المنتج
                     await _supabase.from('trade_requests').insert([{
                         sender_id: String(winningBid.userId),
                         receiver_id: String(item.user_id),
@@ -1678,7 +1674,6 @@
                 return;
             }
 
-            // تظهر فقط المنتجات التي تم مفعل ليهم خاصية المزايدة المباشرة بدون خانة السعر في النافذة
             const myAuctionEligible = allListings.filter(l => String(l.user_id) === String(currentAccount.id) && l.status !== 'completed' && l.is_auction === true);
             const container = document.getElementById('myAuctionActiveListingsDropdown');
 
@@ -1714,7 +1709,6 @@
             const item = allListings.find(i => i.id === listingId);
             if(!item) return;
 
-            // التأكد من طرحه على ساحة المزايدة مع منتوجات المشتركين
             const { error } = await _supabase.from('listings').update({
                 is_auction: true,
                 current_price: item.start_price || 50,
@@ -1734,7 +1728,6 @@
 
         function renderFridayAuctionInterface() {
             const container = document.getElementById('fridayAuctionContainer');
-            // ساحة المزايدة تكون فيها 3 ديال المنتوجات كحد أقصى أو المتاحة
             const activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed').slice(0, 3);
 
             let addBtnHtml = `
@@ -1754,7 +1747,7 @@
                     ${addBtnHtml}
                     <div class="text-center py-12 space-y-3 bg-slate-900/60 rounded-3xl border border-purple-500/40">
                         <i class="fa-solid fa-gavel text-5xl text-purple-400"></i>
-                        <h4 class="font-black text-white text-base">لا توجد 3 منتجات معروضة في المزاد حالياً</h4>
+                        <h4 class="font-black text-white text-base">لا توجد منتجات معروضة في المزاد حالياً</h4>
                         <p class="text-xs text-purple-200">أضف منتجك المفعل للمزاد ليظهر في الساحة مع منتوجات المشتركين!</p>
                     </div>
                 `;
@@ -1835,7 +1828,6 @@
             const item = allListings.find(i => i.id === itemId);
             if(!item) return;
 
-            // ملي إكون المنتوج ديالي طلع فالساحة ميمكنش ليا نتزايد عيله نتزايد على منتوحات المشتركين
             if(String(item.user_id) === String(currentAccount.id)) {
                 showModalAlert("تنبيه قانوني", "ملي يكون المنتوج ديالك طلع في الساحة ميمكنش ليك تتزايد عليه! تتزايد على منتوجات المشتركين الآخرين.", "error");
                 return;
