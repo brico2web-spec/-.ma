@@ -982,6 +982,10 @@
                     <h4 class="font-black text-amber-400 text-sm flex items-center gap-1.5">
                         <i class="fa-solid fa-comments"></i> شاركونا اقتراحاتكم ورسائلكم ✉️
                     </h4>
+                    <div class="bg-amber-500/10 border border-amber-400/30 p-2.5 rounded-xl text-[11px] text-amber-300 font-medium leading-relaxed space-y-1">
+                        <p>💡 <strong>نحن نهتم برسائلكم وأفكاركم ومشاكلكم التقنية!</strong></p>
+                        <p>عند طرح فكرة أو اقتراح مناسب للموقع، أو الإبلاغ عن مشكل تقني، سوف تتواصل الإدارة معكم لتعطيكم هدية قيمة وترسلها لكم إلى العنوان المرسل مباشرة 🎁✨</p>
+                    </div>
                     <form id="footerSuggestionForm" onsubmit="handleFooterSuggestion(event)" class="space-y-2">
                         <div>
                             <input type="text" id="suggestionFullName" required placeholder="الاسم الكامل *" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -991,7 +995,7 @@
                             <input type="tel" id="suggestionPhone" required placeholder="رقم الهاتف *" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         </div>
                         <div>
-                            <textarea id="suggestionMessage" rows="2" required placeholder="رسالتك أو اقتراحك للمنصة... *" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+                            <textarea id="suggestionMessage" rows="2" required placeholder="رسالتك، فكرتك أو مشكلك التقني للمنصة... *" class="w-full bg-slate-900 border border-slate-700 text-white p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
                         </div>
                         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow cursor-pointer flex items-center justify-center gap-1">
                             <i class="fa-solid fa-paper-plane"></i> إرسال المقترح للإدارة 🚀
@@ -1008,7 +1012,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 1.8</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 1.9</span>
                     </div>
                 </div>
             </div>
@@ -1137,8 +1141,8 @@
             showFloatingNotification(`📍 تم تطبيق فلتر المدينة: (${cityName})`);
         }
 
-        // وظيفة إرسال الاقتراحات من الفوتر
-        function handleFooterSuggestion(e) {
+        // وظيفة إرسال الاقتراحات من الفوتر وحفظها في قاعدة البيانات لكي تظهر في صفحة الأدمين فوراً
+        async function handleFooterSuggestion(e) {
             e.preventDefault();
             const fullName = document.getElementById('suggestionFullName').value.trim();
             const address = document.getElementById('suggestionAddress').value.trim();
@@ -1150,12 +1154,33 @@
                 return;
             }
 
-            let savedSuggestions = JSON.parse(localStorage.getItem('badal_user_suggestions') || '[]');
-            savedSuggestions.push({ fullName, address, phone, message, date: new Date().toISOString() });
-            localStorage.setItem('badal_user_suggestions', JSON.stringify(savedSuggestions));
+            // محاولة الحفظ في جدول contact_messages في Supabase لكي تظهر في لوحة الأدمين مباشرة
+            const suggestionPayload = {
+                full_name: fullName,
+                name: fullName,
+                address: address,
+                phone: phone,
+                message: message,
+                content: message,
+                type: 'اقتراح / مشكل تقني',
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                await _supabase.from('contact_messages').insert([suggestionPayload]);
+            } catch (err) {
+                try {
+                    await _supabase.from('contact_us').insert([suggestionPayload]);
+                } catch(e2) {}
+            }
+
+            // حفظ احتياطي في التخزين المحلي أيضاً
+            let savedSuggestions = JSON.parse(localStorage.getItem('badal_contact_messages') || '[]');
+            savedSuggestions.unshift(suggestionPayload);
+            localStorage.setItem('badal_contact_messages', JSON.stringify(savedSuggestions));
 
             document.getElementById('footerSuggestionForm').reset();
-            showModalAlert("شكراً لك 🌟", "تم إرسال اقتراحك ورسالتك بنجاح إلى إدارة منصة بدل.ma! نحن نقدر مشاركتك.", "success");
+            showModalAlert("شكراً لك 🌟", "تم إرسال اقتراحك ورسالتك بنجاح إلى إدارة منصة بدل.ma! تذكر أن الأفكار والحلول التقنية الجيدة تؤهل أصحابها لهدايا قيمة تُرسل لعناوينهم.", "success");
         }
 
         function openCategoriesModal() {
