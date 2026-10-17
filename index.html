@@ -662,7 +662,7 @@
                         </label>
                         <input type="checkbox" id="addAuctionToggle" onchange="toggleAddAuctionPriceBox(this)" class="w-5 h-5 accent-purple-600 cursor-pointer">
                     </div>
-                    <p class="text-[10px] text-slate-700 font-bold">فعل هذا الخيار لتتمكن لاحقاً من اختيار هذا المنتج في ساحة المزايدة الحية.</p>
+                    <p class="text-[10px] text-slate-700 font-bold">فعل هذا الخيار لتتمكن لاحقاً من اختيار هذا المنتج في ساحة المزاد الحية.</p>
                     
                     <div id="auctionPriceContainer" class="hidden pt-2 border-t border-purple-200 space-y-1">
                         <label class="block font-bold text-purple-900 text-[11px]">حدد السعر الابتدائي للمزايدة (بين 10 و 500 درهم كحد أقصى) *:</label>
@@ -1037,7 +1037,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية المعدلة)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.7</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 3.8</span>
                     </div>
                 </div>
             </div>
@@ -1650,7 +1650,7 @@
         async function checkAndFinalizeAuctionWinners() {
             const activeAuctionBatch = allListings.filter(l => l.is_auction === true && l.status !== 'completed');
             for(let item of activeAuctionBatch) {
-                let bids = item.bids_history || [];
+                let bids = Array.isArray(item.bids_history) ? item.bids_history : [];
                 if(bids.length > 0) {
                     const winningBid = bids[bids.length - 1];
                     await _supabase.from('listings').update({ status: 'completed' }).eq('id', item.id);
@@ -1709,10 +1709,12 @@
             const item = allListings.find(i => i.id === listingId);
             if(!item) return;
 
+            const safeBids = Array.isArray(item.bids_history) ? item.bids_history : [];
+
             const { error } = await _supabase.from('listings').update({
                 is_auction: true,
                 current_price: item.start_price || 50,
-                bids_history: item.bids_history || []
+                bids_history: safeBids
             }).eq('id', listingId);
 
             if(error) {
@@ -1759,7 +1761,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     ${activeAuctionBatch.map((item) => {
                         const seller = allProfiles[String(item.user_id)] || { full_name: 'بائع', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
-                        let bids = item.bids_history || [];
+                        let bids = Array.isArray(item.bids_history) ? item.bids_history : [];
                         const highestBid = bids.length > 0 ? bids[bids.length - 1] : null;
                         const isMyItemInAuction = currentAccount && String(item.user_id) === String(currentAccount.id);
                         const startPrice = item.start_price || 50;
@@ -1847,7 +1849,7 @@
                 return;
             }
 
-            let updatedBids = item.bids_history ? [...item.bids_history] : [];
+            let updatedBids = Array.isArray(item.bids_history) ? [...item.bids_history] : [];
             updatedBids.push({
                 userId: String(currentAccount.id),
                 userName: currentAccount.full_name,
@@ -3363,8 +3365,18 @@
             showFloatingNotification(`📂 تم فلترة العروض حسب شريحة: (${subName})`);
         }
 
-        function openModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openModal(id) { 
+            const modalEl = document.getElementById(id);
+            if(modalEl) {
+                modalEl.classList.remove('hidden'); 
+            }
+        }
+        function closeModal(id) { 
+            const modalEl = document.getElementById(id);
+            if(modalEl) {
+                modalEl.classList.add('hidden'); 
+            }
+        }
     </script>
 </body>
 </html>
