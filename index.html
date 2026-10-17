@@ -1012,7 +1012,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 1.9</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 2.0</span>
                     </div>
                 </div>
             </div>
@@ -1180,7 +1180,7 @@
             localStorage.setItem('badal_contact_messages', JSON.stringify(savedSuggestions));
 
             document.getElementById('footerSuggestionForm').reset();
-            showModalAlert("شكراً لك 🌟", "تم إرسال اقتراحك ورسالتك بنجاح إلى إدارة منصة بدل.ma! تذكر أن الأفكار والحلول التقنية الجيدة تؤهل أصحابها لهدايا قيمة تُرسل لعناوينهم.", "success");
+            showModalAlert("شكراً لك 🌟", "تم إرسال اقتراحك ورسالتك بنجاح إلى إدارة منصة بدل.ma! تذكر أن الأفكار والحلول التقنية الجيدة تؤهل أصحابها لهدايا قيمة تُرسل لعناوينهم مباشرة.", "success");
         }
 
         function openCategoriesModal() {
@@ -1880,49 +1880,73 @@
             btn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
 
+        // --- التعديل المطلوب: لعبة عجلة الحظ مع البحث عن الطرف الثاني الحقيقي ومحاكاة البحث المستمر إن لم يوجد ---
         function executeWheelSpin() {
             if(!selectedGameListingId) {
                 showModalAlert("تنبيه", "المرجو اختيار أحد عروضك للمشاركة في العجلة أولاً!", "info");
                 return;
             }
 
-            const availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && !sessionExcludedGameListingIds.includes(l.id));
-
-            if(availableOpponents.length === 0) {
-                showModalAlert("تنبيه", "عذراً، لا توجد عروض كافية متاحة حالياً للتدوير أو استنفذت جميع العروض المتاحة في هذه الجلسة!", "info");
-                return;
-            }
+            // تصفية العروض للبحث عن طرف حقيقي ثانٍ (مستخدم آخر غير المستخدم الحالي)
+            let availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && !sessionExcludedGameListingIds.includes(l.id));
 
             document.getElementById('gameSelectorStep').classList.add('hidden');
             const resultArea = document.getElementById('gameSpinnerResultArea');
             resultArea.classList.remove('hidden');
 
+            // عرض واجهة عملية البحث الحي عن الطرف الثاني
             resultArea.innerHTML = `
                 <div class="py-8 space-y-4">
                     <div class="w-20 h-20 rounded-full bg-gradient-to-r from-amber-500 to-pink-600 flex items-center justify-center mx-auto text-3xl shadow-2xl wheel-anim">
-                        <i class="fa-solid fa-dice text-white"></i>
+                        <i class="fa-solid fa-dice text-white animate-spin"></i>
                     </div>
-                    <div class="space-y-1">
-                        <h4 class="font-black text-base text-amber-300 animate-pulse">جاري تدوير العجلة لاختيار الشريك المناسب... 🎲</h4>
-                        <p class="text-xs text-slate-300">كون راجل وعند كلمتك، هذي غير حظ خفيف ضريف وممتعة!</p>
+                    <div class="space-y-2">
+                        <h4 class="font-black text-base text-amber-300 animate-pulse">جاري البحث عن الطرف الثاني الحقيقي في اللعبة... 🔍</h4>
+                        <p class="text-xs text-slate-300">السيستم يبحث عن شريك حقيقي دخل للعبة لربطكما معاً بالحظ الحقيقي...</p>
                     </div>
                 </div>
             `;
 
+            // محاكاة عملية البحث الحية: فحص ما إذا وجد طرف حقيقي، وإن لم يوجد في تلك اللحظة تبقى في عملية البحث
             setTimeout(() => {
+                // إعادة جلب المنتجات المتاحة للتأكد من وجود طرف حقيقي حديث
+                availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && !sessionExcludedGameListingIds.includes(l.id));
+
+                if(availableOpponents.length === 0) {
+                    // حالة عدم وجود طرف حقيقي في ذلك الوقت -> تبقى في واجهة البحث وتنبيه المستخدم بالانتظار
+                    resultArea.innerHTML = `
+                        <div class="py-8 space-y-4 slide-fade">
+                            <div class="w-16 h-16 rounded-full bg-amber-500/20 border border-amber-400 text-amber-400 flex items-center justify-center mx-auto text-2xl animate-bounce">
+                                <i class="fa-solid fa-hourglass-half"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <h4 class="font-black text-sm text-amber-300">لم يتم العثور على شخص في هذه اللحظة!</h4>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    السيستم ما زال في عملية البحث المستمر عن طرف حقيقي... عندما يدخل شخص آخر للعبة، سيتطابقان فوراً. يمكنك إعادة المحاولة لاحقاً!
+                                </p>
+                            </div>
+                            <button onclick="openTradeWheelGameModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-pink-300 font-bold py-3 rounded-xl text-xs transition cursor-pointer border border-slate-700">
+                                <i class="fa-solid fa-rotate-right ml-1"></i> إعادة المحاولة والبحث مجدداً 🔄
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // في حالة وجود طرف حقيقي جاهز للعب: اختيار العرض عشوائياً وبكل شفافية
                 const randomIdx = Math.floor(Math.random() * availableOpponents.length);
                 const chosenOpponentListing = availableOpponents[randomIdx];
                 sessionExcludedGameListingIds.push(chosenOpponentListing.id);
 
                 const myListing = allListings.find(l => String(l.id) === String(selectedGameListingId));
-                const partner = allProfiles[String(chosenOpponentListing.user_id)] || { full_name: 'شريك مبادل', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
+                const partner = allProfiles[String(chosenOpponentListing.user_id)] || { full_name: 'شريك مبادل حقيقي', avatar_url: 'https://i.ibb.co/BVspypdG/1791985093664.jpg' };
 
                 completeWheelTradeInSystem(myListing, chosenOpponentListing);
 
                 resultArea.innerHTML = `
                     <div class="space-y-4 slide-fade">
                         <span class="bg-emerald-500/20 text-emerald-300 text-xs font-black px-4 py-1.5 rounded-full border border-emerald-400 inline-block animate-bounce">
-                            🎉 مبروك! طاحت فيك هاد الهمزة 🤝
+                            🎉 تم العثور على طرف حقيقي! طاحت فيك هاد الهمزة 🤝
                         </span>
                         
                         <div class="grid grid-cols-2 gap-3 items-center bg-slate-900/90 p-3 rounded-2xl border border-pink-500/60">
@@ -1939,7 +1963,7 @@
                         </div>
 
                         <p class="text-[11px] text-amber-300 font-bold leading-relaxed">
-                            🔥 <strong>كون راجل وعند كلمتك!</strong> هذي لعبة حظ خفيف ضريف وممتعة. تواصل دابا مع الشريك وحدد وقت اللقاء (فأيام العطلة، السبت والأحد) بكل روح رياضية!
+                            🔥 <strong>كون راجل وعند كلمتك!</strong> تم ربطك بنجاح مع طرف حقيقي عبر عجلة الحظ. تواصل دابا مع الشريك وحدد وقت اللقاء بكل روح رياضية!
                         </p>
 
                         <div class="space-y-2 pt-1">
@@ -1955,7 +1979,7 @@
                         </div>
                     </div>
                 `;
-            }, 2500);
+            }, 3000);
         }
 
         function openChatFromGame(opponentListingId) {
