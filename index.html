@@ -645,6 +645,22 @@
                     </select>
                 </div>
 
+                <!-- التعديل المطلوب: خانة ساحة المزايدة المباشرة تحت شريحة الفئة -->
+                <div class="bg-gradient-to-r from-purple-50 via-indigo-50 to-purple-100 p-4 rounded-2xl border-2 border-purple-400 space-y-2.5 shadow-inner">
+                    <div class="flex items-center justify-between">
+                        <label for="addAuctionToggle" class="font-black text-purple-900 cursor-pointer flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-gavel text-purple-700 text-base"></i> إدراج هذا المنتج في ساحة المزايدة المباشرة 🔨
+                        </label>
+                        <input type="checkbox" id="addAuctionToggle" onchange="toggleAddAuctionPriceBox(this)" class="w-5 h-5 accent-purple-600 cursor-pointer">
+                    </div>
+                    <p class="text-[10px] text-slate-700 font-bold">فعل هذا الخيار لعرض منتجك للمزايدة الحية المباشرة بين المشاركين.</p>
+                    
+                    <div id="auctionPriceContainer" class="hidden pt-2 border-t border-purple-200 space-y-1">
+                        <label class="block font-bold text-purple-900 text-[11px]">حدد السعر الابتدائي للمزايدة (بين 10 و 500 درهم كحد أقصى) *:</label>
+                        <input type="number" id="addAuctionStartPrice" min="10" max="500" value="50" class="w-full bg-white border border-purple-300 p-2.5 rounded-xl font-bold text-xs focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+
                 <div class="bg-gradient-to-r from-amber-100 via-pink-100 to-purple-100 p-4 rounded-2xl border-2 border-pink-400 space-y-2 shadow-inner">
                     <div class="flex items-center justify-between">
                         <label for="participateGameCheck" class="font-black text-pink-900 cursor-pointer flex items-center gap-2 text-xs">
@@ -1005,7 +1021,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 2.4</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 2.7</span>
                     </div>
                 </div>
             </div>
@@ -1138,7 +1154,7 @@
             showFloatingNotification(`📍 تم تطبيق فلتر المدينة: (${cityName})`);
         }
 
-        // وظيفة إرسال الاقتراحات من الفوتر وحفظها في قاعدة البيانات لكي تظهر في صفحة الأدمين فوراً
+        // وظيفة إرسال الاقتراحات من الفوتر وحفظها في قاعدة البيانات لكي تظهر في صفحة الأدمين فوراً (محدثة لدعم الأجهزة المختلفة عبر Supabase والتخزين المحلي)
         async function handleFooterSuggestion(e) {
             e.preventDefault();
             const fullName = document.getElementById('suggestionFullName').value.trim();
@@ -1162,12 +1178,17 @@
                 created_at: new Date().toISOString()
             };
 
+            // محاولة الإرسال لعدة جداول محتملة في Supabase لتجنب أي خطأ في أسماء الجداول
             try {
-                await _supabase.from('contact_messages').insert([suggestionPayload]);
-            } catch (err) {
+                await _supabase.from('contact_us').insert([suggestionPayload]);
+            } catch (err1) {
                 try {
-                    await _supabase.from('contact_us').insert([suggestionPayload]);
-                } catch(e2) {}
+                    await _supabase.from('contact_messages').insert([suggestionPayload]);
+                } catch(err2) {
+                    try {
+                        await _supabase.from('suggestions').insert([suggestionPayload]);
+                    } catch(err3) {}
+                }
             }
 
             let savedSuggestions = JSON.parse(localStorage.getItem('badal_contact_messages') || '[]');
@@ -2559,6 +2580,15 @@
             }
         }
 
+        function toggleAddAuctionPriceBox(checkbox) {
+            const box = document.getElementById('auctionPriceContainer');
+            if(checkbox.checked) {
+                box.classList.remove('hidden');
+            } else {
+                box.classList.add('hidden');
+            }
+        }
+
         async function openSuccessTradeModal(listingId) {
             const item = allListings.find(l => String(l.id) === String(listingId));
             if(!item) return;
@@ -2678,6 +2708,9 @@
 
             document.getElementById('randomWantedCheck').checked = false;
             document.getElementById('participateGameCheck').checked = false;
+            document.getElementById('addAuctionToggle').checked = false;
+            document.getElementById('auctionPriceContainer').classList.add('hidden');
+            
             const wantedInput = document.getElementById('addWanted');
             wantedInput.value = "";
             wantedInput.disabled = false;
@@ -3058,8 +3091,20 @@
             const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
             const participateGame = document.getElementById('participateGameCheck').checked;
             const subCategoryVal = document.getElementById('addSubCategory').value;
+            const isAuctionChecked = document.getElementById('addAuctionToggle').checked;
+            
+            let startPriceVal = 50;
+            if(isAuctionChecked) {
+                startPriceVal = Number(document.getElementById('addAuctionStartPrice').value);
+                if(isNaN(startPriceVal) || startPriceVal < 10 || startPriceVal > 500) {
+                    showModalAlert("خطأ في الثمن", "السعر الابتدائي للمزاد يجب أن يكون بين 10 دراهم و 500 درهم كحد أقصى!", "error");
+                    return;
+                }
+            }
 
-            const { error: insertError } = await _supabase.from('listings').insert([{
+            let bidsHistoryLocal = [];
+
+            const { data: insertedData, error: insertError } = await _supabase.from('listings').insert([{
                 title: document.getElementById('addTitle').value,
                 category: subCategoryVal,
                 city: currentAccount.city,
@@ -3069,17 +3114,31 @@
                 description: document.getElementById('addDesc').value,
                 image_url: imageUrl,
                 user_id: String(currentAccount.id),
-                status: 'active'
-            }]);
+                status: 'active',
+                is_auction: isAuctionChecked,
+                start_price: isAuctionChecked ? startPriceVal : null,
+                current_price: isAuctionChecked ? startPriceVal : null,
+                bids_history: isAuctionChecked ? bidsHistoryLocal : null
+            }]).select();
 
             if(insertError) {
                 showModalAlert("خطأ", "خطأ في نشر العرض: " + insertError.message, "error");
                 return;
             }
 
+            if(isAuctionChecked && insertedData && insertedData[0]) {
+                const newId = insertedData[0].id;
+                localStorage.setItem('badal_auction_item_' + newId, JSON.stringify({
+                    is_auction: true,
+                    start_price: startPriceVal,
+                    current_price: startPriceVal,
+                    bids_history: []
+                }));
+            }
+
             closeModal('addModal');
             await fetchListings();
-            showModalAlert("نجاح", participateGame ? "تم نشر عرضك ومشاركته في لعبة حظ المقايضة بنجاح! 🎁🎲" : "تم نشر عرضك بنجاح! 🎉", "success");
+            showModalAlert("نجاح", isAuctionChecked ? "تم نشر عرضك وإدراجه بنجاح في ساحة المزايدة المباشرة! 🔨" : (participateGame ? "تم نشر عرضك ومشاركته في لعبة حظ المقايضة بنجاح! 🎁🎲" : "تم نشر عرضك بنجاح! 🎉"), "success");
         }
 
         async function deleteListing(id) {
@@ -3153,8 +3212,20 @@
             showFloatingNotification(`📂 تم فلترة العروض حسب شريحة: (${subName})`);
         }
 
-        function openModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        // تم إصلاح مشكلة الوميض (تفتح المودال بـ remove فقط بدون تداخل)
+        function openModal(id) { 
+            const modalEl = document.getElementById(id);
+            if(modalEl) {
+                modalEl.classList.remove('hidden'); 
+            }
+        }
+        
+        function closeModal(id) { 
+            const modalEl = document.getElementById(id);
+            if(modalEl) {
+                modalEl.classList.add('hidden'); 
+            }
+        }
     </script>
 </body>
 </html>
