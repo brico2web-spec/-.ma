@@ -14,9 +14,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style> 
         body { font-family: 'Tajawal', sans-serif; } 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(6px) scale(0.98); }
+            15% { opacity: 1; transform: translateY(0) scale(1); }
+            85% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-6px) scale(0.98); }
         }
         @keyframes hemzaGlow {
             0%, 100% { 
@@ -38,21 +40,12 @@
             50% { transform: rotate(180deg) scale(1.1); opacity: 1; }
             100% { transform: rotate(360deg) scale(1); opacity: 1; }
         }
-        /* حركة شريط المقايضات المكتملة الحي */
-        @keyframes tickerScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-ticker {
-            display: flex;
-            width: max-content;
-            animation: tickerScroll 25s linear infinite;
-        }
-        .animate-ticker:hover {
-            animation-play-state: paused;
+
+        .animate-fade-in-out {
+            animation: fadeInOut 5s ease-in-out infinite;
         }
 
-        .slide-fade { animation: fadeIn 0.6s ease-in-out; }
+        .slide-fade { animation: fadeInOut 0.6s ease-in-out; }
         .slider-img-anim { animation: sliderZoom 8s infinite ease-in-out; }
         .wheel-anim { animation: wheelSpinAnim 2.5s cubic-bezier(0.15, 0.85, 0.35, 1) forwards; }
         .hemza-card { 
@@ -177,20 +170,19 @@
 
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
-        <!-- قسم أحدث المقايضات المكتملة بصيغة شريط حركي حي (Live Ticker Stream) بتصميم مفتوح ومشرق ومتناسق -->
-        <section id="homepageCompletedTradesSection" class="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 p-6 rounded-3xl border-2 border-emerald-300 shadow-xl space-y-4 overflow-hidden relative">
-            <div class="flex items-center justify-between flex-wrap gap-2">
-                <div class="flex items-center gap-2.5">
-                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 animate-ping"></span>
-                    <h3 class="font-black text-sm sm:text-base text-emerald-900 tracking-wide">⚡ شريط الحركة الحي: أحدث المقايضات المكتملة فورياً عبر بدل.ma</h3>
+        
+        <!-- الوحدة الأفقية الجديدة البارزة للمقايضات المكتملة (واحدة تلو الأخرى مع تأثير الإختفاء والظهور) -->
+        <section class="bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-900 p-5 rounded-3xl border-2 border-emerald-400/60 shadow-xl relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3 border-b border-emerald-800/60 pb-2">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+                    <h3 class="font-black text-xs sm:text-sm text-emerald-300 tracking-wide">✨ أحدث المقايضات والعمليات المكتملة فورياً</h3>
                 </div>
-                <span class="text-[11px] font-black text-emerald-700 bg-white px-3 py-1 rounded-full border border-emerald-200 shadow-sm">تحديث مباشر ✨</span>
+                <span class="text-[10px] font-bold text-emerald-400 bg-emerald-900/80 px-3 py-1 rounded-full border border-emerald-600">بث حي ⚡</span>
             </div>
-            <!-- الشريط الحركي المتفاعل بتصميم ناصع ومشرق -->
-            <div class="relative overflow-hidden bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-emerald-200 shadow-lg">
-                <div id="homepageCompletedGrid" class="flex gap-4 animate-ticker">
-                    <p class="text-xs text-slate-500 font-medium text-center py-2">جاري جلب أحدث المقايضات الناجحة والمحدثة من السيستم...</p>
-                </div>
+            
+            <div id="rotatingCompletedTradeContainer" class="min-h-[90px] flex items-center justify-center">
+                <p class="text-xs text-emerald-300/80 font-medium text-center py-2">جاري جلب أحدث المقايضات الناجحة والمحدثة...</p>
             </div>
         </section>
 
@@ -451,7 +443,8 @@
             </div>
 
             <div class="relative overflow-hidden py-4 flex items-center justify-center">
-                <div id="featuredSingleProfileContainer" class="w-full max-w-sm transition-all duration-700 ease-in-out">
+                <!-- تم إضافة فئة animate-fade-in-out هنا لضمان سلاسة حركة الظهور والإختفاء -->
+                <div id="featuredSingleProfileContainer" class="w-full max-w-sm animate-fade-in-out">
                     <div class="text-center py-6 text-slate-400 text-xs">جاري تحميل الأشخاص المتميزون...</div>
                 </div>
             </div>
@@ -1012,7 +1005,7 @@
                     </ul>
                     <div class="pt-2 text-[10px] text-slate-500 font-bold flex items-center justify-between">
                         <span>جميع الحقوق محفوظة © 2026 - بدل.ma (النسخة الاحترافية)</span>
-                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 2.0</span>
+                        <span class="bg-emerald-600/30 text-emerald-400 px-2.5 py-0.5 rounded-md font-black border border-emerald-500/40">V 2.3</span>
                     </div>
                 </div>
             </div>
@@ -1042,6 +1035,10 @@
         let auctionTimerInterval = null;
 
         let typingTimeout = null;
+
+        let rotatingTradesList = [];
+        let currentRotatingTradeIndex = 0;
+        let rotatingTradesInterval = null;
 
         function showModalAlert(title, message, type = 'info') {
             document.getElementById('customAlertTitle').textContent = title;
@@ -1154,7 +1151,6 @@
                 return;
             }
 
-            // محاولة الحفظ في جدول contact_messages في Supabase لكي تظهر في لوحة الأدمين مباشرة
             const suggestionPayload = {
                 full_name: fullName,
                 name: fullName,
@@ -1174,7 +1170,6 @@
                 } catch(e2) {}
             }
 
-            // حفظ احتياطي في التخزين المحلي أيضاً
             let savedSuggestions = JSON.parse(localStorage.getItem('badal_contact_messages') || '[]');
             savedSuggestions.unshift(suggestionPayload);
             localStorage.setItem('badal_contact_messages', JSON.stringify(savedSuggestions));
@@ -1443,7 +1438,7 @@
                     currentFeaturedProfileIndex = (currentFeaturedProfileIndex + 1) % weeklyFeaturedList.length;
                     renderSingleFeaturedProfile();
                 }
-            }, 3500);
+            }, 5000);
         }
 
         function renderSingleFeaturedProfile() {
@@ -1455,8 +1450,9 @@
             const city = profile.city || 'المغرب';
             const avatar = profile.avatar_url || 'https://i.ibb.co/BVspypdG/1791985093664.jpg';
 
+            // تم إضافة فئة animate-fade-in-out هنا أيضاً عند تحديث العنصر داخلياً لضمان سلاسة الظهور والإختفاء
             container.innerHTML = `
-                <div class="bg-slate-800/90 border border-emerald-500/50 rounded-3xl p-5 flex items-center gap-4 shadow-2xl slide-fade backdrop-blur-md">
+                <div class="bg-slate-800/90 border border-emerald-500/50 rounded-3xl p-5 flex items-center gap-4 shadow-2xl animate-fade-in-out backdrop-blur-md">
                     <div class="relative flex-shrink-0">
                         <img src="${avatar}" class="w-16 h-16 rounded-full object-cover border-2 border-emerald-400 shadow-lg">
                     </div>
@@ -1880,21 +1876,18 @@
             btn.classList.remove('opacity-50', 'cursor-not-allowed');
         }
 
-        // --- التعديل المطلوب: لعبة عجلة الحظ مع البحث عن الطرف الثاني الحقيقي ومحاكاة البحث المستمر إن لم يوجد ---
         function executeWheelSpin() {
             if(!selectedGameListingId) {
                 showModalAlert("تنبيه", "المرجو اختيار أحد عروضك للمشاركة في العجلة أولاً!", "info");
                 return;
             }
 
-            // تصفية العروض للبحث عن طرف حقيقي ثانٍ (مستخدم آخر غير المستخدم الحالي)
             let availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && !sessionExcludedGameListingIds.includes(l.id));
 
             document.getElementById('gameSelectorStep').classList.add('hidden');
             const resultArea = document.getElementById('gameSpinnerResultArea');
             resultArea.classList.remove('hidden');
 
-            // عرض واجهة عملية البحث الحي عن الطرف الثاني
             resultArea.innerHTML = `
                 <div class="py-8 space-y-4">
                     <div class="w-20 h-20 rounded-full bg-gradient-to-r from-amber-500 to-pink-600 flex items-center justify-center mx-auto text-3xl shadow-2xl wheel-anim">
@@ -1907,13 +1900,10 @@
                 </div>
             `;
 
-            // محاكاة عملية البحث الحية: فحص ما إذا وجد طرف حقيقي، وإن لم يوجد في تلك اللحظة تبقى في عملية البحث
             setTimeout(() => {
-                // إعادة جلب المنتجات المتاحة للتأكد من وجود طرف حقيقي حديث
                 availableOpponents = allListings.filter(l => l.status !== 'completed' && String(l.user_id) !== String(currentAccount.id) && !sessionExcludedGameListingIds.includes(l.id));
 
                 if(availableOpponents.length === 0) {
-                    // حالة عدم وجود طرف حقيقي في ذلك الوقت -> تبقى في واجهة البحث وتنبيه المستخدم بالانتظار
                     resultArea.innerHTML = `
                         <div class="py-8 space-y-4 slide-fade">
                             <div class="w-16 h-16 rounded-full bg-amber-500/20 border border-amber-400 text-amber-400 flex items-center justify-center mx-auto text-2xl animate-bounce">
@@ -1933,7 +1923,6 @@
                     return;
                 }
 
-                // في حالة وجود طرف حقيقي جاهز للعب: اختيار العرض عشوائياً وبكل شفافية
                 const randomIdx = Math.floor(Math.random() * availableOpponents.length);
                 const chosenOpponentListing = availableOpponents[randomIdx];
                 sessionExcludedGameListingIds.push(chosenOpponentListing.id);
@@ -2004,62 +1993,90 @@
             }]);
 
             await fetchRequests();
-            renderHomepageCompletedTrades();
+            renderCompletedTradesRotator();
         }
 
-        async function renderHomepageCompletedTrades() {
-            const container = document.getElementById('homepageCompletedGrid');
+        function renderCompletedTradesRotator() {
+            const container = document.getElementById('rotatingCompletedTradeContainer');
             const completedItems = allListings.filter(l => l.status === 'completed');
 
             if(!completedItems || completedItems.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500 font-medium text-center py-2 w-full">جاري البحث في السجل... لا توجد مقايضات مكتملة مؤخراً. كن أول من يبادل!</p>`;
+                container.innerHTML = `<p class="text-xs text-emerald-300/80 font-medium text-center py-2">لا توجد عمليات مكتملة حتى الآن. كن أول من يبادل!</p>`;
+                if(rotatingTradesInterval) clearInterval(rotatingTradesInterval);
                 return;
             }
 
-            const buildCardsHtml = (itemsList) => {
-                return itemsList.map(item => {
-                    const isGame = item.wanted && item.wanted.includes('لعبة');
-                    const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
-                    const isAuction = item.is_auction === true;
+            rotatingTradesList = completedItems;
+            if(currentRotatingTradeIndex >= rotatingTradesList.length) {
+                currentRotatingTradeIndex = 0;
+            }
 
-                    let cardBgClass = "bg-white border-emerald-200 shadow-sm";
-                    let badgeClass = "bg-emerald-100 text-emerald-800";
-                    let badgeText = "مقايدة عادية 🤝";
-                    let iconSymbol = "fa-handshake";
+            displaySingleRotatingTrade();
 
-                    if (isGame) {
-                        cardBgClass = "bg-gradient-to-br from-pink-50 via-purple-50 to-white border-pink-300 shadow-pink-100";
-                        badgeClass = "bg-gradient-to-r from-amber-500 to-pink-600 text-white animate-pulse";
-                        badgeText = "مقايضة عن طريق لعبة 🎲";
-                        iconSymbol = "fa-dice";
-                    } else if (isHemza) {
-                        cardBgClass = "bg-gradient-to-br from-amber-50 via-yellow-50 to-white border-amber-300 shadow-amber-100";
-                        badgeClass = "bg-amber-500 text-white font-black";
-                        badgeText = "همزة المقايضة ⚡";
-                        iconSymbol = "fa-bolt";
-                    } else if (isAuction) {
-                        cardBgClass = "bg-gradient-to-br from-purple-50 via-indigo-50 to-white border-purple-300 shadow-purple-100";
-                        badgeClass = "bg-purple-600 text-white";
-                        badgeText = "المزاد المباشر 🔨";
-                        iconSymbol = "fa-gavel";
-                    }
+            if(rotatingTradesInterval) clearInterval(rotatingTradesInterval);
+            rotatingTradesInterval = setInterval(() => {
+                if(rotatingTradesList.length > 0) {
+                    currentRotatingTradeIndex = (currentRotatingTradeIndex + 1) % rotatingTradesList.length;
+                    displaySingleRotatingTrade();
+                }
+            }, 5000);
+        }
 
-                    return `
-                        <div onclick="openSuccessTradeModal('${item.id}')" class="${cardBgClass} backdrop-blur p-3.5 rounded-2xl border-2 shadow-md flex items-center gap-3 cursor-pointer hover:shadow-xl transition transform hover:-translate-y-1 flex-shrink-0 w-72">
-                            <img src="${item.image_url}" class="w-14 h-14 rounded-xl object-cover border-2 border-emerald-400 flex-shrink-0 shadow">
-                            <div class="overflow-hidden text-right flex-grow">
-                                <span class="${badgeClass} text-[9px] font-black px-2 py-0.5 rounded-full inline-block mb-1 shadow-sm">
-                                    <i class="fa-solid ${iconSymbol} ml-1"></i> ${badgeText}
+        function displaySingleRotatingTrade() {
+            const container = document.getElementById('rotatingCompletedTradeContainer');
+            if(!container || rotatingTradesList.length === 0) return;
+
+            const item = rotatingTradesList[currentRotatingTradeIndex];
+            const isGame = item.wanted && item.wanted.includes('لعبة');
+            const isHemza = item.wanted && (item.wanted.includes('باغي لي كان') || item.wanted.includes('همزة'));
+            const isAuction = item.is_auction === true;
+
+            let cardBg = "bg-white/95 text-slate-900 border-emerald-300 shadow-emerald-500/10";
+            let badgeBg = "bg-emerald-600 text-white";
+            let badgeText = "مقايضة عادية 🤝";
+            let iconSymbol = "fa-handshake";
+
+            if(isGame) {
+                cardBg = "bg-gradient-to-r from-slate-900 via-pink-950 to-slate-900 text-white border-pink-400 shadow-pink-500/20";
+                badgeBg = "bg-gradient-to-r from-amber-500 to-pink-600 text-white";
+                badgeText = "مقايضة عبر عجلة الحظ 🎲";
+                iconSymbol = "fa-dice";
+            } else if(isHemza) {
+                cardBg = "bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 text-white border-amber-400 shadow-amber-500/20";
+                badgeBg = "bg-amber-500 text-slate-950 font-black";
+                badgeText = "همزة المقايضة ⚡";
+                iconSymbol = "fa-bolt";
+            } else if(isAuction) {
+                cardBg = "bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 text-white border-purple-400 shadow-purple-500/20";
+                badgeBg = "bg-purple-600 text-white";
+                badgeText = "المزاد المباشر 🔨";
+                iconSymbol = "fa-gavel";
+            }
+
+            const seller = allProfiles[String(item.user_id)] || { full_name: 'مشارِك' };
+
+            container.innerHTML = `
+                <div onclick="openSuccessTradeModal('${item.id}')" class="${cardBg} backdrop-blur-md rounded-2xl p-4 border-2 shadow-xl flex items-center justify-between gap-3 w-full max-w-xl cursor-pointer hover:scale-[1.01] transition animate-fade-in-out">
+                    <div class="flex items-center gap-3.5 overflow-hidden">
+                        <img src="${item.image_url}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-emerald-400 shadow-md flex-shrink-0">
+                        <div class="space-y-1 text-right overflow-hidden">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="${badgeBg} text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-sm inline-flex items-center gap-1">
+                                    <i class="fa-solid ${iconSymbol}"></i> ${badgeText}
                                 </span>
-                                <h4 class="font-black text-xs text-slate-900 line-clamp-1">${item.title}</h4>
-                                <p class="text-[10px] text-emerald-700 font-bold mt-0.5"><i class="fa-solid fa-location-dot text-emerald-600"></i> ${item.city} - تمت بنجاح ✅</p>
+                                <span class="text-[10px] font-bold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-700">📍 ${item.city}</span>
                             </div>
+                            <h4 class="font-black text-xs sm:text-sm line-clamp-1">${item.title}</h4>
+                            <p class="text-[10px] opacity-90 font-medium">تمت بنجاح بين المشاركين بـ 0 درهم ✅</p>
                         </div>
-                    `;
-                }).join('');
-            };
-
-            container.innerHTML = buildCardsHtml(completedItems) + buildCardsHtml(completedItems);
+                    </div>
+                    <div class="flex-shrink-0 text-left pl-1">
+                        <span class="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-bold border border-emerald-400/40 shadow">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </span>
+                    </div>
+                </div>
+            `;
         }
 
         function updateDrawerUserInfo() {
@@ -2698,7 +2715,7 @@
             const activeListings = allListings.filter(p => p.status !== 'completed');
             if(countEl) countEl.textContent = activeListings.length;
             filterProducts();
-            renderHomepageCompletedTrades();
+            renderCompletedTradesRotator();
             if(document.getElementById('fridayAuctionModal') && !document.getElementById('fridayAuctionModal').classList.contains('hidden')) {
                 renderFridayAuctionInterface();
             }
