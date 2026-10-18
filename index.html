@@ -1398,7 +1398,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.4.3</span>
+            <span class="version-tag">v0.4.4</span>
         </div>
     </footer>
 
@@ -1863,7 +1863,7 @@
             }
         });
 
-        // ربط عناصر قائمة الحساب الجديدة (اعلاناتي)
+        // ربط عناصر قائمة الحساب الجديدة (اعلاناتي) مع استبعاد حسابات المستخدمين
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
@@ -1891,27 +1891,37 @@
                         .order('created_at', { ascending: false });
 
                     if (!error && data && data.length > 0) {
-                        myAdsContainer.innerHTML = '';
-                        data.forEach(ad => {
-                            const adCard = document.createElement('div');
-                            adCard.style.cssText = "display:flex; align-items:center; justify-content:space-between; background:#f8faf9; border:1px solid #d2ded7; padding:10px 15px; border-radius:10px; gap:10px;";
-                            
-                            let rawDesc = ad.description || '';
-                            let cleanDesc = rawDesc.split(' (الهاتف:')[0];
-                            const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">` : `<div style="width:50px; height:50px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.2rem;"><i class="fa-solid fa-box-open"></i></div>`;
-
-                            adCard.innerHTML = `
-                                <div style="display:flex; align-items:center; gap:12px; overflow:hidden;">
-                                    ${imgThumb}
-                                    <div>
-                                        <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif;">${ad.title}</h4>
-                                        <p style="font-size:0.8rem; color:var(--text-gray);">${cleanDesc}</p>
-                                    </div>
-                                </div>
-                                <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; white-space:nowrap;"><i class="fa-solid fa-trash"></i> حذف</button>
-                            `;
-                            myAdsContainer.appendChild(adCard);
+                        // تصفية النتائج لاستبعاد سجلات حسابات المستخدمين ([USER_ACCOUNT]) نهائياً من نافذة إعلاناتي
+                        const filteredAds = data.filter(ad => {
+                            const desc = ad.description || '';
+                            return !desc.includes('[USER_ACCOUNT]');
                         });
+
+                        if (filteredAds.length > 0) {
+                            myAdsContainer.innerHTML = '';
+                            filteredAds.forEach(ad => {
+                                const adCard = document.createElement('div');
+                                adCard.style.cssText = "display:flex; align-items:center; justify-content:space-between; background:#f8faf9; border:1px solid #d2ded7; padding:10px 15px; border-radius:10px; gap:10px;";
+                                
+                                let rawDesc = ad.description || '';
+                                let cleanDesc = rawDesc.split(' (الهاتف:')[0];
+                                const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">` : `<div style="width:50px; height:50px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.2rem;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                                adCard.innerHTML = `
+                                    <div style="display:flex; align-items:center; gap:12px; overflow:hidden;">
+                                        ${imgThumb}
+                                        <div>
+                                            <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif;">${ad.title}</h4>
+                                            <p style="font-size:0.8rem; color:var(--text-gray);">${cleanDesc}</p>
+                                        </div>
+                                    </div>
+                                    <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; white-space:nowrap;"><i class="fa-solid fa-trash"></i> حذف</button>
+                                `;
+                                myAdsContainer.appendChild(adCard);
+                            });
+                        } else {
+                            myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي إعلانات منشورة حتى الآن.</p>';
+                        }
                     } else {
                         myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي إعلانات منشورة حتى الآن.</p>';
                     }
