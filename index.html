@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.6.0</span>
+            <span class="version-tag">v0.6.1</span>
         </div>
     </footer>
 
@@ -2593,10 +2593,7 @@
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
 
-        document.getElementById('menuMyAds').addEventListener('click', async (e) => {
-            e.preventDefault();
-            accountMenuModal.classList.remove('active');
-            
+        async function openMyAdsModalFunc() {
             const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openLoginTab();
@@ -2660,6 +2657,12 @@
                 console.error(err);
                 myAdsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل إعلاناتك.</p>';
             }
+        }
+
+        document.getElementById('menuMyAds').addEventListener('click', (e) => {
+            e.preventDefault();
+            accountMenuModal.classList.remove('active');
+            openMyAdsModalFunc();
         });
 
         closeMyAdsModalBtn.addEventListener('click', () => {
@@ -2736,7 +2739,7 @@
                         const { error } = await _supabase.from('products').delete().eq('id', adId);
                         if (!error) {
                             showCustomAlert('تم حذف الإعلان بنجاح من قاعدة البيانات', true);
-                            myAdsModal.classList.remove('active');
+                            myAdsModal.classList.remove('active'); // إغلاق نافذة إعلاناتي تلقائياً كما طلبت
                             isProductsLoaded = false;
                             fetchProductsFromSupabase(true);
                         } else {
