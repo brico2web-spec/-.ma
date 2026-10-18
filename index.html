@@ -1582,7 +1582,7 @@
                     <p>اختر ما يناسبك وابدأ عملية التبادل فوراً بـ 0 درهم</p>
                 </div>
                 <div class="products-grid" id="productsGridContainer">
-                    <!-- يتم تعبئة المنتجات ديناميكياً من LocalStorage / Supabase -->
+                    <!-- يتم تعبئة المنتجات ديناميكياً من Supabase وتخزينها محلياً -->
                 </div>
                 <!-- أزرار التصفح (Pagination) -->
                 <div class="pagination-container" id="paginationContainer">
@@ -1773,66 +1773,75 @@
 
         startSlider();
 
-        // الاعتماد على LocalStorage للصفحات الثلاث: العروض، طلبات المقايضة الواردة، وإعلاناتي
+        // متغيرات جلب العروض مع الاعتماد على LocalStorage للصفحات المحددة والتحديث التلقائي اللحظي من Supabase
         let allProducts = [];
         let currentPage = 1;
         const itemsPerPage = 8;
+        let isFetchingProducts = false;
 
-        function loadProductsFromLocalStorage() {
+        // جلب البيانات الأولية من التخزين المحلي (LocalStorage) لصفحة المنتجات
+        function loadProductsFromLocal() {
             try {
-                const cached = localStorage.getItem('badal_local_products');
+                const cached = localStorage.getItem('badal_products_local');
                 if (cached) {
                     allProducts = JSON.parse(cached);
-                } else {
-                    allProducts = [];
                 }
-            } catch (e) {
-                allProducts = [];
+            } catch(e) {
+                console.error(e);
             }
-            renderProducts(currentPage);
         }
+        loadProductsFromLocal();
 
-        // دالة مزامنة وتحديث تلقائي من Supabase في الخلفية لضمان جلب الجديد وتحديث LocalStorage تلقائياً
-        async function backgroundSyncWithSupabase() {
-            if (!_supabase) return;
+        async function fetchProductsFromSupabase(forceRefresh = false) {
+            if (isFetchingProducts && !forceRefresh) return;
+            isFetchingProducts = true;
+
+            const gridContainer = document.getElementById('productsGridContainer');
+            if(allProducts.length === 0) {
+                gridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:30px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل العروض...</p>';
+            }
+
             try {
-                const { data, error } = await _supabase
-                    .from('products')
-                    .select('id, title, description, category, city, image_url, created_at')
-                    .order('created_at', { ascending: false });
-                
-                if (!error && data) {
-                    allProducts = data;
-                    localStorage.setItem('badal_local_products', JSON.stringify(allProducts));
-                    renderProducts(currentPage);
-                    checkIncomingRequestsCount();
+                if (_supabase) {
+                    const { data, error } = await _supabase
+                        .from('products')
+                        .select('id, title, description, category, city, image_url, created_at')
+                        .order('created_at', { ascending: false });
                     
-                    // تحديث النوافذ المفتوحة تلقائياً
-                    if (document.getElementById('messagesModal').classList.contains('active')) {
-                        loadMessagesFromLocalStorage();
-                    }
-                    if (document.getElementById('myAdsModal').classList.contains('active')) {
-                        loadMyAdsFromLocalStorage();
+                    if (!error && data) {
+                        allProducts = data.filter(item => {
+                            const desc = item.description || '';
+                            return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
+                        });
+                        // تخزين المنتجات في LocalStorage كما طلبت
+                        localStorage.setItem('badal_products_local', JSON.stringify(allProducts));
                     }
                 }
+                renderProducts(currentPage);
             } catch (err) {
-                console.error('مشكلة في المزامنة الخلفية:', err);
+                console.error('فشل الاتصال بـ Supabase:', err);
+                renderProducts(currentPage);
+            } finally {
+                isFetchingProducts = false;
             }
         }
 
-        // تفعيل Supabase Realtime للتحديث التلقائي الفوري فور دخول أي بيانات جديدة
+        // تفعيل الاستماع الفوري والتلقائي (Realtime Sync) لتحديث المنتجات والرسائل تلقائياً بدون إعادة تحميل الصفحة
         if (_supabase) {
             _supabase
                 .channel('public:products')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
-                    backgroundSyncWithSupabase();
+                    fetchProductsFromSupabase(true);
+                    checkIncomingRequestsCount();
+                    if (document.getElementById('messagesModal').classList.contains('active')) {
+                        document.getElementById('bottomMessagesBtn').click();
+                    }
+                    if (document.getElementById('myAdsModal').classList.contains('active')) {
+                        openMyAdsModalFunc();
+                    }
                 })
                 .subscribe();
         }
-
-        loadProductsFromLocalStorage();
-        // تشغيل المزامنة الخلفية تلقائياً عند فتح الموقع
-        backgroundSyncWithSupabase();
 
         // إدارة المفضلة المحلية (LocalStorage)
         function getFavorites() {
@@ -1867,20 +1876,15 @@
             const gridContainer = document.getElementById('productsGridContainer');
             gridContainer.innerHTML = '';
 
-            const activeProducts = allProducts.filter(item => {
-                const desc = item.description || '';
-                return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
-            });
-
             const startIndex = (page - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
-            const paginatedItems = activeProducts.slice(startIndex, endIndex);
+            const paginatedItems = allProducts.slice(startIndex, endIndex);
             const favs = getFavorites();
             const isUserLoggedIn = sessionStorage.getItem('badal_supabase_user') !== null;
 
             if (paginatedItems.length === 0) {
-                gridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:30px;">لا توجد منتجات حية مطروحة للمقايضة حالياً.</p>';
-                renderPaginationControls(activeProducts.length);
+                gridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:30px;">لا توجد منتجات حية مطروحة للمقايضة حالياً في قاعدة البيانات.</p>';
+                renderPaginationControls();
                 return;
             }
 
@@ -1927,11 +1931,11 @@
                 gridContainer.appendChild(card);
             });
 
-            renderPaginationControls(activeProducts.length);
+            renderPaginationControls();
         }
 
-        function renderPaginationControls(totalItemsCount) {
-            const totalPages = Math.ceil(totalItemsCount / itemsPerPage);
+        function renderPaginationControls() {
+            const totalPages = Math.ceil(allProducts.length / itemsPerPage);
             const prevBtn = document.getElementById('prevPageBtn');
             const nextBtn = document.getElementById('nextPageBtn');
             const pageNumbersContainer = document.getElementById('pageNumbersContainer');
@@ -1963,11 +1967,7 @@
         };
 
         document.getElementById('nextPageBtn').onclick = () => {
-            const activeProductsCount = allProducts.filter(item => {
-                const desc = item.description || '';
-                return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
-            }).length;
-            const totalPages = Math.ceil(activeProductsCount / itemsPerPage);
+            const totalPages = Math.ceil(allProducts.length / itemsPerPage);
             if (currentPage < totalPages) {
                 goToPage(currentPage + 1);
             }
@@ -2079,36 +2079,33 @@
 
                 try {
                     const compressedImage = await compressImage(file, 350, 350, 0.4);
-                    const reqPayload = {
-                        id: Date.now(), // معرف مؤقت محلي لضمان العمل الفوري
-                        title: "طلب مقايضة من " + userData.name,
-                        description: `[EXCHANGE_REQUEST] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
-                        category: "تلفونات",
-                        city: userData.city || 'القنيطرة',
-                        image_url: compressedImage,
-                        created_at: new Date().toISOString()
-                    };
-
-                    // تحديث محلي فوري (LocalStorage)
-                    allProducts.unshift(reqPayload);
-                    localStorage.setItem('badal_local_products', JSON.stringify(allProducts));
-
-                    showCustomAlert('تم إرسال طلب التبادل بنجاح!', true);
-                    exchangeRequestModal.classList.remove('active');
-                    exchangeRequestForm.reset();
-                    exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
-                    checkIncomingRequestsCount();
-
-                    // مزامنة مع قاعدة البيانات في الخلفية
                     if (_supabase) {
-                        const { error } = await _supabase.from('products').insert([{
-                            title: reqPayload.title,
-                            description: reqPayload.description,
-                            category: reqPayload.category,
-                            city: reqPayload.city,
-                            image_url: reqPayload.image_url
-                        }]);
-                        if (!error) backgroundSyncWithSupabase();
+                        const reqPayload = {
+                            title: "طلب مقايضة من " + userData.name,
+                            description: `[EXCHANGE_REQUEST] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
+                            category: "تلفونات",
+                            city: userData.city || 'القنيطرة',
+                            image_url: compressedImage
+                        };
+
+                        const { error } = await _supabase.from('products').insert([reqPayload]);
+                        if (!error) {
+                            showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل لصاحب المنتوج!', true);
+                            exchangeRequestModal.classList.remove('active');
+                            exchangeRequestForm.reset();
+                            exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                            
+                            // تحديث تخزين طلبات المقايضة محلياً
+                            fetchRequestsFromSupabaseToLocal();
+                            checkIncomingRequestsCount();
+                        } else {
+                            showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
+                        }
+                    } else {
+                        showCustomAlert('تم إرسال طلب التبادل بنجاح!', true);
+                        exchangeRequestModal.classList.remove('active');
+                        exchangeRequestForm.reset();
+                        exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
                     }
                 } catch (err) {
                     console.error(err);
@@ -2117,22 +2114,42 @@
             });
         }
 
-        // فحص عدد الطلبات الواردة من LocalStorage
-        function checkIncomingRequestsCount() {
+        // جلب وتخزين طلبات المقايضة الواردة محلياً (LocalStorage)
+        async function fetchRequestsFromSupabaseToLocal() {
+            try {
+                if (_supabase) {
+                    const { data, error } = await _supabase.from('products').select('id, title, description, image_url, created_at');
+                    if (!error && data) {
+                        const requests = data.filter(item => (item.description || '').includes('[EXCHANGE_REQUEST]'));
+                        localStorage.setItem('badal_requests_local', JSON.stringify(requests));
+                    }
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي مع الاعتماد على التخزين المحلي
+        async function checkIncomingRequestsCount() {
             try {
                 const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
                 if (!currentSupabaseUser) return;
                 const userData = JSON.parse(currentSupabaseUser);
 
-                const requests = allProducts.filter(item => {
+                let requests = [];
+                try {
+                    const cachedReqs = localStorage.getItem('badal_requests_local');
+                    if (cachedReqs) requests = JSON.parse(cachedReqs);
+                } catch(e) {}
+
+                const userRequests = requests.filter(item => {
                     const desc = item.description || '';
-                    if (!desc.includes('[EXCHANGE_REQUEST]')) return false;
                     return userData.phone && desc.includes(`[OWNER_PHONE:${userData.phone}]`);
                 });
-                
+
                 const badge = document.getElementById('msgBadgeCount');
-                if (requests.length > 0) {
-                    badge.textContent = requests.length;
+                if (userRequests.length > 0) {
+                    badge.textContent = userRequests.length;
                     badge.classList.add('active');
                 } else {
                     badge.classList.remove('active');
@@ -2142,68 +2159,76 @@
             }
         }
 
-        // نافذة الرسائل والطلبات الواردة (تعتمد على LocalStorage)
+        // نافذة الرسائل والطلبات الواردة (تعتمد على التخزين المحلي وتحدث تلقائياً)
         const messagesModal = document.getElementById('messagesModal');
         const closeMessagesModalBtn = document.getElementById('closeMessagesModalBtn');
         const incomingRequestsContainer = document.getElementById('incomingRequestsContainer');
         const bottomMessagesBtn = document.getElementById('bottomMessagesBtn');
 
-        function loadMessagesFromLocalStorage() {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
-            if (!currentSupabaseUser) return;
-            const userData = JSON.parse(currentSupabaseUser);
-
-            incomingRequestsContainer.innerHTML = '';
-            const requests = allProducts.filter(item => {
-                const desc = item.description || '';
-                if (!desc.includes('[EXCHANGE_REQUEST]')) return false;
-                return userData.phone && desc.includes(`[OWNER_PHONE:${userData.phone}]`);
-            });
-
-            if (requests.length > 0) {
-                requests.forEach(req => {
-                    const desc = req.description || '';
-                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
-                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
-                    const descMatch = desc.match(/\[DESC:(.*?)\]/);
-                    
-                    const senderName = nameMatch ? nameMatch[1] : 'مستخدم';
-                    const senderPhone = phoneMatch ? phoneMatch[1] : '';
-                    const senderDesc = descMatch ? descMatch[1] : '';
-
-                    const card = document.createElement('div');
-                    card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
-                    
-                    const imgBox = req.image_url ? `<div style="text-align:center;"><img src="${req.image_url}" style="width:110px; height:110px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);"></div>` : `<div style="width:100%; height:90px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.8rem;"><i class="fa-solid fa-box-open"></i></div>`;
-
-                    card.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);">طلب من: ${senderName}</h4>
-                            <span style="font-size:0.75rem; color:var(--primary-green); font-weight:700;">مقايضة جديدة</span>
-                        </div>
-                        ${imgBox}
-                        <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة الطرف الثاني:</b> ${senderDesc}</p>
-                        <div style="display:flex; gap:10px; margin-top:5px;">
-                            <button id="btn-accept-${req.id}" onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:6px;"><i class="fa-solid fa-check"></i> موافق</button>
-                            <button onclick="cancelExchangeRequest('${req.id}')" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-xmark"></i> رفض الطلب</button>
-                        </div>
-                    `;
-                    incomingRequestsContainer.appendChild(card);
-                });
-            } else {
-                incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
-            }
-        }
-
-        bottomMessagesBtn.addEventListener('click', () => {
+        bottomMessagesBtn.addEventListener('click', async () => {
             const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openLoginTab();
                 return;
             }
+            const userData = JSON.parse(currentSupabaseUser);
             setActiveBottomNav(bottomMessagesBtn);
-            loadMessagesFromLocalStorage();
+
+            incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);">جاري تحميل الطلبات الواردة الخاصة بك...</p>';
             messagesModal.classList.add('active');
+
+            await fetchRequestsFromSupabaseToLocal();
+
+            try {
+                let requests = [];
+                try {
+                    const cachedReqs = localStorage.getItem('badal_requests_local');
+                    if (cachedReqs) requests = JSON.parse(cachedReqs);
+                } catch(e) {}
+
+                const userRequests = requests.filter(item => {
+                    const desc = item.description || '';
+                    return userData.phone && desc.includes(`[OWNER_PHONE:${userData.phone}]`);
+                });
+
+                if (userRequests.length > 0) {
+                    incomingRequestsContainer.innerHTML = '';
+                    userRequests.forEach(req => {
+                        const desc = req.description || '';
+                        const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                        const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                        const descMatch = desc.match(/\[DESC:(.*?)\]/);
+                        
+                        const senderName = nameMatch ? nameMatch[1] : 'مستخدم';
+                        const senderPhone = phoneMatch ? phoneMatch[1] : '';
+                        const senderDesc = descMatch ? descMatch[1] : '';
+
+                        const card = document.createElement('div');
+                        card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
+                        
+                        const imgBox = req.image_url ? `<div style="text-align:center;"><img src="${req.image_url}" style="width:110px; height:110px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);"></div>` : `<div style="width:100%; height:90px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.8rem;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                        card.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);">طلب من: ${senderName}</h4>
+                                <span style="font-size:0.75rem; color:var(--primary-green); font-weight:700;">مقايضة جديدة</span>
+                            </div>
+                            ${imgBox}
+                            <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة الطرف الثاني:</b> ${senderDesc}</p>
+                            <div style="display:flex; gap:10px; margin-top:5px;">
+                                <button id="btn-accept-${req.id}" onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:6px;"><i class="fa-solid fa-check"></i> موافق</button>
+                                <button onclick="cancelExchangeRequest('${req.id}')" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-xmark"></i> رفض الطلب</button>
+                            </div>
+                        `;
+                        incomingRequestsContainer.appendChild(card);
+                    });
+                } else {
+                    incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
+                }
+            } catch (err) {
+                console.error(err);
+                incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل الرسائل.</p>';
+            }
         });
 
         closeMessagesModalBtn.addEventListener('click', () => {
@@ -2236,17 +2261,16 @@
 
         window.cancelExchangeRequest = async function(reqId) {
             showCustomConfirm(async () => {
-                // حذف محلي فوري
-                allProducts = allProducts.filter(item => String(item.id) !== String(reqId));
-                localStorage.setItem('badal_local_products', JSON.stringify(allProducts));
-                showCustomAlert('تم رفض وحذف طلب المقايضة بنجاح.', true);
-                messagesModal.classList.remove('active');
-                checkIncomingRequestsCount();
-
-                // حذف من قاعدة البيانات في الخلفية
                 if (_supabase) {
-                    await _supabase.from('products').delete().eq('id', reqId);
-                    backgroundSyncWithSupabase();
+                    const { error } = await _supabase.from('products').delete().eq('id', reqId);
+                    if (!error) {
+                        showCustomAlert('تم رفض وحذف طلب المقايضة بنجاح من قاعدة البيانات.', true);
+                        messagesModal.classList.remove('active');
+                        await fetchRequestsFromSupabaseToLocal();
+                        checkIncomingRequestsCount();
+                    } else {
+                        showCustomAlert('فشل رفض وحذف الطلب: ' + error.message, false);
+                    }
                 }
             });
         };
@@ -2336,7 +2360,7 @@
             offersNavBtn.classList.add('active');
             headerBtnContainer.style.display = 'none';
             currentPage = 1;
-            loadProductsFromLocalStorage();
+            fetchProductsFromSupabase();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -2461,40 +2485,38 @@
                 const file = imageInput.files[0];
                 const compressedImage = await compressImage(file, 350, 350, 0.4);
 
-                const newAdPayload = {
-                    id: Date.now(),
-                    title: title,
-                    description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
-                    category: category,
-                    city: city,
-                    image_url: compressedImage,
-                    created_at: new Date().toISOString()
-                };
-
-                // حفظ محلي فوري
-                allProducts.unshift(newAdPayload);
-                localStorage.setItem('badal_local_products', JSON.stringify(allProducts));
-
-                showCustomAlert('تم نشر إعلانك بنجاح!', true);
-                addAdModal.classList.remove('active');
-                addAdForm.reset();
-                if(openExchangeCheckbox) openExchangeCheckbox.checked = false;
-                adDescTextarea.disabled = false;
-                adDescTextarea.style.backgroundColor = '#f8faf9';
-                adDescTextarea.style.color = 'var(--dark-blue)';
-                fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
-                showProductsView();
-
-                // مزامنة مع قاعدة البيانات في الخلفية
                 if (_supabase) {
-                    const { error: insertError } = await _supabase.from('products').insert([{
-                        title: newAdPayload.title,
-                        description: newAdPayload.description,
-                        category: newAdPayload.category,
-                        city: newAdPayload.city,
-                        image_url: newAdPayload.image_url
-                    }]);
-                    if (!insertError) backgroundSyncWithSupabase();
+                    const insertPayload = {
+                        title: title,
+                        description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
+                        category: category,
+                        city: city,
+                        image_url: compressedImage
+                    };
+
+                    const { error: insertError } = await _supabase.from('products').insert([insertPayload]);
+
+                    if (insertError) {
+                        showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
+                    } else {
+                        showCustomAlert('تم نشر إعلانك بنجاح!', true);
+                        addAdModal.classList.remove('active');
+                        addAdForm.reset();
+                        if(openExchangeCheckbox) openExchangeCheckbox.checked = false;
+                        adDescTextarea.disabled = false;
+                        adDescTextarea.style.backgroundColor = '#f8faf9';
+                        adDescTextarea.style.color = 'var(--dark-blue)';
+                        fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                        
+                        // تحديث المنتجات وإعلاناتي محلياً فوراً
+                        fetchProductsFromSupabase(true);
+                        showProductsView();
+                    }
+                } else {
+                    showCustomAlert('تم نشر إعلانك بنجاح!', true);
+                    addAdModal.classList.remove('active');
+                    addAdForm.reset();
+                    showProductsView();
                 }
 
             } catch (err) {
@@ -2610,12 +2632,12 @@
             }
         });
 
-        // نافذة اعلاناتي (تعتمد على LocalStorage)
+        // نافذة اعلاناتي (تعتمد على التخزين المحلي وتحدث محلياً وتزامنياً)
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
 
-        function loadMyAdsFromLocalStorage() {
+        async function openMyAdsModalFunc() {
             const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openLoginTab();
@@ -2623,51 +2645,75 @@
             }
 
             const userData = JSON.parse(currentSupabaseUser);
-            myAdsContainer.innerHTML = '';
+            myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);">جاري تحميل إعلاناتك...</p>';
+            myAdsModal.classList.add('active');
 
-            const filteredAds = allProducts.filter(ad => {
-                const desc = ad.description || '';
-                if (desc.includes('[USER_ACCOUNT]') || desc.includes('[EXCHANGE_REQUEST]')) return false;
-                
-                const matchPhone = userData.phone && desc.includes(userData.phone);
-                const matchName = userData.name && desc.includes(userData.name);
-                return matchPhone || matchName;
-            });
+            try {
+                // نضمن جلب أحدث البيانات من Supabase لتحديث التخزين المحلي لإعلاناتي أيضاً
+                if (_supabase) {
+                    const { data, error } = await _supabase
+                        .from('products')
+                        .select('id, title, description, category, city, image_url, created_at')
+                        .order('created_at', { ascending: false });
 
-            if (filteredAds.length > 0) {
-                filteredAds.forEach(ad => {
-                    const adCard = document.createElement('div');
-                    adCard.style.cssText = "display:flex; flex-direction:column; gap:8px; background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:10px;";
+                    if (!error && data) {
+                        localStorage.setItem('badal_my_ads_local', JSON.stringify(data));
+                    }
+                }
+
+                let cachedAds = [];
+                try {
+                    const localData = localStorage.getItem('badal_my_ads_local');
+                    if (localData) cachedAds = JSON.parse(localData);
+                } catch(e) {}
+
+                const filteredAds = cachedAds.filter(ad => {
+                    const desc = ad.description || '';
+                    if (desc.includes('[USER_ACCOUNT]') || desc.includes('[EXCHANGE_REQUEST]')) return false;
                     
-                    let rawDesc = ad.description || '';
-                    let cleanDesc = rawDesc.split(' (الهاتف:')[0];
-                    const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:55px; height:55px; object-fit:cover; border-radius:8px; flex-shrink:0;">` : `<div style="width:55px; height:55px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.3rem; flex-shrink:0;"><i class="fa-solid fa-box-open"></i></div>`;
-
-                    adCard.innerHTML = `
-                        <div style="display:flex; align-items:center; gap:10px; width:100%;">
-                            ${imgThumb}
-                            <div style="flex-grow:1; overflow:hidden;">
-                                <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ad.title}</h4>
-                                <p style="font-size:0.8rem; color:var(--text-gray); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cleanDesc}</p>
-                            </div>
-                        </div>
-                        <div style="display:flex; gap:8px; justify-content:flex-end; border-top:1px solid #e2ece8; padding-top:8px; margin-top:2px;">
-                            <button onclick="openEditAdModal(${ad.id}, '${encodeURIComponent(ad.title)}', '${encodeURIComponent(cleanDesc)}', '${encodeURIComponent(ad.category || '')}', '${encodeURIComponent(ad.city || userData.city || '')}')" style="background:#e6f7f0; color:var(--primary-green); border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
-                            <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-trash"></i> حذف</button>
-                        </div>
-                    `;
-                    myAdsContainer.appendChild(adCard);
+                    const matchPhone = userData.phone && desc.includes(userData.phone);
+                    const matchName = userData.name && desc.includes(userData.name);
+                    return matchPhone || matchName;
                 });
-            } else {
-                myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي إعلانات منشورة حتى الآن.</p>';
+
+                if (filteredAds.length > 0) {
+                    myAdsContainer.innerHTML = '';
+                    filteredAds.forEach(ad => {
+                        const adCard = document.createElement('div');
+                        adCard.style.cssText = "display:flex; flex-direction:column; gap:8px; background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:10px;";
+                        
+                        let rawDesc = ad.description || '';
+                        let cleanDesc = rawDesc.split(' (الهاتف:')[0];
+                        const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:55px; height:55px; object-fit:cover; border-radius:8px; flex-shrink:0;">` : `<div style="width:55px; height:55px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.3rem; flex-shrink:0;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                        adCard.innerHTML = `
+                            <div style="display:flex; align-items:center; gap:10px; width:100%;">
+                                ${imgThumb}
+                                <div style="flex-grow:1; overflow:hidden;">
+                                    <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ad.title}</h4>
+                                    <p style="font-size:0.8rem; color:var(--text-gray); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cleanDesc}</p>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:8px; justify-content:flex-end; border-top:1px solid #e2ece8; padding-top:8px; margin-top:2px;">
+                                <button onclick="openEditAdModal(${ad.id}, '${encodeURIComponent(ad.title)}', '${encodeURIComponent(cleanDesc)}', '${encodeURIComponent(ad.category || '')}', '${encodeURIComponent(ad.city || userData.city || '')}')" style="background:#e6f7f0; color:var(--primary-green); border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+                                <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-trash"></i> حذف</button>
+                            </div>
+                        `;
+                        myAdsContainer.appendChild(adCard);
+                    });
+                } else {
+                    myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي إعلانات منشورة حتى الآن.</p>';
+                }
+            } catch (err) {
+                console.error(err);
+                myAdsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل إعلاناتك.</p>';
             }
         }
 
         document.getElementById('menuMyAds').addEventListener('click', (e) => {
             e.preventDefault();
             accountMenuModal.classList.remove('active');
-            loadMyAdsFromLocalStorage();
-            myAdsModal.classList.add('active');
+            openMyAdsModalFunc();
         });
 
         closeMyAdsModalBtn.addEventListener('click', () => {
@@ -2712,42 +2758,48 @@
             const currentSupabaseUser = JSON.parse(sessionStorage.getItem('badal_supabase_user') || '{}');
             const city = currentSupabaseUser.city || 'القنيطرة';
 
-            const updatedDesc = description + " (الهاتف: " + currentSupabaseUser.phone + " - المدينة: " + city + ")";
+            try {
+                if (_supabase) {
+                    const updatePayload = {
+                        title: title,
+                        description: description + " (الهاتف: " + currentSupabaseUser.phone + " - المدينة: " + city + ")",
+                        category: category,
+                        city: city
+                    };
 
-            // تحديث محلي فوري
-            allProducts = allProducts.map(item => {
-                if (String(item.id) === String(id)) {
-                    return { ...item, title, description: updatedDesc, category, city };
+                    const { error } = await _supabase.from('products').update(updatePayload).eq('id', id);
+                    if (!error) {
+                        showCustomAlert('تم تعديل الإعلان بنجاح', true);
+                        editAdModal.classList.remove('active');
+                        fetchProductsFromSupabase(true);
+                    } else {
+                        showCustomAlert('فشل تعديل الإعلان: ' + error.message, false);
+                    }
                 }
-                return item;
-            });
-            localStorage.setItem('badal_local_products', JSON.stringify(allProducts));
-
-            showCustomAlert('تم تعديل الإعلان بنجاح', true);
-            editAdModal.classList.remove('active');
-            renderProducts(currentPage);
-
-            // تحديث في قاعدة البيانات في الخلفية
-            if (_supabase) {
-                await _supabase.from('products').update({ title, description: updatedDesc, category, city }).eq('id', id);
-                backgroundSyncWithSupabase();
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء تعديل الإعلان', false);
             }
         });
 
         window.deleteMyAd = async function(adId) {
             showCustomConfirm(async () => {
-                // حذف محلي فوري لضمان عدم حدوث أي خطأ
-                allProducts = allProducts.filter(p => String(p.id) !== String(adId));
-                localStorage.setItem('badal_local_products', JSON.stringify(allProducts));
-                
-                showCustomAlert('تم حذف الإعلان بنجاح', true);
-                renderProducts(currentPage);
-                loadMyAdsFromLocalStorage();
-
-                // حذف من قاعدة البيانات في الخلفية
-                if (_supabase) {
-                    await _supabase.from('products').delete().eq('id', adId);
-                    backgroundSyncWithSupabase();
+                try {
+                    if (_supabase) {
+                        const { error } = await _supabase.from('products').delete().eq('id', adId);
+                        if (!error) {
+                            showCustomAlert('تم حذف الإعلان بنجاح من قاعدة البيانات', true);
+                            allProducts = allProducts.filter(p => p.id !== adId);
+                            localStorage.setItem('badal_products_local', JSON.stringify(allProducts));
+                            renderProducts(currentPage);
+                            openMyAdsModalFunc();
+                        } else {
+                            showCustomAlert('فشل حذف الإعلان: ' + error.message, false);
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء الحذف', false);
                 }
             });
         };
@@ -2882,7 +2934,7 @@
                 const { data: records, error: queryError } = await _supabase
                     .from('products')
                     .select('id, description')
-                    .ilike('description', `%[USER_ACCOUNT]%`);
+                    .ilike('description', '%[USER_ACCOUNT]%');
 
                 if (queryError || !records) {
                     showCustomAlert('خطأ في الاتصال بقاعدة البيانات للتحقق من الحساب.', false);
@@ -2993,6 +3045,13 @@
                 contactModal.classList.remove('active');
             }
         });
+
+        // تشغيل الجلب الأولي والتحديث التلقائي للطلبات والمنتجات عند بدء التشغيل
+        setTimeout(() => {
+            fetchProductsFromSupabase();
+            fetchRequestsFromSupabaseToLocal();
+            checkIncomingRequestsCount();
+        }, 500);
     </script>
 </body>
 </html>
