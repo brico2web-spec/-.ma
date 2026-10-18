@@ -1040,7 +1040,8 @@
                     <label class="custom-file-upload">
                         <span class="file-name-display" id="fileNameDisplay">لم يتم اختيار أي صور</span>
                         <span class="file-upload-btn-text"><i class="fa-solid fa-cloud-arrow-up"></i> اختر الصور</span>
-                        <input type="file" id="ad-images" accept="image/*" multiple required>
+                        <!-- تم إزالة required هنا لحل مشكلة 'An invalid form control is not focusable' أثناء إخفاء الإدخال -->
+                        <input type="file" id="ad-images" accept="image/*" multiple>
                     </label>
                 </div>
                 <div class="form-group">
@@ -1056,7 +1057,7 @@
                     <label for="ad-city">المدينة:</label>
                     <input type="text" id="ad-city" placeholder="أدخل مدينتك (مثال: القنيطرة)" required>
                 </div>
-                <button type="submit" class="form-submit-btn">أنش</button>
+                <button type="submit" class="form-submit-btn">أنشر للمقايضة</button>
             </form>
         </div>
     </div>
@@ -1278,14 +1279,14 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.1.9</span>
+            <span class="version-tag">v0.2.2</span>
         </div>
     </footer>
 
     <script>
         // إعدادات اتصال Supabase للمشروع الجديد بدل.ma
         const SUPABASE_URL = 'https://pjhkvfuknzvwsiznhhfn.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqaGt2ZnVrbnz2d3Npem5oaGZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMjgwNjIsImV4cCI6MjEwNzkwNDA2Mn0.SJE9KBy5UwYm5A3orV9nXxOtatTBwm4U0tE4THWfvsM';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqaGt2ZnVrbnz2d3Npem5oaGZuIiwicm9sZSI6InBqaGt2ZnVrbnz2d3Npem5oaGZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMjgwNjIsImV4cCI6MjEwNzkwNDA2Mn0.SJE9KBy5UwYm5A3orV9nXxOtatTBwm4U0tE4THWfvsM';
         
         // تهيئة عميل Supabase بأسماء متغيرة تجنباً للتضارب
         const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
@@ -1481,12 +1482,27 @@
             }
         };
 
+        // دالة فتح نافذة التسجيل مباشرة عند عدم وجود جلسة
+        function openRegistrationTab() {
+            const authModal = document.getElementById('authModal');
+            const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+            const tabLoginBtn = document.getElementById('tabLoginBtn');
+            const registerPanel = document.getElementById('registerPanel');
+            const loginPanel = document.getElementById('loginPanel');
+
+            tabRegisterBtn.classList.add('active');
+            tabLoginBtn.classList.remove('active');
+            registerPanel.classList.add('active');
+            loginPanel.classList.remove('active');
+            authModal.classList.add('active');
+        }
+
         // التحقق من حالة تسجيل الدخول وإرسال طلب المقايضة إلى قاعدة البيانات
         async function handleExchangeRequest(productTitle, productId) {
             if (_supabase) {
                 const { data: { session } } = await _supabase.auth.getSession();
                 if (!session) {
-                    document.getElementById('authModal').classList.add('active');
+                    openRegistrationTab();
                 } else {
                     if (productId) {
                         const { error } = await _supabase.from('exchange_requests').insert([
@@ -1502,7 +1518,7 @@
                     }
                 }
             } else {
-                document.getElementById('authModal').classList.add('active');
+                openRegistrationTab();
             }
         }
 
@@ -1597,7 +1613,7 @@
             setActiveBottomNav(bottomFavoritesBtn);
         });
 
-        // فتح نافذة نشر المنتج مباشرة عند الضغط على الكاميرا
+        // فتح نافذة نشر المنتج مباشرة عند الضغط على زر الكاميرا
         bottomCameraBtn.addEventListener('click', () => {
             addAdModal.classList.add('active');
         });
@@ -1612,28 +1628,37 @@
             }
         });
 
-        // معالجة رفع الإعلان الجديد مع رفع الصور إلى Supabase Storage Bucket (BABEL.MA)
+        // معالجة رفع الإعلان الجديد والتحقق من الجلسة عند الضغط على "أنشر للمقايضة"
         addAdForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const title = document.getElementById('ad-title').value;
-            const description = document.getElementById('ad-desc').value;
-            const category = document.getElementById('ad-category').value;
-            const city = document.getElementById('ad-city').value;
-
-            if (imageInput.files.length === 0) {
-                showCustomAlert('المرجو إدراج صورة واحدة على الأقل!', false);
-                return;
-            }
-
-            if (imageInput.files.length > 2) {
-                showCustomAlert('يمكنك رفع 2 صور كحد أقصى!', false);
-                return;
-            }
 
             try {
                 if (_supabase) {
                     const { data: { session } } = await _supabase.auth.getSession();
-                    const userId = session && session.user ? session.user.id : null;
+                    
+                    // إذا لم يكن مسجلاً، قم بإغلاق نافذة النشر وفتح نافذة تسجيل جديد فوراً بدون تنبيه
+                    if (!session || !session.user) {
+                        addAdModal.classList.remove('active');
+                        openRegistrationTab();
+                        return;
+                    }
+
+                    const title = document.getElementById('ad-title').value;
+                    const description = document.getElementById('ad-desc').value;
+                    const category = document.getElementById('ad-category').value;
+                    const city = document.getElementById('ad-city').value;
+
+                    if (imageInput.files.length === 0) {
+                        showCustomAlert('المرجو إدراج صورة واحدة على الأقل!', false);
+                        return;
+                    }
+
+                    if (imageInput.files.length > 2) {
+                        showCustomAlert('يمكنك رفع 2 صور كحد أقصى!', false);
+                        return;
+                    }
+
+                    const userId = session.user.id;
 
                     let imageUrl = '';
                     if (imageInput.files.length > 0) {
@@ -1691,18 +1716,18 @@
             if (_supabase) {
                 const { data: { session } } = await _supabase.auth.getSession();
                 if (!session) {
-                    document.getElementById('authModal').classList.add('active');
+                    openRegistrationTab();
                 } else {
                     showCustomAlert('الدردشة الحية مفعلة. ليس لديك رسائل جديدة حالياً.', true);
                 }
             } else {
-                document.getElementById('authModal').classList.add('active');
+                openRegistrationTab();
             }
             setActiveBottomNav(bottomMessagesBtn);
         });
 
         bottomAccountBtn.addEventListener('click', () => {
-            document.getElementById('authModal').classList.add('active');
+            openRegistrationTab();
             setActiveBottomNav(bottomAccountBtn);
         });
 
