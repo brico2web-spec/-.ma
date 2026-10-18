@@ -1130,6 +1130,17 @@
         </div>
     </div>
 
+    <!-- نافذة منبثقة (Modal) لـ عرض إعلانات المستخدم (اعلاناتي) -->
+    <div class="modal-overlay" id="myAdsModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="modal-close" id="closeMyAdsModalBtn">&times;</button>
+            <h2 class="modal-title">اعلاناتي <span class="logo-green">المنشورة</span></h2>
+            <div id="myAdsContainer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+                <!-- يتم تعبئة إعلانات المستخدم ديناميكياً هنا -->
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة منبثقة (Modal) لـ رفع منتج جديد عبر الكاميرا -->
     <div class="modal-overlay" id="addAdModal">
         <div class="modal-content">
@@ -1387,7 +1398,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.3.9</span>
+            <span class="version-tag">v0.4.3</span>
         </div>
     </footer>
 
@@ -1473,7 +1484,7 @@
         let currentPage = 1;
         const itemsPerPage = 8;
 
-        // جلب المنتجات من جدول products في Supabase مع التحديث الفوري
+        // جلب المنتجات من جدول products في Supabase مع التحديث الفوري واستبعاد حسابات المستخدمين
         async function fetchProductsFromSupabase() {
             try {
                 if (_supabase) {
@@ -1483,7 +1494,11 @@
                         .order('created_at', { ascending: false });
                     
                     if (!error && data && data.length > 0) {
-                        allProducts = data;
+                        // استبعاد السجلات التي تمثل حسابات مستخدمين ([USER_ACCOUNT]) من قائمة العروض
+                        allProducts = data.filter(item => {
+                            const desc = item.description || '';
+                            return !desc.includes('[USER_ACCOUNT]');
+                        });
                     } else {
                         setDefaultProducts();
                     }
@@ -1592,7 +1607,7 @@
             }
         };
 
-        // دالة فتح نافذة التسجيل مباشرة عند عدم وجود تسجيل دخول محلي
+        // دالة فتح نافذة التسجيل مباشرة عند عدم وجود تسجيل دخول نشط في قاعدة البيانات
         function openRegistrationTab() {
             const authModal = document.getElementById('authModal');
             const tabRegisterBtn = document.getElementById('tabRegisterBtn');
@@ -1622,10 +1637,10 @@
             authModal.classList.add('active');
         }
 
-        // التحقق من حالة تسجيل الدخول المحلي وإرسال طلب المقايضة
+        // التحقق من حالة تسجيل الدخول في Supabase وإرسال طلب المقايضة
         function handleExchangeRequest(productTitle, productId) {
-            const currentUser = localStorage.getItem('badal_current_user');
-            if (!currentUser) {
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
                 openRegistrationTab();
             } else {
                 showCustomAlert('تم إرسال طلب التبادل بنجاح للسلعة: ' + productTitle, true);
@@ -1738,21 +1753,21 @@
             }
         });
 
-        // معالجة رفع الإعلان الجديد والتحقق من الجلسة المحلية عند الضغط على "أنشر للمقايضة"
+        // معالجة رفع الإعلان الجديد والتحقق من جلسة قاعدة البيانات عند الضغط على "أنشر للمقايضة"
         addAdForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             try {
-                const currentUser = localStorage.getItem('badal_current_user');
+                const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
                 
-                // إذا لم يكن مسجلاً محلياً، قم بإغلاق نافذة النشر وفتح نافذة تسجيل جديد فوراً
-                if (!currentUser) {
+                // إذا لم يكن مسجلاً، قم بإغلاق نافذة النشر وفتح نافذة تسجيل جديد فوراً
+                if (!currentSupabaseUser) {
                     addAdModal.classList.remove('active');
                     openRegistrationTab();
                     return;
                 }
 
-                const userData = JSON.parse(currentUser);
+                const userData = JSON.parse(currentSupabaseUser);
                 const title = document.getElementById('ad-title').value;
                 const description = document.getElementById('ad-desc').value;
                 const category = document.getElementById('ad-category').value;
@@ -1776,7 +1791,6 @@
                     const base64Image = event.target.result;
 
                     if (_supabase) {
-                        // عدم إرسال user_id نهائياً لتفادي قيود الـ Foreign Key المفروضة في جدول Supabase
                         const insertPayload = {
                             title: title,
                             description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
@@ -1813,8 +1827,8 @@
         });
 
         bottomMessagesBtn.addEventListener('click', () => {
-            const currentUser = localStorage.getItem('badal_current_user');
-            if (!currentUser) {
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
                 openLoginTab();
             } else {
                 showCustomAlert('الدردشة الحية مفعلة. ليس لديك رسائل جديدة حالياً.', true);
@@ -1828,11 +1842,11 @@
         const accountMenuUserName = document.getElementById('accountMenuUserName');
 
         bottomAccountBtn.addEventListener('click', () => {
-            const currentUser = localStorage.getItem('badal_current_user');
-            if (!currentUser) {
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
                 openLoginTab();
             } else {
-                const userData = JSON.parse(currentUser);
+                const userData = JSON.parse(currentSupabaseUser);
                 accountMenuUserName.textContent = `(${userData.name})`;
                 accountMenuModal.classList.add('active');
             }
@@ -1849,12 +1863,95 @@
             }
         });
 
-        // ربط عناصر قائمة الحساب الجديدة
-        document.getElementById('menuMyAds').addEventListener('click', (e) => {
+        // ربط عناصر قائمة الحساب الجديدة (اعلاناتي)
+        const myAdsModal = document.getElementById('myAdsModal');
+        const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
+        const myAdsContainer = document.getElementById('myAdsContainer');
+
+        document.getElementById('menuMyAds').addEventListener('click', async (e) => {
             e.preventDefault();
             accountMenuModal.classList.remove('active');
-            showCustomAlert('قريباً: عرض جميع إعلاناتك المنشورة.', true);
+            
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
+                openLoginTab();
+                return;
+            }
+
+            const userData = JSON.parse(currentSupabaseUser);
+            myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);">جاري تحميل إعلاناتك...</p>';
+            myAdsModal.classList.add('active');
+
+            try {
+                if (_supabase) {
+                    const { data, error } = await _supabase
+                        .from('products')
+                        .select('*')
+                        .ilike('description', `%[USER_PHONE:${userData.phone}]%`)
+                        .order('created_at', { ascending: false });
+
+                    if (!error && data && data.length > 0) {
+                        myAdsContainer.innerHTML = '';
+                        data.forEach(ad => {
+                            const adCard = document.createElement('div');
+                            adCard.style.cssText = "display:flex; align-items:center; justify-content:space-between; background:#f8faf9; border:1px solid #d2ded7; padding:10px 15px; border-radius:10px; gap:10px;";
+                            
+                            let rawDesc = ad.description || '';
+                            let cleanDesc = rawDesc.split(' (الهاتف:')[0];
+                            const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">` : `<div style="width:50px; height:50px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.2rem;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                            adCard.innerHTML = `
+                                <div style="display:flex; align-items:center; gap:12px; overflow:hidden;">
+                                    ${imgThumb}
+                                    <div>
+                                        <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif;">${ad.title}</h4>
+                                        <p style="font-size:0.8rem; color:var(--text-gray);">${cleanDesc}</p>
+                                    </div>
+                                </div>
+                                <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; white-space:nowrap;"><i class="fa-solid fa-trash"></i> حذف</button>
+                            `;
+                            myAdsContainer.appendChild(adCard);
+                        });
+                    } else {
+                        myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي إعلانات منشورة حتى الآن.</p>';
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                myAdsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل إعلاناتك.</p>';
+            }
         });
+
+        closeMyAdsModalBtn.addEventListener('click', () => {
+            myAdsModal.classList.remove('active');
+        });
+
+        myAdsModal.addEventListener('click', (e) => {
+            if (e.target === myAdsModal) {
+                myAdsModal.classList.remove('active');
+            }
+        });
+
+        // دالة حذف الإعلان الخاص بالمستخدم من Supabase
+        window.deleteMyAd = async function(adId) {
+            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
+                try {
+                    if (_supabase) {
+                        const { error } = await _supabase.from('products').delete().eq('id', adId);
+                        if (!error) {
+                            showCustomAlert('تم حذف الإعلان بنجاح', true);
+                            myAdsModal.classList.remove('active');
+                            fetchProductsFromSupabase();
+                        } else {
+                            showCustomAlert('فشل حذف الإعلان', false);
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء الحذف', false);
+                }
+            }
+        };
 
         document.getElementById('menuMyOrders').addEventListener('click', (e) => {
             e.preventDefault();
@@ -1876,7 +1973,7 @@
 
         document.getElementById('menuLogout').addEventListener('click', (e) => {
             e.preventDefault();
-            localStorage.removeItem('badal_current_user');
+            sessionStorage.removeItem('badal_supabase_user');
             accountMenuModal.classList.remove('active');
             showCustomAlert('تم تسجيل الخروج بنجاح.', true);
             setTimeout(() => location.reload(), 1000);
@@ -1927,13 +2024,13 @@
             loginPanel.classList.remove('active');
         });
 
-        // التسجيل العادي: الاسم، المدينة، رقم الهاتف وكلمة المرور بالمجان وبدون إيميل نهائياً
+        // التسجيل الحقيقي في جدول products في Supabase (تخزين بيانات المستخدم بأمان داخل حقل مخصص)
         const registerForm = document.getElementById('registerForm');
-        registerForm.addEventListener('submit', (e) => {
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('reg-name').value;
-            const city = document.getElementById('reg-city').value;
-            const phone = document.getElementById('reg-phone').value;
+            const name = document.getElementById('reg-name').value.trim();
+            const city = document.getElementById('reg-city').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
             const password = document.getElementById('reg-password').value;
             const confirmPassword = document.getElementById('reg-confirm-password').value;
 
@@ -1942,70 +2039,115 @@
                 return;
             }
 
-            // حفظ بيانات المستخدم محلياً وفورياً
-            const userData = { name, city, phone, password };
-            localStorage.setItem('badal_user_' + phone, JSON.stringify(userData));
-            localStorage.setItem('badal_current_user', JSON.stringify(userData));
+            if (!_supabase) {
+                showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
+                return;
+            }
 
-            showCustomAlert('تم إنشاء الحساب بنجاح!', true);
-            authModal.classList.remove('active');
-            checkAuthSession();
-            registerForm.reset();
+            try {
+                // التحقق هل رقم الهاتف مسجل مسبقاً في قاعدة بيانات Supabase
+                const { data: existingRecords, error: checkError } = await _supabase
+                    .from('products')
+                    .select('*')
+                    .ilike('description', `%[USER_PHONE:${phone}]%`);
+
+                if (existingRecords && existingRecords.length > 0) {
+                    showCustomAlert('رقم الهاتف مسجل مسبقاً، يرجى تسجيل الدخول مباشرة!', false);
+                    return;
+                }
+
+                // تسجيل الحساب الحقيقي كإعلان نظامي/حساب في قاعدة البيانات
+                const userPayload = {
+                    title: "حساب مستخدم: " + name,
+                    description: `[USER_ACCOUNT] [USER_PHONE:${phone}] [PASSWORD:${password}] [CITY:${city}] [NAME:${name}]`,
+                    category: "أغراض متنوّعة",
+                    city: city,
+                    image_url: ""
+                };
+
+                const { error: insertError } = await _supabase.from('products').insert([userPayload]);
+
+                if (insertError) {
+                    showCustomAlert('خطأ أثناء التسجيل في قاعدة البيانات: ' + insertError.message, false);
+                } else {
+                    const userData = { name, city, phone, password };
+                    sessionStorage.setItem('badal_supabase_user', JSON.stringify(userData));
+                    showCustomAlert('تم إنشاء الحساب الحقيقي بنجاح في قاعدة البيانات!', true);
+                    authModal.classList.remove('active');
+                    checkAuthSession();
+                    registerForm.reset();
+                }
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ غير متوقع أثناء التسجيل.', false);
+            }
         });
 
-        // تسجيل الدخول العادي بالاسم أو رقم الهاتف وكلمة المرور
+        // تسجيل الدخول الحقيقي والتحقق الفعلي من قاعدة البيانات (يمنع الدخول العشوائي نهائياً)
         const loginForm = document.getElementById('loginForm');
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const inputVal = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
 
-            // البحث برقم الهاتف أولاً أو بالاسم إذا تم خزنه مسبقاً
-            let savedUser = localStorage.getItem('badal_user_' + inputVal);
-            
-            // إذا لم يتم العثور عليه برقم الهاتف، نبحث في كل المستخدمين المخزين بالاسم
-            if (!savedUser) {
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && key.startsWith('badal_user_')) {
-                        const userObj = JSON.parse(localStorage.getItem(key));
-                        if (userObj.name === inputVal || userObj.phone === inputVal) {
-                            savedUser = JSON.stringify(userObj);
+            if (!_supabase) {
+                showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
+                return;
+            }
+
+            try {
+                // البحث في قاعدة البيانات عن الحساب المسجل حصرياً
+                const { data: records, error: queryError } = await _supabase
+                    .from('products')
+                    .select('*')
+                    .ilike('description', '%[USER_ACCOUNT]%');
+
+                if (queryError || !records) {
+                    showCustomAlert('خطأ في الاتصال بقاعدة البيانات للتحقق من الحساب.', false);
+                    return;
+                }
+
+                let foundUser = null;
+                for (let record of records) {
+                    const desc = record.description || '';
+                    if (desc.includes(`[USER_PHONE:${inputVal}]`) || desc.includes(`[NAME:${inputVal}]`)) {
+                        if (desc.includes(`[PASSWORD:${password}]`)) {
+                            // استخراج بيانات المستخدم بدقة من قاعدة البيانات
+                            const nameMatch = desc.match(/\[NAME:(.*?)\]/);
+                            const cityMatch = desc.match(/\[CITY:(.*?)\]/);
+                            const phoneMatch = desc.match(/\[USER_PHONE:(.*?)\]/);
+                            
+                            foundUser = {
+                                name: nameMatch ? nameMatch[1] : inputVal,
+                                city: cityMatch ? cityMatch[1] : 'القنيطرة',
+                                phone: phoneMatch ? phoneMatch[1] : inputVal
+                            };
                             break;
                         }
                     }
                 }
-            }
 
-            if (savedUser) {
-                const userData = JSON.parse(savedUser);
-                if (userData.password === password) {
-                    localStorage.setItem('badal_current_user', JSON.stringify(userData));
-                    showCustomAlert('تم تسجيل الدخول بنجاح!', true);
+                if (foundUser) {
+                    sessionStorage.setItem('badal_supabase_user', JSON.stringify(foundUser));
+                    showCustomAlert('تم تسجيل الدخول بنجاح من قاعدة البيانات!', true);
                     authModal.classList.remove('active');
                     checkAuthSession();
                     loginForm.reset();
                 } else {
-                    showCustomAlert('كلمة المرور غير صحيحة!', false);
+                    showCustomAlert('رقم الهاتف/الاسم أو كلمة المرور غير صحيحة، أو الحساب غير مسجل!', false);
                 }
-            } else {
-                // إذا لم يوجد مسجل مسبقاً، نقوم بإنشاء مستخدم جديد بالاسم المدخل ورقم هاتف افتراضي
-                const defaultUser = { name: inputVal, city: 'القنيطرة', phone: inputVal, password: password };
-                localStorage.setItem('badal_user_' + inputVal, JSON.stringify(defaultUser));
-                localStorage.setItem('badal_current_user', JSON.stringify(defaultUser));
-                showCustomAlert('تم تسجيل الدخول بنجاح!', true);
-                authModal.classList.remove('active');
-                checkAuthSession();
-                loginForm.reset();
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء محاولة تسجيل الدخول.', false);
             }
         });
 
-        // التحقق من الجلسة وتحديث واجهة الهيدر العلوية
+        // التحقق من الجلسة وتحديث واجهة الهيدر العلوية بناءً على قاعدة البيانات
         function checkAuthSession() {
-            const currentUser = localStorage.getItem('badal_current_user');
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
             const topAuthBar = document.getElementById('topAuthBar');
-            if (currentUser) {
-                const userData = JSON.parse(currentUser);
+            if (currentSupabaseUser) {
+                const userData = JSON.parse(currentSupabaseUser);
                 topAuthBar.innerHTML = `
                     <span style="color: var(--dark-blue); font-weight: 700;">مرحباً، ${userData.name}</span> | 
                     <a id="logoutBtn" style="color: #e74c3c; cursor: pointer;">تسجيل الخروج</a>
@@ -2013,7 +2155,7 @@
                 const logoutBtn = document.getElementById('logoutBtn');
                 if(logoutBtn) {
                     logoutBtn.addEventListener('click', () => {
-                        localStorage.removeItem('badal_current_user');
+                        sessionStorage.removeItem('badal_supabase_user');
                         showCustomAlert('تم تسجيل الخروج بنجاح.', true);
                         location.reload();
                     });
