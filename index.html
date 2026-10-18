@@ -1084,7 +1084,7 @@
                     <i class="fa-solid fa-box-open"></i> طلباتي
                 </a>
                 <a class="account-menu-item" id="menuFavorites">
-                    <i class="fa-solid fa-heart"></i> المففضلة
+                    <i class="fa-solid fa-heart"></i> المفضلة
                 </a>
                 <a class="account-menu-item" id="menuSettings">
                     <i class="fa-solid fa-gear"></i> إعدادات
@@ -1115,7 +1115,6 @@
                     <label class="custom-file-upload">
                         <span class="file-name-display" id="fileNameDisplay">لم يتم اختيار أي صور</span>
                         <span class="file-upload-btn-text"><i class="fa-solid fa-cloud-arrow-up"></i> اختر الصور</span>
-                        <!-- تم إزالة required هنا لحل مشكلة 'An invalid form control is not focusable' أثناء إخفاء الإدخال -->
                         <input type="file" id="ad-images" accept="image/*" multiple>
                     </label>
                 </div>
@@ -1354,7 +1353,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.3.3</span>
+            <span class="version-tag">v0.3.4</span>
         </div>
     </footer>
 
@@ -1718,52 +1717,44 @@
                     return;
                 }
 
-                let imageUrl = '';
-                if (_supabase && imageInput.files.length > 0) {
-                    const file = imageInput.files[0];
-                    const fileExt = file.name.split('.').pop();
-                    const fileName = `${Date.now()}_${Math.random()}.${fileExt}`;
-                    const filePath = `${fileName}`;
+                // قراءة الصورة وتحويلها إلى Base64 لتفادي أخطاء السيرفر والتخزين
+                const file = imageInput.files[0];
+                const reader = new FileReader();
 
-                    const { error: uploadError } = await _supabase.storage
-                        .from('BABEL.MA')
-                        .upload(filePath, file);
+                reader.onload = async function(event) {
+                    const base64Image = event.target.result;
 
-                    if (!uploadError) {
-                        const { data: publicUrlData } = _supabase.storage
-                            .from('BABEL.MA')
-                            .getPublicUrl(filePath);
-                        imageUrl = publicUrlData.publicUrl;
-                    }
-                }
+                    if (_supabase) {
+                        const { error: insertError } = await _supabase.from('products').insert([
+                            {
+                                user_id: userData.phone,
+                                title: title,
+                                description: description,
+                                category: category,
+                                city: city,
+                                image_url: base64Image
+                            }
+                        ]);
 
-                if (_supabase) {
-                    const { error: insertError } = await _supabase.from('products').insert([
-                        {
-                            user_id: userData.phone,
-                            title: title,
-                            description: description,
-                            category: category,
-                            city: city,
-                            image_url: imageUrl
+                        if (insertError) {
+                            showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
+                        } else {
+                            showCustomAlert('تم نشر إعلانك بنجاح!', true);
+                            addAdModal.classList.remove('active');
+                            addAdForm.reset();
+                            fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                            showProductsView();
                         }
-                    ]);
-
-                    if (insertError) {
-                        showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
                     } else {
                         showCustomAlert('تم نشر إعلانك بنجاح!', true);
                         addAdModal.classList.remove('active');
                         addAdForm.reset();
-                        fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
                         showProductsView();
                     }
-                } else {
-                    showCustomAlert('تم نشر إعلانك بنجاح!', true);
-                    addAdModal.classList.remove('active');
-                    addAdForm.reset();
-                    showProductsView();
-                }
+                };
+
+                reader.readAsDataURL(file);
+
             } catch (err) {
                 console.error(err);
                 showCustomAlert('حدث خطأ أثناء رفع الإعلان.', false);
