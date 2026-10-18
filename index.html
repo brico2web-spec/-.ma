@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.5.9</span>
+            <span class="version-tag">v0.6.0</span>
         </div>
     </footer>
 
@@ -1773,7 +1773,7 @@
 
         startSlider();
 
-        // متغيرات جلب العروض من قاعدة البيانات Supabase مع نظام Caching فائق السرعة لتفادي البطء
+        // متغيرات جلب العروض من قاعدة البيانات Supabase (التحميل الكسول On-Demand لسرعة فائقة)
         let allProducts = [];
         let currentPage = 1;
         const itemsPerPage = 8;
@@ -1787,6 +1787,11 @@
             }
             if (isFetchingProducts) return;
             isFetchingProducts = true;
+
+            const gridContainer = document.getElementById('productsGridContainer');
+            if(!isProductsLoaded) {
+                gridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:30px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل العروض...</p>';
+            }
 
             try {
                 if (_supabase) {
@@ -1808,7 +1813,6 @@
                     allProducts = [];
                 }
                 renderProducts(currentPage);
-                checkIncomingRequestsCount();
             } catch (err) {
                 console.error('فشل الاتصال بـ Supabase:', err);
                 allProducts = [];
@@ -1816,17 +1820,6 @@
             } finally {
                 isFetchingProducts = false;
             }
-        }
-
-        // الاستماع للتحديثات الحينية (Realtime) للأنشطة الجديدة وتحديث الكاش تلقائياً
-        if (_supabase) {
-            _supabase
-                .channel('realtime-products')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
-                    isProductsLoaded = false;
-                    fetchProductsFromSupabase(true);
-                })
-                .subscribe();
         }
 
         // إدارة المفضلة المحلية (LocalStorage)
@@ -2098,7 +2091,7 @@
             });
         }
 
-        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي باستخدام select خفيف لتفادي البطء
+        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي
         async function checkIncomingRequestsCount() {
             try {
                 const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
@@ -2127,7 +2120,7 @@
             }
         }
 
-        // نافذة الرسائل والطلبات الواردة (باستخدام select محدد سريع)
+        // نافذة الرسائل والطلبات الواردة
         const messagesModal = document.getElementById('messagesModal');
         const closeMessagesModalBtn = document.getElementById('closeMessagesModalBtn');
         const incomingRequestsContainer = document.getElementById('incomingRequestsContainer');
@@ -2595,7 +2588,7 @@
             }
         });
 
-        // نافذة اعلاناتي (باستخدام select محدد سريع لتفادي البطء)
+        // نافذة اعلاناتي
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
@@ -2999,8 +2992,8 @@
             }
         });
 
-        // جلب عدد الطلبات عند التحميل الأولي
-        checkIncomingRequestsCount();
+        // جلب عدد الطلبات للعلامة الحمراء في الخلفية بدون تأثير على سرعة التحميل الأولي
+        setTimeout(checkIncomingRequestsCount, 1000);
     </script>
 </body>
 </html>
