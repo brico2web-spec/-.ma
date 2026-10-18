@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.6.5</span>
+            <span class="version-tag">v0.6.6</span>
         </div>
     </footer>
 
@@ -1773,23 +1773,36 @@
 
         startSlider();
 
-        // متغيرات جلب العروض من قاعدة البيانات Supabase (التحميل الكسول On-Demand لسرعة فائقة)
+        // متغيرات جلب العروض من قاعدة البيانات Supabase مع دعم الذاكرة المحلية (LocalStorage) والـ Realtime Sync التلقائي
         let allProducts = [];
         let currentPage = 1;
         const itemsPerPage = 8;
         let isProductsLoaded = false;
         let isFetchingProducts = false;
 
+        // تحميل البيانات المحفوظة مسبقاً في LocalStorage لتظهر فوراً دون انتظار الانترنت
+        try {
+            const cachedProducts = localStorage.getItem('badal_cached_products');
+            if (cachedProducts) {
+                allProducts = JSON.parse(cachedProducts);
+                if (allProducts.length > 0) {
+                    isProductsLoaded = true;
+                }
+            }
+        } catch(e) {
+            console.error('خطأ في استرجاع الذاكرة المحلية:', e);
+        }
+
         async function fetchProductsFromSupabase(forceRefresh = false) {
             if (isProductsLoaded && !forceRefresh && allProducts.length > 0) {
                 renderProducts(currentPage);
-                return;
+                // حتى لو كانت محملة، نتحقق في الخلفية بهدوء
             }
-            if (isFetchingProducts) return;
+            if (isFetchingProducts && !forceRefresh) return;
             isFetchingProducts = true;
 
             const gridContainer = document.getElementById('productsGridContainer');
-            if(!isProductsLoaded) {
+            if(!isProductsLoaded && allProducts.length === 0) {
                 gridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:30px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل العروض...</p>';
             }
 
@@ -1806,20 +1819,36 @@
                             return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
                         });
                         isProductsLoaded = true;
-                    } else {
-                        allProducts = [];
+                        // حفظ البيانات في LocalStorage لتظل متوفرة محلياً دائماً
+                        localStorage.setItem('badal_cached_products', JSON.stringify(allProducts));
                     }
-                } else {
-                    allProducts = [];
                 }
                 renderProducts(currentPage);
             } catch (err) {
                 console.error('فشل الاتصال بـ Supabase:', err);
-                allProducts = [];
                 renderProducts(currentPage);
             } finally {
                 isFetchingProducts = false;
             }
+        }
+
+        // تفعيل الاستماع الفوري والتلقائي (Realtime Sync) لأي تغييرات جديدة في قاعدة البيانات
+        if (_supabase) {
+            _supabase
+                .channel('public:products')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
+                    // تحديث تلقائي فوري للقائمة عند حدوث أي إضافة أو تعديل أو حذف في القاعدة
+                    fetchProductsFromSupabase(true);
+                    checkIncomingRequestsCount();
+                    // إذا كانت نافذة الرسائل أو إعلاناتي مفتوحة، يتم تحديث محتواها تلقائياً أيضاً
+                    if (document.getElementById('messagesModal').classList.contains('active')) {
+                        document.getElementById('bottomMessagesBtn').click();
+                    }
+                    if (document.getElementById('myAdsModal').classList.contains('active')) {
+                        openMyAdsModalFunc();
+                    }
+                })
+                .subscribe();
         }
 
         // إدارة المفضلة المحلية (LocalStorage)
@@ -2073,7 +2102,6 @@
                             exchangeRequestModal.classList.remove('active');
                             exchangeRequestForm.reset();
                             exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
-                            isProductsLoaded = false;
                             checkIncomingRequestsCount();
                         } else {
                             showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
@@ -2466,7 +2494,6 @@
                         adDescTextarea.style.backgroundColor = '#f8faf9';
                         adDescTextarea.style.color = 'var(--dark-blue)';
                         fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
-                        isProductsLoaded = false;
                         showProductsView();
                     }
                 } else {
@@ -2721,7 +2748,6 @@
                     if (!error) {
                         showCustomAlert('تم تعديل الإعلان بنجاح', true);
                         editAdModal.classList.remove('active');
-                        isProductsLoaded = false;
                         fetchProductsFromSupabase(true);
                     } else {
                         showCustomAlert('فشل تعديل الإعلان: ' + error.message, false);
@@ -2740,11 +2766,9 @@
                         const { error } = await _supabase.from('products').delete().eq('id', adId);
                         if (!error) {
                             showCustomAlert('تم حذف الإعلان بنجاح من قاعدة البيانات', true);
-                            // إزالة العنصر مباشرة من مصفوفة العروض المحلية لتحديث العرض فوراً
                             allProducts = allProducts.filter(p => p.id !== adId);
-                            isProductsLoaded = true;
+                            localStorage.setItem('badal_cached_products', JSON.stringify(allProducts));
                             renderProducts(currentPage);
-                            // إعادة تحديث نافذة إعلاناتي لتبقي مفتوحة مع إخفاء المنتج المحذوف فوراً
                             openMyAdsModalFunc();
                         } else {
                             showCustomAlert('فشل حذف الإعلان: ' + error.message, false);
@@ -2999,8 +3023,11 @@
             }
         });
 
-        // جلب عدد الطلبات للعلامة الحمراء في الخلفية بدون تأثير على سرعة التحميل الأولي
-        setTimeout(checkIncomingRequestsCount, 1000);
+        // تشغيل الجلب الأولي والفحص التلقائي للطلبات عند بدء التشغيل
+        setTimeout(() => {
+            fetchProductsFromSupabase();
+            checkIncomingRequestsCount();
+        }, 500);
     </script>
 </body>
 </html>
