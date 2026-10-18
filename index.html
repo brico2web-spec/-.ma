@@ -668,10 +668,36 @@
             transition: transform 0.3s;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .product-card:hover {
             transform: translateY(-5px);
+        }
+
+        /* زر المفضلة على بطاقة المنتج (يظهر حصراً عند تسجيل الدخول) */
+        .product-fav-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.85);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: none; /* مخفي افتراضياً للمستخدمين الزوار */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-gray);
+            font-size: 1rem;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .product-fav-btn.active, .product-fav-btn:hover {
+            color: #e74c3c;
+            background: #ffffff;
         }
 
         .product-img {
@@ -682,6 +708,7 @@
             justify-content: center;
             color: var(--primary-green);
             font-size: 2.2rem;
+            position: relative;
         }
 
         .product-body {
@@ -902,13 +929,13 @@
             color: var(--primary-green);
         }
 
-        /* شارة الإشعارات الحمراء فوق أيقونة الرسائل */
+        /* شارة الإشعارات الحمراء فوق أيقونة الرسائل مع رقم أبيض */
         .msg-badge {
             position: absolute;
             top: -3px;
             right: 8px;
             background-color: #e74c3c;
-            color: #ffffff;
+            color: #ffffff !important;
             font-size: 0.65rem;
             font-weight: bold;
             padding: 1px 5px;
@@ -1179,7 +1206,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لقائمة الحساب الأنيقة عند تسجيل الدخول (مع إظهار المدينة تحت الاسم) -->
+    <!-- نافذة منبثقة (Modal) لقائمة الحساب الأنيقة عند تسجيل الدخول (بدون زر طلباتي) -->
     <div class="modal-overlay" id="accountMenuModal">
         <div class="modal-content" style="max-width: 400px; text-align: center;">
             <button class="modal-close" id="closeAccountMenuBtn">&times;</button>
@@ -1188,9 +1215,6 @@
             <div class="account-menu-list">
                 <a class="account-menu-item" id="menuMyAds">
                     <i class="fa-solid fa-bullhorn"></i> اعلاناتي
-                </a>
-                <a class="account-menu-item" id="menuMyOrders">
-                    <i class="fa-solid fa-box-open"></i> طلباتي
                 </a>
                 <a class="account-menu-item" id="menuFavorites">
                     <i class="fa-solid fa-heart"></i> المفضلة
@@ -1201,6 +1225,40 @@
                 <a class="account-menu-item logout-item" id="menuLogout">
                     <i class="fa-solid fa-right-from-bracket"></i> خروج
                 </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة (Modal) لـ إعدادات الحساب الشخصي (تغيير رقم الهاتف، المدينة وتأكيد كلمة المرور الحالية) -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <button class="modal-close" id="closeSettingsModalBtn">&times;</button>
+            <h2 class="modal-title">إعدادات <span class="logo-green">الحساب الشخصي</span></h2>
+            <form class="contact-form" id="settingsForm">
+                <div class="form-group">
+                    <label for="settings-phone">رقم الهاتف الجديد:</label>
+                    <input type="text" id="settings-phone" placeholder="أدخل رقم الهاتف الجديد" required>
+                </div>
+                <div class="form-group">
+                    <label for="settings-city">المدينة:</label>
+                    <input type="text" id="settings-city" placeholder="أدخل المدينة الجديدة" required>
+                </div>
+                <div class="form-group">
+                    <label for="settings-password">كلمة المرور الحالية للتأكيد:</label>
+                    <input type="password" id="settings-password" placeholder="أدخل كلمة المرور الحالية لتأكيد التغيير" required>
+                </div>
+                <button type="submit" class="form-submit-btn">حفظ التغييرات</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة (Modal) لـ عرض المنتجات المفضلة -->
+    <div class="modal-overlay" id="favoritesModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="modal-close" id="closeFavoritesModalBtn">&times;</button>
+            <h2 class="modal-title">المنتجات <span class="logo-green">المفضلة</span></h2>
+            <div class="products-grid" id="favoritesGridContainer" style="margin-top: 15px;">
+                <!-- يتم تعبئة المفضلة هنا ديناميكياً -->
             </div>
         </div>
     </div>
@@ -1216,7 +1274,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ تعديل الإعلان (بدون خانة المدينة) -->
+    <!-- نافذة منبثقة (Modal) لـ تعديل الإعلان -->
     <div class="modal-overlay" id="editAdModal">
         <div class="modal-content">
             <button class="modal-close" id="closeEditAdModalBtn">&times;</button>
@@ -1251,7 +1309,7 @@
             <button class="modal-close" id="closeCustomConfirmBtn">&times;</button>
             <div class="custom-alert-box">
                 <div class="custom-alert-icon" style="color: #e74c3c;"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                <p class="custom-alert-text" id="customConfirmMessage">هل أنت متأكد من حذف هذا الإعلان؟</p>
+                <p class="custom-alert-text" id="customConfirmMessage">هل أنت متأكد من الحذف؟</p>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button type="button" class="modal-footer-btn" id="customConfirmYesBtn" style="background-color: #e74c3c;">تأكيد الحذف</button>
                     <button type="button" class="modal-footer-btn" id="customConfirmNoBtn" style="background-color: var(--text-gray);">إلغاء</button>
@@ -1260,7 +1318,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ رفع منتج جديد عبر الكاميرا (بدون خانة المدينة وتأخذ المدينة تلقائياً من الحساب المسجل) -->
+    <!-- نافذة منبثقة (Modal) لـ رفع منتج جديد عبر الكاميرا -->
     <div class="modal-overlay" id="addAdModal">
         <div class="modal-content">
             <button class="modal-close" id="closeAddAdModalBtn">&times;</button>
@@ -1513,7 +1571,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.5.2</span>
+            <span class="version-tag">v0.5.4</span>
         </div>
     </footer>
 
@@ -1675,15 +1733,44 @@
 
         function setDefaultProducts() {
             allProducts = [
-                { title: "هاتف ذكي بحالة ممتازة", category: "تلفونات", city: "القنيطرة", description: "مطلوب التبديل بساعة ذكية أو ملابس رجالية.", icon: "fa-mobile-screen-button" },
-                { title: "جاكيت شتوي أصلي", category: "ملابس", city: "الرباط", description: "مقاس L، بحالة جديدة تماماً. مطلوب حذاء رياضي.", icon: "fa-shirt" },
-                { title: "آلة تصوير قديمة", category: "أغراض متنوّعة", city: "الدار البيضاء", description: "صالحة للديكور أو الهواة. مطلوب كتب أو أدوات منزلية.", icon: "fa-box-open" },
-                { title: "لابتوب للاستخدام اليومي", category: "تلفونات", city: "طنجة", description: "بحالة جيدة، مطلوب آيباد أو هاتف لوحي.", icon: "fa-laptop" },
-                { title: "ساعة دستر الكلاسيكية", category: "أغراض متنوّعة", city: "مراكش", description: "ساعة يد أصلية، مطلوب عطر أو نظارة شمسية.", icon: "fa-clock" },
-                { title: "حذاء رياضي ماركة عالمية", category: "ملابس", city: "أكادير", description: "مقاس 42، لم يلبس قط. مطلوب قميص رياضي.", icon: "fa-shoe-prints" },
-                { title: "دراجة هوائية خفيفة", category: "أغراض متنوّعة", city: "القنيطرة", description: "ممتازة للتنقل داخل المدينة. مطلوب هاتف ذكي.", icon: "fa-bicycle" },
-                { title: "سماعات بلوتوث متطورة", category: "تلفونات", city: "سلا", description: "صوت نقي وبطارية قوية. مطلوب حقيبة ظهر.", icon: "fa-headphones" }
+                { id: 1, title: "هاتف ذكي بحالة ممتازة", category: "تلفونات", city: "القنيطرة", description: "مطلوب التبديل بساعة ذكية أو ملابس رجالية.", icon: "fa-mobile-screen-button" },
+                { id: 2, title: "جاكيت شتوي أصلي", category: "ملابس", city: "الرباط", description: "مقاس L، بحالة جديدة تماماً. مطلوب حذاء رياضي.", icon: "fa-shirt" },
+                { id: 3, title: "آلة تصوير قديمة", category: "أغراض متنوّعة", city: "الدار البيضاء", description: "صالحة للديكور أو الهواة. مطلوب كتب أو أدوات منزلية.", icon: "fa-box-open" },
+                { id: 4, title: "لابتوب للاستخدام اليومي", category: "تلفونات", city: "طنجة", description: "بحالة جيدة، مطلوب آيباد أو هاتف لوحي.", icon: "fa-laptop" },
+                { id: 5, title: "ساعة دستر الكلاسيكية", category: "أغراض متنوّعة", city: "مراكش", description: "ساعة يد أصلية، مطلوب عطر أو نظارة شمسية.", icon: "fa-clock" },
+                { id: 6, title: "حذاء رياضي ماركة عالمية", category: "ملابس", city: "أكادير", description: "مقاس 42، لم يلبس قط. مطلوب قميص رياضي.", icon: "fa-shoe-prints" },
+                { id: 7, title: "دراجة هوائية خفيفة", category: "أغراض متنوّعة", city: "القنيطرة", description: "ممتازة للتنقل داخل المدينة. مطلوب هاتف ذكي.", icon: "fa-bicycle" },
+                { id: 8, title: "سماعات بلوتوث متطورة", category: "تلفونات", city: "سلا", description: "صوت نقي وبطارية قوية. مطلوب حقيبة ظهر.", icon: "fa-headphones" }
             ];
+        }
+
+        // إدارة المفضلة المحلية (LocalStorage)
+        function getFavorites() {
+            try {
+                return JSON.parse(localStorage.getItem('badal_favorites') || '[]');
+            } catch(e) {
+                return [];
+            }
+        }
+
+        window.toggleFavorite = function(productId, event) {
+            if(event) event.preventDefault();
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
+                openRegistrationTab();
+                return;
+            }
+            let favs = getFavorites();
+            const index = favs.indexOf(productId);
+            if(index > -1) {
+                favs.splice(index, 1);
+                showCustomAlert('تمت إزالة المنتوج من المفضلة', true);
+            } else {
+                favs.push(productId);
+                showCustomAlert('تمت إضافة المنتوج إلى المفضلة بنجاح', true);
+            }
+            localStorage.setItem('badal_favorites', JSON.stringify(favs));
+            renderProducts(currentPage);
         }
 
         function renderProducts(page) {
@@ -1693,11 +1780,14 @@
             const startIndex = (page - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
             const paginatedItems = allProducts.slice(startIndex, endIndex);
+            const favs = getFavorites();
+            const isUserLoggedIn = sessionStorage.getItem('badal_supabase_user') !== null;
 
             paginatedItems.forEach(prod => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 const iconClass = prod.icon || 'fa-box-open';
+                const isFav = favs.includes(prod.id);
                 
                 let prodCity = prod.city || '';
                 let rawDesc = prod.description || prod.desc || '';
@@ -1716,7 +1806,13 @@
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
                 const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 
+                // زر المفضلة يظهر فقط إذا كان المستخدم مسجلاً للدخول
+                const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
+
                 card.innerHTML = `
+                    <button class="product-fav-btn ${isFav ? 'active' : ''}" style="${favBtnStyle}" onclick="toggleFavorite(${prod.id}, event)" title="إضافة للمفضلة">
+                        <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
+                    </button>
                     ${displayImg}
                     <div class="product-body">
                         <div class="product-badge-group">
@@ -2026,7 +2122,7 @@
             }
         });
 
-        // تحويل زر "موافق" إلى زر ومظهر الواتساب وتوجيه المستخدم مباشرة دون كشف الأرقام
+        // زر موافق وفتح الواتساب
         window.acceptExchangeRequest = function(reqId, phone, name) {
             let cleanPhone = phone.replace(/[^0-9]/g, '');
             if (cleanPhone.startsWith('0')) {
@@ -2045,21 +2141,85 @@
             window.open(whatsappUrl, '_blank');
         };
 
-        // زر رفض الطلب يقوم بحذف الطلب من قاعدة البيانات والرسائل
+        // زر رفض الطلب (يقوم بحذف الطلب بصفت نهائية وفورية من قاعدة البيانات)
         window.cancelExchangeRequest = async function(reqId) {
             showCustomConfirm(async () => {
                 if (_supabase) {
                     const { error } = await _supabase.from('products').delete().eq('id', reqId);
                     if (!error) {
-                        showCustomAlert('تم رفض وحذف طلب المقايضة بنجاح.', true);
+                        showCustomAlert('تم رفض وحذف طلب المقايضة بنجاح من قاعدة البيانات.', true);
                         messagesModal.classList.remove('active');
                         checkIncomingRequestsCount();
                     } else {
-                        showCustomAlert('فشل رفض الطلب: ' + error.message, false);
+                        showCustomAlert('فشل رفض وحذف الطلب: ' + error.message, false);
                     }
                 }
             });
         };
+
+        // نافذة المفضلة
+        const favoritesModal = document.getElementById('favoritesModal');
+        const closeFavoritesModalBtn = document.getElementById('closeFavoritesModalBtn');
+        const favoritesGridContainer = document.getElementById('favoritesGridContainer');
+        const bottomFavoritesBtn = document.getElementById('bottomFavoritesBtn');
+
+        function openFavoritesModal() {
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
+                openRegistrationTab();
+                return;
+            }
+            const favs = getFavorites();
+            favoritesGridContainer.innerHTML = '';
+            
+            const matchedProducts = allProducts.filter(p => favs.includes(p.id));
+            if(matchedProducts.length > 0) {
+                matchedProducts.forEach(prod => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    const iconClass = prod.icon || 'fa-box-open';
+                    let prodCity = prod.city || 'القنيطرة';
+                    let rawDesc = prod.description || prod.desc || '';
+                    let cleanDesc = rawDesc.split(' (الهاتف:')[0];
+                    const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
+
+                    card.innerHTML = `
+                        <button class="product-fav-btn active" style="display: flex;" onclick="toggleFavorite(${prod.id}, event); openFavoritesModal();" title="إزالة من المفضلة">
+                            <i class="fa-solid fa-heart"></i>
+                        </button>
+                        ${displayImg}
+                        <div class="product-body">
+                            <div class="product-badge-group">
+                                <span class="product-badge">${prod.category}</span>
+                                <span class="product-city-badge"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${prodCity}</span>
+                            </div>
+                            <h3 class="product-title">${prod.title}</h3>
+                            <p class="product-desc">${cleanDesc}</p>
+                            <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}', ${prod.id});">طلب تبدل معاه</a>
+                        </div>
+                    `;
+                    favoritesGridContainer.appendChild(card);
+                });
+            } else {
+                favoritesGridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:20px;">قائمة المفضلة لديك فارغة حالياً.</p>';
+            }
+            favoritesModal.classList.add('active');
+        }
+
+        bottomFavoritesBtn.addEventListener('click', () => {
+            openFavoritesModal();
+            setActiveBottomNav(bottomFavoritesBtn);
+        });
+
+        closeFavoritesModalBtn.addEventListener('click', () => {
+            favoritesModal.classList.remove('active');
+        });
+
+        favoritesModal.addEventListener('click', (e) => {
+            if (e.target === favoritesModal) {
+                favoritesModal.classList.remove('active');
+            }
+        });
 
         // التبديل بين الرئيسية وعرض المنتجات
         const sliderWrapper = document.getElementById('sliderWrapper');
@@ -2113,7 +2273,6 @@
 
         // تفاعل أزرار شريط التنقل السفلي الجديد
         const bottomAdsBtn = document.getElementById('bottomAdsBtn');
-        const bottomFavoritesBtn = document.getElementById('bottomFavoritesBtn');
         const bottomCameraBtn = document.getElementById('bottomCameraBtn');
         const bottomAccountBtn = document.getElementById('bottomAccountBtn');
         const addAdModal = document.getElementById('addAdModal');
@@ -2143,11 +2302,6 @@
         bottomAdsBtn.addEventListener('click', (e) => {
             showProductsView(e);
             setActiveBottomNav(bottomAdsBtn);
-        });
-
-        bottomFavoritesBtn.addEventListener('click', () => {
-            showCustomAlert('قريباً: قسم المفضلة لحفظ السلع التي تعجبك.', true);
-            setActiveBottomNav(bottomFavoritesBtn);
         });
 
         bottomCameraBtn.addEventListener('click', () => {
@@ -2259,6 +2413,88 @@
         accountMenuModal.addEventListener('click', (e) => {
             if (e.target === accountMenuModal) {
                 accountMenuModal.classList.remove('active');
+            }
+        });
+
+        // نافذة إعدادات الحساب الشخصي وتعديل المعلومات في قاعدة البيانات مع التحقق من كلمة المرور الحالية
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettingsModalBtn = document.getElementById('closeSettingsModalBtn');
+        const settingsForm = document.getElementById('settingsForm');
+
+        document.getElementById('menuSettings').addEventListener('click', (e) => {
+            e.preventDefault();
+            accountMenuModal.classList.remove('active');
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
+                openLoginTab();
+                return;
+            }
+            const userData = JSON.parse(currentSupabaseUser);
+            document.getElementById('settings-phone').value = userData.phone || '';
+            document.getElementById('settings-city').value = userData.city || '';
+            document.getElementById('settings-password').value = '';
+            settingsModal.classList.add('active');
+        });
+
+        closeSettingsModalBtn.addEventListener('click', () => {
+            settingsModal.classList.remove('active');
+        });
+
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.remove('active');
+            }
+        });
+
+        settingsForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const currentSupabaseUser = JSON.parse(sessionStorage.getItem('badal_supabase_user') || '{}');
+            const newPhone = document.getElementById('settings-phone').value.trim();
+            const newCity = document.getElementById('settings-city').value.trim();
+            const enteredPassword = document.getElementById('settings-password').value;
+
+            // التحقق من صحة كلمة المرور الحالية للمستخدم
+            if (enteredPassword !== currentSupabaseUser.password) {
+                showCustomAlert('كلمة المرور الحالية غير صحيحة، يرجى إدخال كلمة المرور الصحيحة لتأكيد التغيير.', false);
+                return;
+            }
+
+            if (!_supabase) {
+                showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
+                return;
+            }
+
+            try {
+                // البحث عن سجل الحساب في قاعدة البيانات لتحديثه
+                const { data: records, error: queryError } = await _supabase
+                    .from('products')
+                    .select('*')
+                    .ilike('description', '%[USER_ACCOUNT]%');
+
+                if (!queryError && records) {
+                    let userRecord = records.find(r => r.description.includes(`[USER_PHONE:${currentSupabaseUser.phone}]`));
+                    if (userRecord) {
+                        const updatedDesc = `[USER_ACCOUNT] [USER_PHONE:${newPhone}] [PASSWORD:${currentSupabaseUser.password}] [CITY:${newCity}] [NAME:${currentSupabaseUser.name}]`;
+                        const { error: updateError } = await _supabase
+                            .from('products')
+                            .update({ description: updatedDesc, city: newCity })
+                            .eq('id', userRecord.id);
+
+                        if (!updateError) {
+                            const updatedUserData = { name: currentSupabaseUser.name, phone: newPhone, city: newCity, password: currentSupabaseUser.password };
+                            sessionStorage.setItem('badal_supabase_user', JSON.stringify(updatedUserData));
+                            showCustomAlert('تم تحديث معلومات الحساب في قاعدة البيانات بنجاح!', true);
+                            settingsModal.classList.remove('active');
+                        } else {
+                            showCustomAlert('فشل تحديث الحساب: ' + updateError.message, false);
+                        }
+                    } else {
+                        showCustomAlert('لم يتم العثور على سجل الحساب في قاعدة البيانات.', false);
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء تحديث الإعدادات.', false);
             }
         });
 
@@ -2401,13 +2637,14 @@
             }
         });
 
+        // تفعيل زر الحذف في نافذة اعلاناتي بشكل كامل ومباشر
         window.deleteMyAd = async function(adId) {
             showCustomConfirm(async () => {
                 try {
                     if (_supabase) {
                         const { error } = await _supabase.from('products').delete().eq('id', adId);
                         if (!error) {
-                            showCustomAlert('تم حذف الإعلان بنجاح', true);
+                            showCustomAlert('تم حذف الإعلان بنجاح من قاعدة البيانات', true);
                             myAdsModal.classList.remove('active');
                             fetchProductsFromSupabase();
                         } else {
@@ -2421,22 +2658,10 @@
             });
         };
 
-        document.getElementById('menuMyOrders').addEventListener('click', (e) => {
-            e.preventDefault();
-            accountMenuModal.classList.remove('active');
-            showCustomAlert('قريباً: عرض طلبات المقايضة الخاصة بك.', true);
-        });
-
         document.getElementById('menuFavorites').addEventListener('click', (e) => {
             e.preventDefault();
             accountMenuModal.classList.remove('active');
-            showCustomAlert('قريباً: عرض السلع المفضلة لديك.', true);
-        });
-
-        document.getElementById('menuSettings').addEventListener('click', (e) => {
-            e.preventDefault();
-            accountMenuModal.classList.remove('active');
-            showCustomAlert('قريباً: إعدادات الحساب الشخصي.', true);
+            openFavoritesModal();
         });
 
         document.getElementById('menuLogout').addEventListener('click', (e) => {
@@ -2540,6 +2765,7 @@
                     authModal.classList.remove('active');
                     checkAuthSession();
                     registerForm.reset();
+                    renderProducts(currentPage);
                 }
             } catch (err) {
                 console.error(err);
@@ -2581,7 +2807,8 @@
                             foundUser = {
                                 name: nameMatch ? nameMatch[1] : inputVal,
                                 city: cityMatch ? cityMatch[1] : 'القنيطرة',
-                                phone: phoneMatch ? phoneMatch[1] : inputVal
+                                phone: phoneMatch ? phoneMatch[1] : inputVal,
+                                password: password
                             };
                             break;
                         }
@@ -2595,6 +2822,7 @@
                     checkAuthSession();
                     loginForm.reset();
                     checkIncomingRequestsCount();
+                    renderProducts(currentPage);
                 } else {
                     showCustomAlert('رقم الهاتف/الاسم أو كلمة المرور غير صحيحة، أو الحساب غير مسجل!', false);
                 }
