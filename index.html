@@ -1398,7 +1398,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.4.4</span>
+            <span class="version-tag">v0.4.5</span>
         </div>
     </footer>
 
@@ -1863,7 +1863,7 @@
             }
         });
 
-        // ربط عناصر قائمة الحساب الجديدة (اعلاناتي) مع استبعاد حسابات المستخدمين
+        // ربط عناصر قائمة الحساب الجديدة (اعلاناتي) مع جلب ذكي واستبعاد حسابات المستخدمين
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
@@ -1884,17 +1884,21 @@
 
             try {
                 if (_supabase) {
+                    // جلب جميع المنتجات التي لا تحتوي على علامة [USER_ACCOUNT]
                     const { data, error } = await _supabase
                         .from('products')
                         .select('*')
-                        .ilike('description', `%[USER_PHONE:${userData.phone}]%`)
                         .order('created_at', { ascending: false });
 
-                    if (!error && data && data.length > 0) {
-                        // تصفية النتائج لاستبعاد سجلات حسابات المستخدمين ([USER_ACCOUNT]) نهائياً من نافذة إعلاناتي
+                    if (!error && data) {
+                        // تصفية الإعلانات الخاصة بالمستخدم الحالي بناءً على رقم الهاتف أو الاسم المخزن في الوصف
                         const filteredAds = data.filter(ad => {
                             const desc = ad.description || '';
-                            return !desc.includes('[USER_ACCOUNT]');
+                            if (desc.includes('[USER_ACCOUNT]')) return false;
+                            
+                            const matchPhone = userData.phone && desc.includes(userData.phone);
+                            const matchName = userData.name && desc.includes(userData.name);
+                            return matchPhone || matchName;
                         });
 
                         if (filteredAds.length > 0) {
