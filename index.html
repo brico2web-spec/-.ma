@@ -675,7 +675,7 @@
             transform: translateY(-5px);
         }
 
-        /* زر المفضلة على بطاقة المنتج (يظهر حصراً عند تسجيل الدخول) */
+        /* زر المفضلة على بطاقة المنتج */
         .product-fav-btn {
             position: absolute;
             top: 10px;
@@ -685,7 +685,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            display: none; /* مخفي افتراضياً للمستخدمين الزوار */
+            display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -1229,7 +1229,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ إعدادات الحساب الشخصي (تغيير رقم الهاتف، المدينة وتأكيد كلمة المرور الحالية) -->
+    <!-- نافذة منبثقة (Modal) لـ إعدادات الحساب الشخصي (تغيير رقم الهاتف، المدينة وكلمة المرور) -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-content" style="max-width: 450px;">
             <button class="modal-close" id="closeSettingsModalBtn">&times;</button>
@@ -1244,8 +1244,8 @@
                     <input type="text" id="settings-city" placeholder="أدخل المدينة الجديدة" required>
                 </div>
                 <div class="form-group">
-                    <label for="settings-password">كلمة المرور الحالية للتأكيد:</label>
-                    <input type="password" id="settings-password" placeholder="أدخل كلمة المرور الحالية لتأكيد التغيير" required>
+                    <label for="settings-password">كلمة المرور الحالية أو الجديدة للتأكيد:</label>
+                    <input type="password" id="settings-password" placeholder="أدخل كلمة المرور" required>
                 </div>
                 <button type="submit" class="form-submit-btn">حفظ التغييرات</button>
             </form>
@@ -1571,7 +1571,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.5.4</span>
+            <span class="version-tag">v0.5.3</span>
         </div>
     </footer>
 
@@ -1755,11 +1755,6 @@
 
         window.toggleFavorite = function(productId, event) {
             if(event) event.preventDefault();
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
-            if (!currentSupabaseUser) {
-                openRegistrationTab();
-                return;
-            }
             let favs = getFavorites();
             const index = favs.indexOf(productId);
             if(index > -1) {
@@ -1781,7 +1776,6 @@
             const endIndex = startIndex + itemsPerPage;
             const paginatedItems = allProducts.slice(startIndex, endIndex);
             const favs = getFavorites();
-            const isUserLoggedIn = sessionStorage.getItem('badal_supabase_user') !== null;
 
             paginatedItems.forEach(prod => {
                 const card = document.createElement('div');
@@ -1806,11 +1800,8 @@
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
                 const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 
-                // زر المفضلة يظهر فقط إذا كان المستخدم مسجلاً للدخول
-                const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
-
                 card.innerHTML = `
-                    <button class="product-fav-btn ${isFav ? 'active' : ''}" style="${favBtnStyle}" onclick="toggleFavorite(${prod.id}, event)" title="إضافة للمفضلة">
+                    <button class="product-fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${prod.id}, event)" title="إضافة للمفضلة">
                         <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
                     </button>
                     ${displayImg}
@@ -2164,11 +2155,6 @@
         const bottomFavoritesBtn = document.getElementById('bottomFavoritesBtn');
 
         function openFavoritesModal() {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
-            if (!currentSupabaseUser) {
-                openRegistrationTab();
-                return;
-            }
             const favs = getFavorites();
             favoritesGridContainer.innerHTML = '';
             
@@ -2184,7 +2170,7 @@
                     const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
 
                     card.innerHTML = `
-                        <button class="product-fav-btn active" style="display: flex;" onclick="toggleFavorite(${prod.id}, event); openFavoritesModal();" title="إزالة من المفضلة">
+                        <button class="product-fav-btn active" onclick="toggleFavorite(${prod.id}, event); openFavoritesModal();" title="إزالة من المفضلة">
                             <i class="fa-solid fa-heart"></i>
                         </button>
                         ${displayImg}
@@ -2416,7 +2402,7 @@
             }
         });
 
-        // نافذة إعدادات الحساب الشخصي وتعديل المعلومات في قاعدة البيانات مع التحقق من كلمة المرور الحالية
+        // نافذة إعدادات الحساب الشخصي وتعديل المعلومات في قاعدة البيانات
         const settingsModal = document.getElementById('settingsModal');
         const closeSettingsModalBtn = document.getElementById('closeSettingsModalBtn');
         const settingsForm = document.getElementById('settingsForm');
@@ -2432,7 +2418,7 @@
             const userData = JSON.parse(currentSupabaseUser);
             document.getElementById('settings-phone').value = userData.phone || '';
             document.getElementById('settings-city').value = userData.city || '';
-            document.getElementById('settings-password').value = '';
+            document.getElementById('settings-password').value = userData.password || '';
             settingsModal.classList.add('active');
         });
 
@@ -2451,13 +2437,7 @@
             const currentSupabaseUser = JSON.parse(sessionStorage.getItem('badal_supabase_user') || '{}');
             const newPhone = document.getElementById('settings-phone').value.trim();
             const newCity = document.getElementById('settings-city').value.trim();
-            const enteredPassword = document.getElementById('settings-password').value;
-
-            // التحقق من صحة كلمة المرور الحالية للمستخدم
-            if (enteredPassword !== currentSupabaseUser.password) {
-                showCustomAlert('كلمة المرور الحالية غير صحيحة، يرجى إدخال كلمة المرور الصحيحة لتأكيد التغيير.', false);
-                return;
-            }
+            const newPassword = document.getElementById('settings-password').value;
 
             if (!_supabase) {
                 showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
@@ -2474,14 +2454,14 @@
                 if (!queryError && records) {
                     let userRecord = records.find(r => r.description.includes(`[USER_PHONE:${currentSupabaseUser.phone}]`));
                     if (userRecord) {
-                        const updatedDesc = `[USER_ACCOUNT] [USER_PHONE:${newPhone}] [PASSWORD:${currentSupabaseUser.password}] [CITY:${newCity}] [NAME:${currentSupabaseUser.name}]`;
+                        const updatedDesc = `[USER_ACCOUNT] [USER_PHONE:${newPhone}] [PASSWORD:${newPassword}] [CITY:${newCity}] [NAME:${currentSupabaseUser.name}]`;
                         const { error: updateError } = await _supabase
                             .from('products')
                             .update({ description: updatedDesc, city: newCity })
                             .eq('id', userRecord.id);
 
                         if (!updateError) {
-                            const updatedUserData = { name: currentSupabaseUser.name, phone: newPhone, city: newCity, password: currentSupabaseUser.password };
+                            const updatedUserData = { name: currentSupabaseUser.name, phone: newPhone, city: newCity, password: newPassword };
                             sessionStorage.setItem('badal_supabase_user', JSON.stringify(updatedUserData));
                             showCustomAlert('تم تحديث معلومات الحساب في قاعدة البيانات بنجاح!', true);
                             settingsModal.classList.remove('active');
@@ -2765,7 +2745,6 @@
                     authModal.classList.remove('active');
                     checkAuthSession();
                     registerForm.reset();
-                    renderProducts(currentPage);
                 }
             } catch (err) {
                 console.error(err);
@@ -2822,7 +2801,6 @@
                     checkAuthSession();
                     loginForm.reset();
                     checkIncomingRequestsCount();
-                    renderProducts(currentPage);
                 } else {
                     showCustomAlert('رقم الهاتف/الاسم أو كلمة المرور غير صحيحة، أو الحساب غير مسجل!', false);
                 }
