@@ -707,6 +707,14 @@
             word-break: break-word;
         }
 
+        .product-badge-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            align-self: flex-start;
+        }
+
         .product-badge {
             display: inline-block;
             background-color: #e6f7f0;
@@ -715,7 +723,17 @@
             border-radius: 6px;
             font-size: 0.7rem;
             font-weight: 700;
-            align-self: flex-start;
+        }
+
+        .product-city-badge {
+            display: inline-block;
+            background-color: #f2f7f4;
+            color: var(--text-gray);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border: 1px solid #d2ded7;
         }
 
         .product-btn {
@@ -866,6 +884,7 @@
             background: none;
             border: none;
             gap: 2px;
+            position: relative;
         }
 
         .bottom-nav-item i {
@@ -881,6 +900,23 @@
         .bottom-nav-item:hover i, .bottom-nav-item.active i,
         .bottom-nav-item:hover span, .bottom-nav-item.active span {
             color: var(--primary-green);
+        }
+
+        /* شارة الإشعارات الحمراء فوق أيقونة الرسائل */
+        .msg-badge {
+            position: absolute;
+            top: -3px;
+            right: 8px;
+            background-color: #e74c3c;
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 1px 5px;
+            border-radius: 10px;
+            display: none;
+        }
+        .msg-badge.active {
+            display: inline-block;
         }
 
         /* زر الكاميرا البارز في الوسط تماماً */
@@ -1089,6 +1125,7 @@
         <button class="bottom-nav-item" id="bottomMessagesBtn">
             <i class="fa-regular fa-comment-dots"></i>
             <span>الرسائل</span>
+            <span class="msg-badge" id="msgBadgeCount">0</span>
         </button>
         <button class="bottom-nav-camera" id="bottomCameraBtn" title="إضافة إعلان جديد">
             <div class="camera-circle">
@@ -1105,11 +1142,48 @@
         </button>
     </nav>
 
-    <!-- نافذة منبثقة (Modal) لقائمة الحساب الأنيقة عند تسجيل الدخول -->
+    <!-- نافذة منبثقة لطلب التبادل (مع رفع الصورة، الوصف، وكود منع كتابة أرقام الهواتف) -->
+    <div class="modal-overlay" id="exchangeRequestModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeExchangeModalBtn">&times;</button>
+            <h2 class="modal-title">طلب <span class="logo-green">مقايضة سلعة</span></h2>
+            <form class="contact-form" id="exchangeRequestForm">
+                <input type="hidden" id="target-product-id">
+                <div class="form-group">
+                    <label for="exchange-item-image">صورة المنتوج الذي ترغب في المقايضة به:</label>
+                    <label class="custom-file-upload">
+                        <span class="file-name-display" id="exchangeFileNameDisplay">لم يتم اختيار أي صورة</span>
+                        <span class="file-upload-btn-text"><i class="fa-solid fa-cloud-arrow-up"></i> اختر الصورة</span>
+                        <input type="file" id="exchange-item-image" accept="image/*" required>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="exchange-item-desc">وصف سلعتك البديلة:</label>
+                    <textarea id="exchange-item-desc" placeholder="اكتب وصفاً لما تقدمه..." required></textarea>
+                    <small style="color: #e74c3c; font-size: 0.75rem; margin-top: 2px;">تنبيه: يُمنع كتابة أرقام الهواتف في الوصف حفاظاً على الأمان.</small>
+                </div>
+                <button type="submit" class="form-submit-btn">إرسال طلب التبادل</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة الرسائل والطلبات الواردة (تعرض صورة ووصف الطرف الثاني مع زري موافق وإلغاء) -->
+    <div class="modal-overlay" id="messagesModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" id="closeMessagesModalBtn">&times;</button>
+            <h2 class="modal-title">طلبات <span class="logo-green">المقايضة الواردة</span></h2>
+            <div id="incomingRequestsContainer" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                <!-- يتم تعبئة الطلبات الواردة هنا ديناميكياً -->
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة (Modal) لقائمة الحساب الأنيقة عند تسجيل الدخول (مع إظهار المدينة تحت الاسم) -->
     <div class="modal-overlay" id="accountMenuModal">
-        <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
             <button class="modal-close" id="closeAccountMenuBtn">&times;</button>
-            <h2 class="modal-title">حسابي <span class="logo-green" id="accountMenuUserName"></span></h2>
+            <h2 class="modal-title" style="margin-bottom: 5px;">حسابي <span class="logo-green" id="accountMenuUserName"></span></h2>
+            <p id="accountMenuUserCity" style="font-size: 0.85rem; color: var(--text-gray); font-weight: 700; margin-bottom: 15px;"></p>
             <div class="account-menu-list">
                 <a class="account-menu-item" id="menuMyAds">
                     <i class="fa-solid fa-bullhorn"></i> اعلاناتي
@@ -1132,16 +1206,16 @@
 
     <!-- نافذة منبثقة (Modal) لـ عرض إعلانات المستخدم (اعلاناتي) -->
     <div class="modal-overlay" id="myAdsModal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content" style="max-width: 550px; padding: 18px;">
             <button class="modal-close" id="closeMyAdsModalBtn">&times;</button>
             <h2 class="modal-title">اعلاناتي <span class="logo-green">المنشورة</span></h2>
-            <div id="myAdsContainer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+            <div id="myAdsContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
                 <!-- يتم تعبئة إعلانات المستخدم ديناميكياً هنا -->
             </div>
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ تعديل الإعلان -->
+    <!-- نافذة منبثقة (Modal) لـ تعديل الإعلان (بدون خانة المدينة) -->
     <div class="modal-overlay" id="editAdModal">
         <div class="modal-content">
             <button class="modal-close" id="closeEditAdModalBtn">&times;</button>
@@ -1165,10 +1239,6 @@
                         <option value="أغراض متنوّعة">أغراض متنوّعة</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="edit-ad-city">المدينة:</label>
-                    <input type="text" id="edit-ad-city" placeholder="أدخل مدينتك (مثال: القنيطرة)" required>
-                </div>
                 <button type="submit" class="form-submit-btn">حفظ التعديلات</button>
             </form>
         </div>
@@ -1189,7 +1259,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ رفع منتج جديد عبر الكاميرا -->
+    <!-- نافذة منبثقة (Modal) لـ رفع منتج جديد عبر الكاميرا (بدون خانة المدينة وتأخذ المدينة تلقائياً من الحساب المسجل) -->
     <div class="modal-overlay" id="addAdModal">
         <div class="modal-content">
             <button class="modal-close" id="closeAddAdModalBtn">&times;</button>
@@ -1219,10 +1289,6 @@
                         <option value="ملابس">ملابس</option>
                         <option value="أغراض متنوّعة">أغراض متنوّعة</option>
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="ad-city">المدينة:</label>
-                    <input type="text" id="ad-city" placeholder="أدخل مدينتك (مثال: القنيطرة)" required>
                 </div>
                 <button type="submit" class="form-submit-btn">أنشر للمقايضة</button>
             </form>
@@ -1446,7 +1512,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.4.6</span>
+            <span class="version-tag">v0.4.9</span>
         </div>
     </footer>
 
@@ -1576,10 +1642,10 @@
                         .order('created_at', { ascending: false });
                     
                     if (!error && data && data.length > 0) {
-                        // استبعاد السجلات التي تمثل حسابات مستخدمين ([USER_ACCOUNT]) من قائمة العروض
+                        // استبعاد السجلات التي تمثل حسابات مستخدمين ([USER_ACCOUNT]) أو طلبات مقايضة ([EXCHANGE_REQUEST])
                         allProducts = data.filter(item => {
                             const desc = item.description || '';
-                            return !desc.includes('[USER_ACCOUNT]');
+                            return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
                         });
                     } else {
                         setDefaultProducts();
@@ -1588,6 +1654,7 @@
                     setDefaultProducts();
                 }
                 renderProducts(currentPage);
+                checkIncomingRequestsCount();
             } catch (err) {
                 console.error('فشل الاتصال بـ Supabase:', err);
                 setDefaultProducts();
@@ -1607,14 +1674,14 @@
 
         function setDefaultProducts() {
             allProducts = [
-                { title: "هاتف ذكي بحالة ممتازة", category: "تلفونات", description: "مطلوب التبديل بساعة ذكية أو ملابس رجالية.", icon: "fa-mobile-screen-button" },
-                { title: "جاكيت شتوي أصلي", category: "ملابس", description: "مقاس L، بحالة جديدة تماماً. مطلوب حذاء رياضي.", icon: "fa-shirt" },
-                { title: "آلة تصوير قديمة", category: "أغراض متنوّعة", description: "صالحة للديكور أو الهواة. مطلوب كتب أو أدوات منزلية.", icon: "fa-box-open" },
-                { title: "لابتوب للاستخدام اليومي", category: "تلفونات", description: "بحالة جيدة، مطلوب آيباد أو هاتف لوحي.", icon: "fa-laptop" },
-                { title: "ساعة دستر الكلاسيكية", category: "أغراض متنوّعة", description: "ساعة يد أصلية، مطلوب عطر أو نظارة شمسية.", icon: "fa-clock" },
-                { title: "حذاء رياضي ماركة عالمية", category: "ملابس", description: "مقاس 42، لم يلبس قط. مطلوب قميص رياضي.", icon: "fa-shoe-prints" },
-                { title: "دراجة هوائية خفيفة", category: "أغراض متنوّعة", description: "ممتازة للتنقل داخل المدينة. مطلوب هاتف ذكي.", icon: "fa-bicycle" },
-                { title: "سماعات بلوتوث متطورة", category: "تلفونات", description: "صوت نقي وبطارية قوية. مطلوب حقيبة ظهر.", icon: "fa-headphones" }
+                { title: "هاتف ذكي بحالة ممتازة", category: "تلفونات", city: "القنيطرة", description: "مطلوب التبديل بساعة ذكية أو ملابس رجالية.", icon: "fa-mobile-screen-button" },
+                { title: "جاكيت شتوي أصلي", category: "ملابس", city: "الرباط", description: "مقاس L، بحالة جديدة تماماً. مطلوب حذاء رياضي.", icon: "fa-shirt" },
+                { title: "آلة تصوير قديمة", category: "أغراض متنوّعة", city: "الدار البيضاء", description: "صالحة للديكور أو الهواة. مطلوب كتب أو أدوات منزلية.", icon: "fa-box-open" },
+                { title: "لابتوب للاستخدام اليومي", category: "تلفونات", city: "طنجة", description: "بحالة جيدة، مطلوب آيباد أو هاتف لوحي.", icon: "fa-laptop" },
+                { title: "ساعة دستر الكلاسيكية", category: "أغراض متنوّعة", city: "مراكش", description: "ساعة يد أصلية، مطلوب عطر أو نظارة شمسية.", icon: "fa-clock" },
+                { title: "حذاء رياضي ماركة عالمية", category: "ملابس", city: "أكادير", description: "مقاس 42، لم يلبس قط. مطلوب قميص رياضي.", icon: "fa-shoe-prints" },
+                { title: "دراجة هوائية خفيفة", category: "أغراض متنوّعة", city: "القنيطرة", description: "ممتازة للتنقل داخل المدينة. مطلوب هاتف ذكي.", icon: "fa-bicycle" },
+                { title: "سماعات بلوتوث متطورة", category: "تلفونات", city: "سلا", description: "صوت نقي وبطارية قوية. مطلوب حقيبة ظهر.", icon: "fa-headphones" }
             ];
         }
 
@@ -1630,15 +1697,25 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 const iconClass = prod.icon || 'fa-box-open';
-                // تنظيف الوصف من أي رقم هاتف أو معلومات إضافية تم إدخالها مسبقاً في قاعدة البيانات
+                
+                let prodCity = prod.city || '';
                 let rawDesc = prod.description || prod.desc || '';
+                if (!prodCity && rawDesc.includes('المدينة:')) {
+                    const cityMatch = rawDesc.match(/المدينة:\s*([^)]+)\)/);
+                    if (cityMatch) prodCity = cityMatch[1].trim();
+                }
+                if (!prodCity) prodCity = 'المغرب';
+
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
                 const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 
                 card.innerHTML = `
                     ${displayImg}
                     <div class="product-body">
-                        <span class="product-badge">${prod.category}</span>
+                        <div class="product-badge-group">
+                            <span class="product-badge">${prod.category}</span>
+                            <span class="product-city-badge"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${prodCity}</span>
+                        </div>
                         <h3 class="product-title">${prod.title}</h3>
                         <p class="product-desc">${cleanDesc}</p>
                         <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}', ${prod.id});">طلب تبدل معاه</a>
@@ -1689,7 +1766,6 @@
             }
         };
 
-        // دالة فتح نافذة التسجيل مباشرة عند عدم وجود تسجيل دخول نشط في قاعدة البيانات
         function openRegistrationTab() {
             const authModal = document.getElementById('authModal');
             const tabRegisterBtn = document.getElementById('tabRegisterBtn');
@@ -1704,7 +1780,6 @@
             authModal.classList.add('active');
         }
 
-        // دالة فتح نافذة تسجيل الدخول مباشرة
         function openLoginTab() {
             const authModal = document.getElementById('authModal');
             const tabRegisterBtn = document.getElementById('tabRegisterBtn');
@@ -1719,15 +1794,223 @@
             authModal.classList.add('active');
         }
 
-        // التحقق من حالة تسجيل الدخول في Supabase وإرسال طلب المقايضة
+        // نافذة طلب التبادل مع رفع الصورة والوصف وكود منع كتابة أرقام الهواتف
+        const exchangeRequestModal = document.getElementById('exchangeRequestModal');
+        const closeExchangeModalBtn = document.getElementById('closeExchangeModalBtn');
+        const exchangeRequestForm = document.getElementById('exchangeRequestForm');
+        const exchangeItemImage = document.getElementById('exchange-item-image');
+        const exchangeFileNameDisplay = document.getElementById('exchangeFileNameDisplay');
+        const exchangeItemDesc = document.getElementById('exchange-item-desc');
+
+        if(exchangeItemImage) {
+            exchangeItemImage.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    exchangeFileNameDisplay.textContent = e.target.files[0].name;
+                } else {
+                    exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                }
+            });
+        }
+
+        // كود لمنع كتابة أرقام الهواتف في الوصف لحظياً
+        if(exchangeItemDesc) {
+            exchangeItemDesc.addEventListener('input', (e) => {
+                const val = e.target.value;
+                // فحص نمط أرقام الهواتف (أكثر من 5 أرقام متتالية أو رموز هاتفية)
+                const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
+                if (phoneRegex.test(val)) {
+                    showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف حفاظاً على الأمان!', false);
+                    e.target.value = val.replace(phoneRegex, '');
+                }
+            });
+        }
+
         function handleExchangeRequest(productTitle, productId) {
             const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openRegistrationTab();
             } else {
-                showCustomAlert('تم إرسال طلب التبادل بنجاح للسلعة: ' + productTitle, true);
+                document.getElementById('target-product-id').value = productId;
+                exchangeRequestModal.classList.add('active');
             }
         }
+
+        closeExchangeModalBtn.addEventListener('click', () => {
+            exchangeRequestModal.classList.remove('active');
+        });
+
+        exchangeRequestModal.addEventListener('click', (e) => {
+            if (e.target === exchangeRequestModal) {
+                exchangeRequestModal.classList.remove('active');
+            }
+        });
+
+        // إرسال طلب التبادل وحفظه في جدول products بترميز خاص لظهوره في الرسائل فوراَ
+        exchangeRequestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) return;
+            const userData = JSON.parse(currentSupabaseUser);
+
+            if (exchangeItemImage.files.length === 0) {
+                showCustomAlert('المرجو اختيار صورة المنتوج البديل!', false);
+                return;
+            }
+
+            const file = exchangeItemImage.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async function(event) {
+                const base64Image = event.target.result;
+                const descText = exchangeItemDesc.value.trim();
+
+                // فحص نهائي لمنع أرقام الهواتف قبل الإرسال
+                const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
+                if (phoneRegex.test(descText)) {
+                    showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف!', false);
+                    return;
+                }
+
+                if (_supabase) {
+                    const reqPayload = {
+                        title: "طلب مقايضة من " + userData.name,
+                        description: `[EXCHANGE_REQUEST] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
+                        category: "تلفونات",
+                        city: userData.city || 'القنيطرة',
+                        image_url: base64Image
+                    };
+
+                    const { error } = await _supabase.from('products').insert([reqPayload]);
+                    if (!error) {
+                        showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل!', true);
+                        exchangeRequestModal.classList.remove('active');
+                        exchangeRequestForm.reset();
+                        exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                        checkIncomingRequestsCount();
+                    } else {
+                        showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
+                    }
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // فحص عدد الطلبات الواردة لتحديث الإشعار الأحمر فوريّاً فوق أيقونة الرسائل
+        async function checkIncomingRequestsCount() {
+            try {
+                if (_supabase) {
+                    const { data, error } = await _supabase.from('products').select('*');
+                    if (!error && data) {
+                        const requests = data.filter(item => (item.description || '').includes('[EXCHANGE_REQUEST]'));
+                        const badge = document.getElementById('msgBadgeCount');
+                        if (requests.length > 0) {
+                            badge.textContent = requests.length;
+                            badge.classList.add('active');
+                        } else {
+                            badge.classList.remove('active');
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // نافذة عرض تفاصيل الطلبات الواردة في الرسائل (صورة ووصف الطرف الثاني مع زري موافق وإلغاء)
+        const messagesModal = document.getElementById('messagesModal');
+        const closeMessagesModalBtn = document.getElementById('closeMessagesModalBtn');
+        const incomingRequestsContainer = document.getElementById('incomingRequestsContainer');
+        const bottomMessagesBtn = document.getElementById('bottomMessagesBtn');
+
+        bottomMessagesBtn.addEventListener('click', async () => {
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
+                openLoginTab();
+                return;
+            }
+            setActiveBottomNav(bottomMessagesBtn);
+
+            incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);">جاري تحميل الطلبات الواردة...</p>';
+            messagesModal.classList.add('active');
+
+            try {
+                if (_supabase) {
+                    const { data, error } = await _supabase.from('products').select('*').order('created_at', { ascending: false });
+                    if (!error && data) {
+                        const requests = data.filter(item => (item.description || '').includes('[EXCHANGE_REQUEST]'));
+                        if (requests.length > 0) {
+                            incomingRequestsContainer.innerHTML = '';
+                            requests.forEach(req => {
+                                const desc = req.description || '';
+                                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                                const descMatch = desc.match(/\[DESC:(.*?)\]/);
+                                
+                                const senderName = nameMatch ? nameMatch[1] : 'مستخدم';
+                                const senderPhone = phoneMatch ? phoneMatch[1] : '';
+                                const senderDesc = descMatch ? descMatch[1] : '';
+
+                                const card = document.createElement('div');
+                                card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
+                                
+                                const imgBox = req.image_url ? `<img src="${req.image_url}" style="width:100%; height:160px; object-fit:cover; border-radius:8px;">` : `<div style="width:100%; height:120px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:2rem;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                                card.innerHTML = `
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);">طلب من: ${senderName}</h4>
+                                        <span style="font-size:0.75rem; color:var(--primary-green); font-weight:700;">مقايضة جديدة</span>
+                                    </div>
+                                    ${imgBox}
+                                    <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة الطرف الثاني:</b> ${senderDesc}</p>
+                                    <div style="display:flex; gap:10px; margin-top:5px;">
+                                        <button onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-check"></i> موافق (إرسال رقم الواتساب)</button>
+                                        <button onclick="cancelExchangeRequest('${req.id}')" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-xmark"></i> إلغاء</button>
+                                    </div>
+                                `;
+                                incomingRequestsContainer.appendChild(card);
+                            });
+                        } else {
+                            incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل الرسائل.</p>';
+            }
+        });
+
+        closeMessagesModalBtn.addEventListener('click', () => {
+            messagesModal.classList.remove('active');
+        });
+
+        messagesModal.addEventListener('click', (e) => {
+            if (e.target === messagesModal) {
+                messagesModal.classList.remove('active');
+            }
+        });
+
+        // موافقة على الطلب وإظهار رقم واتساب الطرف الثاني
+        window.acceptExchangeRequest = function(reqId, phone, name) {
+            showCustomAlert(`تمت الموافقة على طلب ${name}! رقم الواتساب للتواصل: ${phone}`, true);
+            messagesModal.classList.remove('active');
+        };
+
+        // إلغاء أو حذف الطلب الوارد
+        window.cancelExchangeRequest = async function(reqId) {
+            showCustomConfirm(async () => {
+                if (_supabase) {
+                    const { error } = await _supabase.from('products').delete().eq('id', reqId);
+                    if (!error) {
+                        showCustomAlert('تم إلغاء طلب المقايضة بنجاح.', true);
+                        messagesModal.classList.remove('active');
+                        checkIncomingRequestsCount();
+                    } else {
+                        showCustomAlert('فشل إلغاء الطلب: ' + error.message, false);
+                    }
+                }
+            });
+        };
 
         // التبديل بين الرئيسية وعرض المنتجات
         const sliderWrapper = document.getElementById('sliderWrapper');
@@ -1783,7 +2066,6 @@
         const bottomAdsBtn = document.getElementById('bottomAdsBtn');
         const bottomFavoritesBtn = document.getElementById('bottomFavoritesBtn');
         const bottomCameraBtn = document.getElementById('bottomCameraBtn');
-        const bottomMessagesBtn = document.getElementById('bottomMessagesBtn');
         const bottomAccountBtn = document.getElementById('bottomAccountBtn');
         const addAdModal = document.getElementById('addAdModal');
         const closeAddAdModalBtn = document.getElementById('closeAddAdModalBtn');
@@ -1791,7 +2073,6 @@
         const imageInput = document.getElementById('ad-images');
         const fileNameDisplay = document.getElementById('fileNameDisplay');
 
-        // تحديث اسم الملف المختار عند رفع الصور
         if(imageInput) {
             imageInput.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
@@ -1820,7 +2101,6 @@
             setActiveBottomNav(bottomFavoritesBtn);
         });
 
-        // فتح نافذة نشر المنتج مباشرة عند الضغط على زر الكاميرا
         bottomCameraBtn.addEventListener('click', () => {
             addAdModal.classList.add('active');
         });
@@ -1835,14 +2115,12 @@
             }
         });
 
-        // معالجة رفع الإعلان الجديد والتحقق من جلسة قاعدة البيانات عند الضغط على "أنشر للمقايضة"
         addAdForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             try {
                 const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
                 
-                // إذا لم يكن مسجلاً، قم بإغلاق نافذة النشر وفتح نافذة تسجيل جديد فوراً
                 if (!currentSupabaseUser) {
                     addAdModal.classList.remove('active');
                     openRegistrationTab();
@@ -1853,7 +2131,7 @@
                 const title = document.getElementById('ad-title').value;
                 const description = document.getElementById('ad-desc').value;
                 const category = document.getElementById('ad-category').value;
-                const city = document.getElementById('ad-city').value;
+                const city = userData.city || 'القنيطرة';
 
                 if (imageInput.files.length === 0) {
                     showCustomAlert('المرجو إدراج صورة واحدة على الأقل!', false);
@@ -1865,7 +2143,6 @@
                     return;
                 }
 
-                // قراءة الصورة وتحويلها إلى Base64
                 const file = imageInput.files[0];
                 const reader = new FileReader();
 
@@ -1908,20 +2185,10 @@
             }
         });
 
-        bottomMessagesBtn.addEventListener('click', () => {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
-            if (!currentSupabaseUser) {
-                openLoginTab();
-            } else {
-                showCustomAlert('الدردشة الحية مفعلة. ليس لديك رسائل جديدة حالياً.', true);
-            }
-            setActiveBottomNav(bottomMessagesBtn);
-        });
-
-        // زر حسابي في الشريط السفلي: إذا كان مسجلاً تظهر قائمة الحساب، وإذا لم يكن مسجلاً تظهر نافذة الدخول
         const accountMenuModal = document.getElementById('accountMenuModal');
         const closeAccountMenuBtn = document.getElementById('closeAccountMenuBtn');
         const accountMenuUserName = document.getElementById('accountMenuUserName');
+        const accountMenuUserCity = document.getElementById('accountMenuUserCity');
 
         bottomAccountBtn.addEventListener('click', () => {
             const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
@@ -1930,6 +2197,7 @@
             } else {
                 const userData = JSON.parse(currentSupabaseUser);
                 accountMenuUserName.textContent = `(${userData.name})`;
+                accountMenuUserCity.innerHTML = `<i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> مدينة: ${userData.city || 'القنيطرة'}`;
                 accountMenuModal.classList.add('active');
             }
             setActiveBottomNav(bottomAccountBtn);
@@ -1945,7 +2213,6 @@
             }
         });
 
-        // ربط عناصر قائمة الحساب الجديدة (اعلاناتي) مع زر تعديل وحذف متناسقين
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
@@ -1974,7 +2241,7 @@
                     if (!error && data) {
                         const filteredAds = data.filter(ad => {
                             const desc = ad.description || '';
-                            if (desc.includes('[USER_ACCOUNT]')) return false;
+                            if (desc.includes('[USER_ACCOUNT]') || desc.includes('[EXCHANGE_REQUEST]')) return false;
                             
                             const matchPhone = userData.phone && desc.includes(userData.phone);
                             const matchName = userData.name && desc.includes(userData.name);
@@ -1985,23 +2252,23 @@
                             myAdsContainer.innerHTML = '';
                             filteredAds.forEach(ad => {
                                 const adCard = document.createElement('div');
-                                adCard.style.cssText = "display:flex; align-items:center; justify-content:space-between; background:#f8faf9; border:1px solid #d2ded7; padding:10px 15px; border-radius:10px; gap:10px; flex-wrap:wrap;";
+                                adCard.style.cssText = "display:flex; flex-direction:column; gap:8px; background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:10px;";
                                 
                                 let rawDesc = ad.description || '';
                                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
-                                const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">` : `<div style="width:50px; height:50px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.2rem;"><i class="fa-solid fa-box-open"></i></div>`;
+                                const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:55px; height:55px; object-fit:cover; border-radius:8px; flex-shrink:0;">` : `<div style="width:55px; height:55px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.3rem; flex-shrink:0;"><i class="fa-solid fa-box-open"></i></div>`;
 
                                 adCard.innerHTML = `
-                                    <div style="display:flex; align-items:center; gap:12px; overflow:hidden; flex-grow:1;">
+                                    <div style="display:flex; align-items:center; gap:10px; width:100%;">
                                         ${imgThumb}
-                                        <div>
-                                            <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif;">${ad.title}</h4>
-                                            <p style="font-size:0.8rem; color:var(--text-gray);">${cleanDesc}</p>
+                                        <div style="flex-grow:1; overflow:hidden;">
+                                            <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ad.title}</h4>
+                                            <p style="font-size:0.8rem; color:var(--text-gray); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cleanDesc}</p>
                                         </div>
                                     </div>
-                                    <div style="display:flex; gap:6px;">
-                                        <button onclick="openEditAdModal(${ad.id}, '${encodeURIComponent(ad.title)}', '${encodeURIComponent(cleanDesc)}', '${encodeURIComponent(ad.category || '')}', '${encodeURIComponent(ad.city || '')}')" style="background:#e6f7f0; color:var(--primary-green); border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; white-space:nowrap;"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
-                                        <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; white-space:nowrap;"><i class="fa-solid fa-trash"></i> حذف</button>
+                                    <div style="display:flex; gap:8px; justify-content:flex-end; border-top:1px solid #e2ece8; padding-top:8px; margin-top:2px;">
+                                        <button onclick="openEditAdModal(${ad.id}, '${encodeURIComponent(ad.title)}', '${encodeURIComponent(cleanDesc)}', '${encodeURIComponent(ad.category || '')}', '${encodeURIComponent(ad.city || userData.city || '')}')" style="background:#e6f7f0; color:var(--primary-green); border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+                                        <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-trash"></i> حذف</button>
                                     </div>
                                 `;
                                 myAdsContainer.appendChild(adCard);
@@ -2029,7 +2296,6 @@
             }
         });
 
-        // نافذة تعديل الإعلان
         const editAdModal = document.getElementById('editAdModal');
         const closeEditAdModalBtn = document.getElementById('closeEditAdModalBtn');
         const editAdForm = document.getElementById('editAdForm');
@@ -2040,7 +2306,6 @@
             document.getElementById('edit-ad-title').value = decodeURIComponent(title);
             document.getElementById('edit-ad-desc').value = decodeURIComponent(desc);
             document.getElementById('edit-ad-category').value = decodeURIComponent(category);
-            document.getElementById('edit-ad-city').value = decodeURIComponent(city);
             editAdModal.classList.add('active');
         };
 
@@ -2060,8 +2325,8 @@
             const title = document.getElementById('edit-ad-title').value;
             const description = document.getElementById('edit-ad-desc').value;
             const category = document.getElementById('edit-ad-category').value;
-            const city = document.getElementById('edit-ad-city').value;
             const currentSupabaseUser = JSON.parse(sessionStorage.getItem('badal_supabase_user') || '{}');
+            const city = currentSupabaseUser.city || 'القنيطرة';
 
             try {
                 if (_supabase) {
@@ -2087,7 +2352,6 @@
             }
         });
 
-        // دالة حذف الإعلان الخاص بالمستخدم من Supabase باستخدام نافذة التأكيد المخصصة
         window.deleteMyAd = async function(adId) {
             showCustomConfirm(async () => {
                 try {
@@ -2098,7 +2362,7 @@
                             myAdsModal.classList.remove('active');
                             fetchProductsFromSupabase();
                         } else {
-                            showCustomAlert('فشل حذف الإعلان', false);
+                            showCustomAlert('فشل حذف الإعلان: ' + error.message, false);
                         }
                     }
                 } catch (err) {
@@ -2141,7 +2405,6 @@
             }
         }
 
-        // نافذة الدخول / تسجيل جديد
         const openAuthModalBtn = document.getElementById('openAuthModalBtn');
         const authModal = document.getElementById('authModal');
         const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
@@ -2179,7 +2442,6 @@
             loginPanel.classList.remove('active');
         });
 
-        // التسجيل الحقيقي في جدول products في Supabase (تخزين بيانات المستخدم بأمان داخل حقل مخصص)
         const registerForm = document.getElementById('registerForm');
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -2200,7 +2462,6 @@
             }
 
             try {
-                // التحقق هل رقم الهاتف مسجل مسبقاً في قاعدة بيانات Supabase
                 const { data: existingRecords, error: checkError } = await _supabase
                     .from('products')
                     .select('*')
@@ -2211,7 +2472,6 @@
                     return;
                 }
 
-                // تسجيل الحساب الحقيقي كإعلان نظامي/حساب في قاعدة البيانات
                 const userPayload = {
                     title: "حساب مستخدم: " + name,
                     description: `[USER_ACCOUNT] [USER_PHONE:${phone}] [PASSWORD:${password}] [CITY:${city}] [NAME:${name}]`,
@@ -2238,7 +2498,6 @@
             }
         });
 
-        // تسجيل الدخول الحقيقي والتحقق الفعلي من قاعدة البيانات (يمنع الدخول العشوائي نهائياً)
         const loginForm = document.getElementById('loginForm');
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -2251,7 +2510,6 @@
             }
 
             try {
-                // البحث في قاعدة البيانات عن الحساب المسجل حصرياً
                 const { data: records, error: queryError } = await _supabase
                     .from('products')
                     .select('*')
@@ -2267,7 +2525,6 @@
                     const desc = record.description || '';
                     if (desc.includes(`[USER_PHONE:${inputVal}]`) || desc.includes(`[NAME:${inputVal}]`)) {
                         if (desc.includes(`[PASSWORD:${password}]`)) {
-                            // استخراج بيانات المستخدم بدقة من قاعدة البيانات
                             const nameMatch = desc.match(/\[NAME:(.*?)\]/);
                             const cityMatch = desc.match(/\[CITY:(.*?)\]/);
                             const phoneMatch = desc.match(/\[USER_PHONE:(.*?)\]/);
@@ -2297,7 +2554,6 @@
             }
         });
 
-        // التحقق من الجلسة وتحديث واجهة الهيدر العلوية بناءً على قاعدة البيانات
         function checkAuthSession() {
             const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
             const topAuthBar = document.getElementById('topAuthBar');
@@ -2320,7 +2576,6 @@
 
         checkAuthSession();
 
-        // تواصل معنا
         const contactForm = document.getElementById('contactForm');
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -2329,7 +2584,6 @@
             contactForm.reset();
         });
 
-        // نافذة كيفاش نتبادل؟
         const howToBtn = document.getElementById('howToExchangeBtn');
         const howToModal = document.getElementById('howToModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -2349,7 +2603,6 @@
             }
         });
 
-        // نافذة تواصل معنا
         const contactBtn = document.getElementById('contactUsBtn');
         const contactModal = document.getElementById('contactModal');
         const closeContactModalBtn = document.getElementById('closeContactModalBtn');
@@ -2368,6 +2621,9 @@
                 contactModal.classList.remove('active');
             }
         });
+
+        // جلب عدد الطلبات عند التحميل الأولي
+        checkIncomingRequestsCount();
     </script>
 </body>
 </html>
