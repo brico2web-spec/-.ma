@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.5.7</span>
+            <span class="version-tag">v0.5.8</span>
         </div>
     </footer>
 
@@ -1777,9 +1777,14 @@
         let allProducts = [];
         let currentPage = 1;
         const itemsPerPage = 8;
+        let isProductsLoaded = false;
 
         // جلب المنتجات الحية فقط من قاعدة البيانات Supabase بشكل سريع ومنع الاعتماد التام على المحلي
-        async function fetchProductsFromSupabase() {
+        async function fetchProductsFromSupabase(forceRefresh = false) {
+            if (isProductsLoaded && !forceRefresh && allProducts.length > 0) {
+                renderProducts(currentPage);
+                return;
+            }
             try {
                 if (_supabase) {
                     const { data, error } = await _supabase
@@ -1788,11 +1793,11 @@
                         .order('created_at', { ascending: false });
                     
                     if (!error && data) {
-                        // استبعاد السجلات التي تمثل حسابات مستخدمين ([USER_ACCOUNT]) أو طلبات مقايضة ([EXCHANGE_REQUEST]) وجلب المنتجات الحية فقط
                         allProducts = data.filter(item => {
                             const desc = item.description || '';
                             return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
                         });
+                        isProductsLoaded = true;
                     } else {
                         allProducts = [];
                     }
@@ -1813,7 +1818,8 @@
             _supabase
                 .channel('realtime-products')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
-                    fetchProductsFromSupabase();
+                    isProductsLoaded = false;
+                    fetchProductsFromSupabase(true);
                 })
                 .subscribe();
         }
@@ -1886,7 +1892,6 @@
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
                 const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 
-                // زر المفضلة يظهر فقط إذا كان المستخدم مسجلاً للدخول
                 const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
 
                 card.innerHTML = `
@@ -1995,7 +2000,6 @@
             });
         }
 
-        // كود لمنع كتابة أرقام الهواتف في الوصف لحظياً
         if(exchangeItemDesc) {
             exchangeItemDesc.addEventListener('input', (e) => {
                 const val = e.target.value;
@@ -2071,6 +2075,7 @@
                             exchangeRequestModal.classList.remove('active');
                             exchangeRequestForm.reset();
                             exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                            isProductsLoaded = false;
                             checkIncomingRequestsCount();
                         } else {
                             showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
@@ -2088,7 +2093,7 @@
             });
         }
 
-        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي لتحديث الإشعار الأحمر فوريّاً
+        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي لتحديث الإشعار الأحمر فوريّاً باستخدام الأعمدة المحددة
         async function checkIncomingRequestsCount() {
             try {
                 const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
@@ -2117,7 +2122,7 @@
             }
         }
 
-        // نافذة عرض تفاصيل الطلبات الواردة الخاصة بالمستخدم الحالي
+        // نافذة عرض تفاصيل الطلبات الواردة الخاصة بالمستخدم الحالي (باستخدام select محدد لتسريع الجلب)
         const messagesModal = document.getElementById('messagesModal');
         const closeMessagesModalBtn = document.getElementById('closeMessagesModalBtn');
         const incomingRequestsContainer = document.getElementById('incomingRequestsContainer');
@@ -2197,7 +2202,6 @@
             }
         });
 
-        // زر موافق وفتح الواتساب
         window.acceptExchangeRequest = function(reqId, phone, name) {
             let cleanPhone = phone.replace(/[^0-9]/g, '');
             if (cleanPhone.startsWith('0')) {
@@ -2216,7 +2220,6 @@
             window.open(whatsappUrl, '_blank');
         };
 
-        // زر رفض الطلب (يقوم بحذف الطلب بصفت نهائية وفورية من قاعدة البيانات)
         window.cancelExchangeRequest = async function(reqId) {
             showCustomConfirm(async () => {
                 if (_supabase) {
@@ -2358,7 +2361,6 @@
         const openExchangeCheckbox = document.getElementById('open-exchange-checkbox');
         const adDescTextarea = document.getElementById('ad-desc');
 
-        // قفل/فتح خانة الوصف بناءً على خيار المقايضة المفتوحة
         if (openExchangeCheckbox && adDescTextarea) {
             openExchangeCheckbox.addEventListener('change', () => {
                 if (openExchangeCheckbox.checked) {
@@ -2465,6 +2467,7 @@
                         adDescTextarea.style.backgroundColor = '#f8faf9';
                         adDescTextarea.style.color = 'var(--dark-blue)';
                         fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                        isProductsLoaded = false;
                         showProductsView();
                     }
                 } else {
@@ -2508,7 +2511,6 @@
             }
         });
 
-        // نافذة إعدادات الحساب الشخصي وتعديل المعلومات في قاعدة البيانات مع التحقق من كلمة المرور الحالية
         const settingsModal = document.getElementById('settingsModal');
         const closeSettingsModalBtn = document.getElementById('closeSettingsModalBtn');
         const settingsForm = document.getElementById('settingsForm');
@@ -2545,7 +2547,6 @@
             const newCity = document.getElementById('settings-city').value.trim();
             const enteredPassword = document.getElementById('settings-password').value;
 
-            // التحقق من صحة كلمة المرور الحالية للمستخدم
             if (enteredPassword !== currentSupabaseUser.password) {
                 showCustomAlert('كلمة المرور الحالية غير صحيحة، يرجى إدخال كلمة المرور الصحيحة لتأكيد التغيير.', false);
                 return;
@@ -2557,7 +2558,6 @@
             }
 
             try {
-                // البحث عن سجل الحساب في قاعدة البيانات لتحديثه
                 const { data: records, error: queryError } = await _supabase
                     .from('products')
                     .select('id, description')
@@ -2590,6 +2590,7 @@
             }
         });
 
+        // نافذة اعلاناتي (باستخدام select محدد لتسريع الجلب وتجنب البطء)
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
@@ -2718,7 +2719,8 @@
                     if (!error) {
                         showCustomAlert('تم تعديل الإعلان بنجاح', true);
                         editAdModal.classList.remove('active');
-                        fetchProductsFromSupabase();
+                        isProductsLoaded = false;
+                        fetchProductsFromSupabase(true);
                     } else {
                         showCustomAlert('فشل تعديل الإعلان: ' + error.message, false);
                     }
@@ -2729,7 +2731,6 @@
             }
         });
 
-        // تفعيل زر الحذف في نافذة اعلاناتي بشكل كامل ومباشر
         window.deleteMyAd = async function(adId) {
             showCustomConfirm(async () => {
                 try {
@@ -2738,7 +2739,8 @@
                         if (!error) {
                             showCustomAlert('تم حذف الإعلان بنجاح من قاعدة البيانات', true);
                             myAdsModal.classList.remove('active');
-                            fetchProductsFromSupabase();
+                            isProductsLoaded = false;
+                            fetchProductsFromSupabase(true);
                         } else {
                             showCustomAlert('فشل حذف الإعلان: ' + error.message, false);
                         }
