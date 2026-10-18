@@ -1353,7 +1353,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.3.6</span>
+            <span class="version-tag">v0.3.7</span>
         </div>
     </footer>
 
@@ -1725,13 +1725,10 @@
                     const base64Image = event.target.result;
 
                     if (_supabase) {
-                        // توليد UUID عشوائي متوافق تماماً مع متطلبات نوع uuid في Supabase لتفادي الخطأ نهائياً
-                        const fakeUuid = '00000000-0000-4000-8000-' + Math.floor(100000000000 + Math.random() * 900000000000);
-
+                        // عدم إرسال user_id نهائياً لتفادي قيود الـ Foreign Key المفروضة في جدول Supabase
                         const insertPayload = {
-                            user_id: fakeUuid,
                             title: title,
-                            description: description + " (الهاتف: " + userData.phone + ")",
+                            description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
                             category: category,
                             city: city,
                             image_url: base64Image
