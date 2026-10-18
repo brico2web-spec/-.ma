@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.5.5</span>
+            <span class="version-tag">v0.5.7</span>
         </div>
     </footer>
 
@@ -1636,6 +1636,39 @@
         
         // تهيئة عميل Supabase بأسماء متغيرة تجنباً للتضارب
         const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+        // دالة ضغط الصور لتفادي مشاكل الحجم و Timeout في Supabase
+        function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height *= maxWidth / width;
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width *= maxHeight / height;
+                                height = maxHeight;
+                            }
+                        }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                };
+            });
+        }
 
         // دالة عرض التنبيه العادي المتناسق مع ألوان الموقع
         function showCustomAlert(message, isSuccess = true) {
@@ -1745,32 +1778,32 @@
         let currentPage = 1;
         const itemsPerPage = 8;
 
-        // جلب المنتجات من جدول products في Supabase مع التحديث الفوري واستبعاد حسابات المستخدمين
+        // جلب المنتجات الحية فقط من قاعدة البيانات Supabase بشكل سريع ومنع الاعتماد التام على المحلي
         async function fetchProductsFromSupabase() {
             try {
                 if (_supabase) {
                     const { data, error } = await _supabase
                         .from('products')
-                        .select('*')
+                        .select('id, title, description, category, city, image_url, created_at')
                         .order('created_at', { ascending: false });
                     
-                    if (!error && data && data.length > 0) {
-                        // استبعاد السجلات التي تمثل حسابات مستخدمين ([USER_ACCOUNT]) أو طلبات مقايضة ([EXCHANGE_REQUEST])
+                    if (!error && data) {
+                        // استبعاد السجلات التي تمثل حسابات مستخدمين ([USER_ACCOUNT]) أو طلبات مقايضة ([EXCHANGE_REQUEST]) وجلب المنتجات الحية فقط
                         allProducts = data.filter(item => {
                             const desc = item.description || '';
                             return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
                         });
                     } else {
-                        setDefaultProducts();
+                        allProducts = [];
                     }
                 } else {
-                    setDefaultProducts();
+                    allProducts = [];
                 }
                 renderProducts(currentPage);
                 checkIncomingRequestsCount();
             } catch (err) {
                 console.error('فشل الاتصال بـ Supabase:', err);
-                setDefaultProducts();
+                allProducts = [];
                 renderProducts(currentPage);
             }
         }
@@ -1783,19 +1816,6 @@
                     fetchProductsFromSupabase();
                 })
                 .subscribe();
-        }
-
-        function setDefaultProducts() {
-            allProducts = [
-                { id: 1, title: "هاتف ذكي بحالة ممتازة", category: "تلفونات", city: "القنيطرة", description: "مطلوب التبديل بساعة ذكية أو ملابس رجالية.", icon: "fa-mobile-screen-button" },
-                { id: 2, title: "جاكيت شتوي أصلي", category: "ملابس", city: "الرباط", description: "مقاس L، بحالة جديدة تماماً. مطلوب حذاء رياضي.", icon: "fa-shirt" },
-                { id: 3, title: "آلة تصوير قديمة", category: "أغراض متنوّعة", city: "الدار البيضاء", description: "صالحة للديكور أو الهواة. مطلوب كتب أو أدوات منزلية.", icon: "fa-box-open" },
-                { id: 4, title: "لابتوب للاستخدام اليومي", category: "تلفونات", city: "طنجة", description: "بحالة جيدة، مطلوب آيباد أو هاتف لوحي.", icon: "fa-laptop" },
-                { id: 5, title: "ساعة دستر الكلاسيكية", category: "أغراض متنوّعة", city: "مراكش", description: "ساعة يد أصلية، مطلوب عطر أو نظارة شمسية.", icon: "fa-clock" },
-                { id: 6, title: "حذاء رياضي ماركة عالمية", category: "ملابس", city: "أكادير", description: "مقاس 42، لم يلبس قط. مطلوب قميص رياضي.", icon: "fa-shoe-prints" },
-                { id: 7, title: "دراجة هوائية خفيفة", category: "أغراض متنوّعة", city: "القنيطرة", description: "ممتازة للتنقل داخل المدينة. مطلوب هاتف ذكي.", icon: "fa-bicycle" },
-                { id: 8, title: "سماعات بلوتوث متطورة", category: "تلفونات", city: "سلا", description: "صوت نقي وبطارية قوية. مطلوب حقيبة ظهر.", icon: "fa-headphones" }
-            ];
         }
 
         // إدارة المفضلة المحلية (LocalStorage)
@@ -1836,6 +1856,12 @@
             const paginatedItems = allProducts.slice(startIndex, endIndex);
             const favs = getFavorites();
             const isUserLoggedIn = sessionStorage.getItem('badal_supabase_user') !== null;
+
+            if (paginatedItems.length === 0) {
+                gridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:30px;">لا توجد منتجات حية مطروحة للمقايضة حالياً في قاعدة البيانات.</p>';
+                renderPaginationControls();
+                return;
+            }
 
             paginatedItems.forEach(prod => {
                 const card = document.createElement('div');
@@ -1960,7 +1986,7 @@
         const exchangeItemDesc = document.getElementById('exchange-item-desc');
 
         if(exchangeItemImage) {
-            exchangeItemImage.addEventListener('change', (e) => {
+            exchangeItemImage.addEventListener('change', async (e) => {
                 if (e.target.files.length > 0) {
                     exchangeFileNameDisplay.textContent = e.target.files[0].name;
                 } else {
@@ -2019,51 +2045,46 @@
                 }
 
                 const file = exchangeItemImage.files[0];
-                const reader = new FileReader();
+                const descText = exchangeItemDesc.value.trim();
+                const ownerPhone = document.getElementById('target-owner-phone').value;
 
-                reader.onload = async function(event) {
-                    const base64Image = event.target.result;
-                    const descText = exchangeItemDesc.value.trim();
-                    const ownerPhone = document.getElementById('target-owner-phone').value;
+                const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
+                if (phoneRegex.test(descText)) {
+                    showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف!', false);
+                    return;
+                }
 
-                    const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
-                    if (phoneRegex.test(descText)) {
-                        showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف!', false);
-                        return;
-                    }
+                try {
+                    const compressedImage = await compressImage(file, 600, 600, 0.6);
+                    if (_supabase) {
+                        const reqPayload = {
+                            title: "طلب مقايضة من " + userData.name,
+                            description: `[EXCHANGE_REQUEST] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
+                            category: "تلفونات",
+                            city: userData.city || 'القنيطرة',
+                            image_url: compressedImage
+                        };
 
-                    try {
-                        if (_supabase) {
-                            const reqPayload = {
-                                title: "طلب مقايضة من " + userData.name,
-                                description: `[EXCHANGE_REQUEST] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
-                                category: "تلفونات",
-                                city: userData.city || 'القنيطرة',
-                                image_url: base64Image
-                            };
-
-                            const { error } = await _supabase.from('products').insert([reqPayload]);
-                            if (!error) {
-                                showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل لصاحب المنتوج!', true);
-                                exchangeRequestModal.classList.remove('active');
-                                exchangeRequestForm.reset();
-                                exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
-                                checkIncomingRequestsCount();
-                            } else {
-                                showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
-                            }
-                        } else {
-                            showCustomAlert('تم إرسال طلب التبادل بنجاح!', true);
+                        const { error } = await _supabase.from('products').insert([reqPayload]);
+                        if (!error) {
+                            showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل لصاحب المنتوج!', true);
                             exchangeRequestModal.classList.remove('active');
                             exchangeRequestForm.reset();
                             exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                            checkIncomingRequestsCount();
+                        } else {
+                            showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
                         }
-                    } catch (err) {
-                        console.error(err);
-                        showCustomAlert('حدث خطأ أثناء إرسال الطلب.', false);
+                    } else {
+                        showCustomAlert('تم إرسال طلب التبادل بنجاح!', true);
+                        exchangeRequestModal.classList.remove('active');
+                        exchangeRequestForm.reset();
+                        exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
                     }
-                };
-                reader.readAsDataURL(file);
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء إرسال الطلب.', false);
+                }
             });
         }
 
@@ -2075,7 +2096,7 @@
                 const userData = JSON.parse(currentSupabaseUser);
 
                 if (_supabase) {
-                    const { data, error } = await _supabase.from('products').select('*');
+                    const { data, error } = await _supabase.from('products').select('description');
                     if (!error && data) {
                         const requests = data.filter(item => {
                             const desc = item.description || '';
@@ -2116,7 +2137,7 @@
 
             try {
                 if (_supabase) {
-                    const { data, error } = await _supabase.from('products').select('*').order('created_at', { ascending: false });
+                    const { data, error } = await _supabase.from('products').select('id, title, description, image_url, created_at').order('created_at', { ascending: false });
                     if (!error && data) {
                         const requests = data.filter(item => {
                             const desc = item.description || '';
@@ -2420,44 +2441,38 @@
                 }
 
                 const file = imageInput.files[0];
-                const reader = new FileReader();
+                const compressedImage = await compressImage(file, 600, 600, 0.6);
 
-                reader.onload = async function(event) {
-                    const base64Image = event.target.result;
+                if (_supabase) {
+                    const insertPayload = {
+                        title: title,
+                        description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
+                        category: category,
+                        city: city,
+                        image_url: compressedImage
+                    };
 
-                    if (_supabase) {
-                        const insertPayload = {
-                            title: title,
-                            description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
-                            category: category,
-                            city: city,
-                            image_url: base64Image
-                        };
+                    const { error: insertError } = await _supabase.from('products').insert([insertPayload]);
 
-                        const { error: insertError } = await _supabase.from('products').insert([insertPayload]);
-
-                        if (insertError) {
-                            showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
-                        } else {
-                            showCustomAlert('تم نشر إعلانك بنجاح!', true);
-                            addAdModal.classList.remove('active');
-                            addAdForm.reset();
-                            if(openExchangeCheckbox) openExchangeCheckbox.checked = false;
-                            adDescTextarea.disabled = false;
-                            adDescTextarea.style.backgroundColor = '#f8faf9';
-                            adDescTextarea.style.color = 'var(--dark-blue)';
-                            fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
-                            showProductsView();
-                        }
+                    if (insertError) {
+                        showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
                     } else {
                         showCustomAlert('تم نشر إعلانك بنجاح!', true);
                         addAdModal.classList.remove('active');
                         addAdForm.reset();
+                        if(openExchangeCheckbox) openExchangeCheckbox.checked = false;
+                        adDescTextarea.disabled = false;
+                        adDescTextarea.style.backgroundColor = '#f8faf9';
+                        adDescTextarea.style.color = 'var(--dark-blue)';
+                        fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
                         showProductsView();
                     }
-                };
-
-                reader.readAsDataURL(file);
+                } else {
+                    showCustomAlert('تم نشر إعلانك بنجاح!', true);
+                    addAdModal.classList.remove('active');
+                    addAdForm.reset();
+                    showProductsView();
+                }
 
             } catch (err) {
                 console.error(err);
@@ -2545,7 +2560,7 @@
                 // البحث عن سجل الحساب في قاعدة البيانات لتحديثه
                 const { data: records, error: queryError } = await _supabase
                     .from('products')
-                    .select('*')
+                    .select('id, description')
                     .ilike('description', '%[USER_ACCOUNT]%');
 
                 if (!queryError && records) {
@@ -2597,7 +2612,7 @@
                 if (_supabase) {
                     const { data, error } = await _supabase
                         .from('products')
-                        .select('*')
+                        .select('id, title, description, category, city, image_url, created_at')
                         .order('created_at', { ascending: false });
 
                     if (!error && data) {
@@ -2815,7 +2830,7 @@
             try {
                 const { data: existingRecords, error: checkError } = await _supabase
                     .from('products')
-                    .select('*')
+                    .select('id, description')
                     .ilike('description', `%[USER_PHONE:${phone}]%`);
 
                 if (existingRecords && existingRecords.length > 0) {
@@ -2864,7 +2879,7 @@
             try {
                 const { data: records, error: queryError } = await _supabase
                     .from('products')
-                    .select('*')
+                    .select('id, description')
                     .ilike('description', '%[USER_ACCOUNT]%');
 
                 if (queryError || !records) {
