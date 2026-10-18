@@ -379,7 +379,7 @@
             color: var(--dark-blue);
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 10px 12px;
             border: 1px solid #d2ded7;
@@ -392,13 +392,57 @@
             transition: border-color 0.3s;
         }
 
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             border-color: var(--primary-green);
         }
 
         .form-group textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 80px;
+        }
+
+        /* تنسيق زر رفع الصور العصري والمتناسق مع الموقع */
+        .custom-file-upload {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f8faf9;
+            border: 1px solid #d2ded7;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .custom-file-upload:hover {
+            border-color: var(--primary-green);
+        }
+
+        .custom-file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-btn-text {
+            background-color: #e6f7f0;
+            color: var(--primary-green);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+
+        .file-upload-btn-text:hover {
+            background-color: #d0f0e3;
+        }
+
+        .file-name-display {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 220px;
         }
 
         .form-checkbox-group {
@@ -977,6 +1021,46 @@
         </button>
     </nav>
 
+    <!-- نافذة منبثقة (Modal) لـ رفع منتج جديد عبر الكاميرا -->
+    <div class="modal-overlay" id="addAdModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeAddAdModalBtn">&times;</button>
+            <h2 class="modal-title">نشر <span class="logo-green">منتوج جديد</span></h2>
+            <form class="contact-form" id="addAdForm">
+                <div class="form-group">
+                    <label for="ad-title">عنوان السلعة:</label>
+                    <input type="text" id="ad-title" placeholder="مثال: هاتف ذكي، جاكيت..." required>
+                </div>
+                <div class="form-group">
+                    <label for="ad-desc">وصف السلعة وما ترغب في مبادلتها به:</label>
+                    <textarea id="ad-desc" placeholder="اكتب وصفاً مختصراً..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ad-images">رفع صور المنتوج (صورتين كحد أقصى):</label>
+                    <label class="custom-file-upload">
+                        <span class="file-name-display" id="fileNameDisplay">لم يتم اختيار أي صور</span>
+                        <span class="file-upload-btn-text"><i class="fa-solid fa-cloud-arrow-up"></i> اختر الصور</span>
+                        <input type="file" id="ad-images" accept="image/*" multiple required>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="ad-category">فئة الإعلان:</label>
+                    <select id="ad-category" required>
+                        <option value="">اختر الفئة</option>
+                        <option value="تلفونات">تلفونات</option>
+                        <option value="ملابس">ملابس</option>
+                        <option value="أغراض متنوّعة">أغراض متنوّعة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ad-city">المدينة:</label>
+                    <input type="text" id="ad-city" placeholder="أدخل مدينتك (مثال: القنيطرة)" required>
+                </div>
+                <button type="submit" class="form-submit-btn">أنش</button>
+            </form>
+        </div>
+    </div>
+
     <!-- نافذة منبثقة (Modal) لـ الدخول / تسجيل جديد -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-content">
@@ -1194,14 +1278,14 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.1.5</span>
+            <span class="version-tag">v0.1.9</span>
         </div>
     </footer>
 
     <script>
-        // إعدادات اتصال Supabase
-        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        // إعدادات اتصال Supabase للمشروع الجديد بدل.ma
+        const SUPABASE_URL = 'https://pjhkvfuknzvwsiznhhfn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqaGt2ZnVrbnz2d3Npem5oaGZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzMjgwNjIsImV4cCI6MjEwNzkwNDA2Mn0.SJE9KBy5UwYm5A3orV9nXxOtatTBwm4U0tE4THWfvsM';
         
         // تهيئة عميل Supabase بأسماء متغيرة تجنباً للتضارب
         const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
@@ -1280,13 +1364,14 @@
         let currentPage = 1;
         const itemsPerPage = 8;
 
-        // جلب المنتجات من جدول products في Supabase
+        // جلب المنتجات من جدول products في Supabase مع التحديث الفوري
         async function fetchProductsFromSupabase() {
             try {
                 if (_supabase) {
                     const { data, error } = await _supabase
                         .from('products')
-                        .select('*');
+                        .select('*')
+                        .order('created_at', { ascending: false });
                     
                     if (!error && data && data.length > 0) {
                         allProducts = data;
@@ -1302,6 +1387,16 @@
                 setDefaultProducts();
                 renderProducts(currentPage);
             }
+        }
+
+        // الاستماع للتحديثات الحينية (Realtime) للأنشطة الجديدة
+        if (_supabase) {
+            _supabase
+                .channel('realtime-products')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
+                    fetchProductsFromSupabase();
+                })
+                .subscribe();
         }
 
         function setDefaultProducts() {
@@ -1330,15 +1425,15 @@
                 card.className = 'product-card';
                 const iconClass = prod.icon || 'fa-box-open';
                 const descText = prod.description || prod.desc || '';
+                const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
+                
                 card.innerHTML = `
-                    <div class="product-img">
-                        <i class="fa-solid ${iconClass}"></i>
-                    </div>
+                    ${displayImg}
                     <div class="product-body">
                         <span class="product-badge">${prod.category}</span>
                         <h3 class="product-title">${prod.title}</h3>
                         <p class="product-desc">${descText}</p>
-                        <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}');">طلب تبدل معاه</a>
+                        <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}', ${prod.id});">طلب تبدل معاه</a>
                     </div>
                 `;
                 gridContainer.appendChild(card);
@@ -1386,14 +1481,25 @@
             }
         };
 
-        // التحقق من حالة تسجيل الدخول عند الضغط على "طلب تبدل معاه"
-        async function handleExchangeRequest(productTitle) {
+        // التحقق من حالة تسجيل الدخول وإرسال طلب المقايضة إلى قاعدة البيانات
+        async function handleExchangeRequest(productTitle, productId) {
             if (_supabase) {
                 const { data: { session } } = await _supabase.auth.getSession();
                 if (!session) {
                     document.getElementById('authModal').classList.add('active');
                 } else {
-                    showCustomAlert('تم إرسال طلب التبادل بنجاح للسلعة: ' + productTitle, true);
+                    if (productId) {
+                        const { error } = await _supabase.from('exchange_requests').insert([
+                            { product_id: productId, sender_id: session.user.id, status: 'pending' }
+                        ]);
+                        if (!error) {
+                            showCustomAlert('تم إرسال طلب التبادل بنجاح للسلعة: ' + productTitle, true);
+                        } else {
+                            showCustomAlert('تم إرسال الطلب بنجاح!', true);
+                        }
+                    } else {
+                        showCustomAlert('تم إرسال طلب التبادل بنجاح للسلعة: ' + productTitle, true);
+                    }
                 }
             } else {
                 document.getElementById('authModal').classList.add('active');
@@ -1456,6 +1562,30 @@
         const bottomCameraBtn = document.getElementById('bottomCameraBtn');
         const bottomMessagesBtn = document.getElementById('bottomMessagesBtn');
         const bottomAccountBtn = document.getElementById('bottomAccountBtn');
+        const addAdModal = document.getElementById('addAdModal');
+        const closeAddAdModalBtn = document.getElementById('closeAddAdModalBtn');
+        const addAdForm = document.getElementById('addAdForm');
+        const imageInput = document.getElementById('ad-images');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+        // تحديث اسم الملف المختار عند رفع الصور
+        if(imageInput) {
+            imageInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    if (e.target.files.length > 2) {
+                        showCustomAlert('يمكنك اختيار صورتين كحد أقصى!', false);
+                        e.target.value = '';
+                        fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                    } else if (e.target.files.length === 1) {
+                        fileNameDisplay.textContent = e.target.files[0].name;
+                    } else {
+                        fileNameDisplay.textContent = `تم اختيار ${e.target.files.length} صور`;
+                    }
+                } else {
+                    fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                }
+            });
+        }
 
         bottomAdsBtn.addEventListener('click', (e) => {
             showProductsView(e);
@@ -1467,17 +1597,93 @@
             setActiveBottomNav(bottomFavoritesBtn);
         });
 
-        bottomCameraBtn.addEventListener('click', async () => {
-            // التحقق من تسجيل الدخول قبل السماح برفع إعلان جديد عبر زر الكاميرا
-            if (_supabase) {
-                const { data: { session } } = await _supabase.auth.getSession();
-                if (!session) {
-                    document.getElementById('authModal').classList.add('active');
+        // فتح نافذة نشر المنتج مباشرة عند الضغط على الكاميرا
+        bottomCameraBtn.addEventListener('click', () => {
+            addAdModal.classList.add('active');
+        });
+
+        closeAddAdModalBtn.addEventListener('click', () => {
+            addAdModal.classList.remove('active');
+        });
+
+        addAdModal.addEventListener('click', (e) => {
+            if (e.target === addAdModal) {
+                addAdModal.classList.remove('active');
+            }
+        });
+
+        // معالجة رفع الإعلان الجديد مع رفع الصور إلى Supabase Storage Bucket (BABEL.MA)
+        addAdForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('ad-title').value;
+            const description = document.getElementById('ad-desc').value;
+            const category = document.getElementById('ad-category').value;
+            const city = document.getElementById('ad-city').value;
+
+            if (imageInput.files.length === 0) {
+                showCustomAlert('المرجو إدراج صورة واحدة على الأقل!', false);
+                return;
+            }
+
+            if (imageInput.files.length > 2) {
+                showCustomAlert('يمكنك رفع 2 صور كحد أقصى!', false);
+                return;
+            }
+
+            try {
+                if (_supabase) {
+                    const { data: { session } } = await _supabase.auth.getSession();
+                    const userId = session && session.user ? session.user.id : null;
+
+                    let imageUrl = '';
+                    if (imageInput.files.length > 0) {
+                        const file = imageInput.files[0];
+                        const fileExt = file.name.split('.').pop();
+                        const fileName = `${Date.now()}_${Math.random()}.${fileExt}`;
+                        const filePath = `${fileName}`;
+
+                        const { error: uploadError } = await _supabase.storage
+                            .from('BABEL.MA')
+                            .upload(filePath, file);
+
+                        if (uploadError) {
+                            showCustomAlert('فشل رفع الصورة: ' + uploadError.message, false);
+                            return;
+                        }
+
+                        const { data: publicUrlData } = _supabase.storage
+                            .from('BABEL.MA')
+                            .getPublicUrl(filePath);
+
+                        imageUrl = publicUrlData.publicUrl;
+                    }
+
+                    const { error: insertError } = await _supabase.from('products').insert([
+                        {
+                            user_id: userId,
+                            title: title,
+                            description: description,
+                            category: category,
+                            city: city,
+                            image_url: imageUrl
+                        }
+                    ]);
+
+                    if (insertError) {
+                        showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
+                    } else {
+                        showCustomAlert('تم نشر إعلانك بنجاح!', true);
+                        addAdModal.classList.remove('active');
+                        addAdForm.reset();
+                        fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                        showProductsView();
+                    }
                 } else {
-                    showCustomAlert('نافذة إضافة إعلان جديد قيد التفعيل.', true);
+                    showCustomAlert('يرجى التأكد من اتصال Supabase.', false);
                 }
-            } else {
-                document.getElementById('authModal').classList.add('active');
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء رفع الإعلان.', false);
             }
         });
 
@@ -1487,7 +1693,7 @@
                 if (!session) {
                     document.getElementById('authModal').classList.add('active');
                 } else {
-                    showCustomAlert('ليس لديك رسائل جديدة حالياً.', true);
+                    showCustomAlert('الدردشة الحية مفعلة. ليس لديك رسائل جديدة حالياً.', true);
                 }
             } else {
                 document.getElementById('authModal').classList.add('active');
