@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بدل.ma - أول منصة للمقايضة المباشرة بالمغرب</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- الهيدر (Header) -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <span class="logo-green">بدل</span><span class="logo-dark">.ma</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">الرئيسية</a>
+                <a href="#">كيفاش نتبادل؟</a>
+                <a href="#">العروض</a>
+                <a href="#">تواصل معنا</a>
+            </nav>
+            <div class="header-btn">
+                <a href="#" class="btn-primary">ابدأ المقايضة الأن</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- السلايدر (Slider) -->
+    <section class="slider-section">
+        <div class="slider-container">
+            
+            <!-- الشريحة الأولى -->
+            <div class="slide active">
+                <div class="slide-content">
+                    <h2>بلاصة ما تلوحو، بدلو!</h2>
+                    <p class="subtitle">بدل تلفونك، حوايجك، أي حاجة بـ <span>0 درهم</span></p>
+                    <p class="desc">أول منصة للمقايضة المباشرة بالمغرب</p>
+                    <div class="features-icons">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>تلفونات</span>
+                        </div>
+                        <div class="icon-box">
+                            <i class="fa-solid fa-shirt"></i>
+                            <span>ملابس</span>
+                        </div>
+                        <div class="icon-box">
+                            <i class="fa-solid fa-box-open"></i>
+                            <span>أغراض متنوّعة</span>
+                        </div>
+                    </div>
+                    <a href="https://www.bedal.ma" class="btn-cta">دخل واستمتع - www.bedal.ma</a>
+                    <p class="tagline">مجاني • سريع • آمن • 100% مغربي</p>
+                </div>
+            </div>
+
+            <!-- الشريحة الثانية -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>بدّل، تجمّع، تواصل</h2>
+                    <p class="subtitle">سهل، سريع، وبلا فلوس</p>
+                    <p class="desc">وفر فلوسك واستبدل الأشياء لي معندك ما تدير بيها بأشياء محتاجها اليوم!</p>
+                    <a href="https://www.bedal.ma" class="btn-cta">اكتشف العروض الحالية</a>
+                    <p class="tagline">مجاني • سريع • آمن • 100% مغربي</p>
+                </div>
+            </div>
+
+            <!-- أسهم التنقل -->
+            <button class="prev-btn" id="prevBtn"><i class="fa-solid fa-chevron-right"></i></button>
+            <button class="next-btn" id="nextBtn"><i class="fa-solid fa-chevron-left"></i></button>
+
+            <!-- نقاط التنقل -->
+            <div class="slider-dots">
+                <span class="dot active" onclick="currentSlide(0)"></span>
+                <span class="dot" onclick="currentSlide(1)"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- الفوتر (Footer) -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <h3><span class="logo-green">بدل</span><span class="logo-white">.ma</span></h3>
+                <p>أول منصة مغربية للمقايضة المباشرة والتبادل بدون مصاريف.</p>
+            </div>
+            <div class="footer-links">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="#">الرئيسية</a></li>
+                    <li><a href="#">عن المنصة</a></li>
+                    <li><a href="#">الشروط والأحكام</a></li>
+                    <li><a href="#">سياسة الخصوصية</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <h4>تابعنا على</h4>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
