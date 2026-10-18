@@ -1149,6 +1149,7 @@
             <h2 class="modal-title">طلب <span class="logo-green">مقايضة سلعة</span></h2>
             <form class="contact-form" id="exchangeRequestForm">
                 <input type="hidden" id="target-product-id">
+                <input type="hidden" id="target-owner-phone">
                 <div class="form-group">
                     <label for="exchange-item-image">صورة المنتوج الذي ترغب في المقايضة به:</label>
                     <label class="custom-file-upload">
@@ -1167,7 +1168,7 @@
         </div>
     </div>
 
-    <!-- نافذة الرسائل والطلبات الواردة (تعرض صورة ووصف الطرف الثاني مع زري موافق وإلغاء) -->
+    <!-- نافذة الرسائل والطلبات الواردة (تعرض صورة ووصف الطرف الثاني مع زري موافق ورفض الطلب) -->
     <div class="modal-overlay" id="messagesModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="modal-close" id="closeMessagesModalBtn">&times;</button>
@@ -1512,7 +1513,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.5.0</span>
+            <span class="version-tag">v0.5.2</span>
         </div>
     </footer>
 
@@ -1706,6 +1707,12 @@
                 }
                 if (!prodCity) prodCity = 'المغرب';
 
+                let ownerPhone = '';
+                const phoneMatch = rawDesc.match(/\(الهاتف:\s*([^\s-]+)/);
+                if (phoneMatch) {
+                    ownerPhone = phoneMatch[1].trim();
+                }
+
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
                 const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 
@@ -1718,7 +1725,7 @@
                         </div>
                         <h3 class="product-title">${prod.title}</h3>
                         <p class="product-desc">${cleanDesc}</p>
-                        <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}', ${prod.id});">طلب تبدل معاه</a>
+                        <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>
                     </div>
                 `;
                 gridContainer.appendChild(card);
@@ -1824,12 +1831,13 @@
             });
         }
 
-        function handleExchangeRequest(productTitle, productId) {
+        function handleExchangeRequest(productTitle, productId, ownerPhone) {
             const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openRegistrationTab();
             } else {
                 document.getElementById('target-product-id').value = productId;
+                document.getElementById('target-owner-phone').value = ownerPhone || '';
                 exchangeRequestModal.classList.add('active');
             }
         }
@@ -1844,7 +1852,6 @@
             }
         });
 
-        // إصلاح وجعل زر إرسال طلب التبادل يعمل بسلاسة تامة وحفظ الطلب في قاعدة البيانات
         if(exchangeRequestForm) {
             exchangeRequestForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -1867,6 +1874,7 @@
                 reader.onload = async function(event) {
                     const base64Image = event.target.result;
                     const descText = exchangeItemDesc.value.trim();
+                    const ownerPhone = document.getElementById('target-owner-phone').value;
 
                     const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
                     if (phoneRegex.test(descText)) {
@@ -1878,7 +1886,7 @@
                         if (_supabase) {
                             const reqPayload = {
                                 title: "طلب مقايضة من " + userData.name,
-                                description: `[EXCHANGE_REQUEST] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
+                                description: `[EXCHANGE_REQUEST] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
                                 category: "تلفونات",
                                 city: userData.city || 'القنيطرة',
                                 image_url: base64Image
@@ -1886,7 +1894,7 @@
 
                             const { error } = await _supabase.from('products').insert([reqPayload]);
                             if (!error) {
-                                showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل!', true);
+                                showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل لصاحب المنتوج!', true);
                                 exchangeRequestModal.classList.remove('active');
                                 exchangeRequestForm.reset();
                                 exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
@@ -1909,13 +1917,21 @@
             });
         }
 
-        // فحص عدد الطلبات الواردة لتحديث الإشعار الأحمر فوريّاً فوق أيقونة الرسائل
+        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي لتحديث الإشعار الأحمر فوريّاً
         async function checkIncomingRequestsCount() {
             try {
+                const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+                if (!currentSupabaseUser) return;
+                const userData = JSON.parse(currentSupabaseUser);
+
                 if (_supabase) {
                     const { data, error } = await _supabase.from('products').select('*');
                     if (!error && data) {
-                        const requests = data.filter(item => (item.description || '').includes('[EXCHANGE_REQUEST]'));
+                        const requests = data.filter(item => {
+                            const desc = item.description || '';
+                            if (!desc.includes('[EXCHANGE_REQUEST]')) return false;
+                            return userData.phone && desc.includes(`[OWNER_PHONE:${userData.phone}]`);
+                        });
                         const badge = document.getElementById('msgBadgeCount');
                         if (requests.length > 0) {
                             badge.textContent = requests.length;
@@ -1930,7 +1946,7 @@
             }
         }
 
-        // نافذة عرض تفاصيل الطلبات الواردة في الرسائل (صورة ووصف الطرف الثاني مع زري موافق وإلغاء)
+        // نافذة عرض تفاصيل الطلبات الواردة الخاصة بالمستخدم الحالي
         const messagesModal = document.getElementById('messagesModal');
         const closeMessagesModalBtn = document.getElementById('closeMessagesModalBtn');
         const incomingRequestsContainer = document.getElementById('incomingRequestsContainer');
@@ -1942,16 +1958,22 @@
                 openLoginTab();
                 return;
             }
+            const userData = JSON.parse(currentSupabaseUser);
             setActiveBottomNav(bottomMessagesBtn);
 
-            incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);">جاري تحميل الطلبات الواردة...</p>';
+            incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);">جاري تحميل الطلبات الواردة الخاصة بك...</p>';
             messagesModal.classList.add('active');
 
             try {
                 if (_supabase) {
                     const { data, error } = await _supabase.from('products').select('*').order('created_at', { ascending: false });
                     if (!error && data) {
-                        const requests = data.filter(item => (item.description || '').includes('[EXCHANGE_REQUEST]'));
+                        const requests = data.filter(item => {
+                            const desc = item.description || '';
+                            if (!desc.includes('[EXCHANGE_REQUEST]')) return false;
+                            return userData.phone && desc.includes(`[OWNER_PHONE:${userData.phone}]`);
+                        });
+
                         if (requests.length > 0) {
                             incomingRequestsContainer.innerHTML = '';
                             requests.forEach(req => {
@@ -1977,8 +1999,8 @@
                                     ${imgBox}
                                     <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة الطرف الثاني:</b> ${senderDesc}</p>
                                     <div style="display:flex; gap:10px; margin-top:5px;">
-                                        <button onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-check"></i> موافق (إرسال رقم الواتساب)</button>
-                                        <button onclick="cancelExchangeRequest('${req.id}')" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-xmark"></i> إلغاء</button>
+                                        <button id="btn-accept-${req.id}" onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:6px;"><i class="fa-solid fa-check"></i> موافق</button>
+                                        <button onclick="cancelExchangeRequest('${req.id}')" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-xmark"></i> رفض الطلب</button>
                                     </div>
                                 `;
                                 incomingRequestsContainer.appendChild(card);
@@ -2004,21 +2026,36 @@
             }
         });
 
+        // تحويل زر "موافق" إلى زر ومظهر الواتساب وتوجيه المستخدم مباشرة دون كشف الأرقام
         window.acceptExchangeRequest = function(reqId, phone, name) {
-            showCustomAlert(`تمت الموافقة على طلب ${name}! رقم الواتساب للتواصل: ${phone}`, true);
-            messagesModal.classList.remove('active');
+            let cleanPhone = phone.replace(/[^0-9]/g, '');
+            if (cleanPhone.startsWith('0')) {
+                cleanPhone = '212' + cleanPhone.substring(1);
+            }
+            const whatsappUrl = `https://wa.me/${cleanPhone}?text=مرحباً ${name}، وافقت على طلب المقايضة الخاص بك عبر منصة بدل.ma`;
+            
+            const btn = document.getElementById(`btn-accept-${reqId}`);
+            if(btn) {
+                btn.style.backgroundColor = '#25D366';
+                btn.innerHTML = `<i class="fa-brands fa-whatsapp" style="font-size:1.1rem;"></i> تواصل عبر الواتساب`;
+                btn.onclick = () => {
+                    window.open(whatsappUrl, '_blank');
+                };
+            }
+            window.open(whatsappUrl, '_blank');
         };
 
+        // زر رفض الطلب يقوم بحذف الطلب من قاعدة البيانات والرسائل
         window.cancelExchangeRequest = async function(reqId) {
             showCustomConfirm(async () => {
                 if (_supabase) {
                     const { error } = await _supabase.from('products').delete().eq('id', reqId);
                     if (!error) {
-                        showCustomAlert('تم إلغاء طلب المقايضة بنجاح.', true);
+                        showCustomAlert('تم رفض وحذف طلب المقايضة بنجاح.', true);
                         messagesModal.classList.remove('active');
                         checkIncomingRequestsCount();
                     } else {
-                        showCustomAlert('فشل إلغاء الطلب: ' + error.message, false);
+                        showCustomAlert('فشل رفض الطلب: ' + error.message, false);
                     }
                 }
             });
@@ -2557,6 +2594,7 @@
                     authModal.classList.remove('active');
                     checkAuthSession();
                     loginForm.reset();
+                    checkIncomingRequestsCount();
                 } else {
                     showCustomAlert('رقم الهاتف/الاسم أو كلمة المرور غير صحيحة، أو الحساب غير مسجل!', false);
                 }
