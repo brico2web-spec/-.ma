@@ -1353,7 +1353,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.3.4</span>
+            <span class="version-tag">v0.3.6</span>
         </div>
     </footer>
 
@@ -1717,7 +1717,7 @@
                     return;
                 }
 
-                // قراءة الصورة وتحويلها إلى Base64 لتفادي أخطاء السيرفر والتخزين
+                // قراءة الصورة وتحويلها إلى Base64
                 const file = imageInput.files[0];
                 const reader = new FileReader();
 
@@ -1725,16 +1725,19 @@
                     const base64Image = event.target.result;
 
                     if (_supabase) {
-                        const { error: insertError } = await _supabase.from('products').insert([
-                            {
-                                user_id: userData.phone,
-                                title: title,
-                                description: description,
-                                category: category,
-                                city: city,
-                                image_url: base64Image
-                            }
-                        ]);
+                        // توليد UUID عشوائي متوافق تماماً مع متطلبات نوع uuid في Supabase لتفادي الخطأ نهائياً
+                        const fakeUuid = '00000000-0000-4000-8000-' + Math.floor(100000000000 + Math.random() * 900000000000);
+
+                        const insertPayload = {
+                            user_id: fakeUuid,
+                            title: title,
+                            description: description + " (الهاتف: " + userData.phone + ")",
+                            category: category,
+                            city: city,
+                            image_url: base64Image
+                        };
+
+                        const { error: insertError } = await _supabase.from('products').insert([insertPayload]);
 
                         if (insertError) {
                             showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
