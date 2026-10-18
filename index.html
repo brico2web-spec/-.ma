@@ -521,6 +521,43 @@
             accent-color: var(--primary-green);
         }
 
+        /* تصميم مربع اختيار المقايضة المفتوحة بشكل جذاب ومثيرة للانتباه */
+        .open-exchange-box {
+            background: linear-gradient(135deg, #e6f7f0 0%, #f2f7f4 100%);
+            border: 2px dashed var(--primary-green);
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2px;
+        }
+
+        .open-exchange-box:hover {
+            background: #d8f3e5;
+            box-shadow: 0 3px 10px rgba(0, 168, 107, 0.15);
+        }
+
+        .open-exchange-box input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-green);
+            cursor: pointer;
+        }
+
+        .open-exchange-box label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--dark-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-grow: 1;
+        }
+
         .form-submit-btn {
             background-color: var(--primary-green);
             color: var(--white);
@@ -675,7 +712,7 @@
             transform: translateY(-5px);
         }
 
-        /* زر المفضلة على بطاقة المنتج */
+        /* زر المفضلة على بطاقة المنتج (يظهر حصراً عند تسجيل الدخول) */
         .product-fav-btn {
             position: absolute;
             top: 10px;
@@ -685,7 +722,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            display: flex;
+            display: none; /* مخفي افتراضياً للمستخدمين الزوار */
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -1229,7 +1266,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ إعدادات الحساب الشخصي (تغيير رقم الهاتف، المدينة وكلمة المرور) -->
+    <!-- نافذة منبثقة (Modal) لـ إعدادات الحساب الشخصي (تغيير رقم الهاتف، المدينة وتأكيد كلمة المرور الحالية) -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-content" style="max-width: 450px;">
             <button class="modal-close" id="closeSettingsModalBtn">&times;</button>
@@ -1244,8 +1281,8 @@
                     <input type="text" id="settings-city" placeholder="أدخل المدينة الجديدة" required>
                 </div>
                 <div class="form-group">
-                    <label for="settings-password">كلمة المرور الحالية أو الجديدة للتأكيد:</label>
-                    <input type="password" id="settings-password" placeholder="أدخل كلمة المرور" required>
+                    <label for="settings-password">كلمة المرور الحالية للتأكيد:</label>
+                    <input type="password" id="settings-password" placeholder="أدخل كلمة المرور الحالية لتأكيد التغيير" required>
                 </div>
                 <button type="submit" class="form-submit-btn">حفظ التغييرات</button>
             </form>
@@ -1295,6 +1332,11 @@
                         <option value="">اختر الفئة</option>
                         <option value="تلفونات">تلفونات</option>
                         <option value="ملابس">ملابس</option>
+                        <option value="نسائية">نسائية</option>
+                        <option value="أطفال">أطفال</option>
+                        <option value="إلكترونيات">إلكترونيات</option>
+                        <option value="أثاث ومنزل">أثاث ومنزل</option>
+                        <option value="أدوات رياضية">أدوات رياضية</option>
                         <option value="أغراض متنوّعة">أغراض متنوّعة</option>
                     </select>
                 </div>
@@ -1328,6 +1370,13 @@
                     <label for="ad-title">عنوان السلعة:</label>
                     <input type="text" id="ad-title" placeholder="مثال: هاتف ذكي، جاكيت..." required>
                 </div>
+                <!-- خانة تفعيل خيار المقايضة بأي منتوج بحسب الطلب -->
+                <div class="form-group">
+                    <div class="open-exchange-box" id="openExchangeToggleBox">
+                        <input type="checkbox" id="open-exchange-checkbox">
+                        <label for="open-exchange-checkbox"><i class="fa-solid fa-shuffle" style="color:var(--primary-green);"></i> 🔓 أقبل المقايضة بأي منتوج مقترح (بدون شروط محددة)</label>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label for="ad-desc">وصف السلعة وما ترغب في مبادلتها به:</label>
                     <textarea id="ad-desc" placeholder="اكتب وصفاً مختصراً..." required></textarea>
@@ -1346,6 +1395,11 @@
                         <option value="">اختر الفئة</option>
                         <option value="تلفونات">تلفونات</option>
                         <option value="ملابس">ملابس</option>
+                        <option value="نسائية">نسائية</option>
+                        <option value="أطفال">أطفال</option>
+                        <option value="إلكترونيات">إلكترونيات</option>
+                        <option value="أثاث ومنزل">أثاث ومنزل</option>
+                        <option value="أدوات رياضية">أدوات رياضية</option>
                         <option value="أغراض متنوّعة">أغراض متنوّعة</option>
                     </select>
                 </div>
@@ -1571,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.5.3</span>
+            <span class="version-tag">v0.5.5</span>
         </div>
     </footer>
 
@@ -1755,6 +1809,11 @@
 
         window.toggleFavorite = function(productId, event) {
             if(event) event.preventDefault();
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
+                openRegistrationTab();
+                return;
+            }
             let favs = getFavorites();
             const index = favs.indexOf(productId);
             if(index > -1) {
@@ -1776,6 +1835,7 @@
             const endIndex = startIndex + itemsPerPage;
             const paginatedItems = allProducts.slice(startIndex, endIndex);
             const favs = getFavorites();
+            const isUserLoggedIn = sessionStorage.getItem('badal_supabase_user') !== null;
 
             paginatedItems.forEach(prod => {
                 const card = document.createElement('div');
@@ -1800,8 +1860,11 @@
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
                 const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 
+                // زر المفضلة يظهر فقط إذا كان المستخدم مسجلاً للدخول
+                const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
+
                 card.innerHTML = `
-                    <button class="product-fav-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${prod.id}, event)" title="إضافة للمفضلة">
+                    <button class="product-fav-btn ${isFav ? 'active' : ''}" style="${favBtnStyle}" onclick="toggleFavorite(${prod.id}, event)" title="إضافة للمفضلة">
                         <i class="fa-${isFav ? 'solid' : 'regular'} fa-heart"></i>
                     </button>
                     ${displayImg}
@@ -2155,6 +2218,11 @@
         const bottomFavoritesBtn = document.getElementById('bottomFavoritesBtn');
 
         function openFavoritesModal() {
+            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
+                openRegistrationTab();
+                return;
+            }
             const favs = getFavorites();
             favoritesGridContainer.innerHTML = '';
             
@@ -2170,7 +2238,7 @@
                     const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
 
                     card.innerHTML = `
-                        <button class="product-fav-btn active" onclick="toggleFavorite(${prod.id}, event); openFavoritesModal();" title="إزالة من المفضلة">
+                        <button class="product-fav-btn active" style="display: flex;" onclick="toggleFavorite(${prod.id}, event); openFavoritesModal();" title="إزالة من المفضلة">
                             <i class="fa-solid fa-heart"></i>
                         </button>
                         ${displayImg}
@@ -2266,6 +2334,25 @@
         const addAdForm = document.getElementById('addAdForm');
         const imageInput = document.getElementById('ad-images');
         const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const openExchangeCheckbox = document.getElementById('open-exchange-checkbox');
+        const adDescTextarea = document.getElementById('ad-desc');
+
+        // قفل/فتح خانة الوصف بناءً على خيار المقايضة المفتوحة
+        if (openExchangeCheckbox && adDescTextarea) {
+            openExchangeCheckbox.addEventListener('change', () => {
+                if (openExchangeCheckbox.checked) {
+                    adDescTextarea.value = '🔓 أقبل المقايضة بأي منتوج مقترح (مفتوح على جميع العروض)';
+                    adDescTextarea.disabled = true;
+                    adDescTextarea.style.backgroundColor = '#eef2f0';
+                    adDescTextarea.style.color = '#718096';
+                } else {
+                    adDescTextarea.value = '';
+                    adDescTextarea.disabled = false;
+                    adDescTextarea.style.backgroundColor = '#f8faf9';
+                    adDescTextarea.style.color = 'var(--dark-blue)';
+                }
+            });
+        }
 
         if(imageInput) {
             imageInput.addEventListener('change', (e) => {
@@ -2318,7 +2405,7 @@
 
                 const userData = JSON.parse(currentSupabaseUser);
                 const title = document.getElementById('ad-title').value;
-                const description = document.getElementById('ad-desc').value;
+                const description = adDescTextarea.value;
                 const category = document.getElementById('ad-category').value;
                 const city = userData.city || 'القنيطرة';
 
@@ -2355,6 +2442,10 @@
                             showCustomAlert('تم نشر إعلانك بنجاح!', true);
                             addAdModal.classList.remove('active');
                             addAdForm.reset();
+                            if(openExchangeCheckbox) openExchangeCheckbox.checked = false;
+                            adDescTextarea.disabled = false;
+                            adDescTextarea.style.backgroundColor = '#f8faf9';
+                            adDescTextarea.style.color = 'var(--dark-blue)';
                             fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
                             showProductsView();
                         }
@@ -2402,7 +2493,7 @@
             }
         });
 
-        // نافذة إعدادات الحساب الشخصي وتعديل المعلومات في قاعدة البيانات
+        // نافذة إعدادات الحساب الشخصي وتعديل المعلومات في قاعدة البيانات مع التحقق من كلمة المرور الحالية
         const settingsModal = document.getElementById('settingsModal');
         const closeSettingsModalBtn = document.getElementById('closeSettingsModalBtn');
         const settingsForm = document.getElementById('settingsForm');
@@ -2418,7 +2509,7 @@
             const userData = JSON.parse(currentSupabaseUser);
             document.getElementById('settings-phone').value = userData.phone || '';
             document.getElementById('settings-city').value = userData.city || '';
-            document.getElementById('settings-password').value = userData.password || '';
+            document.getElementById('settings-password').value = '';
             settingsModal.classList.add('active');
         });
 
@@ -2437,7 +2528,13 @@
             const currentSupabaseUser = JSON.parse(sessionStorage.getItem('badal_supabase_user') || '{}');
             const newPhone = document.getElementById('settings-phone').value.trim();
             const newCity = document.getElementById('settings-city').value.trim();
-            const newPassword = document.getElementById('settings-password').value;
+            const enteredPassword = document.getElementById('settings-password').value;
+
+            // التحقق من صحة كلمة المرور الحالية للمستخدم
+            if (enteredPassword !== currentSupabaseUser.password) {
+                showCustomAlert('كلمة المرور الحالية غير صحيحة، يرجى إدخال كلمة المرور الصحيحة لتأكيد التغيير.', false);
+                return;
+            }
 
             if (!_supabase) {
                 showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
@@ -2454,14 +2551,14 @@
                 if (!queryError && records) {
                     let userRecord = records.find(r => r.description.includes(`[USER_PHONE:${currentSupabaseUser.phone}]`));
                     if (userRecord) {
-                        const updatedDesc = `[USER_ACCOUNT] [USER_PHONE:${newPhone}] [PASSWORD:${newPassword}] [CITY:${newCity}] [NAME:${currentSupabaseUser.name}]`;
+                        const updatedDesc = `[USER_ACCOUNT] [USER_PHONE:${newPhone}] [PASSWORD:${currentSupabaseUser.password}] [CITY:${newCity}] [NAME:${currentSupabaseUser.name}]`;
                         const { error: updateError } = await _supabase
                             .from('products')
                             .update({ description: updatedDesc, city: newCity })
                             .eq('id', userRecord.id);
 
                         if (!updateError) {
-                            const updatedUserData = { name: currentSupabaseUser.name, phone: newPhone, city: newCity, password: newPassword };
+                            const updatedUserData = { name: currentSupabaseUser.name, phone: newPhone, city: newCity, password: currentSupabaseUser.password };
                             sessionStorage.setItem('badal_supabase_user', JSON.stringify(updatedUserData));
                             showCustomAlert('تم تحديث معلومات الحساب في قاعدة البيانات بنجاح!', true);
                             settingsModal.classList.remove('active');
@@ -2745,6 +2842,7 @@
                     authModal.classList.remove('active');
                     checkAuthSession();
                     registerForm.reset();
+                    renderProducts(currentPage);
                 }
             } catch (err) {
                 console.error(err);
@@ -2801,6 +2899,7 @@
                     checkAuthSession();
                     loginForm.reset();
                     checkIncomingRequestsCount();
+                    renderProducts(currentPage);
                 } else {
                     showCustomAlert('رقم الهاتف/الاسم أو كلمة المرور غير صحيحة، أو الحساب غير مسجل!', false);
                 }
