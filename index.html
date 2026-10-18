@@ -3,80 +3,1023 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بدل.ma - أول منصة للمقايضة المباشرة بالمغرب</title>
-    <link rel="stylesheet" href="style.css">
+    <title>بدل.ma - أول موقع للمقايضة بـ 0 درهم</title>
+    <!-- استيراد خط Cairo المميز للشعار و Tajawal للنصوص -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* إعادة ضبط الأساسيات والخطوط */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        :root {
+            --primary-green: #00a86b;
+            --dark-blue: #0e1726;
+            --light-bg: #f8faf9;
+            --text-gray: #555555;
+            --white: #ffffff;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-blue);
+            direction: rtl;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 1. الهيدر (Header) */
+        .main-header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* شريط أعلى الهيدر لتسجيل الدخول / تسجيل جديد */
+        .top-auth-bar {
+            background-color: #f2f7f4;
+            text-align: center;
+            padding: 5px 0;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #e2ece8;
+        }
+
+        .top-auth-bar a {
+            text-decoration: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .top-auth-bar a:hover {
+            opacity: 0.8;
+        }
+
+        .auth-login-text {
+            color: var(--dark-blue);
+        }
+
+        .auth-register-text {
+            color: var(--primary-green);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            position: relative;
+        }
+
+        /* إعدادات الشعار والسلوغون */
+        .brand-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 900;
+            font-family: 'Cairo', sans-serif; /* الخط الجديد للشعار */
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-green {
+            color: var(--primary-green);
+        }
+
+        .logo-dark {
+            color: var(--dark-blue);
+        }
+
+        .logo-white {
+            color: var(--white);
+        }
+
+        .slogan {
+            font-size: 0.72rem;
+            color: #888888;
+            font-weight: 500;
+            margin-top: 3px;
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            display: inline-block;
+            opacity: 0.85;
+        }
+
+        .slogan span {
+            color: var(--primary-green);
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        /* توسيط المنيو في الوسط تماماً */
+        .nav-links {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-blue);
+            margin: 0 15px;
+            font-weight: 700;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-green);
+        }
+
+        .header-btn {
+            z-index: 2;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 10px 22px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #008f5a;
+        }
+
+        /* زر إضافي متناسق داخل السلايدر */
+        .slide-btn {
+            display: inline-block;
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 168, 107, 0.2);
+            cursor: pointer;
+        }
+
+        .slide-btn:hover {
+            background-color: #008f5a;
+            transform: translateY(-2px);
+        }
+
+        /* نافذة منبثقة (Modal) عامة */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(14, 23, 38, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            border-radius: 16px;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--primary-green);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* تبويبات نافذة الدخول / تسجيل جديد */
+        .auth-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2ece8;
+            padding-bottom: 10px;
+        }
+
+        .auth-tab-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-gray);
+            cursor: pointer;
+            padding: 5px 15px;
+            transition: color 0.3s;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .auth-tab-btn.active {
+            color: var(--primary-green);
+            border-bottom: 2px solid var(--primary-green);
+            margin-bottom: -12px;
+            padding-bottom: 10px;
+        }
+
+        .auth-form-panel {
+            display: none;
+        }
+
+        .auth-form-panel.active {
+            display: block;
+        }
+
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            text-align: right;
+            margin-bottom: 25px;
+        }
+
+        .step-item h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--dark-blue);
+            margin-bottom: 8px;
+        }
+
+        .step-item p {
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .modal-footer-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 12px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .modal-footer-btn:hover {
+            background-color: #008f5a;
+        }
+
+        /* تنسيق النماذج (Forms) */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: right;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d2ded7;
+            border-radius: 8px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.95rem;
+            background-color: #f8faf9;
+            color: var(--dark-blue);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--primary-green);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            cursor: pointer;
+        }
+
+        .form-checkbox-group input {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-green);
+        }
+
+        .form-submit-btn {
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: 'Tajawal', sans-serif;
+            margin-top: 10px;
+        }
+
+        .form-submit-btn:hover {
+            background-color: #008f5a;
+        }
+
+        /* 2. السلايدر (Slider) و صفحة العروض */
+        .slider-section {
+            position: relative;
+            padding: 50px 0;
+            background-color: #f2f7f4;
+            background-image: radial-gradient(#00a86b 0.5px, transparent 0.5px), radial-gradient(#00a86b 0.5px, #f2f7f4 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .slide {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            animation: fade 0.8s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
+        }
+
+        .slide-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-content h2 {
+            font-size: 2.8rem;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+            font-weight: 900;
+            font-family: 'Cairo', sans-serif;
+            letter-spacing: -1px;
+            text-align: center;
+        }
+
+        .slide-content .subtitle {
+            font-size: 1.6rem;
+            color: var(--primary-green);
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .slide-content .subtitle span {
+            background-color: #e6f7f0;
+            padding: 2px 10px;
+            border-radius: 5px;
+        }
+
+        .slide-content .desc {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        /* تنسيق قسم عروض المقايضة (مكان السلايدر عند الضغط على ابدأ المقايضة) */
+        .products-section {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: right;
+            padding: 20px 0;
+            animation: fade 0.5s ease-in-out;
+        }
+
+        .products-section.active {
+            display: block;
+        }
+
+        .products-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .products-header h2 {
+            font-size: 2.2rem;
+            color: var(--dark-blue);
+            font-family: 'Cairo', sans-serif;
+            margin-bottom: 8px;
+        }
+
+        .products-header p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e2ece8;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-img {
+            height: 160px;
+            background-color: #e6f7f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            font-size: 2.5rem;
+        }
+
+        .product-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--dark-blue);
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .product-desc {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            line-height: 1.4;
+        }
+
+        .product-badge {
+            display: inline-block;
+            background-color: #e6f7f0;
+            color: var(--primary-green);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            align-self: flex-start;
+        }
+
+        .product-btn {
+            display: block;
+            text-align: center;
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 8px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .product-btn:hover {
+            background-color: #008f5a;
+        }
+
+        /* أزرار التصفح (Pagination) */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .page-btn {
+            background-color: var(--white);
+            color: var(--dark-blue);
+            border: 1px solid #d2ded7;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .page-btn:hover:not(:disabled), .page-btn.active {
+            background-color: var(--primary-green);
+            color: var(--white);
+            border-color: var(--primary-green);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* أيقونات المميزات */
+        .features-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .icon-box {
+            background: var(--white);
+            border: 2px solid #d0f0e3;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+
+        .icon-box i {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .icon-box span {
+            font-size: 0.75rem;
+            color: var(--dark-blue);
+            font-weight: 600;
+        }
+
+        .tagline {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: #666;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* نقاط التنقل */
+        .slider-dots {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .dot {
+            height: 12px;
+            width: 12px;
+            margin: 0 5px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dot.active, .dot:hover {
+            background-color: var(--primary-green);
+            width: 25px;
+            border-radius: 10px;
+        }
+
+        /* 3. الفوتر (Footer) */
+        .main-footer {
+            background-color: var(--dark-blue);
+            color: var(--white);
+            padding-top: 40px;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            padding-bottom: 30px;
+        }
+
+        .footer-brand .logo {
+            font-family: 'Cairo', sans-serif;
+            font-size: 2rem;
+        }
+
+        .footer-brand p {
+            margin-top: 10px;
+            color: #a0aec0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer-links h4, .footer-social h4 {
+            margin-bottom: 15px;
+            color: var(--primary-green);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links ul li a {
+            color: #a0aec0;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links ul li a:hover {
+            color: var(--white);
+        }
+
+        .social-icons a {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: rgba(255,255,255,0.1);
+            color: var(--white);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: var(--primary-green);
+        }
+
+        .footer-bottom {
+            background-color: #080d17;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.85rem;
+            color: #718096;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .version-tag {
+            color: #718096;
+            font-size: 0.7rem;
+        }
+
+        /* التجاوب مع مختلف الشاشات (Responsive) */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .brand-box {
+                align-items: center;
+            }
+            .nav-links {
+                position: static;
+                transform: none;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .slide-content h2 {
+                font-size: 2rem;
+            }
+            .slide-content .subtitle {
+                font-size: 1.2rem;
+            }
+            .features-icons {
+                gap: 10px;
+            }
+            .icon-box {
+                width: 75px;
+                height: 75px;
+            }
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <!-- الهيدر (Header) -->
-    <header class="main-header">
+    <header class="main-header" id="topHeader">
+        <!-- شريط أعلى الهيدر في الوسط لتسجيل الدخول / تسجيل جديد -->
+        <div class="top-auth-bar">
+            <a id="openAuthModalBtn">
+                <span class="auth-login-text">الدخول</span> / <span class="auth-register-text">تسجيل جديد</span>
+            </a>
+        </div>
         <div class="container header-container">
-            <div class="logo">
-                <span class="logo-green">بدل</span><span class="logo-dark">.ma</span>
-            </div>
+            <!-- الشعار + السلوغون الجديد -->
+            <a class="brand-box" id="logoHomeBtn">
+                <div class="logo">
+                    <span class="logo-green">بدل</span><span class="logo-dark">.ma</span>
+                </div>
+                <div class="slogan">أول موقع للمقايضة بـ <span>0 درهم</span></div>
+            </a>
+
             <nav class="nav-links">
-                <a href="#" class="active">الرئيسية</a>
-                <a href="#">كيفاش نتبادل؟</a>
-                <a href="#">العروض</a>
-                <a href="#">تواصل معنا</a>
+                <a id="homeNavBtn" class="active">الرئيسية</a>
+                <a id="howToExchangeBtn">كيفاش نتبادل؟</a>
+                <a id="contactUsBtn">تواصل معنا</a>
+                <a id="offersNavBtn">العروض</a>
             </nav>
-            <div class="header-btn">
-                <a href="#" class="btn-primary">ابدأ المقايضة الأن</a>
+
+            <div class="header-btn" id="headerBtnContainer">
+                <a id="startExchangeBtn" class="btn-primary">ابدأ المقايضة الأن</a>
             </div>
         </div>
     </header>
 
-    <!-- السلايدر (Slider) -->
+    <!-- نافذة منبثقة (Modal) لـ الدخول / تسجيل جديد -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeAuthModalBtn">&times;</button>
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" id="tabLoginBtn">الدخول</button>
+                <button class="auth-tab-btn" id="tabRegisterBtn">تسجيل جديد</button>
+            </div>
+
+            <!-- نموذج الدخول -->
+            <div class="auth-form-panel active" id="loginPanel">
+                <h2 class="modal-title">تسجيل <span class="logo-green">الدخول</span></h2>
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('تم تسجيل الدخول بنجاح!');">
+                    <div class="form-group">
+                        <label for="login-email">رقم الهاتف أو البريد الإلكتروني:</label>
+                        <input type="text" id="login-email" placeholder="أدخل رقم الهاتف أو البريد" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">كلمة المرور:</label>
+                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required>
+                    </div>
+                    <button type="submit" class="form-submit-btn">دخول</button>
+                </form>
+            </div>
+
+            <!-- نموذج تسجيل جديد -->
+            <div class="auth-form-panel" id="registerPanel">
+                <h2 class="modal-title"><span class="logo-green">تسجيل</span> جديد</h2>
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('تم إنشاء الحساب بنجاح!');">
+                    <div class="form-group">
+                        <label for="reg-name">الإسم :</label>
+                        <input type="text" id="reg-name" placeholder="أدخل اسمك الكامل" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-city">المدينة :</label>
+                        <input type="text" id="reg-city" placeholder="أدخل مدينتك (مثال: القنيطرة)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-phone">رقم الهاتف:</label>
+                        <input type="text" id="reg-phone" placeholder="أدخل رقم الهاتف" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">كلمة المرور :</label>
+                        <input type="password" id="reg-password" placeholder="أدخل كلمة المرور" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-confirm-password">تأكيد كلمة المرور :</label>
+                        <input type="password" id="reg-confirm-password" placeholder="أعد إدخال كلمة المرور" required>
+                    </div>
+                    <label class="form-checkbox-group">
+                        <input type="checkbox" required> الموافقة على شروط الموقع
+                    </label>
+                    <button type="submit" class="form-submit-btn">تسجيل الحساب</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة (Modal) لـ كيفاش نتبادل؟ -->
+    <div class="modal-overlay" id="howToModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeModalBtn">&times;</button>
+            <h2 class="modal-title">خطوات <span class="logo-green">بدل</span><span class="logo-dark">.ma</span> السريعة في 3 خطوات:</h2>
+            <div class="steps-container">
+                <div class="step-item">
+                    <h3>حط إعلانك بوضوح</h3>
+                    <p>1. صور السلعة لي بغيتي تبدل مزيان وبأدق التفاصيل.</p>
+                    <p>2. كتب بوضوح شنو عاطي وشنو باغي تاخد في المقابل.</p>
+                </div>
+                <div class="step-item">
+                    <h3>تواصل وتفق بسرعة</h3>
+                    <p>1. رسل طلب للشخص المهتم ، للموفقة إرسال رقم الواتساب.</p>
+                    <p>2. تفقوا على الوقت والمكان المناسب للقاء.</p>
+                </div>
+                <div class="step-item">
+                    <h3>تلاقاو وبدلوا يد بيد</h3>
+                    <p>1. اختاروا دائماً مكاناً عاماً وآمناً لإتمام التبادل.</p>
+                    <p>2. عاين السلعة وتأكد منها مزيان، وها هية صفقتك تمت بنجاح بلا فلوس!! 0 درهم</p>
+                </div>
+            </div>
+            <a id="modalDiscoverBtn" class="modal-footer-btn">دخل كتشف العروض</a>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة (Modal) لـ تواصل معنا -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeContactModalBtn">&times;</button>
+            <h2 class="modal-title">تواصل مع فريق <span class="logo-green">بدل</span><span class="logo-dark">.ma</span></h2>
+            <form class="contact-form" onsubmit="event.preventDefault(); alert('تم إرسال رسالتك بنجاح!');">
+                <div class="form-group">
+                    <label for="name">اسمك:</label>
+                    <input type="text" id="name" placeholder="أدخل اسمك الكريم" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact-info">رقم هاتفك أو إيميلك:</label>
+                    <input type="text" id="contact-info" placeholder="أدخل رقم الهاتف أو البريد الإلكتروني" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">رسالتك:</label>
+                    <textarea id="message" placeholder="اكتب رسالتك هنا..." required></textarea>
+                </div>
+                <button type="submit" class="form-submit-btn">إرسال الرسالة</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- السلايدر (Slider) / قسم العروض -->
     <section class="slider-section">
         <div class="slider-container">
             
-            <!-- الشريحة الأولى -->
-            <div class="slide active">
-                <div class="slide-content">
-                    <h2>بلاصة ما تلوحو، بدلو!</h2>
-                    <p class="subtitle">بدل تلفونك، حوايجك، أي حاجة بـ <span>0 درهم</span></p>
-                    <p class="desc">أول منصة للمقايضة المباشرة بالمغرب</p>
-                    <div class="features-icons">
-                        <div class="icon-box">
-                            <i class="fa-solid fa-mobile-screen-button"></i>
-                            <span>تلفونات</span>
+            <!-- السلايدر الرئيسي (Home View) -->
+            <div id="sliderWrapper">
+                <!-- الشريحة الأولى -->
+                <div class="slide active">
+                    <div class="slide-content">
+                        <h2>بلاست ما تلوحو، بدلو!</h2>
+                        <p class="subtitle">بدل تلفونك، حوايجك، أي حاجة بـ <span>0 درهم</span></p>
+                        <p class="desc">أول موقع للمقايضة المباشرة بالمغرب</p>
+                        <div class="features-icons">
+                            <div class="icon-box">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                               <span>تلفونات</span>
+                            </div>
+                            <div class="icon-box">
+                                <i class="fa-solid fa-shirt"></i>
+                                <span>ملابس</span>
+                            </div>
+                            <div class="icon-box">
+                                <i class="fa-solid fa-box-open"></i>
+                                <span>أغراض متنوّعة</span>
+                            </div>
                         </div>
-                        <div class="icon-box">
-                            <i class="fa-solid fa-shirt"></i>
-                            <span>ملابس</span>
-                        </div>
-                        <div class="icon-box">
-                            <i class="fa-solid fa-box-open"></i>
-                            <span>أغراض متنوّعة</span>
-                        </div>
+                        <p class="tagline">مجاني • سريع • آمن • 100% مغربي</p>
                     </div>
-                    <a href="https://www.bedal.ma" class="btn-cta">دخل واستمتع - www.bedal.ma</a>
-                    <p class="tagline">مجاني • سريع • آمن • 100% مغربي</p>
+                </div>
+
+                <!-- الشريحة الثانية -->
+                <div class="slide">
+                    <div class="slide-content">
+                        <a id="slideDiscoverBtn" class="slide-btn">اكتشف الآن</a>
+                        <h2>سهل، تواصل، بدل</h2>
+                        <p class="subtitle">سهل، سريع، وبلا فلوس</p>
+                        <p class="desc">وفر فلوسك واستبدل الأشياء لي معندك ما تدير بيها بأشياء محتاجها اليوم!</p>
+                        <p class="tagline">مجاني • سريع • آمن • 100% مغربي</p>
+                    </div>
+                </div>
+
+                <!-- نقاط التنقل -->
+                <div class="slider-dots" id="sliderDots">
+                    <span class="dot active" onclick="currentSlide(0)"></span>
+                    <span class="dot" onclick="currentSlide(1)"></span>
                 </div>
             </div>
 
-            <!-- الشريحة الثانية -->
-            <div class="slide">
-                <div class="slide-content">
-                    <h2>بدّل، تجمّع، تواصل</h2>
-                    <p class="subtitle">سهل، سريع، وبلا فلوس</p>
-                    <p class="desc">وفر فلوسك واستبدل الأشياء لي معندك ما تدير بيها بأشياء محتاجها اليوم!</p>
-                    <a href="https://www.bedal.ma" class="btn-cta">اكتشف العروض الحالية</a>
-                    <p class="tagline">مجاني • سريع • آمن • 100% مغربي</p>
+            <!-- قسم المنتجات المطروحة للمقايضة (Products View) -->
+            <div class="products-section" id="productsSection">
+                <div class="products-header" id="productsTopAnchor">
+                    <h2>المنتجات المطروحة للمقايضة</h2>
+                    <p>اختر ما يناسبك وابدأ عملية التبادل فوراً بـ 0 درهم</p>
+                </div>
+                <div class="products-grid" id="productsGridContainer">
+                    <!-- يتم تعبئة المنتجات ديناميكياً عبر الجافاسكريبت -->
+                </div>
+                <!-- أزرار التصفح (Pagination) -->
+                <div class="pagination-container" id="paginationContainer">
+                    <button class="page-btn" id="prevPageBtn">سابق</button>
+                    <div id="pageNumbersContainer" style="display: flex; gap: 5px;"></div>
+                    <button class="page-btn" id="nextPageBtn">التالي</button>
                 </div>
             </div>
 
-            <!-- أسهم التنقل -->
-            <button class="prev-btn" id="prevBtn"><i class="fa-solid fa-chevron-right"></i></button>
-            <button class="next-btn" id="nextBtn"><i class="fa-solid fa-chevron-left"></i></button>
-
-            <!-- نقاط التنقل -->
-            <div class="slider-dots">
-                <span class="dot active" onclick="currentSlide(0)"></span>
-                <span class="dot" onclick="currentSlide(1)"></span>
-            </div>
         </div>
     </section>
 
@@ -84,14 +1027,17 @@
     <footer class="main-footer">
         <div class="container footer-container">
             <div class="footer-brand">
-                <h3><span class="logo-green">بدل</span><span class="logo-white">.ma</span></h3>
+                <div class="logo">
+                    <span class="logo-green">بدل</span><span class="logo-white">.ma</span>
+                </div>
+                <div class="slogan" style="background: none; padding: 0; color: #888888;">أول موقع للمقايضة بـ <span style="color: var(--primary-green); opacity: 0.9;">0 درهم</span></div>
                 <p>أول منصة مغربية للمقايضة المباشرة والتبادل بدون مصاريف.</p>
             </div>
             <div class="footer-links">
                 <h4>روابط سريعة</h4>
                 <ul>
-                    <li><a href="#">الرئيسية</a></li>
-                    <li><a href="#">عن المنصة</a></li>
+                    <li><a href="#" id="footerHomeBtn">الرئيسية</a></li>
+                    <li><a href="#" id="footerAboutBtn">عن المنصة</a></li>
                     <li><a href="#">الشروط والأحكام</a></li>
                     <li><a href="#">سياسة الخصوصية</a></li>
                 </ul>
@@ -107,9 +1053,268 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
+            <span class="version-tag">v0.1.0</span>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        let slideInterval;
+
+        // إظهار الشريحة المحددة
+        function showSlide(index) {
+            if (index >= slides.length) {
+                currentSlideIndex = 0;
+            } else if (index < 0) {
+                currentSlideIndex = slides.length - 1;
+            } else {
+                currentSlideIndex = index;
+            }
+
+            // إخفاء كل الشرائح وتغيير النقاط النشطة
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            if(slides[currentSlideIndex]) {
+                slides[currentSlideIndex].classList.add('active');
+                dots[currentSlideIndex].classList.add('active');
+            }
+        }
+
+        // التحكم بالنقاط
+        function currentSlide(index) {
+            showSlide(index);
+        }
+
+        // التمرير الأوتوماتيكي للسلايدر كل 5 ثوانٍ
+        function startSlider() {
+            slideInterval = setInterval(() => {
+                showSlide(currentSlideIndex + 1);
+            }, 5000);
+        }
+
+        function stopSlider() {
+            clearInterval(slideInterval);
+        }
+
+        startSlider();
+
+        // بيانات المنتجات الوهمية (إجمالي 12 منتج لتوضيح نظام الصفحات بـ 8 منتجات لكل صفحة)
+        const allProducts = [
+            { title: "هاتف ذكي بحالة ممتازة", category: "تلفونات", desc: "مطلوب التبديل بساعة ذكية أو ملابس رجالية.", icon: "fa-mobile-screen-button" },
+            { title: "جاكيت شتوي أصلي", category: "ملابس", desc: "مقاس L، بحالة جديدة تماماً. مطلوب حذاء رياضي.", icon: "fa-shirt" },
+            { title: "آلة تصوير قديمة", category: "أغراض متنوّعة", desc: "صالحة للديكور أو الهواة. مطلوب كتب أو أدوات منزلية.", icon: "fa-box-open" },
+            { title: "لابتوب للاستخدام اليومي", category: "تلفونات", desc: "بحالة جيدة، مطلوب آيباد أو هاتف لوحي.", icon: "fa-laptop" },
+            { title: "ساعة دستر الكلاسيكية", category: "أغراض متنوّعة", desc: "ساعة يد أصلية، مطلوب عطر أو نظارة شمسية.", icon: "fa-clock" },
+            { title: "حذاء رياضي ماركة عالمية", category: "ملابس", desc: "مقاس 42، لم يلبس قط. مطلوب قميص رياضي.", icon: "fa-shoe-prints" },
+            { title: "دراجة هوائية خفيفة", category: "أغراض متنوّعة", desc: "ممتازة للتنقل داخل المدينة. مطلوب هاتف ذكي.", icon: "fa-bicycle" },
+            { title: "سماعات بلوتوث متطورة", category: "تلفونات", desc: "صوت نقي وبطارية قوية. مطلوب حقيبة ظهر.", icon: "fa-headphones" },
+            { title: "معطف جلد طبيعي", category: "ملابس", desc: "بحالة ممتازة جداً، مطلوب نظارة شمسية أصلية.", icon: "fa-vest" },
+            { title: "بلايستيشن 3 مع ألعاب", category: "أغراض متنوّعة", desc: "يعمل بشكل جيد مع يدتي تحكم. مطلوب هاتف أو دراجة.", icon: "fa-gamepad" },
+            { title: "طقم أواني منزلية جديدة", category: "أغراض متنوّعة", desc: "غير مستعملة نهائياً. مطلوبة خلاط كهربائي.", icon: "fa-utensils" },
+            { title: "طاولة دراسة خشبية", category: "أغراض متنوّعة", desc: "بتصميم عصري وصغير. مطلوب كرسي مكتب مريح.", icon: "fa-chair" }
+        ];
+
+        let currentPage = 1;
+        const itemsPerPage = 8;
+
+        function renderProducts(page) {
+            const gridContainer = document.getElementById('productsGridContainer');
+            gridContainer.innerHTML = '';
+
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedItems = allProducts.slice(startIndex, endIndex);
+
+            paginatedItems.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-img">
+                        <i class="fa-solid ${prod.icon}"></i>
+                    </div>
+                    <div class="product-body">
+                        <span class="product-badge">${prod.category}</span>
+                        <h3 class="product-title">${prod.title}</h3>
+                        <p class="product-desc">${prod.desc}</p>
+                        <a href="#" class="product-btn" onclick="event.preventDefault(); document.getElementById('authModal').classList.add('active');">طلب تبدل معاه</a>
+                    </div>
+                `;
+                gridContainer.appendChild(card);
+            });
+
+            renderPaginationControls();
+        }
+
+        function renderPaginationControls() {
+            const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+            const prevBtn = document.getElementById('prevPageBtn');
+            const nextBtn = document.getElementById('nextPageBtn');
+            const pageNumbersContainer = document.getElementById('pageNumbersContainer');
+
+            pageNumbersContainer.innerHTML = '';
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => goToPage(i);
+                pageNumbersContainer.appendChild(btn);
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderProducts(currentPage);
+            // التمرير إلى أول منتج في الصفحة بدقة
+            document.getElementById('productsTopAnchor').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('prevPageBtn').onclick = () => {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
+            }
+        };
+
+        document.getElementById('nextPageBtn').onclick = () => {
+            const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                goToPage(currentPage + 1);
+            }
+        };
+
+        // التبديل بين الرئيسية وعرض المنتجات (ابدأ المقايضة الآن / العروض)
+        const sliderWrapper = document.getElementById('sliderWrapper');
+        const productsSection = document.getElementById('productsSection');
+        const startExchangeBtn = document.getElementById('startExchangeBtn');
+        const headerBtnContainer = document.getElementById('headerBtnContainer');
+        const offersNavBtn = document.getElementById('offersNavBtn');
+        const homeNavBtn = document.getElementById('homeNavBtn');
+        const footerHomeBtn = document.getElementById('footerHomeBtn');
+        const logoHomeBtn = document.getElementById('logoHomeBtn');
+        const slideDiscoverBtn = document.getElementById('slideDiscoverBtn');
+        const modalDiscoverBtn = document.getElementById('modalDiscoverBtn');
+
+        function showProductsView(e) {
+            if(e) e.preventDefault();
+            stopSlider();
+            sliderWrapper.style.display = 'none';
+            productsSection.classList.add('active');
+            homeNavBtn.classList.remove('active');
+            offersNavBtn.classList.add('active');
+            headerBtnContainer.style.display = 'none'; // إخفاء زر "ابدأ المقايضة الأن" عند دخول صفحة المنتجات
+            currentPage = 1;
+            renderProducts(currentPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showHomeView(e) {
+            if(e) e.preventDefault();
+            productsSection.classList.remove('active');
+            sliderWrapper.style.display = 'block';
+            offersNavBtn.classList.remove('active');
+            homeNavBtn.classList.add('active');
+            headerBtnContainer.style.display = 'block'; // إظهار زر "ابدأ المقايضة الأن" في الصفحة الرئيسية
+            startSlider();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        startExchangeBtn.addEventListener('click', showProductsView);
+        offersNavBtn.addEventListener('click', showProductsView);
+        slideDiscoverBtn.addEventListener('click', showProductsView);
+        
+        modalDiscoverBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            howToModal.classList.remove('active');
+            showProductsView();
+        });
+
+        homeNavBtn.addEventListener('click', showHomeView);
+        footerHomeBtn.addEventListener('click', showHomeView);
+        logoHomeBtn.addEventListener('click', showHomeView);
+
+        // تفاعل نافذة الدخول / تسجيل جديد (Auth Modal)
+        const openAuthModalBtn = document.getElementById('openAuthModalBtn');
+        const authModal = document.getElementById('authModal');
+        const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
+        const tabLoginBtn = document.getElementById('tabLoginBtn');
+        const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+        const loginPanel = document.getElementById('loginPanel');
+        const registerPanel = document.getElementById('registerPanel');
+
+        openAuthModalBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            authModal.classList.add('active');
+        });
+
+        closeAuthModalBtn.addEventListener('click', () => {
+            authModal.classList.remove('active');
+        });
+
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.classList.remove('active');
+            }
+        });
+
+        tabLoginBtn.addEventListener('click', () => {
+            tabLoginBtn.classList.add('active');
+            tabRegisterBtn.classList.remove('active');
+            loginPanel.classList.add('active');
+            registerPanel.classList.remove('active');
+        });
+
+        tabRegisterBtn.addEventListener('click', () => {
+            tabRegisterBtn.classList.add('active');
+            tabLoginBtn.classList.remove('active');
+            registerPanel.classList.add('active');
+            loginPanel.classList.remove('active');
+        });
+
+        // تفاعل النافذة المنبثقة (Modal) لـ كيفاش نتبادل؟
+        const howToBtn = document.getElementById('howToExchangeBtn');
+        const howToModal = document.getElementById('howToModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        howToBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            howToModal.classList.add('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            howToModal.classList.remove('active');
+        });
+
+        howToModal.addEventListener('click', (e) => {
+            if (e.target === howToModal) {
+                howToModal.classList.remove('active');
+            }
+        });
+
+        // تفاعل النافذة المنبثقة (Modal) لـ تواصل معنا
+        const contactBtn = document.getElementById('contactUsBtn');
+        const contactModal = document.getElementById('contactModal');
+        const closeContactModalBtn = document.getElementById('closeContactModalBtn');
+
+        contactBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            contactModal.classList.add('active');
+        });
+
+        closeContactModalBtn.addEventListener('click', () => {
+            contactModal.classList.remove('active');
+        });
+
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) {
+                contactModal.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
