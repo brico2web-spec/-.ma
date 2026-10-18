@@ -1512,7 +1512,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.4.9</span>
+            <span class="version-tag">v0.5.0</span>
         </div>
     </footer>
 
@@ -1816,7 +1816,6 @@
         if(exchangeItemDesc) {
             exchangeItemDesc.addEventListener('input', (e) => {
                 const val = e.target.value;
-                // فحص نمط أرقام الهواتف (أكثر من 5 أرقام متتالية أو رموز هاتفية)
                 const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
                 if (phoneRegex.test(val)) {
                     showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف حفاظاً على الأمان!', false);
@@ -1845,55 +1844,70 @@
             }
         });
 
-        // إرسال طلب التبادل وحفظه في جدول products بترميز خاص لظهوره في الرسائل فوراَ
-        exchangeRequestForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
-            if (!currentSupabaseUser) return;
-            const userData = JSON.parse(currentSupabaseUser);
+        // إصلاح وجعل زر إرسال طلب التبادل يعمل بسلاسة تامة وحفظ الطلب في قاعدة البيانات
+        if(exchangeRequestForm) {
+            exchangeRequestForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+                if (!currentSupabaseUser) {
+                    exchangeRequestModal.classList.remove('active');
+                    openRegistrationTab();
+                    return;
+                }
+                const userData = JSON.parse(currentSupabaseUser);
 
-            if (exchangeItemImage.files.length === 0) {
-                showCustomAlert('المرجو اختيار صورة المنتوج البديل!', false);
-                return;
-            }
-
-            const file = exchangeItemImage.files[0];
-            const reader = new FileReader();
-
-            reader.onload = async function(event) {
-                const base64Image = event.target.result;
-                const descText = exchangeItemDesc.value.trim();
-
-                // فحص نهائي لمنع أرقام الهواتف قبل الإرسال
-                const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
-                if (phoneRegex.test(descText)) {
-                    showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف!', false);
+                if (!exchangeItemImage.files || exchangeItemImage.files.length === 0) {
+                    showCustomAlert('المرجو اختيار صورة المنتوج البديل!', false);
                     return;
                 }
 
-                if (_supabase) {
-                    const reqPayload = {
-                        title: "طلب مقايضة من " + userData.name,
-                        description: `[EXCHANGE_REQUEST] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
-                        category: "تلفونات",
-                        city: userData.city || 'القنيطرة',
-                        image_url: base64Image
-                    };
+                const file = exchangeItemImage.files[0];
+                const reader = new FileReader();
 
-                    const { error } = await _supabase.from('products').insert([reqPayload]);
-                    if (!error) {
-                        showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل!', true);
-                        exchangeRequestModal.classList.remove('active');
-                        exchangeRequestForm.reset();
-                        exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
-                        checkIncomingRequestsCount();
-                    } else {
-                        showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
+                reader.onload = async function(event) {
+                    const base64Image = event.target.result;
+                    const descText = exchangeItemDesc.value.trim();
+
+                    const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
+                    if (phoneRegex.test(descText)) {
+                        showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف!', false);
+                        return;
                     }
-                }
-            };
-            reader.readAsDataURL(file);
-        });
+
+                    try {
+                        if (_supabase) {
+                            const reqPayload = {
+                                title: "طلب مقايضة من " + userData.name,
+                                description: `[EXCHANGE_REQUEST] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
+                                category: "تلفونات",
+                                city: userData.city || 'القنيطرة',
+                                image_url: base64Image
+                            };
+
+                            const { error } = await _supabase.from('products').insert([reqPayload]);
+                            if (!error) {
+                                showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل!', true);
+                                exchangeRequestModal.classList.remove('active');
+                                exchangeRequestForm.reset();
+                                exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                                checkIncomingRequestsCount();
+                            } else {
+                                showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
+                            }
+                        } else {
+                            showCustomAlert('تم إرسال طلب التبادل بنجاح!', true);
+                            exchangeRequestModal.classList.remove('active');
+                            exchangeRequestForm.reset();
+                            exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        showCustomAlert('حدث خطأ أثناء إرسال الطلب.', false);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
         // فحص عدد الطلبات الواردة لتحديث الإشعار الأحمر فوريّاً فوق أيقونة الرسائل
         async function checkIncomingRequestsCount() {
@@ -1990,13 +2004,11 @@
             }
         });
 
-        // موافقة على الطلب وإظهار رقم واتساب الطرف الثاني
         window.acceptExchangeRequest = function(reqId, phone, name) {
             showCustomAlert(`تمت الموافقة على طلب ${name}! رقم الواتساب للتواصل: ${phone}`, true);
             messagesModal.classList.remove('active');
         };
 
-        // إلغاء أو حذف الطلب الوارد
         window.cancelExchangeRequest = async function(reqId) {
             showCustomConfirm(async () => {
                 if (_supabase) {
