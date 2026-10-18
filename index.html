@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* إعادة ضبط الأساسيات والخطوط */
         * {
@@ -29,6 +31,7 @@
             background-color: var(--light-bg);
             color: var(--dark-blue);
             direction: rtl;
+            padding-bottom: 70px; /* مساحة لكي لا يختفي المحتوى خلف الشريط السفلي في الهاتف */
         }
 
         .container {
@@ -46,7 +49,7 @@
             z-index: 1000;
         }
 
-        /* شريط أعلى الهيدر لتسجيل الدخول / تسجيل جديد */
+        /* شريط أعلى الهيدر لتسجيل الدخول / تسجيل جديد أو عرض اسم المستخدم */
         .top-auth-bar {
             background-color: #f2f7f4;
             text-align: center;
@@ -191,14 +194,14 @@
             transform: translateY(-2px);
         }
 
-        /* نافذة منبثقة (Modal) عامة */
+        /* نافذة منبثقة (Modal) عامة بتصميم عادي متناسق */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(14, 23, 38, 0.6);
+            background-color: rgba(14, 23, 38, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -216,14 +219,15 @@
         .modal-content {
             background-color: var(--white);
             width: 90%;
-            max-width: 500px;
+            max-width: 480px;
             max-height: 85vh;
-            border-radius: 16px;
-            padding: 30px;
+            border-radius: 12px;
+            padding: 25px;
             overflow-y: auto;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            transform: translateY(20px);
+            box-shadow: 0 5px 20px rgba(14, 23, 38, 0.12);
+            border: 1px solid #e2ece8;
+            transform: translateY(15px);
             transition: transform 0.3s ease;
         }
 
@@ -233,11 +237,11 @@
 
         .modal-close {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 15px;
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--text-gray);
             cursor: pointer;
             transition: color 0.3s;
@@ -248,32 +252,52 @@
         }
 
         .modal-title {
-            font-size: 1.5rem;
-            font-weight: 900;
+            font-size: 1.35rem;
+            font-weight: 800;
             color: var(--dark-blue);
             margin-bottom: 20px;
             text-align: center;
             font-family: 'Cairo', sans-serif;
         }
 
+        /* نافذة التنبيهات العادية المتناسقة مع ألوان الموقع */
+        .custom-alert-box {
+            text-align: center;
+            padding: 5px 0;
+        }
+
+        .custom-alert-icon {
+            font-size: 2.5rem;
+            color: var(--primary-green);
+            margin-bottom: 12px;
+        }
+
+        .custom-alert-text {
+            font-size: 1rem;
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
         /* تبويبات نافذة الدخول / تسجيل جديد */
         .auth-tabs {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 20px;
             border-bottom: 2px solid #e2ece8;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
         .auth-tab-btn {
             background: none;
             border: none;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-gray);
             cursor: pointer;
-            padding: 5px 15px;
+            padding: 5px 10px;
             transition: color 0.3s;
             font-family: 'Tajawal', sans-serif;
         }
@@ -281,8 +305,8 @@
         .auth-tab-btn.active {
             color: var(--primary-green);
             border-bottom: 2px solid var(--primary-green);
-            margin-bottom: -12px;
-            padding-bottom: 10px;
+            margin-bottom: -10px;
+            padding-bottom: 8px;
         }
 
         .auth-form-panel {
@@ -296,23 +320,23 @@
         .steps-container {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             text-align: right;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .step-item h3 {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 800;
             color: var(--dark-blue);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .step-item p {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-gray);
-            line-height: 1.6;
-            margin-bottom: 5px;
+            line-height: 1.5;
+            margin-bottom: 3px;
         }
 
         .modal-footer-btn {
@@ -321,13 +345,14 @@
             text-align: center;
             background-color: var(--primary-green);
             color: var(--white);
-            padding: 12px;
-            border-radius: 25px;
+            padding: 10px;
+            border-radius: 20px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: background-color 0.3s;
             cursor: pointer;
+            border: none;
         }
 
         .modal-footer-btn:hover {
@@ -338,29 +363,29 @@
         .contact-form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             text-align: right;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .form-group label {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--dark-blue);
         }
 
         .form-group input, .form-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 10px 12px;
             border: 1px solid #d2ded7;
             border-radius: 8px;
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             background-color: #f8faf9;
             color: var(--dark-blue);
             outline: none;
@@ -373,37 +398,37 @@
 
         .form-group textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: 100px;
         }
 
         .form-checkbox-group {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-gray);
             cursor: pointer;
         }
 
         .form-checkbox-group input {
             cursor: pointer;
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             accent-color: var(--primary-green);
         }
 
         .form-submit-btn {
             background-color: var(--primary-green);
             color: var(--white);
-            padding: 12px;
+            padding: 10px;
             border: none;
-            border-radius: 25px;
+            border-radius: 20px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: background-color 0.3s;
             font-family: 'Tajawal', sans-serif;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .form-submit-btn:hover {
@@ -698,6 +723,85 @@
             border-radius: 10px;
         }
 
+        /* شريط التنقل السفلي الجديد العصري (Bottom Navigation Bar) */
+        .bottom-nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 10px;
+            z-index: 1500;
+            border-top: 1px solid #e2ece8;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-gray);
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+            gap: 3px;
+        }
+
+        .bottom-nav-item i {
+            font-size: 1.3rem;
+            color: var(--dark-blue);
+            transition: color 0.3s;
+        }
+
+        .bottom-nav-item span {
+            color: var(--dark-blue);
+        }
+
+        .bottom-nav-item:hover i, .bottom-nav-item.active i,
+        .bottom-nav-item:hover span, .bottom-nav-item.active span {
+            color: var(--primary-green);
+        }
+
+        /* زر الكاميرا البارز في الوسط تماماً */
+        .bottom-nav-camera {
+            position: relative;
+            top: -18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .camera-circle {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.6rem;
+            box-shadow: 0 4px 15px rgba(0, 168, 107, 0.4);
+            transition: transform 0.3s, background-color 0.3s;
+            border: 3px solid var(--white);
+        }
+
+        .camera-circle:hover {
+            background-color: #008f5a;
+            transform: scale(1.05);
+        }
+
         /* 3. الفوتر (Footer) */
         .main-footer {
             background-color: var(--dark-blue);
@@ -821,7 +925,7 @@
     <!-- الهيدر (Header) -->
     <header class="main-header" id="topHeader">
         <!-- شريط أعلى الهيدر في الوسط لتسجيل الدخول / تسجيل جديد -->
-        <div class="top-auth-bar">
+        <div class="top-auth-bar" id="topAuthBar">
             <a id="openAuthModalBtn">
                 <span class="auth-login-text">الدخول</span> / <span class="auth-register-text">تسجيل جديد</span>
             </a>
@@ -848,6 +952,31 @@
         </div>
     </header>
 
+    <!-- شريط التنقل السفلي الجديد (Bottom Navigation Bar) -->
+    <nav class="bottom-nav-bar">
+        <button class="bottom-nav-item" id="bottomAccountBtn">
+            <i class="fa-regular fa-user"></i>
+            <span>حسابي</span>
+        </button>
+        <button class="bottom-nav-item" id="bottomMessagesBtn">
+            <i class="fa-regular fa-comment-dots"></i>
+            <span>الرسائل</span>
+        </button>
+        <button class="bottom-nav-camera" id="bottomCameraBtn" title="إضافة إعلان جديد">
+            <div class="camera-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </button>
+        <button class="bottom-nav-item" id="bottomFavoritesBtn">
+            <i class="fa-regular fa-heart"></i>
+            <span>المفضلة</span>
+        </button>
+        <button class="bottom-nav-item active" id="bottomAdsBtn">
+            <i class="fa-solid fa-house"></i>
+            <span>الإعلانات</span>
+        </button>
+    </nav>
+
     <!-- نافذة منبثقة (Modal) لـ الدخول / تسجيل جديد -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-content">
@@ -860,7 +989,7 @@
             <!-- نموذج الدخول -->
             <div class="auth-form-panel active" id="loginPanel">
                 <h2 class="modal-title">تسجيل <span class="logo-green">الدخول</span></h2>
-                <form class="contact-form" onsubmit="event.preventDefault(); alert('تم تسجيل الدخول بنجاح!');">
+                <form class="contact-form" id="loginForm">
                     <div class="form-group">
                         <label for="login-email">رقم الهاتف أو البريد الإلكتروني:</label>
                         <input type="text" id="login-email" placeholder="أدخل رقم الهاتف أو البريد" required>
@@ -876,7 +1005,7 @@
             <!-- نموذج تسجيل جديد -->
             <div class="auth-form-panel" id="registerPanel">
                 <h2 class="modal-title"><span class="logo-green">تسجيل</span> جديد</h2>
-                <form class="contact-form" onsubmit="event.preventDefault(); alert('تم إنشاء الحساب بنجاح!');">
+                <form class="contact-form" id="registerForm">
                     <div class="form-group">
                         <label for="reg-name">الإسم :</label>
                         <input type="text" id="reg-name" placeholder="أدخل اسمك الكامل" required>
@@ -898,10 +1027,22 @@
                         <input type="password" id="reg-confirm-password" placeholder="أعد إدخال كلمة المرور" required>
                     </div>
                     <label class="form-checkbox-group">
-                        <input type="checkbox" required> الموافقة على شروط الموقع
+                        <input type="checkbox" id="reg-terms" required> الموافقة على شروط الموقع
                     </label>
                     <button type="submit" class="form-submit-btn">تسجيل الحساب</button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تنبيهات عادية متناسقة مع ألوان الموقع -->
+    <div class="modal-overlay" id="customAlertModal">
+        <div class="modal-content" style="max-width: 380px; text-align: center;">
+            <button class="modal-close" id="closeCustomAlertBtn">&times;</button>
+            <div class="custom-alert-box">
+                <div class="custom-alert-icon" id="customAlertIcon"><i class="fa-solid fa-circle-check"></i></div>
+                <p class="custom-alert-text" id="customAlertMessage">رسالة التنبيه هنا</p>
+                <button type="button" class="modal-footer-btn" id="customAlertOkBtn">حسناً</button>
             </div>
         </div>
     </div>
@@ -937,7 +1078,7 @@
         <div class="modal-content">
             <button class="modal-close" id="closeContactModalBtn">&times;</button>
             <h2 class="modal-title">تواصل مع فريق <span class="logo-green">بدل</span><span class="logo-dark">.ma</span></h2>
-            <form class="contact-form" onsubmit="event.preventDefault(); alert('تم إرسال رسالتك بنجاح!');">
+            <form class="contact-form" id="contactForm">
                 <div class="form-group">
                     <label for="name">اسمك:</label>
                     <input type="text" id="name" placeholder="أدخل اسمك الكريم" required>
@@ -1010,7 +1151,7 @@
                     <p>اختر ما يناسبك وابدأ عملية التبادل فوراً بـ 0 درهم</p>
                 </div>
                 <div class="products-grid" id="productsGridContainer">
-                    <!-- يتم تعبئة المنتجات ديناميكياً عبر الجافاسكريبت -->
+                    <!-- يتم تعبئة المنتجات ديناميكياً من Supabase -->
                 </div>
                 <!-- أزرار التصفح (Pagination) -->
                 <div class="pagination-container" id="paginationContainer">
@@ -1053,11 +1194,47 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.1.0</span>
+            <span class="version-tag">v0.1.5</span>
         </div>
     </footer>
 
     <script>
+        // إعدادات اتصال Supabase
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        
+        // تهيئة عميل Supabase بأسماء متغيرة تجنباً للتضارب
+        const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+        // دالة عرض التنبيه العادي المتناسق مع ألوان الموقع
+        function showCustomAlert(message, isSuccess = true) {
+            const alertModal = document.getElementById('customAlertModal');
+            const alertMsg = document.getElementById('customAlertMessage');
+            const alertIcon = document.getElementById('customAlertIcon');
+            
+            alertMsg.textContent = message;
+            if(isSuccess) {
+                alertIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                alertIcon.style.color = 'var(--primary-green)';
+            } else {
+                alertIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+                alertIcon.style.color = '#e74c3c';
+            }
+            alertModal.classList.add('active');
+        }
+
+        document.getElementById('closeCustomAlertBtn').addEventListener('click', () => {
+            document.getElementById('customAlertModal').classList.remove('active');
+        });
+        document.getElementById('customAlertOkBtn').addEventListener('click', () => {
+            document.getElementById('customAlertModal').classList.remove('active');
+        });
+        document.getElementById('customAlertModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('customAlertModal')) {
+                document.getElementById('customAlertModal').classList.remove('active');
+            }
+        });
+
         let currentSlideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
@@ -1073,7 +1250,6 @@
                 currentSlideIndex = index;
             }
 
-            // إخفاء كل الشرائح وتغيير النقاط النشطة
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
 
@@ -1083,12 +1259,10 @@
             }
         }
 
-        // التحكم بالنقاط
         function currentSlide(index) {
             showSlide(index);
         }
 
-        // التمرير الأوتوماتيكي للسلايدر كل 5 ثوانٍ
         function startSlider() {
             slideInterval = setInterval(() => {
                 showSlide(currentSlideIndex + 1);
@@ -1101,24 +1275,47 @@
 
         startSlider();
 
-        // بيانات المنتجات الوهمية (إجمالي 12 منتج لتوضيح نظام الصفحات بـ 8 منتجات لكل صفحة)
-        const allProducts = [
-            { title: "هاتف ذكي بحالة ممتازة", category: "تلفونات", desc: "مطلوب التبديل بساعة ذكية أو ملابس رجالية.", icon: "fa-mobile-screen-button" },
-            { title: "جاكيت شتوي أصلي", category: "ملابس", desc: "مقاس L، بحالة جديدة تماماً. مطلوب حذاء رياضي.", icon: "fa-shirt" },
-            { title: "آلة تصوير قديمة", category: "أغراض متنوّعة", desc: "صالحة للديكور أو الهواة. مطلوب كتب أو أدوات منزلية.", icon: "fa-box-open" },
-            { title: "لابتوب للاستخدام اليومي", category: "تلفونات", desc: "بحالة جيدة، مطلوب آيباد أو هاتف لوحي.", icon: "fa-laptop" },
-            { title: "ساعة دستر الكلاسيكية", category: "أغراض متنوّعة", desc: "ساعة يد أصلية، مطلوب عطر أو نظارة شمسية.", icon: "fa-clock" },
-            { title: "حذاء رياضي ماركة عالمية", category: "ملابس", desc: "مقاس 42، لم يلبس قط. مطلوب قميص رياضي.", icon: "fa-shoe-prints" },
-            { title: "دراجة هوائية خفيفة", category: "أغراض متنوّعة", desc: "ممتازة للتنقل داخل المدينة. مطلوب هاتف ذكي.", icon: "fa-bicycle" },
-            { title: "سماعات بلوتوث متطورة", category: "تلفونات", desc: "صوت نقي وبطارية قوية. مطلوب حقيبة ظهر.", icon: "fa-headphones" },
-            { title: "معطف جلد طبيعي", category: "ملابس", desc: "بحالة ممتازة جداً، مطلوب نظارة شمسية أصلية.", icon: "fa-vest" },
-            { title: "بلايستيشن 3 مع ألعاب", category: "أغراض متنوّعة", desc: "يعمل بشكل جيد مع يدتي تحكم. مطلوب هاتف أو دراجة.", icon: "fa-gamepad" },
-            { title: "طقم أواني منزلية جديدة", category: "أغراض متنوّعة", desc: "غير مستعملة نهائياً. مطلوبة خلاط كهربائي.", icon: "fa-utensils" },
-            { title: "طاولة دراسة خشبية", category: "أغراض متنوّعة", desc: "بتصميم عصري وصغير. مطلوب كرسي مكتب مريح.", icon: "fa-chair" }
-        ];
-
+        // متغيرات جلب العروض من قاعدة البيانات Supabase
+        let allProducts = [];
         let currentPage = 1;
         const itemsPerPage = 8;
+
+        // جلب المنتجات من جدول products في Supabase
+        async function fetchProductsFromSupabase() {
+            try {
+                if (_supabase) {
+                    const { data, error } = await _supabase
+                        .from('products')
+                        .select('*');
+                    
+                    if (!error && data && data.length > 0) {
+                        allProducts = data;
+                    } else {
+                        setDefaultProducts();
+                    }
+                } else {
+                    setDefaultProducts();
+                }
+                renderProducts(currentPage);
+            } catch (err) {
+                console.error('فشل الاتصال بـ Supabase:', err);
+                setDefaultProducts();
+                renderProducts(currentPage);
+            }
+        }
+
+        function setDefaultProducts() {
+            allProducts = [
+                { title: "هاتف ذكي بحالة ممتازة", category: "تلفونات", description: "مطلوب التبديل بساعة ذكية أو ملابس رجالية.", icon: "fa-mobile-screen-button" },
+                { title: "جاكيت شتوي أصلي", category: "ملابس", description: "مقاس L، بحالة جديدة تماماً. مطلوب حذاء رياضي.", icon: "fa-shirt" },
+                { title: "آلة تصوير قديمة", category: "أغراض متنوّعة", description: "صالحة للديكور أو الهواة. مطلوب كتب أو أدوات منزلية.", icon: "fa-box-open" },
+                { title: "لابتوب للاستخدام اليومي", category: "تلفونات", description: "بحالة جيدة، مطلوب آيباد أو هاتف لوحي.", icon: "fa-laptop" },
+                { title: "ساعة دستر الكلاسيكية", category: "أغراض متنوّعة", description: "ساعة يد أصلية، مطلوب عطر أو نظارة شمسية.", icon: "fa-clock" },
+                { title: "حذاء رياضي ماركة عالمية", category: "ملابس", description: "مقاس 42، لم يلبس قط. مطلوب قميص رياضي.", icon: "fa-shoe-prints" },
+                { title: "دراجة هوائية خفيفة", category: "أغراض متنوّعة", description: "ممتازة للتنقل داخل المدينة. مطلوب هاتف ذكي.", icon: "fa-bicycle" },
+                { title: "سماعات بلوتوث متطورة", category: "تلفونات", description: "صوت نقي وبطارية قوية. مطلوب حقيبة ظهر.", icon: "fa-headphones" }
+            ];
+        }
 
         function renderProducts(page) {
             const gridContainer = document.getElementById('productsGridContainer');
@@ -1131,15 +1328,17 @@
             paginatedItems.forEach(prod => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
+                const iconClass = prod.icon || 'fa-box-open';
+                const descText = prod.description || prod.desc || '';
                 card.innerHTML = `
                     <div class="product-img">
-                        <i class="fa-solid ${prod.icon}"></i>
+                        <i class="fa-solid ${iconClass}"></i>
                     </div>
                     <div class="product-body">
                         <span class="product-badge">${prod.category}</span>
                         <h3 class="product-title">${prod.title}</h3>
-                        <p class="product-desc">${prod.desc}</p>
-                        <a href="#" class="product-btn" onclick="event.preventDefault(); document.getElementById('authModal').classList.add('active');">طلب تبدل معاه</a>
+                        <p class="product-desc">${descText}</p>
+                        <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}');">طلب تبدل معاه</a>
                     </div>
                 `;
                 gridContainer.appendChild(card);
@@ -1157,7 +1356,7 @@
             pageNumbersContainer.innerHTML = '';
 
             prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
 
             for (let i = 1; i <= totalPages; i++) {
                 const btn = document.createElement('button');
@@ -1171,7 +1370,6 @@
         function goToPage(page) {
             currentPage = page;
             renderProducts(currentPage);
-            // التمرير إلى أول منتج في الصفحة بدقة
             document.getElementById('productsTopAnchor').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -1188,7 +1386,21 @@
             }
         };
 
-        // التبديل بين الرئيسية وعرض المنتجات (ابدأ المقايضة الآن / العروض)
+        // التحقق من حالة تسجيل الدخول عند الضغط على "طلب تبدل معاه"
+        async function handleExchangeRequest(productTitle) {
+            if (_supabase) {
+                const { data: { session } } = await _supabase.auth.getSession();
+                if (!session) {
+                    document.getElementById('authModal').classList.add('active');
+                } else {
+                    showCustomAlert('تم إرسال طلب التبادل بنجاح للسلعة: ' + productTitle, true);
+                }
+            } else {
+                document.getElementById('authModal').classList.add('active');
+            }
+        }
+
+        // التبديل بين الرئيسية وعرض المنتجات
         const sliderWrapper = document.getElementById('sliderWrapper');
         const productsSection = document.getElementById('productsSection');
         const startExchangeBtn = document.getElementById('startExchangeBtn');
@@ -1207,9 +1419,9 @@
             productsSection.classList.add('active');
             homeNavBtn.classList.remove('active');
             offersNavBtn.classList.add('active');
-            headerBtnContainer.style.display = 'none'; // إخفاء زر "ابدأ المقايضة الأن" عند دخول صفحة المنتجات
+            headerBtnContainer.style.display = 'none';
             currentPage = 1;
-            renderProducts(currentPage);
+            fetchProductsFromSupabase();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1219,7 +1431,7 @@
             sliderWrapper.style.display = 'block';
             offersNavBtn.classList.remove('active');
             homeNavBtn.classList.add('active');
-            headerBtnContainer.style.display = 'block'; // إظهار زر "ابدأ المقايضة الأن" في الصفحة الرئيسية
+            headerBtnContainer.style.display = 'block';
             startSlider();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1238,7 +1450,64 @@
         footerHomeBtn.addEventListener('click', showHomeView);
         logoHomeBtn.addEventListener('click', showHomeView);
 
-        // تفاعل نافذة الدخول / تسجيل جديد (Auth Modal)
+        // تفاعل أزرار شريط التنقل السفلي الجديد
+        const bottomAdsBtn = document.getElementById('bottomAdsBtn');
+        const bottomFavoritesBtn = document.getElementById('bottomFavoritesBtn');
+        const bottomCameraBtn = document.getElementById('bottomCameraBtn');
+        const bottomMessagesBtn = document.getElementById('bottomMessagesBtn');
+        const bottomAccountBtn = document.getElementById('bottomAccountBtn');
+
+        bottomAdsBtn.addEventListener('click', (e) => {
+            showProductsView(e);
+            setActiveBottomNav(bottomAdsBtn);
+        });
+
+        bottomFavoritesBtn.addEventListener('click', () => {
+            showCustomAlert('قريباً: قسم المفضلة لحفظ السلع التي تعجبك.', true);
+            setActiveBottomNav(bottomFavoritesBtn);
+        });
+
+        bottomCameraBtn.addEventListener('click', async () => {
+            // التحقق من تسجيل الدخول قبل السماح برفع إعلان جديد عبر زر الكاميرا
+            if (_supabase) {
+                const { data: { session } } = await _supabase.auth.getSession();
+                if (!session) {
+                    document.getElementById('authModal').classList.add('active');
+                } else {
+                    showCustomAlert('نافذة إضافة إعلان جديد قيد التفعيل.', true);
+                }
+            } else {
+                document.getElementById('authModal').classList.add('active');
+            }
+        });
+
+        bottomMessagesBtn.addEventListener('click', async () => {
+            if (_supabase) {
+                const { data: { session } } = await _supabase.auth.getSession();
+                if (!session) {
+                    document.getElementById('authModal').classList.add('active');
+                } else {
+                    showCustomAlert('ليس لديك رسائل جديدة حالياً.', true);
+                }
+            } else {
+                document.getElementById('authModal').classList.add('active');
+            }
+            setActiveBottomNav(bottomMessagesBtn);
+        });
+
+        bottomAccountBtn.addEventListener('click', () => {
+            document.getElementById('authModal').classList.add('active');
+            setActiveBottomNav(bottomAccountBtn);
+        });
+
+        function setActiveBottomNav(btn) {
+            document.querySelectorAll('.bottom-nav-bar .bottom-nav-item').forEach(item => item.classList.remove('active'));
+            if(btn.classList.contains('bottom-nav-item')) {
+                btn.classList.add('active');
+            }
+        }
+
+        // نافذة الدخول / تسجيل جديد
         const openAuthModalBtn = document.getElementById('openAuthModalBtn');
         const authModal = document.getElementById('authModal');
         const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
@@ -1276,7 +1545,117 @@
             loginPanel.classList.remove('active');
         });
 
-        // تفاعل النافذة المنبثقة (Modal) لـ كيفاش نتبادل؟
+        // ربط تسجيل جديد بـ Supabase Auth & Database
+        const registerForm = document.getElementById('registerForm');
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const city = document.getElementById('reg-city').value;
+            const phone = document.getElementById('reg-phone').value;
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                showCustomAlert('كلمتا المرور غير متطابقتين!', false);
+                return;
+            }
+
+            const email = `${phone}@badal.ma`;
+
+            try {
+                if (_supabase) {
+                    const { data, error } = await _supabase.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                full_name: name,
+                                city: city,
+                                phone: phone
+                            }
+                        }
+                    });
+
+                    if (error) {
+                        showCustomAlert('خطأ في التسجيل: ' + error.message, false);
+                    } else {
+                        showCustomAlert('تم إنشاء الحساب بنجاح!', true);
+                        authModal.classList.remove('active');
+                        checkAuthSession();
+                    }
+                } else {
+                    showCustomAlert('يرجى ضبط بيانات اتصال Supabase الصحيحة في الكود.', false);
+                }
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء الاتصال بقاعدة البيانات.', false);
+            }
+        });
+
+        // ربط تسجيل الدخول بـ Supabase Auth
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const identifier = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const email = identifier.includes('@') ? identifier : `${identifier}@badal.ma`;
+
+            try {
+                if (_supabase) {
+                    const { data, error } = await _supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (error) {
+                        showCustomAlert('فشل تسجيل الدخول: تأكد من البيانات المدخلة.', false);
+                    } else {
+                        showCustomAlert('تم تسجيل الدخول بنجاح!', true);
+                        authModal.classList.remove('active');
+                        checkAuthSession();
+                    }
+                } else {
+                    showCustomAlert('يرجى ضبط بيانات اتصال Supabase الصحيحة في الكود.', false);
+                }
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء تسجيل الدخول.', false);
+            }
+        });
+
+        // التحقق من الجلسة وتحديث واجهة الهيدر العلوية
+        async function checkAuthSession() {
+            if (_supabase) {
+                const { data: { session } } = await _supabase.auth.getSession();
+                const topAuthBar = document.getElementById('topAuthBar');
+                if (session && session.user) {
+                    const userName = session.user.user_metadata?.full_name || 'حسابي';
+                    topAuthBar.innerHTML = `
+                        <span style="color: var(--dark-blue); font-weight: 700;">مرحباً، ${userName}</span> | 
+                        <a id="logoutBtn" style="color: #e74c3c; cursor: pointer;">تسجيل الخروج</a>
+                    `;
+                    document.getElementById('logoutBtn').addEventListener('click', async () => {
+                        await _supabase.auth.signOut();
+                        showCustomAlert('تم تسجيل الخروج بنجاح.', true);
+                        location.reload();
+                    });
+                }
+            }
+        }
+
+        checkAuthSession();
+
+        // تواصل معنا
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            showCustomAlert('تم إرسال رسالتك بنجاح!', true);
+            contactModal.classList.remove('active');
+            contactForm.reset();
+        });
+
+        // نافذة كيفاش نتبادل؟
         const howToBtn = document.getElementById('howToExchangeBtn');
         const howToModal = document.getElementById('howToModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
@@ -1296,7 +1675,7 @@
             }
         });
 
-        // تفاعل النافذة المنبثقة (Modal) لـ تواصل معنا
+        // نافذة تواصل معنا
         const contactBtn = document.getElementById('contactUsBtn');
         const contactModal = document.getElementById('contactModal');
         const closeContactModalBtn = document.getElementById('closeContactModalBtn');
