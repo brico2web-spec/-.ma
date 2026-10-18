@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.5.8</span>
+            <span class="version-tag">v0.5.9</span>
         </div>
     </footer>
 
@@ -1773,18 +1773,21 @@
 
         startSlider();
 
-        // متغيرات جلب العروض من قاعدة البيانات Supabase
+        // متغيرات جلب العروض من قاعدة البيانات Supabase مع نظام Caching فائق السرعة لتفادي البطء
         let allProducts = [];
         let currentPage = 1;
         const itemsPerPage = 8;
         let isProductsLoaded = false;
+        let isFetchingProducts = false;
 
-        // جلب المنتجات الحية فقط من قاعدة البيانات Supabase بشكل سريع ومنع الاعتماد التام على المحلي
         async function fetchProductsFromSupabase(forceRefresh = false) {
             if (isProductsLoaded && !forceRefresh && allProducts.length > 0) {
                 renderProducts(currentPage);
                 return;
             }
+            if (isFetchingProducts) return;
+            isFetchingProducts = true;
+
             try {
                 if (_supabase) {
                     const { data, error } = await _supabase
@@ -1810,10 +1813,12 @@
                 console.error('فشل الاتصال بـ Supabase:', err);
                 allProducts = [];
                 renderProducts(currentPage);
+            } finally {
+                isFetchingProducts = false;
             }
         }
 
-        // الاستماع للتحديثات الحينية (Realtime) للأنشطة الجديدة
+        // الاستماع للتحديثات الحينية (Realtime) للأنشطة الجديدة وتحديث الكاش تلقائياً
         if (_supabase) {
             _supabase
                 .channel('realtime-products')
@@ -2093,7 +2098,7 @@
             });
         }
 
-        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي لتحديث الإشعار الأحمر فوريّاً باستخدام الأعمدة المحددة
+        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي باستخدام select خفيف لتفادي البطء
         async function checkIncomingRequestsCount() {
             try {
                 const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
@@ -2122,7 +2127,7 @@
             }
         }
 
-        // نافذة عرض تفاصيل الطلبات الواردة الخاصة بالمستخدم الحالي (باستخدام select محدد لتسريع الجلب)
+        // نافذة الرسائل والطلبات الواردة (باستخدام select محدد سريع)
         const messagesModal = document.getElementById('messagesModal');
         const closeMessagesModalBtn = document.getElementById('closeMessagesModalBtn');
         const incomingRequestsContainer = document.getElementById('incomingRequestsContainer');
@@ -2590,7 +2595,7 @@
             }
         });
 
-        // نافذة اعلاناتي (باستخدام select محدد لتسريع الجلب وتجنب البطء)
+        // نافذة اعلاناتي (باستخدام select محدد سريع لتفادي البطء)
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
