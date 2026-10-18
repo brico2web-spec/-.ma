@@ -1184,8 +1184,8 @@
                 <h2 class="modal-title">تسجيل <span class="logo-green">الدخول</span></h2>
                 <form class="contact-form" id="loginForm">
                     <div class="form-group">
-                        <label for="login-email">رقم الهاتف:</label>
-                        <input type="text" id="login-email" placeholder="أدخل رقم الهاتف" required>
+                        <label for="login-email">رقم الهاتف أو الاسم:</label>
+                        <input type="text" id="login-email" placeholder="أدخل رقم الهاتف أو الاسم" required>
                     </div>
                     <div class="form-group">
                         <label for="login-password">كلمة المرور:</label>
@@ -1387,7 +1387,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.3.8</span>
+            <span class="version-tag">v0.3.9</span>
         </div>
     </footer>
 
@@ -1953,14 +1953,30 @@
             registerForm.reset();
         });
 
-        // تسجيل الدخول العادي برقم الهاتف وكلمة المرور فقط
+        // تسجيل الدخول العادي بالاسم أو رقم الهاتف وكلمة المرور
         const loginForm = document.getElementById('loginForm');
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const phoneInput = document.getElementById('login-email').value;
+            const inputVal = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
 
-            const savedUser = localStorage.getItem('badal_user_' + phoneInput);
+            // البحث برقم الهاتف أولاً أو بالاسم إذا تم خزنه مسبقاً
+            let savedUser = localStorage.getItem('badal_user_' + inputVal);
+            
+            // إذا لم يتم العثور عليه برقم الهاتف، نبحث في كل المستخدمين المخزين بالاسم
+            if (!savedUser) {
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('badal_user_')) {
+                        const userObj = JSON.parse(localStorage.getItem(key));
+                        if (userObj.name === inputVal || userObj.phone === inputVal) {
+                            savedUser = JSON.stringify(userObj);
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (savedUser) {
                 const userData = JSON.parse(savedUser);
                 if (userData.password === password) {
@@ -1973,8 +1989,9 @@
                     showCustomAlert('كلمة المرور غير صحيحة!', false);
                 }
             } else {
-                // إذا لم يوجد مسجل مسبقاً محلياً، نسمح بالدخول المباشر كنوع من المرونة وسهولة الاستخدام
-                const defaultUser = { name: phoneInput, city: 'القنيطرة', phone: phoneInput };
+                // إذا لم يوجد مسجل مسبقاً، نقوم بإنشاء مستخدم جديد بالاسم المدخل ورقم هاتف افتراضي
+                const defaultUser = { name: inputVal, city: 'القنيطرة', phone: inputVal, password: password };
+                localStorage.setItem('badal_user_' + inputVal, JSON.stringify(defaultUser));
                 localStorage.setItem('badal_current_user', JSON.stringify(defaultUser));
                 showCustomAlert('تم تسجيل الدخول بنجاح!', true);
                 authModal.classList.remove('active');
