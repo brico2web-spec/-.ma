@@ -1141,6 +1141,54 @@
         </div>
     </div>
 
+    <!-- نافذة منبثقة (Modal) لـ تعديل الإعلان -->
+    <div class="modal-overlay" id="editAdModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeEditAdModalBtn">&times;</button>
+            <h2 class="modal-title">تعديل <span class="logo-green">المنتوج</span></h2>
+            <form class="contact-form" id="editAdForm">
+                <input type="hidden" id="edit-ad-id">
+                <div class="form-group">
+                    <label for="edit-ad-title">عنوان السلعة:</label>
+                    <input type="text" id="edit-ad-title" placeholder="مثال: هاتف ذكي، جاكيت..." required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-ad-desc">وصف السلعة وما ترغب في مبادلتها به:</label>
+                    <textarea id="edit-ad-desc" placeholder="اكتب وصفاً مختصراً..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-ad-category">فئة الإعلان:</label>
+                    <select id="edit-ad-category" required>
+                        <option value="">اختر الفئة</option>
+                        <option value="تلفونات">تلفونات</option>
+                        <option value="ملابس">ملابس</option>
+                        <option value="أغراض متنوّعة">أغراض متنوّعة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-ad-city">المدينة:</label>
+                    <input type="text" id="edit-ad-city" placeholder="أدخل مدينتك (مثال: القنيطرة)" required>
+                </div>
+                <button type="submit" class="form-submit-btn">حفظ التعديلات</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة مخصصة لتأكيد الحذف بتصميم الموقع -->
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-content" style="max-width: 380px; text-align: center;">
+            <button class="modal-close" id="closeCustomConfirmBtn">&times;</button>
+            <div class="custom-alert-box">
+                <div class="custom-alert-icon" style="color: #e74c3c;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <p class="custom-alert-text" id="customConfirmMessage">هل أنت متأكد من حذف هذا الإعلان؟</p>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button type="button" class="modal-footer-btn" id="customConfirmYesBtn" style="background-color: #e74c3c;">تأكيد الحذف</button>
+                    <button type="button" class="modal-footer-btn" id="customConfirmNoBtn" style="background-color: var(--text-gray);">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة منبثقة (Modal) لـ رفع منتج جديد عبر الكاميرا -->
     <div class="modal-overlay" id="addAdModal">
         <div class="modal-content">
@@ -1398,7 +1446,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.4.5</span>
+            <span class="version-tag">v0.4.6</span>
         </div>
     </footer>
 
@@ -1436,6 +1484,40 @@
         document.getElementById('customAlertModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('customAlertModal')) {
                 document.getElementById('customAlertModal').classList.remove('active');
+            }
+        });
+
+        // نافذة تأكيد الحذف المخصصة
+        const customConfirmModal = document.getElementById('customConfirmModal');
+        const closeCustomConfirmBtn = document.getElementById('closeCustomConfirmBtn');
+        const customConfirmNoBtn = document.getElementById('customConfirmNoBtn');
+        const customConfirmYesBtn = document.getElementById('customConfirmYesBtn');
+        let pendingDeleteAction = null;
+
+        function showCustomConfirm(onConfirm) {
+            pendingDeleteAction = onConfirm;
+            customConfirmModal.classList.add('active');
+        }
+
+        closeCustomConfirmBtn.addEventListener('click', () => {
+            customConfirmModal.classList.remove('active');
+            pendingDeleteAction = null;
+        });
+        customConfirmNoBtn.addEventListener('click', () => {
+            customConfirmModal.classList.remove('active');
+            pendingDeleteAction = null;
+        });
+        customConfirmYesBtn.addEventListener('click', () => {
+            customConfirmModal.classList.remove('active');
+            if(pendingDeleteAction) {
+                pendingDeleteAction();
+                pendingDeleteAction = null;
+            }
+        });
+        customConfirmModal.addEventListener('click', (e) => {
+            if (e.target === customConfirmModal) {
+                customConfirmModal.classList.remove('active');
+                pendingDeleteAction = null;
             }
         });
 
@@ -1863,7 +1945,7 @@
             }
         });
 
-        // ربط عناصر قائمة الحساب الجديدة (اعلاناتي) مع جلب ذكي واستبعاد حسابات المستخدمين
+        // ربط عناصر قائمة الحساب الجديدة (اعلاناتي) مع زر تعديل وحذف متناسقين
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
@@ -1884,14 +1966,12 @@
 
             try {
                 if (_supabase) {
-                    // جلب جميع المنتجات التي لا تحتوي على علامة [USER_ACCOUNT]
                     const { data, error } = await _supabase
                         .from('products')
                         .select('*')
                         .order('created_at', { ascending: false });
 
                     if (!error && data) {
-                        // تصفية الإعلانات الخاصة بالمستخدم الحالي بناءً على رقم الهاتف أو الاسم المخزن في الوصف
                         const filteredAds = data.filter(ad => {
                             const desc = ad.description || '';
                             if (desc.includes('[USER_ACCOUNT]')) return false;
@@ -1905,21 +1985,24 @@
                             myAdsContainer.innerHTML = '';
                             filteredAds.forEach(ad => {
                                 const adCard = document.createElement('div');
-                                adCard.style.cssText = "display:flex; align-items:center; justify-content:space-between; background:#f8faf9; border:1px solid #d2ded7; padding:10px 15px; border-radius:10px; gap:10px;";
+                                adCard.style.cssText = "display:flex; align-items:center; justify-content:space-between; background:#f8faf9; border:1px solid #d2ded7; padding:10px 15px; border-radius:10px; gap:10px; flex-wrap:wrap;";
                                 
                                 let rawDesc = ad.description || '';
                                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
                                 const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">` : `<div style="width:50px; height:50px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.2rem;"><i class="fa-solid fa-box-open"></i></div>`;
 
                                 adCard.innerHTML = `
-                                    <div style="display:flex; align-items:center; gap:12px; overflow:hidden;">
+                                    <div style="display:flex; align-items:center; gap:12px; overflow:hidden; flex-grow:1;">
                                         ${imgThumb}
                                         <div>
                                             <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif;">${ad.title}</h4>
                                             <p style="font-size:0.8rem; color:var(--text-gray);">${cleanDesc}</p>
                                         </div>
                                     </div>
-                                    <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; white-space:nowrap;"><i class="fa-solid fa-trash"></i> حذف</button>
+                                    <div style="display:flex; gap:6px;">
+                                        <button onclick="openEditAdModal(${ad.id}, '${encodeURIComponent(ad.title)}', '${encodeURIComponent(cleanDesc)}', '${encodeURIComponent(ad.category || '')}', '${encodeURIComponent(ad.city || '')}')" style="background:#e6f7f0; color:var(--primary-green); border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; white-space:nowrap;"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+                                        <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; white-space:nowrap;"><i class="fa-solid fa-trash"></i> حذف</button>
+                                    </div>
                                 `;
                                 myAdsContainer.appendChild(adCard);
                             });
@@ -1946,9 +2029,67 @@
             }
         });
 
-        // دالة حذف الإعلان الخاص بالمستخدم من Supabase
+        // نافذة تعديل الإعلان
+        const editAdModal = document.getElementById('editAdModal');
+        const closeEditAdModalBtn = document.getElementById('closeEditAdModalBtn');
+        const editAdForm = document.getElementById('editAdForm');
+
+        window.openEditAdModal = function(id, title, desc, category, city) {
+            myAdsModal.classList.remove('active');
+            document.getElementById('edit-ad-id').value = id;
+            document.getElementById('edit-ad-title').value = decodeURIComponent(title);
+            document.getElementById('edit-ad-desc').value = decodeURIComponent(desc);
+            document.getElementById('edit-ad-category').value = decodeURIComponent(category);
+            document.getElementById('edit-ad-city').value = decodeURIComponent(city);
+            editAdModal.classList.add('active');
+        };
+
+        closeEditAdModalBtn.addEventListener('click', () => {
+            editAdModal.classList.remove('active');
+        });
+
+        editAdModal.addEventListener('click', (e) => {
+            if (e.target === editAdModal) {
+                editAdModal.classList.remove('active');
+            }
+        });
+
+        editAdForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-ad-id').value;
+            const title = document.getElementById('edit-ad-title').value;
+            const description = document.getElementById('edit-ad-desc').value;
+            const category = document.getElementById('edit-ad-category').value;
+            const city = document.getElementById('edit-ad-city').value;
+            const currentSupabaseUser = JSON.parse(sessionStorage.getItem('badal_supabase_user') || '{}');
+
+            try {
+                if (_supabase) {
+                    const updatePayload = {
+                        title: title,
+                        description: description + " (الهاتف: " + currentSupabaseUser.phone + " - المدينة: " + city + ")",
+                        category: category,
+                        city: city
+                    };
+
+                    const { error } = await _supabase.from('products').update(updatePayload).eq('id', id);
+                    if (!error) {
+                        showCustomAlert('تم تعديل الإعلان بنجاح', true);
+                        editAdModal.classList.remove('active');
+                        fetchProductsFromSupabase();
+                    } else {
+                        showCustomAlert('فشل تعديل الإعلان: ' + error.message, false);
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء تعديل الإعلان', false);
+            }
+        });
+
+        // دالة حذف الإعلان الخاص بالمستخدم من Supabase باستخدام نافذة التأكيد المخصصة
         window.deleteMyAd = async function(adId) {
-            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
+            showCustomConfirm(async () => {
                 try {
                     if (_supabase) {
                         const { error } = await _supabase.from('products').delete().eq('id', adId);
@@ -1964,7 +2105,7 @@
                     console.error(err);
                     showCustomAlert('حدث خطأ أثناء الحذف', false);
                 }
-            }
+            });
         };
 
         document.getElementById('menuMyOrders').addEventListener('click', (e) => {
