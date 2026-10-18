@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.6.4</span>
+            <span class="version-tag">v0.6.5</span>
         </div>
     </footer>
 
@@ -2740,9 +2740,12 @@
                         const { error } = await _supabase.from('products').delete().eq('id', adId);
                         if (!error) {
                             showCustomAlert('تم حذف الإعلان بنجاح من قاعدة البيانات', true);
-                            isProductsLoaded = false;
-                            fetchProductsFromSupabase(true);
-                            openMyAdsModalFunc(); // تحديث نافذة إعلاناتي دون إغلاقها
+                            // إزالة العنصر مباشرة من مصفوفة العروض المحلية لتحديث العرض فوراً
+                            allProducts = allProducts.filter(p => p.id !== adId);
+                            isProductsLoaded = true;
+                            renderProducts(currentPage);
+                            // إعادة تحديث نافذة إعلاناتي لتبقي مفتوحة مع إخفاء المنتج المحذوف فوراً
+                            openMyAdsModalFunc();
                         } else {
                             showCustomAlert('فشل حذف الإعلان: ' + error.message, false);
                         }
