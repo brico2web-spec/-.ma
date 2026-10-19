@@ -493,6 +493,8 @@
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" onclick="switchAdminTab('ads')"><i class="fa-solid fa-box-archive"></i> إدارة الإعلانات</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('requests')"><i class="fa-solid fa-right-left"></i> طلبات المقايضة المرسلة</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('approvedRequests')"><i class="fa-solid fa-circle-check"></i> المقايضة الموافقة</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('rejectedRequests')"><i class="fa-solid fa-circle-xmark"></i> المقايضة المرفوضة</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('users')"><i class="fa-solid fa-user-gear"></i> إدارة المستخدمين والحظر</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('traffic')"><i class="fa-solid fa-chart-column"></i> إحصائيات الترافيك والمبيان</button>
             </div>
@@ -519,11 +521,10 @@
                 </div>
             </div>
 
-            <!-- قسم طلبات المقايضة المرسلة الجديد -->
+            <!-- قسم طلبات المقايضة المرسلة -->
             <div id="adminRequestsSection" class="admin-panel-section">
                 <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-right-left"></i> تفاصيل طلبات المقايضة وحالة الموافقة (من قاعدة البيانات)</h3>
                 
-                <!-- خانة البحث الفوري لطلبات المقايضة -->
                 <div class="search-box-container">
                     <input type="text" id="requestSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterRequestsTable()">
                 </div>
@@ -546,11 +547,64 @@
                 </div>
             </div>
 
+            <!-- قسم المقايضة الموافقة الجديد -->
+            <div id="adminApprovedRequestsSection" class="admin-panel-section">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-circle-check" style="color:var(--primary-green);"></i> طلبات المقايضة التي وافق عليها المستخدمون</h3>
+                
+                <div class="search-box-container">
+                    <input type="text" id="approvedSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterApprovedRequestsTable()">
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المرسل</th>
+                                <th>المستقبل</th>
+                                <th>تفاصيل السلعة</th>
+                                <th>الحالة</th>
+                                <th>التاريخ</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminApprovedRequestsTableBody">
+                            <tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد طلبات موافق عليها.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- قسم المقايضة المرفوضة الجديد -->
+            <div id="adminRejectedRequestsSection" class="admin-panel-section">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> طلبات المقايضة التي رفضها المستخدمون</h3>
+                
+                <div class="search-box-container">
+                    <input type="text" id="rejectedSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterRejectedRequestsTable()">
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المرسل</th>
+                                <th>المستقبل</th>
+                                <th>تفاصيل السلعة</th>
+                                <th>الحالة</th>
+                                <th>التاريخ</th>
+                                <th>حذف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRejectedRequestsTableBody">
+                            <tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مرفوضة.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- قسم إدارة المستخدمين -->
             <div id="adminUsersSection" class="admin-panel-section">
                 <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-user-shield"></i> قائمة المستخدمين المسجلين في النظام</h3>
                 
-                <!-- خانة البحث الفوري للمستخدمين -->
                 <div class="search-box-container">
                     <input type="text" id="userSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterUsersTable()">
                 </div>
@@ -578,7 +632,6 @@
                 <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-chart-line"></i> تحليل وترافيك المنصة المرتبط بقاعدة البيانات حقيقة</h3>
                 
                 <div class="traffic-chart-container">
-                    <!-- أزرار تصفية المبيان (عام، شهر، أسبوع، يوم) -->
                     <div class="traffic-filters">
                         <button class="traffic-filter-btn active" onclick="renderTrafficChart('year', event)">حسب العام</button>
                         <button class="traffic-filter-btn" onclick="renderTrafficChart('month', event)">حسب الشهر</button>
@@ -588,10 +641,7 @@
 
                     <p id="trafficSummaryText" style="font-size: 0.85rem; font-weight: 700; color: var(--text-gray); margin-bottom: 10px;"></p>
 
-                    <!-- حاوية الأعمدة للمبيان -->
-                    <div class="chart-bars-wrapper" id="trafficChartBars">
-                        <!-- يتم تعبئتها ديناميكياً من قاعدة البيانات -->
-                    </div>
+                    <div class="chart-bars-wrapper" id="trafficChartBars"></div>
                 </div>
             </div>
 
@@ -600,7 +650,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.13
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.14
     </footer>
 
     <!-- نافذة تكبير الصورة -->
@@ -640,7 +690,7 @@
         const ADMIN_USER = 'ZAMZAMAM';
         const ADMIN_PASS = 'ZAMZAM14634ALFMRNA';
 
-        let allLoadedUsers = []; // حفظ نسخة من المستخدمين لتفعيل البحث الفوري والربط
+        let allLoadedUsers = [];
         let globalCachedAds = [];
         let globalCachedRawData = [];
         let globalCachedUsersMap = {};
@@ -679,7 +729,6 @@
             }
         });
 
-        // دوظائف عرض وتكبير الصورة
         window.openImageModal = function(imgUrl) {
             document.getElementById('modalZoomedImg').src = imgUrl;
             document.getElementById('imageModalOverlay').classList.add('active');
@@ -689,7 +738,6 @@
             document.getElementById('imageModalOverlay').classList.remove('active');
         }
 
-        // التحقق من الجلسة عند التحميل
         window.addEventListener('DOMContentLoaded', () => {
             if (sessionStorage.getItem('badal_admin_logged') === 'true') {
                 activateAdminDashboard();
@@ -720,11 +768,10 @@
             document.getElementById('adminDashboardSection').classList.add('active');
             document.getElementById('logoutAdminBtn').style.display = 'flex';
             loadAdminData();
-            setupRealtimeSubscription(); // تفعيل التحديث الفوري المباشر أوتوماتيكياً
-            setupOnlinePresenceTracking(); // تفعيل نظام تتبع المتواجدين أونلاين
+            setupRealtimeSubscription();
+            setupOnlinePresenceTracking();
         }
 
-        // تتبع عدد المتواجدين أونلاين عبر Supabase Realtime Presence
         function setupOnlinePresenceTracking() {
             if (!_supabase) return;
             const channel = _supabase.channel('online-admin-room', {
@@ -747,13 +794,12 @@
             });
         }
 
-        // الاستماع الفوري للتغييرات في جدول products أوتوماتيكياً دون تحديث يدوياً
         function setupRealtimeSubscription() {
             if (!_supabase) return;
             _supabase
                 .channel('public:products')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
-                    loadAdminData(); // إعادة جلب وتحديث الجدول والإحصائيات والرسوم البيانية فوراً
+                    loadAdminData();
                 })
                 .subscribe();
         }
@@ -770,6 +816,14 @@
                 event.currentTarget.classList.add('active');
                 document.getElementById('adminRequestsSection').classList.add('active');
                 renderRequestsTable(globalCachedRawData);
+            } else if (tab === 'approvedRequests') {
+                event.currentTarget.classList.add('active');
+                document.getElementById('adminApprovedRequestsSection').classList.add('active');
+                renderApprovedRequestsTable(globalCachedRawData);
+            } else if (tab === 'rejectedRequests') {
+                event.currentTarget.classList.add('active');
+                document.getElementById('adminRejectedRequestsSection').classList.add('active');
+                renderRejectedRequestsTable(globalCachedRawData);
             } else if (tab === 'users') {
                 event.currentTarget.classList.add('active');
                 document.getElementById('adminUsersSection').classList.add('active');
@@ -795,13 +849,14 @@
                     document.getElementById('statTotalUsers').textContent = users.length;
                     document.getElementById('statTotalRequests').textContent = requests.length;
 
-                    // تخزين الخرائط للمطابقة
                     parseAndStoreUsers(users);
                     parseAndStoreAds(pureAds);
                     globalCachedAds = pureAds;
 
                     renderAdsTable(pureAds);
                     renderRequestsTable(data);
+                    renderApprovedRequestsTable(data);
+                    renderRejectedRequestsTable(data);
                     renderTrafficChart(currentTrafficMode);
                     if (document.getElementById('adminUsersSection').classList.contains('active')) {
                         renderUsersTable(allLoadedUsers);
@@ -845,17 +900,13 @@
             });
         }
 
-        // دالة عرض جدول طلبات المقايضة (الأرشيف الكامل يبقى ظاهراً دائماً للآدمن مع حالات الموافقة والرفض والانتظار)
         function renderRequestsTable(allData, filterQuery = '') {
             const tbody = document.getElementById('adminRequestsTableBody');
             tbody.innerHTML = '';
             
             let requests = allData.filter(i => (i.description || '').includes('[EXCHANGE_REQUEST]'));
-            
-            // ترتيب الطلبات لتكون الطلبيات الجديدة هي الأولى
             requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
-            // تصفية حسب البحث (رقم الهاتف أو اسم المستخدم)
             if (filterQuery) {
                 const q = filterQuery.toLowerCase();
                 requests = requests.filter(req => {
@@ -906,14 +957,9 @@
                 }
 
                 let acceptedList = [];
-                try {
-                    acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
-                } catch(e) { acceptedList = []; }
-
+                try { acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]'); } catch(e) { acceptedList = []; }
                 let rejectedList = [];
-                try {
-                    rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]');
-                } catch(e) { rejectedList = []; }
+                try { rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]'); } catch(e) { rejectedList = []; }
 
                 const isAccepted = acceptedList.some(item => String(item.id) === String(req.id));
                 const isRejected = rejectedList.some(item => String(item.id) === String(req.id)) || req.status === 'rejected';
@@ -939,12 +985,199 @@
             });
         }
 
+        // دالة عرض جدول المقايضة الموافقة
+        function renderApprovedRequestsTable(allData, filterQuery = '') {
+            const tbody = document.getElementById('adminApprovedRequestsTableBody');
+            tbody.innerHTML = '';
+            
+            let acceptedList = [];
+            try { acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]'); } catch(e) { acceptedList = []; }
+
+            let requests = allData.filter(i => {
+                const isReq = (i.description || '').includes('[EXCHANGE_REQUEST]');
+                const isAccepted = acceptedList.some(item => String(item.id) === String(i.id));
+                return isReq && isAccepted;
+            });
+
+            requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+            if (filterQuery) {
+                const q = filterQuery.toLowerCase();
+                requests = requests.filter(req => {
+                    const desc = req.description || '';
+                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                    const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
+                    
+                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
+                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
+                    const oPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim().toLowerCase() : '';
+
+                    return sName.includes(q) || sPhone.includes(q) || oPhone.includes(q);
+                });
+            }
+
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد طلبات موافق عليها.</td></tr>';
+                return;
+            }
+
+            requests.forEach(req => {
+                const desc = req.description || '';
+                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
+                const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
+                const descMatch = desc.match(/\[DESC:(.*?)\]/);
+
+                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
+                const senderPhone = phoneMatch ? phoneMatch[1].trim() : '';
+                const targetProductId = targetIdMatch ? targetIdMatch[1].trim() : '';
+                const ownerPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim() : '';
+                const senderDesc = descMatch ? descMatch[1].trim() : 'بدون وصف';
+                const dateStr = req.created_at ? new Date(req.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
+
+                let receiverName = 'مستخدم الموقع';
+                if (ownerPhone && globalCachedUsersMap[ownerPhone]) {
+                    receiverName = globalCachedUsersMap[ownerPhone];
+                } else if (targetProductId && globalCachedAdsMap[targetProductId]) {
+                    const targetAd = globalCachedAdsMap[targetProductId];
+                    let adOwnerPhone = '';
+                    const pMatch = (targetAd.description || '').match(/\(الهاتف:\s*([^\s-]+)/);
+                    if (pMatch) adOwnerPhone = pMatch[1].trim();
+                    if (adOwnerPhone && globalCachedUsersMap[adOwnerPhone]) {
+                        receiverName = globalCachedUsersMap[adOwnerPhone];
+                    }
+                }
+
+                const statusHTML = `<span class="badge-user" style="background:#e6f7f0; color:var(--primary-green);"><i class="fa-solid fa-circle-check"></i> موافقة</span>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);">${senderPhone}</span></td>
+                    <td><span class="badge-user"><i class="fa-solid fa-user-shield"></i> ${receiverName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);">${ownerPhone}</span></td>
+                    <td style="font-weight:700;">${senderDesc}</td>
+                    <td>${statusHTML}</td>
+                    <td>${dateStr}</td>
+                    <td>
+                        <button onclick="adminDeleteRequest(${req.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // دالة عرض جدول المقايضة المرفوضة
+        function renderRejectedRequestsTable(allData, filterQuery = '') {
+            const tbody = document.getElementById('adminRejectedRequestsTableBody');
+            tbody.innerHTML = '';
+            
+            let rejectedList = [];
+            try { rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]'); } catch(e) { rejectedList = []; }
+
+            let requests = allData.filter(i => {
+                const isReq = (i.description || '').includes('[EXCHANGE_REQUEST]');
+                const isRejected = rejectedList.some(item => String(item.id) === String(i.id)) || i.status === 'rejected';
+                return isReq && isRejected;
+            });
+
+            requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+            if (filterQuery) {
+                const q = filterQuery.toLowerCase();
+                requests = requests.filter(req => {
+                    const desc = req.description || '';
+                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                    const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
+                    
+                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
+                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
+                    const oPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim().toLowerCase() : '';
+
+                    return sName.includes(q) || sPhone.includes(q) || oPhone.includes(q);
+                });
+            }
+
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مرفوضة.</td></tr>';
+                return;
+            }
+
+            requests.forEach(req => {
+                const desc = req.description || '';
+                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
+                const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
+                const descMatch = desc.match(/\[DESC:(.*?)\]/);
+
+                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
+                const senderPhone = phoneMatch ? phoneMatch[1].trim() : '';
+                const targetProductId = targetIdMatch ? targetIdMatch[1].trim() : '';
+                const ownerPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim() : '';
+                const senderDesc = descMatch ? descMatch[1].trim() : 'بدون وصف';
+                const dateStr = req.created_at ? new Date(req.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
+
+                let receiverName = 'مستخدم الموقع';
+                if (ownerPhone && globalCachedUsersMap[ownerPhone]) {
+                    receiverName = globalCachedUsersMap[ownerPhone];
+                } else if (targetProductId && globalCachedAdsMap[targetProductId]) {
+                    const targetAd = globalCachedAdsMap[targetProductId];
+                    let adOwnerPhone = '';
+                    const pMatch = (targetAd.description || '').match(/\(الهاتف:\s*([^\s-]+)/);
+                    if (pMatch) adOwnerPhone = pMatch[1].trim();
+                    if (adOwnerPhone && globalCachedUsersMap[adOwnerPhone]) {
+                        receiverName = globalCachedUsersMap[adOwnerPhone];
+                    }
+                }
+
+                const statusHTML = `<span class="badge-user" style="background:#fadbd8; color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i> رفض</span>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);">${senderPhone}</span></td>
+                    <td><span class="badge-user"><i class="fa-solid fa-user-shield"></i> ${receiverName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);">${ownerPhone}</span></td>
+                    <td style="font-weight:700;">${senderDesc}</td>
+                    <td>${statusHTML}</td>
+                    <td>${dateStr}</td>
+                    <td>
+                        <button onclick="adminDeleteRequest(${req.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
         function filterRequestsTable() {
             const query = document.getElementById('requestSearchInput').value.trim();
             renderRequestsTable(globalCachedRawData, query);
         }
 
-        // دالة إنشاء وعرض مبيان الترافيك المفصل والمتصل بقاعدة البيانات حقيقة
+        function filterApprovedRequestsTable() {
+            const query = document.getElementById('approvedSearchInput').value.trim();
+            renderApprovedRequestsTable(globalCachedRawData, query);
+        }
+
+        function filterRejectedRequestsTable() {
+            const query = document.getElementById('rejectedSearchInput').value.trim();
+            renderRejectedRequestsTable(globalCachedRawData, query);
+        }
+
+        window.adminDeleteRequest = function(id) {
+            showCustomConfirm('هل أنت متأكد من رغبتك في حذف طلب المقايضة هذا نهائياً من قاعدة البيانات؟', async () => {
+                if (_supabase) {
+                    const { error } = await _supabase.from('products').delete().eq('id', Number(id));
+                    if (!error) {
+                        showCustomAlert('تم حذف طلب المقايضة بنجاح.', true);
+                        loadAdminData();
+                    } else {
+                        showCustomAlert('فشل حذف الطلب: ' + error.message, false);
+                    }
+                }
+            });
+        };
+
         function renderTrafficChart(mode, eventObj = null) {
             currentTrafficMode = mode;
             if (eventObj) {
