@@ -563,6 +563,11 @@
             background-color: #008f5a;
         }
 
+        .form-submit-btn:disabled {
+            background-color: #b0bec5 !important;
+            cursor: not-allowed !important;
+        }
+
         .slider-section {
             position: relative;
             padding: 40px 15px;
@@ -764,7 +769,6 @@
             overflow: hidden;
         }
 
-        /* تأثير الوميض الخفيف والجذاب لكلمة أقبل بأي منتوج */
         @keyframes softBlink {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.75; transform: scale(1.01); }
@@ -1170,7 +1174,6 @@
                 width: 70px;
                 height: 70px;
             }
-            /* الحفاظ على 2 أعمدة (إعلانين جنبا إلى جنب) حتى على الهواتف مع ضبط المسافات */
             .products-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
@@ -1270,7 +1273,7 @@
                     <textarea id="exchange-item-desc" placeholder="اكتب وصفاً لما تقدمه..." required></textarea>
                     <small style="color: #e74c3c; font-size: 0.75rem; margin-top: 2px;">تنبيه: يُمنع كتابة أرقام الهواتف في الوصف حفاظاً على الأمان.</small>
                 </div>
-                <button type="submit" class="form-submit-btn">إرسال طلب التبادل</button>
+                <button type="submit" class="form-submit-btn" id="exchangeSubmitBtn">إرسال طلب التبادل</button>
             </form>
         </div>
     </div>
@@ -1442,7 +1445,7 @@
                         <option value="أغراض متنوّعة">أغراض متنوّعة</option>
                     </select>
                 </div>
-                <button type="submit" class="form-submit-btn">أنشر للمقايضة</button>
+                <button type="submit" class="form-submit-btn" id="addAdSubmitBtn">أنشر للمقايضة</button>
             </form>
         </div>
     </div>
@@ -1730,7 +1733,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.20</span>
+            <span class="version-tag">v0.9.21</span>
         </div>
     </footer>
 
@@ -1740,7 +1743,6 @@
         
         const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-        // دالة الضغط وزيادة الجودة والقياسات باش التصويرة متجيش مربعة أو مشوهة
         function compressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.85) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -1769,7 +1771,13 @@
                         ctx.drawImage(img, 0, 0, width, height);
                         resolve(canvas.toDataURL('image/jpeg', quality));
                     };
+                    img.onerror = () => {
+                        resolve(event.target.result); // في حال فشل معالجة الصورة نمررها كما هي
+                    }
                 };
+                reader.onerror = () => {
+                    resolve(null);
+                }
             });
         }
 
@@ -2198,6 +2206,7 @@
         const userAdsSelectionList = document.getElementById('userAdsSelectionList');
         const selectedMyAdImageInput = document.getElementById('selected-my-ad-image');
         const exchangeImageFieldGroup = document.getElementById('exchangeImageFieldGroup');
+        const exchangeSubmitBtn = document.getElementById('exchangeSubmitBtn');
 
         if(exchangeItemImage) {
             exchangeItemImage.addEventListener('change', async (e) => {
@@ -2317,9 +2326,17 @@
         if(exchangeRequestForm) {
             exchangeRequestForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
+                // منع النقرات المتكررة وحماية الزر
+                if(exchangeSubmitBtn.disabled) return;
+                exchangeSubmitBtn.disabled = true;
+                exchangeSubmitBtn.textContent = 'جاري الإرسال...';
+
                 const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
                 if (!currentSupabaseUser) {
                     exchangeRequestModal.classList.remove('active');
+                    exchangeSubmitBtn.disabled = false;
+                    exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
                     openRegistrationTab();
                     return;
                 }
@@ -2328,33 +2345,29 @@
                 const selectedImgUrl = selectedMyAdImageInput.value;
                 let finalImageToSubmit = selectedImgUrl;
 
-                if (!selectedImgUrl) {
-                    if (!exchangeItemImage.files || exchangeItemImage.files.length === 0) {
-                        showCustomAlert('المرجو اختيار سلعة من إعلاناتك أو رفع صورة المنتوج البديل!', false);
-                        return;
-                    }
-                    const file = exchangeItemImage.files[0];
-                    try {
-                        finalImageToSubmit = await compressImage(file, 1000, 1000, 0.85);
-                    } catch(err) {
-                        console.error(err);
-                        showCustomAlert('حدث خطأ أثناء معالجة الصورة.', false);
-                        return;
-                    }
-                }
-
-                const descText = exchangeItemDesc.value.trim();
-                const ownerPhone = document.getElementById('target-owner-phone').value;
-                const targetProductId = document.getElementById('target-product-id').value;
-
                 try {
+                    if (!selectedImgUrl) {
+                        if (!exchangeItemImage.files || exchangeItemImage.files.length === 0) {
+                            showCustomAlert('المرجو اختيار سلعة من إعلاناتك أو رفع صورة المنتوج البديل!', false);
+                            exchangeSubmitBtn.disabled = false;
+                            exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
+                            return;
+                        }
+                        const file = exchangeItemImage.files[0];
+                        finalImageToSubmit = await compressImage(file, 1000, 1000, 0.85);
+                    }
+
+                    const descText = exchangeItemDesc.value.trim();
+                    const ownerPhone = document.getElementById('target-owner-phone').value;
+                    const targetProductId = document.getElementById('target-product-id').value;
+
                     if (_supabase) {
                         const reqPayload = {
                             title: "طلب مقايضة من " + userData.name,
                             description: `[EXCHANGE_REQUEST] [TARGET_PRODUCT_ID:${targetProductId}] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [SENDER_CITY:${userData.city || 'القنيطرة'}] [DESC:${descText}]`,
                             category: "تلفونات",
                             city: userData.city || 'القنيطرة',
-                            image_url: finalImageToSubmit
+                            image_url: finalImageToSubmit || ''
                         };
 
                         const { error } = await _supabase.from('products').insert([reqPayload]);
@@ -2371,6 +2384,9 @@
                 } catch (err) {
                     console.error(err);
                     showCustomAlert('حدث خطأ أثناء إرسال الطلب.', false);
+                } finally {
+                    exchangeSubmitBtn.disabled = false;
+                    exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
                 }
             });
         }
@@ -2939,7 +2955,7 @@
                         description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
                         category: category,
                         city: city,
-                        image_url: compressedImage
+                        image_url: compressedImage || ''
                     };
 
                     const { data: insertedData, error: insertError } = await _supabase.from('products').insert([insertPayload]).select();
