@@ -547,7 +547,7 @@
                 </div>
             </div>
 
-            <!-- قسم المقايضة الموافقة الجديد -->
+            <!-- قسم المقايضة الموافقة -->
             <div id="adminApprovedRequestsSection" class="admin-panel-section">
                 <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-circle-check" style="color:var(--primary-green);"></i> طلبات المقايضة التي وافق عليها المستخدمون</h3>
                 
@@ -574,7 +574,7 @@
                 </div>
             </div>
 
-            <!-- قسم المقايضة المرفوضة الجديد -->
+            <!-- قسم المقايضة المرفوضة -->
             <div id="adminRejectedRequestsSection" class="admin-panel-section">
                 <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> طلبات المقايضة التي رفضها المستخدمون</h3>
                 
@@ -650,7 +650,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.14
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.15
     </footer>
 
     <!-- نافذة تكبير الصورة -->
@@ -900,6 +900,22 @@
             });
         }
 
+        // دالة مساعدة عامة للتحقق ما إذا كان الطلب موافقاً عليه (من Supabase أو LocalStorage)
+        function checkIsAccepted(req) {
+            if (req.status === 'approved' || req.status === 'accepted') return true;
+            let acceptedList = [];
+            try { acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]'); } catch(e) { acceptedList = []; }
+            return acceptedList.some(item => String(item.id) === String(req.id));
+        }
+
+        // دالة مساعدة عامة للتحقق ما إذا كان الطلب مرفوضاً (من Supabase أو LocalStorage)
+        function checkIsRejected(req) {
+            if (req.status === 'rejected') return true;
+            let rejectedList = [];
+            try { rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]'); } catch(e) { rejectedList = []; }
+            return rejectedList.some(item => String(item.id) === String(req.id));
+        }
+
         function renderRequestsTable(allData, filterQuery = '') {
             const tbody = document.getElementById('adminRequestsTableBody');
             tbody.innerHTML = '';
@@ -956,13 +972,8 @@
                     }
                 }
 
-                let acceptedList = [];
-                try { acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]'); } catch(e) { acceptedList = []; }
-                let rejectedList = [];
-                try { rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]'); } catch(e) { rejectedList = []; }
-
-                const isAccepted = acceptedList.some(item => String(item.id) === String(req.id));
-                const isRejected = rejectedList.some(item => String(item.id) === String(req.id)) || req.status === 'rejected';
+                const isAccepted = checkIsAccepted(req);
+                const isRejected = checkIsRejected(req);
 
                 let statusHTML = '';
                 if (isAccepted) {
@@ -990,13 +1001,9 @@
             const tbody = document.getElementById('adminApprovedRequestsTableBody');
             tbody.innerHTML = '';
             
-            let acceptedList = [];
-            try { acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]'); } catch(e) { acceptedList = []; }
-
             let requests = allData.filter(i => {
                 const isReq = (i.description || '').includes('[EXCHANGE_REQUEST]');
-                const isAccepted = acceptedList.some(item => String(item.id) === String(i.id));
-                return isReq && isAccepted;
+                return isReq && checkIsAccepted(i);
             });
 
             requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
@@ -1072,13 +1079,9 @@
             const tbody = document.getElementById('adminRejectedRequestsTableBody');
             tbody.innerHTML = '';
             
-            let rejectedList = [];
-            try { rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]'); } catch(e) { rejectedList = []; }
-
             let requests = allData.filter(i => {
                 const isReq = (i.description || '').includes('[EXCHANGE_REQUEST]');
-                const isRejected = rejectedList.some(item => String(item.id) === String(i.id)) || i.status === 'rejected';
-                return isReq && isRejected;
+                return isReq && checkIsRejected(i);
             });
 
             requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
