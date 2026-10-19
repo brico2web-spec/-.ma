@@ -1697,7 +1697,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.4</span>
+            <span class="version-tag">v0.9.5</span>
         </div>
     </footer>
 
@@ -2223,13 +2223,14 @@
                 const file = exchangeItemImage.files[0];
                 const descText = exchangeItemDesc.value.trim();
                 const ownerPhone = document.getElementById('target-owner-phone').value;
+                const targetProductId = document.getElementById('target-product-id').value;
 
                 try {
                     const compressedImage = await compressImage(file, 350, 350, 0.4);
                     if (_supabase) {
                         const reqPayload = {
                             title: "طلب مقايضة من " + userData.name,
-                            description: `[EXCHANGE_REQUEST] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [SENDER_CITY:${userData.city || 'القنيطرة'}] [DESC:${descText}]`,
+                            description: `[EXCHANGE_REQUEST] [TARGET_PRODUCT_ID:${targetProductId}] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [SENDER_CITY:${userData.city || 'القنيطرة'}] [DESC:${descText}]`,
                             category: "تلفونات",
                             city: userData.city || 'القنيطرة',
                             image_url: compressedImage
@@ -2297,6 +2298,8 @@
 
             try {
                 if (_supabase && userData.phone) {
+                    const { data: allDbProducts } = await _supabase.from('products').select('id, title, image_url, description');
+                    
                     const { data, error } = await _supabase
                         .from('products')
                         .select('id, title, description, image_url, created_at')
@@ -2312,24 +2315,55 @@
                                 const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
                                 const cityMatch = desc.match(/\[SENDER_CITY:(.*?)\]/);
                                 const descMatch = desc.match(/\[DESC:(.*?)\]/);
+                                const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
                                 
                                 const senderName = nameMatch ? nameMatch[1] : 'مستخدم';
                                 const senderPhone = phoneMatch ? phoneMatch[1] : '';
                                 const senderCity = (cityMatch && cityMatch[1].trim() !== '' && cityMatch[1].trim() !== 'المغرب') ? cityMatch[1].trim() : 'القنيطرة';
                                 const senderDesc = descMatch ? descMatch[1] : '';
+                                const targetId = targetIdMatch ? targetIdMatch[1] : null;
+
+                                // البحث عن المنتوج المطلوب تبديله الخاص بي
+                                let myTargetProductImg = '';
+                                if (targetId && allDbProducts) {
+                                    const targetProd = allDbProducts.find(p => String(p.id) === String(targetId));
+                                    if (targetProd && targetProd.image_url) {
+                                        myTargetProductImg = targetProd.image_url;
+                                    }
+                                }
 
                                 const card = document.createElement('div');
                                 card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
                                 
-                                const imgBox = req.image_url ? `<div style="text-align:center;"><img src="${req.image_url}" style="width:110px; height:110px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);"></div>` : `<div style="width:100%; height:90px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.8rem;"><i class="fa-solid fa-box-open"></i></div>`;
+                                // تصميم عرض الصورتين جنباً إلى جنب (صورة منتوجك + صورة منتوج المقايض)
+                                let imagesComparisonHTML = '';
+                                const senderImgTag = req.image_url ? `<img src="${req.image_url}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
+                                
+                                const myImgTag = myTargetProductImg ? `<img src="${myTargetProductImg}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                                imagesComparisonHTML = `
+                                    <div style="display:flex; align-items:center; justify-content:center; gap:12px; background:#ffffff; padding:10px; border-radius:8px; border:1px solid #e2ece8;">
+                                        <div style="text-align:center;">
+                                            <span style="font-size:0.75rem; font-weight:800; color:var(--dark-blue); display:block; margin-bottom:4px;">سلعتك المطلوبة</span>
+                                            ${myImgTag}
+                                        </div>
+                                        <div style="color:var(--primary-green); font-size:1.4rem; font-weight:bold;">
+                                            <i class="fa-solid fa-right-left"></i>
+                                        </div>
+                                        <div style="text-align:center;">
+                                            <span style="font-size:0.75rem; font-weight:800; color:var(--dark-blue); display:block; margin-bottom:4px;">سلعة المقايض</span>
+                                            ${senderImgTag}
+                                        </div>
+                                    </div>
+                                `;
 
                                 card.innerHTML = `
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                                        <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${senderCity}</h4>
+                                        <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${senderCity} (${senderName})</h4>
                                         <span style="font-size:0.75rem; color:var(--primary-green); font-weight:700;">مقايضة جديدة</span>
                                     </div>
-                                    ${imgBox}
-                                    <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف المنتوج للمقايض:</b> ${senderDesc}</p>
+                                    ${imagesComparisonHTML}
+                                    <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة المقايض:</b> ${senderDesc}</p>
                                     <div style="display:flex; gap:10px; margin-top:5px;">
                                         <button onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">موافق</button>
                                         <button onclick="cancelExchangeRequest(${req.id})" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">رفض الطلب</button>
