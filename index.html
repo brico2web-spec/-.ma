@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.7.0</span>
+            <span class="version-tag">v0.7.1</span>
         </div>
     </footer>
 
@@ -2459,7 +2459,7 @@
                         image_url: compressedImage
                     };
 
-                    const { error: insertError } = await _supabase.from('products').insert([insertPayload]);
+                    const { data: insertedData, error: insertError } = await _supabase.from('products').insert([insertPayload]).select();
 
                     if (insertError) {
                         showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
@@ -2473,7 +2473,21 @@
                         adDescTextarea.style.color = 'var(--dark-blue)';
                         fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
                         
-                        fetchProductsFromSupabase(true);
+                        // إضافة الإعلان مباشرة للقائمة المحلية وإعادة العرض فوراً بدون انتظار التخزين المؤقت
+                        if (insertedData && insertedData.length > 0) {
+                            allProducts.unshift(insertedData[0]);
+                        } else {
+                            allProducts.unshift({
+                                id: Date.now(),
+                                title: title,
+                                description: insertPayload.description,
+                                category: category,
+                                city: city,
+                                image_url: compressedImage,
+                                created_at: new Date().toISOString()
+                            });
+                        }
+                        renderProducts(currentPage);
                         showProductsView();
                     }
                 } else {
