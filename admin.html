@@ -471,7 +471,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.0.3
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.0.4
     </footer>
 
     <!-- نافذة التنبيهات العامة -->
@@ -568,6 +568,18 @@
             document.getElementById('adminDashboardSection').classList.add('active');
             document.getElementById('logoutAdminBtn').style.display = 'flex';
             loadAdminData();
+            setupRealtimeSubscription(); // تفعيل التحديث الفوري المباشر
+        }
+
+        // الاستماع للتغييرات في جدول products مباشرة أوتوماتيكياً
+        function setupRealtimeSubscription() {
+            if (!_supabase) return;
+            _supabase
+                .channel('public:products')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
+                    loadAdminData(); // إعادة جلب وتحديث البيانات فوراً عند حدوث أي إضافة أو حذف
+                })
+                .subscribe();
         }
 
         function switchAdminTab(tab) {
