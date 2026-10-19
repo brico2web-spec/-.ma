@@ -821,8 +821,8 @@
                 const cityMatch = desc.match(/\[CITY:(.*?)\]/);
                 const passMatch = desc.match(/\[PASSWORD:(.*?)\]/);
 
-                const uName = nameMatch ? nameMatch.trim() : 'مستخدم';
-                const uPhone = phoneMatch ? phoneMatch.trim() : '';
+                const uName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
+                const uPhone = phoneMatch ? phoneMatch[1].trim() : '';
 
                 if (uPhone) {
                     globalCachedUsersMap[uPhone] = uName;
@@ -832,8 +832,8 @@
                     id: userRec.id,
                     name: uName,
                     phone: uPhone,
-                    city: cityMatch ? cityMatch : 'القنيطرة',
-                    password: passMatch ? passMatch : '***'
+                    city: cityMatch ? cityMatch[1] : 'القنيطرة',
+                    password: passMatch ? passMatch[1] : '***'
                 };
             });
         }
@@ -845,31 +845,14 @@
             });
         }
 
-        // دالة إنشاء وعرض جدول طلبات المقايضة المرسلة (مع إخفاء الطلبات التي تم اتخاذ قرار بشأنها: موافقة أو رفض)
+        // دالة عرض جدول طلبات المقايضة (الأرشيف الكامل يبقى ظاهراً دائماً للآدمن مع حالات الموافقة والرفض والانتظار)
         function renderRequestsTable(allData, filterQuery = '') {
             const tbody = document.getElementById('adminRequestsTableBody');
             tbody.innerHTML = '';
             
             let requests = allData.filter(i => (i.description || '').includes('[EXCHANGE_REQUEST]'));
             
-            // استبعاد الطلبات التي تمت الموافقة عليها أو رفضها من تفاصيل طلبات المقايضة في صفحة الإدارة
-            let acceptedList = [];
-            try {
-                acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
-            } catch(e) { acceptedList = []; }
-
-            let rejectedList = [];
-            try {
-                rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]');
-            } catch(e) { rejectedList = []; }
-
-            requests = requests.filter(req => {
-                const isAccepted = acceptedList.some(item => String(item.id) === String(req.id));
-                const isRejected = rejectedList.some(item => String(item.id) === String(req.id)) || req.status === 'rejected';
-                return !isAccepted && !isRejected; // إخفاؤها من جدول الطلبات الجارية
-            });
-
-            // ترتيب الطلبات لتكون الطلبيات الجديدة هي الأولى (تنازلياً حسب created_at)
+            // ترتيب الطلبات لتكون الطلبيات الجديدة هي الأولى
             requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
             // تصفية حسب البحث (رقم الهاتف أو اسم المستخدم)
@@ -881,16 +864,16 @@
                     const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
                     const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
                     
-                    const sName = nameMatch ? nameMatch.trim().toLowerCase() : '';
-                    const sPhone = phoneMatch ? phoneMatch.trim().toLowerCase() : '';
-                    const oPhone = ownerPhoneMatch ? ownerPhoneMatch.trim().toLowerCase() : '';
+                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
+                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
+                    const oPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim().toLowerCase() : '';
 
                     return sName.includes(q) || sPhone.includes(q) || oPhone.includes(q);
                 });
             }
 
             if (requests.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مقايضة قيد الانتظار حالياً.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مقايضة مرسلة مطابقة.</td></tr>';
                 return;
             }
 
@@ -902,14 +885,13 @@
                 const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
                 const descMatch = desc.match(/\[DESC:(.*?)\]/);
 
-                const senderName = nameMatch ? nameMatch.trim() : 'مستخدم';
-                const senderPhone = phoneMatch ? phoneMatch.trim() : '';
-                const targetProductId = targetIdMatch ? targetIdMatch.trim() : '';
-                const ownerPhone = ownerPhoneMatch ? ownerPhoneMatch.trim() : '';
-                const senderDesc = descMatch ? descMatch.trim() : 'بدون وصف';
+                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
+                const senderPhone = phoneMatch ? phoneMatch[1].trim() : '';
+                const targetProductId = targetIdMatch ? targetIdMatch[1].trim() : '';
+                const ownerPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim() : '';
+                const senderDesc = descMatch ? descMatch[1].trim() : 'بدون وصف';
                 const dateStr = req.created_at ? new Date(req.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
 
-                // معرفة اسم المستقبل (صاحب السلعة المستهدفة)
                 let receiverName = 'مستخدم الموقع';
                 if (ownerPhone && globalCachedUsersMap[ownerPhone]) {
                     receiverName = globalCachedUsersMap[ownerPhone];
@@ -917,13 +899,33 @@
                     const targetAd = globalCachedAdsMap[targetProductId];
                     let adOwnerPhone = '';
                     const pMatch = (targetAd.description || '').match(/\(الهاتف:\s*([^\s-]+)/);
-                    if (pMatch) adOwnerPhone = pMatch.trim();
+                    if (pMatch) adOwnerPhone = pMatch[1].trim();
                     if (adOwnerPhone && globalCachedUsersMap[adOwnerPhone]) {
                         receiverName = globalCachedUsersMap[adOwnerPhone];
                     }
                 }
 
-                let statusHTML = `<span class="badge-user" style="background:#fef5e7; color:#d35400;"><i class="fa-solid fa-clock"></i> قيد الإنتظار</span>`;
+                let acceptedList = [];
+                try {
+                    acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
+                } catch(e) { acceptedList = []; }
+
+                let rejectedList = [];
+                try {
+                    rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]');
+                } catch(e) { rejectedList = []; }
+
+                const isAccepted = acceptedList.some(item => String(item.id) === String(req.id));
+                const isRejected = rejectedList.some(item => String(item.id) === String(req.id)) || req.status === 'rejected';
+
+                let statusHTML = '';
+                if (isAccepted) {
+                    statusHTML = `<span class="badge-user" style="background:#e6f7f0; color:var(--primary-green);"><i class="fa-solid fa-circle-check"></i> موافقة</span>`;
+                } else if (isRejected) {
+                    statusHTML = `<span class="badge-user" style="background:#fadbd8; color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i> رفض</span>`;
+                } else {
+                    statusHTML = `<span class="badge-user" style="background:#fef5e7; color:#d35400;"><i class="fa-solid fa-clock"></i> قيد الإنتظار</span>`;
+                }
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
