@@ -1238,7 +1238,7 @@
     </nav>
 
     <div class="modal-overlay" id="productDetailsModal">
-        <div class="modal-content" style="max-width: 520px; text-align: right;">
+        <div class="modal-content" style="max-width: 550px; text-align: right;">
             <button class="modal-close" id="closeProductDetailsBtn">&times;</button>
             <div id="productDetailsModalBody" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;"></div>
         </div>
@@ -1733,7 +1733,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.21</span>
+            <span class="version-tag">v0.9.23</span>
         </div>
     </footer>
 
@@ -2086,33 +2086,33 @@
 
         function openProductDetailsModal(prod, cleanDesc, prodCity, ownerPhone, isMyAd) {
             const iconClass = prod.icon || 'fa-box-open';
-            const displayImgFull = prod.image_url ? `<img src="${prod.image_url}" style="width:100%; height:260px; object-fit:cover; border-radius:10px; border:1px solid #d2ded7;" alt="${prod.title}">` : `<div style="width:100%; height:220px; background-color:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:3rem;"><i class="fa-solid ${iconClass}"></i></div>`;
+            const displayImgFull = prod.image_url ? `<img src="${prod.image_url}" style="width:100%; height:320px; object-fit:cover; border-radius:10px; border:1px solid #d2ded7;" alt="${prod.title}">` : `<div style="width:100%; height:260px; background-color:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:3rem;"><i class="fa-solid ${iconClass}"></i></div>`;
 
-            let modalDescHTML = `<p style="font-size:0.9rem; color:var(--text-gray); line-height:1.5; word-break:break-word;">${cleanDesc}</p>`;
+            let modalDescHTML = `<p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4; word-break:break-word;">${cleanDesc}</p>`;
             if (cleanDesc.includes('أقبل بأي منتوج') || cleanDesc.includes('أقبل المقايضة بأي منتوج مقترح')) {
                 let formattedText = "أقبل بأي منتوج";
                 modalDescHTML = `
-                    <div class="open-exchange-highlight" style="padding:10px; font-size:0.9rem;">
-                        <i class="fa-solid fa-handshake-angle" style="font-size:1.2rem;"></i>
+                    <div class="open-exchange-highlight" style="padding:8px; font-size:0.85rem;">
+                        <i class="fa-solid fa-handshake-angle" style="font-size:1.1rem;"></i>
                         <span>${formattedText}</span>
                     </div>
                 `;
             }
 
-            let modalActionButtonHTML = `<button type="button" class="form-submit-btn" style="margin-top:10px;" onclick="productDetailsModal.classList.remove('active'); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</button>`;
+            let modalActionButtonHTML = `<button type="button" class="form-submit-btn" style="margin-top:5px;" onclick="productDetailsModal.classList.remove('active'); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</button>`;
             if (isMyAd) {
-                modalActionButtonHTML = `<button type="button" class="form-submit-btn product-btn-disabled" style="margin-top:10px;" onclick="event.preventDefault();">منصة بدل.ma</button>`;
+                modalActionButtonHTML = `<button type="button" class="form-submit-btn product-btn-disabled" style="margin-top:5px;" onclick="event.preventDefault();">منصة بدل.ma</button>`;
             }
 
             productDetailsModalBody.innerHTML = `
-                <h2 style="font-size:1.3rem; font-weight:900; color:var(--dark-blue); font-family:'Cairo', sans-serif; text-align:center; margin-bottom:5px;">${prod.title}</h2>
-                <div style="display:flex; justify-content:center; gap:8px; margin-bottom:5px;">
+                <h2 style="font-size:1.2rem; font-weight:900; color:var(--dark-blue); font-family:'Cairo', sans-serif; text-align:center; margin-bottom:2px;">${prod.title}</h2>
+                <div style="display:flex; justify-content:center; gap:8px; margin-bottom:2px;">
                     <span class="product-badge">${prod.category}</span>
                     <span class="product-city-badge"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${prodCity}</span>
                 </div>
                 ${displayImgFull}
-                <div style="background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:8px; margin-top:5px;">
-                    <h4 style="font-size:0.9rem; font-weight:800; color:var(--dark-blue); margin-bottom:4px;">وصف السلعة:</h4>
+                <div style="background:#f8faf9; border:1px solid #d2ded7; padding:10px; border-radius:8px; margin-top:2px; max-height:120px; overflow-y:auto;">
+                    <h4 style="font-size:0.85rem; font-weight:800; color:var(--dark-blue); margin-bottom:2px;">وصف السلعة:</h4>
                     ${modalDescHTML}
                 </div>
                 ${modalActionButtonHTML}
@@ -2327,7 +2327,6 @@
             exchangeRequestForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                // منع النقرات المتكررة وحماية الزر
                 if(exchangeSubmitBtn.disabled) return;
                 exchangeSubmitBtn.disabled = true;
                 exchangeSubmitBtn.textContent = 'جاري الإرسال...';
