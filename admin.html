@@ -502,6 +502,11 @@
             <!-- قسم إدارة الإعلانات -->
             <div id="adminAdsSection" class="admin-panel-section active">
                 <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-list"></i> جميع الإعلانات المنشورة على المنصة</h3>
+                
+                <div class="search-box-container">
+                    <input type="text" id="adsSearchInput" placeholder="ابحث برقم الهاتف أو الإسم..." oninput="filterAdsTable()">
+                </div>
+
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -633,10 +638,10 @@
                 
                 <div class="traffic-chart-container">
                     <div class="traffic-filters">
-                        <button class="traffic-filter-btn active" onclick="renderTrafficChart('year', event)">حسب العام</button>
-                        <button class="traffic-filter-btn" onclick="renderTrafficChart('month', event)">حسب الشهر</button>
+                        <button class="traffic-filter-btn active" onclick="renderTrafficChart('day', event)">حسب اليوم</button>
                         <button class="traffic-filter-btn" onclick="renderTrafficChart('week', event)">حسب الأسبوع</button>
-                        <button class="traffic-filter-btn" onclick="renderTrafficChart('day', event)">حسب اليوم</button>
+                        <button class="traffic-filter-btn" onclick="renderTrafficChart('month', event)">حسب الشهر</button>
+                        <button class="traffic-filter-btn" onclick="renderTrafficChart('year', event)">حسب العام</button>
                     </div>
 
                     <p id="trafficSummaryText" style="font-size: 0.85rem; font-weight: 700; color: var(--text-gray); margin-bottom: 10px;"></p>
@@ -650,7 +655,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.15
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.16
     </footer>
 
     <!-- نافذة تكبير الصورة -->
@@ -695,7 +700,7 @@
         let globalCachedRawData = [];
         let globalCachedUsersMap = {};
         let globalCachedAdsMap = {};
-        let currentTrafficMode = 'year';
+        let currentTrafficMode = 'day';
 
         function showCustomAlert(msg, isSuccess = true) {
             const modal = document.getElementById('customAlertModal');
@@ -900,7 +905,6 @@
             });
         }
 
-        // دالة مساعدة عامة للتحقق ما إذا كان الطلب موافقاً عليه (من Supabase أو LocalStorage)
         function checkIsAccepted(req) {
             if (req.status === 'approved' || req.status === 'accepted') return true;
             let acceptedList = [];
@@ -908,7 +912,6 @@
             return acceptedList.some(item => String(item.id) === String(req.id));
         }
 
-        // دالة مساعدة عامة للتحقق ما إذا كان الطلب مرفوضاً (من Supabase أو LocalStorage)
         function checkIsRejected(req) {
             if (req.status === 'rejected') return true;
             let rejectedList = [];
@@ -996,7 +999,6 @@
             });
         }
 
-        // دالة عرض جدول المقايضة الموافقة
         function renderApprovedRequestsTable(allData, filterQuery = '') {
             const tbody = document.getElementById('adminApprovedRequestsTableBody');
             tbody.innerHTML = '';
@@ -1074,7 +1076,6 @@
             });
         }
 
-        // دالة عرض جدول المقايضة المرفوضة
         function renderRejectedRequestsTable(allData, filterQuery = '') {
             const tbody = document.getElementById('adminRejectedRequestsTableBody');
             tbody.innerHTML = '';
@@ -1167,6 +1168,11 @@
             renderRejectedRequestsTable(globalCachedRawData, query);
         }
 
+        function filterAdsTable() {
+            const query = document.getElementById('adsSearchInput').value.trim();
+            renderAdsTable(globalCachedAds, query);
+        }
+
         window.adminDeleteRequest = function(id) {
             showCustomConfirm('هل أنت متأكد من رغبتك في حذف طلب المقايضة هذا نهائياً من قاعدة البيانات؟', async () => {
                 if (_supabase) {
@@ -1198,31 +1204,25 @@
 
             const now = new Date();
 
-            if (mode === 'year') {
-                summaryText.textContent = 'إحصائيات الأنشطة والإعلانات مصنفة حسب الأعوام السابقة والحالية:';
-                items.forEach(item => {
-                    if (!item.created_at) return;
-                    const year = new Date(item.created_at).getFullYear();
-                    buckets[year] = (buckets[year] || 0) + 1;
-                });
-                if (Object.keys(buckets).length === 0) {
-                    buckets[now.getFullYear()] = 0;
-                }
-            } else if (mode === 'month') {
-                summaryText.textContent = 'إحصائيات الأنشطة والإعلانات خلال الأشهر (للعام الحالي):';
-                const currentYear = now.getFullYear();
-                const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'ماي', 'يونيو', 'يوليوز', 'غشت', 'شتنبر', 'أكتوبر', 'نونبر', 'دجنبر'];
-                
-                for (let m = 0; m < 12; m++) {
-                    buckets[monthNames[m]] = 0;
+            if (mode === 'day') {
+                summaryText.textContent = 'إحصائيات الأنشطة والإعلانات خلال الأيام الـ 7 الأخيرة:';
+                const daysMap = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date();
+                    d.setDate(now.getDate() - i);
+                    const dName = daysMap[d.getDay()];
+                    buckets[dName] = 0;
                 }
 
                 items.forEach(item => {
                     if (!item.created_at) return;
                     const d = new Date(item.created_at);
-                    if (d.getFullYear() === currentYear) {
-                        const mName = monthNames[d.getMonth()];
-                        buckets[mName]++;
+                    const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+                    if (diffDays < 7) {
+                        const dName = daysMap[d.getDay()];
+                        if (buckets[dName] !== undefined) {
+                            buckets[dName]++;
+                        }
                     }
                 });
             } else if (mode === 'week') {
@@ -1240,29 +1240,33 @@
                     else if (diffDays <= 28) buckets['الأسبوع 2']++;
                     else buckets['الأسبوع 1']++;
                 });
-            } else if (mode === 'day') {
-                summaryText.textContent = 'إحصائيات الأنشطة والإعلانات خلال الأيام الـ 7 الأخيرة:';
-                const daysMap = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-                let last7Days = [];
-                for (let i = 6; i >= 0; i--) {
-                    const d = new Date();
-                    d.setDate(now.getDate() - i);
-                    const dName = daysMap[d.getDay()];
-                    last7Days.push(dName);
-                    buckets[dName] = 0;
+            } else if (mode === 'month') {
+                summaryText.textContent = 'إحصائيات الأنشطة والإعلانات خلال الأشهر (للعام الحالي):';
+                const currentYear = now.getFullYear();
+                const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'ماي', 'يونيو', 'يوليوز', 'غشت', 'شتنبر', 'أكتوبر', 'نونبر', 'دجنبر'];
+                
+                for (let m = 0; m < 12; m++) {
+                    buckets[monthNames[m]] = 0;
                 }
 
                 items.forEach(item => {
                     if (!item.created_at) return;
                     const d = new Date(item.created_at);
-                    const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
-                    if (diffDays < 7) {
-                        const dName = daysMap[d.getDay()];
-                        if (buckets[dName] !== undefined) {
-                            buckets[dName]++;
-                        }
+                    if (d.getFullYear() === currentYear) {
+                        const mName = monthNames[d.getMonth()];
+                        buckets[mName]++;
                     }
                 });
+            } else if (mode === 'year') {
+                summaryText.textContent = 'إحصائيات الأنشطة والإعلانات مصنفة حسب الأعوام السابقة والحالية:';
+                items.forEach(item => {
+                    if (!item.created_at) return;
+                    const year = new Date(item.created_at).getFullYear();
+                    buckets[year] = (buckets[year] || 0) + 1;
+                });
+                if (Object.keys(buckets).length === 0) {
+                    buckets[now.getFullYear()] = 0;
+                }
             }
 
             const values = Object.values(buckets);
@@ -1284,14 +1288,41 @@
             });
         }
 
-        function renderAdsTable(ads) {
+        function renderAdsTable(ads, filterQuery = '') {
             const tbody = document.getElementById('adminAdsTableBody');
             tbody.innerHTML = '';
-            if (ads.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد إعلانات نشطة حالياً.</td></tr>';
+            
+            let sortedAds = ads.slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+            if (filterQuery) {
+                const q = filterQuery.toLowerCase();
+                sortedAds = sortedAds.filter(ad => {
+                    let ownerPhone = ad.phone || ad.user_phone || ad.whatsapp || ad.phoneNumber || ad.tel || '';
+                    if (!ownerPhone) {
+                        const phoneMatch = (ad.description || '').match(/\[USER_PHONE:(.*?)\]/) || (ad.description || '').match(/الهاتف:\s*([\d\+\-]+)/);
+                        if (phoneMatch) ownerPhone = phoneMatch[1].trim();
+                    }
+
+                    let ownerName = 'مستخدم الموقع';
+                    if (ownerPhone !== 'غير متوفر' && globalCachedUsersMap[ownerPhone]) {
+                        ownerName = globalCachedUsersMap[ownerPhone];
+                    } else if (ad.userName || ad.owner_name || ad.user_name) {
+                        ownerName = ad.userName || ad.owner_name || ad.user_name;
+                    } else {
+                        const descMatch = (ad.description || '').match(/\[NAME:(.*?)\]/);
+                        if (descMatch) ownerName = descMatch[1].trim();
+                    }
+
+                    return ownerName.toLowerCase().includes(q) || ownerPhone.toLowerCase().includes(q) || ad.title.toLowerCase().includes(q);
+                });
+            }
+
+            if (sortedAds.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد إعلانات مطابقة للبحث.</td></tr>';
                 return;
             }
-            ads.forEach(ad => {
+
+            sortedAds.forEach(ad => {
                 const tr = document.createElement('tr');
                 const imgTag = ad.image_url ? `<img src="${ad.image_url}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${ad.image_url}')" title="انقر لتكبير الصورة">` : '<span style="color:#aaa;">بدون صورة</span>';
                 const dateStr = ad.created_at ? new Date(ad.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
