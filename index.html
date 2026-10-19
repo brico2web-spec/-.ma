@@ -643,7 +643,7 @@
         }
 
         .products-section {
-            display: none;
+            display: block;
             width: 100%;
             max-width: 900px;
             margin: 0 auto;
@@ -1180,11 +1180,10 @@
 
             <nav class="nav-links">
                 <a id="homeNavBtn" class="active">الرئيسية</a>
-                <a id="howToExchangeBtn">كيفاش نتبادل؟</a>
-                <a id="offersNavBtn">منتوجات 0 درهم</a>
+                <a id="howToExchangeBtn">كيفاش المقايضة بي 0 درهم</a>
             </nav>
 
-            <div class="header-btn" id="headerBtnContainer">
+            <div class="header-btn" id="headerBtnContainer" style="display: none;">
                 <a id="startExchangeBtn" class="btn-primary">ابدأ المقايضة الأن</a>
             </div>
         </div>
@@ -1211,8 +1210,8 @@
             <span class="fav-badge" id="favBadgeCount">0</span>
         </button>
         <button class="bottom-nav-item active" id="bottomAdsBtn">
-            <i class="fa-solid fa-house"></i>
-            <span>بدل 0 درهم</span>
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>إعلاناتي</span>
         </button>
     </nav>
 
@@ -1668,7 +1667,7 @@
                 </div>
             </div>
 
-            <div class="products-section" id="productsSection">
+            <div class="products-section active" id="productsSection">
                 <div class="products-header" id="productsTopAnchor">
                     <h2>المنتجات المطروحة للمقايضة</h2>
                     <p>اختر ما يناسبك وابدأ عملية التبادل فوراً بـ 0 درهم</p>
@@ -1712,7 +1711,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.14</span>
+            <span class="version-tag">v0.9.16</span>
         </div>
     </footer>
 
@@ -2782,9 +2781,6 @@
 
         const sliderWrapper = document.getElementById('sliderWrapper');
         const productsSection = document.getElementById('productsSection');
-        const startExchangeBtn = document.getElementById('startExchangeBtn');
-        const headerBtnContainer = document.getElementById('headerBtnContainer');
-        const offersNavBtn = document.getElementById('offersNavBtn');
         const homeNavBtn = document.getElementById('homeNavBtn');
         const footerHomeBtn = document.getElementById('footerHomeBtn');
         const logoHomeBtn = document.getElementById('logoHomeBtn');
@@ -2794,29 +2790,23 @@
         function showProductsView(e) {
             if(e) e.preventDefault();
             stopSlider();
-            sliderWrapper.style.display = 'none';
+            sliderWrapper.style.display = 'block';
             productsSection.classList.add('active');
             homeNavBtn.classList.remove('active');
-            offersNavBtn.classList.add('active');
-            headerBtnContainer.style.display = 'none';
             currentPage = 1;
             fetchProductsFromSupabase();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('productsTopAnchor').scrollIntoView({ behavior: 'smooth' });
         }
 
         function showHomeView(e) {
             if(e) e.preventDefault();
-            productsSection.classList.remove('active');
+            productsSection.classList.add('active');
             sliderWrapper.style.display = 'block';
-            offersNavBtn.classList.remove('active');
             homeNavBtn.classList.add('active');
-            headerBtnContainer.style.display = 'block';
             startSlider();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        startExchangeBtn.addEventListener('click', showProductsView);
-        offersNavBtn.addEventListener('click', showProductsView);
         slideDiscoverBtn.addEventListener('click', showProductsView);
         
         modalDiscoverBtn.addEventListener('click', (e) => {
@@ -2875,8 +2865,9 @@
         }
 
         bottomAdsBtn.addEventListener('click', (e) => {
-            showProductsView(e);
+            e.preventDefault();
             setActiveBottomNav(bottomAdsBtn);
+            openMyAdsModalFunc();
         });
 
         bottomCameraBtn.addEventListener('click', () => {
