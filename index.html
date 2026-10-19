@@ -1703,7 +1703,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.12</span>
+            <span class="version-tag">v0.9.13</span>
         </div>
     </footer>
 
@@ -1714,7 +1714,7 @@
         const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         // دالة الضغط وزيادة الجودة والقياسات باش التصويرة متجيش مربعة أو مشوهة
-        function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.75) {
+        function compressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.85) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -2010,7 +2010,7 @@
                     `;
                 }
 
-                // استعمال object-fit: cover والتنسيق لضمان عرض جميل وغير مشوه
+                // استعمال object-fit: cover والتنسيق لضمان عرض جميل وغير مشوه وبجودة عالية
                 const displayImg = prod.image_url ? `<img src="${prod.image_url}" class="product-img" alt="${prod.title}">` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 
                 const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
@@ -2235,7 +2235,7 @@
                 const targetProductId = document.getElementById('target-product-id').value;
 
                 try {
-                    const compressedImage = await compressImage(file, 800, 800, 0.75);
+                    const compressedImage = await compressImage(file, 1000, 1000, 0.85);
                     if (_supabase) {
                         const reqPayload = {
                             title: "طلب مقايضة من " + userData.name,
@@ -2827,7 +2827,7 @@
                 }
 
                 const file = imageInput.files[0];
-                const compressedImage = await compressImage(file, 800, 800, 0.75);
+                const compressedImage = await compressImage(file, 1000, 1000, 0.85);
 
                 if (_supabase) {
                     const insertPayload = {
