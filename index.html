@@ -1697,7 +1697,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.5</span>
+            <span class="version-tag">v0.9.6</span>
         </div>
     </footer>
 
@@ -1987,10 +1987,8 @@
 
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
                 
-                // تحقق هل الإعلان يخص المستخدم الحالي
                 const isMyAd = currentUserPhone && ownerPhone && currentUserPhone === ownerPhone;
 
-                // تطبيق التنسيق المميز في حال كان الوصف يدل على العرض المفتوح
                 let descHTML = `<p class="product-desc">${cleanDesc}</p>`;
                 if (cleanDesc.includes('أقبل المقايضة بأي منتوج مقترح')) {
                     let formattedText = cleanDesc.replace('🔓', '').trim();
@@ -2298,6 +2296,7 @@
 
             try {
                 if (_supabase && userData.phone) {
+                    // جلب جميع المنتجات بما فيها الإعلانات العادية لضمان العثور على صورة المنتج المطلوب بدقة
                     const { data: allDbProducts } = await _supabase.from('products').select('id, title, image_url, description');
                     
                     const { data, error } = await _supabase
@@ -2321,12 +2320,13 @@
                                 const senderPhone = phoneMatch ? phoneMatch[1] : '';
                                 const senderCity = (cityMatch && cityMatch[1].trim() !== '' && cityMatch[1].trim() !== 'المغرب') ? cityMatch[1].trim() : 'القنيطرة';
                                 const senderDesc = descMatch ? descMatch[1] : '';
-                                const targetId = targetIdMatch ? targetIdMatch[1] : null;
+                                const targetId = targetIdMatch ? targetIdMatch[1].trim() : null;
 
-                                // البحث عن المنتوج المطلوب تبديله الخاص بي
+                                // البحث بدقة عن المنتوج المطلوب تبديله الخاص بي (من قاعدة البيانات العامة أو الذاكرة)
                                 let myTargetProductImg = '';
-                                if (targetId && allDbProducts) {
-                                    const targetProd = allDbProducts.find(p => String(p.id) === String(targetId));
+                                const searchPool = (allDbProducts && allDbProducts.length > 0) ? allDbProducts : allProducts;
+                                if (targetId && searchPool) {
+                                    const targetProd = searchPool.find(p => String(p.id) === String(targetId));
                                     if (targetProd && targetProd.image_url) {
                                         myTargetProductImg = targetProd.image_url;
                                     }
@@ -2335,7 +2335,6 @@
                                 const card = document.createElement('div');
                                 card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
                                 
-                                // تصميم عرض الصورتين جنباً إلى جنب (صورة منتوجك + صورة منتوج المقايض)
                                 let imagesComparisonHTML = '';
                                 const senderImgTag = req.image_url ? `<img src="${req.image_url}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
                                 
@@ -3201,7 +3200,6 @@
             }
         });
 
-        // تشغيل نافذة عن المنصة للمقايضة
         const footerAboutBtn = document.getElementById('footerAboutBtn');
         const aboutPlatformModal = document.getElementById('aboutPlatformModal');
         const closeAboutPlatformBtn = document.getElementById('closeAboutPlatformBtn');
@@ -3226,7 +3224,6 @@
             }
         });
 
-        // تشغيل نافذة الشروط والأحكام
         const footerTermsBtn = document.getElementById('footerTermsBtn');
         const termsModal = document.getElementById('termsModal');
         const closeTermsModalBtn = document.getElementById('closeTermsModalBtn');
@@ -3251,7 +3248,6 @@
             }
         });
 
-        // تشغيل نافذة سياسة الخصوصية
         const footerPrivacyBtn = document.getElementById('footerPrivacyBtn');
         const privacyModal = document.getElementById('privacyModal');
         const closePrivacyModalBtn = document.getElementById('closePrivacyModalBtn');
