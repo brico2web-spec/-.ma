@@ -522,6 +522,12 @@
             <!-- قسم طلبات المقايضة المرسلة الجديد -->
             <div id="adminRequestsSection" class="admin-panel-section">
                 <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-right-left"></i> تفاصيل طلبات المقايضة وحالة الموافقة (من قاعدة البيانات)</h3>
+                
+                <!-- خانة البحث الفوري لطلبات المقايضة -->
+                <div class="search-box-container">
+                    <input type="text" id="requestSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterRequestsTable()">
+                </div>
+
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -531,11 +537,10 @@
                                 <th>تفاصيل السلعة البديلة</th>
                                 <th>حالة الموافقة الواتساب</th>
                                 <th>تاريخ الطلب</th>
-                                <th>الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="adminRequestsTableBody">
-                            <tr><td colspan="6" style="text-align: center; color: var(--text-gray);">جاري تحميل طلبات المقايضة...</td></tr>
+                            <tr><td colspan="5" style="text-align: center; color: var(--text-gray);">جاري تحميل طلبات المقايضة...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -595,7 +600,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.11
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.12
     </footer>
 
     <!-- نافذة تكبير الصورة -->
@@ -840,15 +845,35 @@
             });
         }
 
-        // دالة إنشاء وعرض جدول طلبات المقايضة المرسلة وحالة واتساب
-        function renderRequestsTable(allData) {
+        // دالة إنشاء وعرض جدول طلبات المقايضة المرسلة مع الترتيب والبحث والحالات الملونة
+        function renderRequestsTable(allData, filterQuery = '') {
             const tbody = document.getElementById('adminRequestsTableBody');
             tbody.innerHTML = '';
             
-            const requests = allData.filter(i => (i.description || '').includes('[EXCHANGE_REQUEST]'));
+            let requests = allData.filter(i => (i.description || '').includes('[EXCHANGE_REQUEST]'));
             
+            // ترتيب الطلبات لتكون الطلبيات الجديدة هي الأولى (تنازلياً حسب created_at)
+            requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+            // تصفية حسب البحث (رقم الهاتف أو اسم المستخدم)
+            if (filterQuery) {
+                const q = filterQuery.toLowerCase();
+                requests = requests.filter(req => {
+                    const desc = req.description || '';
+                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                    const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
+                    
+                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
+                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
+                    const oPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim().toLowerCase() : '';
+
+                    return sName.includes(q) || sPhone.includes(q) || oPhone.includes(q);
+                });
+            }
+
             if (requests.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مقايضة مرسلة حالياً.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مقايضة مرسلة مطابقة.</td></tr>';
                 return;
             }
 
@@ -881,19 +906,27 @@
                     }
                 }
 
-                // تحديد حالة الموافقة الواتساب الحقيقية بناءً على الأرشيف أو القواعد
+                // التحقق من حالة الطلب (موافقة / رفض / قيد الانتظار)
                 let acceptedList = [];
                 try {
                     acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
                 } catch(e) { acceptedList = []; }
 
-                const isAcceptedInArchive = acceptedList.some(item => String(item.id) === String(req.id));
-                
-                let whatsappStatusHTML = '';
-                if (isAcceptedInArchive) {
-                    whatsappStatusHTML = `<span class="badge-user" style="background:#e6f7f0; color:var(--primary-green);"><i class="fa-solid fa-circle-check"></i> تمت الموافقة عليه (تم النقر على واتساب)</span>`;
+                let rejectedList = [];
+                try {
+                    rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || '[]');
+                } catch(e) { rejectedList = []; }
+
+                const isAccepted = acceptedList.some(item => String(item.id) === String(req.id));
+                const isRejected = rejectedList.some(item => String(item.id) === String(req.id)) || req.status === 'rejected';
+
+                let statusHTML = '';
+                if (isAccepted) {
+                    statusHTML = `<span class="badge-user" style="background:#e6f7f0; color:var(--primary-green);"><i class="fa-solid fa-circle-check"></i> موافقة</span>`;
+                } else if (isRejected) {
+                    statusHTML = `<span class="badge-user" style="background:#fadbd8; color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i> رفض</span>`;
                 } else {
-                    whatsappStatusHTML = `<span class="badge-user" style="background:#fff3f2; color:var(--danger);"><i class="fa-solid fa-clock"></i> قيد إنتظار الموافقة</span>`;
+                    statusHTML = `<span class="badge-user" style="background:#fef5e7; color:#d35400;"><i class="fa-solid fa-clock"></i> قيد الإنتظار</span>`;
                 }
 
                 const tr = document.createElement('tr');
@@ -901,29 +934,17 @@
                     <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);">${senderPhone}</span></td>
                     <td><span class="badge-user"><i class="fa-solid fa-user-shield"></i> ${receiverName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);">${ownerPhone}</span></td>
                     <td style="font-weight:700;">${senderDesc}</td>
-                    <td>${whatsappStatusHTML}</td>
+                    <td>${statusHTML}</td>
                     <td>${dateStr}</td>
-                    <td>
-                        <button onclick="adminDeleteRequest(${req.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف الطلب</button>
-                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        window.adminDeleteRequest = function(id) {
-            showCustomConfirm('هل أنت متأكد من رغبتك في حذف طلب المقايضة هذا نهائياً؟', async () => {
-                if (_supabase) {
-                    const { error } = await _supabase.from('products').delete().eq('id', Number(id));
-                    if (!error) {
-                        showCustomAlert('تم حذف طلب المقايضة بنجاح من قاعدة البيانات.', true);
-                        loadAdminData();
-                    } else {
-                        showCustomAlert('فشل حذف الطلب: ' + error.message, false);
-                    }
-                }
-            });
-        };
+        function filterRequestsTable() {
+            const query = document.getElementById('requestSearchInput').value.trim();
+            renderRequestsTable(globalCachedRawData, query);
+        }
 
         // دالة إنشاء وعرض مبيان الترافيك المفصل والمتصل بقاعدة البيانات حقيقة
         function renderTrafficChart(mode, eventObj = null) {
