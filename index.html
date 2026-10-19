@@ -11,7 +11,6 @@
     <!-- Supabase JS Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* إعادة ضبط الأساسيات والخطوط */
         * {
             margin: 0;
             padding: 0;
@@ -31,7 +30,7 @@
             background-color: var(--light-bg);
             color: var(--dark-blue);
             direction: rtl;
-            padding-bottom: 70px; /* مساحة لكي لا يختفي المحتوى خلف الشريط السفلي في الهاتف */
+            padding-bottom: 70px;
         }
 
         .container {
@@ -40,7 +39,6 @@
             margin: 0 auto;
         }
 
-        /* 1. الهيدر (Header) */
         .main-header {
             background-color: var(--white);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -49,7 +47,6 @@
             z-index: 1000;
         }
 
-        /* شريط أعلى الهيدر لتسجيل الدخول / تسجيل جديد أو عرض اسم المستخدم */
         .top-auth-bar {
             background-color: #f2f7f4;
             text-align: center;
@@ -86,7 +83,6 @@
             position: relative;
         }
 
-        /* إعدادات الشعار والسلوغون */
         .brand-box {
             display: flex;
             flex-direction: column;
@@ -98,7 +94,7 @@
         .logo {
             font-size: 2rem;
             font-weight: 900;
-            font-family: 'Cairo', sans-serif; /* الخط الجديد للشعار */
+            font-family: 'Cairo', sans-serif;
             line-height: 1;
             letter-spacing: -0.5px;
         }
@@ -134,7 +130,6 @@
             opacity: 0.9;
         }
 
-        /* توسيط المنيو في الوسط تماماً */
         .nav-links {
             position: absolute;
             left: 50%;
@@ -178,7 +173,6 @@
             background-color: #008f5a;
         }
 
-        /* زر إضافي متناسق داخل السلايدر */
         .slide-btn {
             display: inline-block;
             background-color: var(--primary-green);
@@ -199,7 +193,6 @@
             transform: translateY(-2px);
         }
 
-        /* نافذة منبثقة (Modal) عامة بتصميم عادي متناسق */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -267,7 +260,6 @@
             word-break: break-word;
         }
 
-        /* تنسيق قائمة الحساب الأنيقة */
         .account-menu-list {
             display: flex;
             flex-direction: column;
@@ -317,7 +309,6 @@
             border-color: #e74c3c;
         }
 
-        /* نافذة التنبيهات العادية المتناسقة مع ألوان الموقع */
         .custom-alert-box {
             text-align: center;
             padding: 5px 0;
@@ -338,7 +329,6 @@
             word-break: break-word;
         }
 
-        /* تبويبات نافذة الدخول / تسجيل جديد */
         .auth-tabs {
             display: flex;
             justify-content: center;
@@ -417,7 +407,6 @@
             background-color: #008f5a;
         }
 
-        /* تنسيق النماذج (Forms) */
         .contact-form {
             display: flex;
             flex-direction: column;
@@ -459,7 +448,6 @@
             min-height: 70px;
         }
 
-        /* تنسيق زر رفع الصور العصري والمتناسق مع الموقع */
         .custom-file-upload {
             display: flex;
             align-items: center;
@@ -521,7 +509,6 @@
             accent-color: var(--primary-green);
         }
 
-        /* تصميم مربع اختيار المقايضة المفتوحة بشكل جذاب ومثيرة للانتباه */
         .open-exchange-box {
             background: linear-gradient(135deg, #e6f7f0 0%, #f2f7f4 100%);
             border: 2px dashed var(--primary-green);
@@ -576,7 +563,6 @@
             background-color: #008f5a;
         }
 
-        /* 2. السلايدر (Slider) و صفحة العروض */
         .slider-section {
             position: relative;
             padding: 40px 15px;
@@ -656,7 +642,6 @@
             word-break: break-word;
         }
 
-        /* تنسيق قسم عروض المقايضة (مكان السلايدر عند الضغط على ابدأ المقايضة) */
         .products-section {
             display: none;
             width: 100%;
@@ -706,13 +691,13 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            cursor: pointer;
         }
 
         .product-card:hover {
             transform: translateY(-5px);
         }
 
-        /* زر المفضلة على بطاقة المنتج (يظهر حصراً عند تسجيل الدخول) */
         .product-fav-btn {
             position: absolute;
             top: 10px;
@@ -722,7 +707,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            display: none; /* مخفي افتراضياً للمستخدمين الزوار */
+            display: none;
             align-items: center;
             justify-content: center;
             cursor: pointer;
@@ -733,7 +718,7 @@
         }
 
         .product-fav-btn.active, .product-fav-btn:hover {
-            color: #e74c3c;
+            color: var(--primary-green);
             background: #ffffff;
         }
 
@@ -818,7 +803,6 @@
             background-color: #008f5a;
         }
 
-        /* أزرار التصفح (Pagination) */
         .pagination-container {
             display: flex;
             justify-content: center;
@@ -852,7 +836,6 @@
             cursor: not-allowed;
         }
 
-        /* أيقونات المميزات */
         .features-icons {
             display: flex;
             justify-content: center;
@@ -896,7 +879,6 @@
             text-align: center;
         }
 
-        /* نقاط التنقل */
         .slider-dots {
             text-align: center;
             margin-top: 12px;
@@ -919,7 +901,6 @@
             border-radius: 10px;
         }
 
-        /* شريط التنقل السفلي الجديد العصري (Bottom Navigation Bar) */
         .bottom-nav-bar {
             position: fixed;
             bottom: 0;
@@ -966,8 +947,7 @@
             color: var(--primary-green);
         }
 
-        /* شارة الإشعارات الحمراء فوق أيقونة الرسائل مع رقم أبيض */
-        .msg-badge {
+        .msg-badge, .fav-badge {
             position: absolute;
             top: -3px;
             right: 8px;
@@ -979,11 +959,14 @@
             border-radius: 10px;
             display: none;
         }
-        .msg-badge.active {
+        .msg-badge.active, .fav-badge.active {
             display: inline-block;
         }
+        .fav-badge {
+            background-color: var(--primary-green);
+            color: #ffffff !important;
+        }
 
-        /* زر الكاميرا البارز في الوسط تماماً */
         .bottom-nav-camera {
             position: relative;
             top: -15px;
@@ -1016,7 +999,6 @@
             transform: scale(1.05);
         }
 
-        /* 3. الفوتر (Footer) */
         .main-footer {
             background-color: var(--dark-blue);
             color: var(--white);
@@ -1107,7 +1089,6 @@
             font-size: 0.7rem;
         }
 
-        /* التجاوب مع مختلف الشاشات (Responsive) */
         @media (max-width: 768px) {
             .header-container {
                 flex-direction: column;
@@ -1150,16 +1131,13 @@
 </head>
 <body>
 
-    <!-- الهيدر (Header) -->
     <header class="main-header" id="topHeader">
-        <!-- شريط أعلى الهيدر في الوسط لتسجيل الدخول / تسجيل جديد -->
         <div class="top-auth-bar" id="topAuthBar">
             <a id="openAuthModalBtn">
                 <span class="auth-login-text">الدخول</span> / <span class="auth-register-text">تسجيل جديد</span>
             </a>
         </div>
         <div class="container header-container">
-            <!-- الشعار + السلوغون الجديد -->
             <a class="brand-box" id="logoHomeBtn">
                 <div class="logo">
                     <span class="logo-green">بدل</span><span class="logo-dark">.ma</span>
@@ -1180,7 +1158,6 @@
         </div>
     </header>
 
-    <!-- شريط التنقل السفلي الجديد (Bottom Navigation Bar) -->
     <nav class="bottom-nav-bar">
         <button class="bottom-nav-item" id="bottomAccountBtn">
             <i class="fa-regular fa-user"></i>
@@ -1199,6 +1176,7 @@
         <button class="bottom-nav-item" id="bottomFavoritesBtn">
             <i class="fa-regular fa-heart"></i>
             <span>المفضلة</span>
+            <span class="fav-badge" id="favBadgeCount">0</span>
         </button>
         <button class="bottom-nav-item active" id="bottomAdsBtn">
             <i class="fa-solid fa-house"></i>
@@ -1206,7 +1184,13 @@
         </button>
     </nav>
 
-    <!-- نافذة منبثقة لطلب التبادل (مع رفع الصورة، الوصف، وكود منع كتابة أرقام الهواتف) -->
+    <div class="modal-overlay" id="productDetailsModal">
+        <div class="modal-content" style="max-width: 520px; text-align: right;">
+            <button class="modal-close" id="closeProductDetailsBtn">&times;</button>
+            <div id="productDetailsModalBody" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;"></div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="exchangeRequestModal">
         <div class="modal-content">
             <button class="modal-close" id="closeExchangeModalBtn">&times;</button>
@@ -1232,18 +1216,14 @@
         </div>
     </div>
 
-    <!-- نافذة الرسائل والطلبات الواردة (تعرض صورة مصغرة وواضحة للسلعة مع زري موافق ورفض الطلب) -->
     <div class="modal-overlay" id="messagesModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="modal-close" id="closeMessagesModalBtn">&times;</button>
             <h2 class="modal-title">طلبات <span class="logo-green">المقايضة الواردة</span></h2>
-            <div id="incomingRequestsContainer" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
-                <!-- يتم تعبئة الطلبات الواردة هنا ديناميكياً -->
-            </div>
+            <div id="incomingRequestsContainer" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;"></div>
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لقائمة الحساب الأنيقة عند تسجيل الدخول (بدون زر طلباتي) -->
     <div class="modal-overlay" id="accountMenuModal">
         <div class="modal-content" style="max-width: 400px; text-align: center;">
             <button class="modal-close" id="closeAccountMenuBtn">&times;</button>
@@ -1266,7 +1246,6 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ إعدادات الحساب الشخصي (تغيير رقم الهاتف، المدينة وتأكيد كلمة المرور الحالية) -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-content" style="max-width: 450px;">
             <button class="modal-close" id="closeSettingsModalBtn">&times;</button>
@@ -1289,29 +1268,23 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ عرض المنتجات المفضلة -->
     <div class="modal-overlay" id="favoritesModal">
         <div class="modal-content" style="max-width: 600px;">
             <button class="modal-close" id="closeFavoritesModalBtn">&times;</button>
             <h2 class="modal-title">المنتجات <span class="logo-green">المفضلة</span></h2>
-            <div class="products-grid" id="favoritesGridContainer" style="margin-top: 15px;">
-                <!-- يتم تعبئة المفضلة هنا ديناميكياً -->
-            </div>
+            <div class="products-grid" id="favoritesGridContainer" style="margin-top: 15px;"></div>
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ عرض إعلانات المستخدم (اعلاناتي) -->
+    <!-- نافذة اعلاناتي (محدثة لتبحث برقم الهاتف 0601749553 حصراً لضمان ظهور إعلاناتك) -->
     <div class="modal-overlay" id="myAdsModal">
         <div class="modal-content" style="max-width: 550px; padding: 18px;">
             <button class="modal-close" id="closeMyAdsModalBtn">&times;</button>
             <h2 class="modal-title">اعلاناتي <span class="logo-green">المنشورة</span></h2>
-            <div id="myAdsContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
-                <!-- يتم تعبئة إعلانات المستخدم ديناميكياً هنا -->
-            </div>
+            <div id="myAdsContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;"></div>
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ تعديل الإعلان -->
     <div class="modal-overlay" id="editAdModal">
         <div class="modal-content">
             <button class="modal-close" id="closeEditAdModalBtn">&times;</button>
@@ -1345,7 +1318,6 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة مخصصة لتأكيد الحذف بتصميم الموقع -->
     <div class="modal-overlay" id="customConfirmModal">
         <div class="modal-content" style="max-width: 380px; text-align: center;">
             <button class="modal-close" id="closeCustomConfirmBtn">&times;</button>
@@ -1360,7 +1332,6 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ رفع منتج جديد عبر الكاميرا -->
     <div class="modal-overlay" id="addAdModal">
         <div class="modal-content">
             <button class="modal-close" id="closeAddAdModalBtn">&times;</button>
@@ -1370,11 +1341,10 @@
                     <label for="ad-title">عنوان السلعة:</label>
                     <input type="text" id="ad-title" placeholder="مثال: هاتف ذكي، جاكيت..." required>
                 </div>
-                <!-- خانة تفعيل خيار المقايضة بأي منتوج بحسب الطلب -->
                 <div class="form-group">
                     <div class="open-exchange-box" id="openExchangeToggleBox">
                         <input type="checkbox" id="open-exchange-checkbox">
-                        <label for="open-exchange-checkbox"><i class="fa-solid fa-shuffle" style="color:var(--primary-green);"></i> 🔓 أقبل المقايضة بأي منتوج مقترح (بدون شروط محددة)</label>
+                        <label for="open-exchange-checkbox"><i class="fa-solid fa-handshake-angle" style="color:var(--primary-green);"></i> أقبل المقايضة بأي منتوج مقترح (بدون شروط محددة)</label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -1408,7 +1378,6 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ الدخول / تسجيل جديد -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-content">
             <button class="modal-close" id="closeAuthModalBtn">&times;</button>
@@ -1417,7 +1386,6 @@
                 <button class="auth-tab-btn" id="tabRegisterBtn">تسجيل جديد</button>
             </div>
 
-            <!-- نموذج الدخول -->
             <div class="auth-form-panel active" id="loginPanel">
                 <h2 class="modal-title">تسجيل <span class="logo-green">الدخول</span></h2>
                 <form class="contact-form" id="loginForm">
@@ -1433,7 +1401,6 @@
                 </form>
             </div>
 
-            <!-- نموذج تسجيل جديد -->
             <div class="auth-form-panel" id="registerPanel">
                 <h2 class="modal-title"><span class="logo-green">تسجيل</span> جديد</h2>
                 <form class="contact-form" id="registerForm">
@@ -1466,7 +1433,6 @@
         </div>
     </div>
 
-    <!-- نافذة تنبيهات عادية متناسقة مع ألوان الموقع -->
     <div class="modal-overlay" id="customAlertModal">
         <div class="modal-content" style="max-width: 380px; text-align: center;">
             <button class="modal-close" id="closeCustomAlertBtn">&times;</button>
@@ -1478,7 +1444,6 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ كيفاش نتبادل؟ -->
     <div class="modal-overlay" id="howToModal">
         <div class="modal-content">
             <button class="modal-close" id="closeModalBtn">&times;</button>
@@ -1504,7 +1469,6 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة (Modal) لـ تواصل معنا -->
     <div class="modal-overlay" id="contactModal">
         <div class="modal-content">
             <button class="modal-close" id="closeContactModalBtn">&times;</button>
@@ -1527,13 +1491,9 @@
         </div>
     </div>
 
-    <!-- السلايدر (Slider) / قسم العروض -->
     <section class="slider-section">
         <div class="slider-container">
-            
-            <!-- السلايدر الرئيسي (Home View) -->
             <div id="sliderWrapper">
-                <!-- الشريحة الأولى -->
                 <div class="slide active">
                     <div class="slide-content">
                         <h2>بلاست ما تلوحو، بدلو!</h2>
@@ -1557,7 +1517,6 @@
                     </div>
                 </div>
 
-                <!-- الشريحة الثانية -->
                 <div class="slide">
                     <div class="slide-content">
                         <a id="slideDiscoverBtn" class="slide-btn">اكتشف الآن</a>
@@ -1568,34 +1527,27 @@
                     </div>
                 </div>
 
-                <!-- نقاط التنقل -->
                 <div class="slider-dots" id="sliderDots">
                     <span class="dot active" onclick="currentSlide(0)"></span>
                     <span class="dot" onclick="currentSlide(1)"></span>
                 </div>
             </div>
 
-            <!-- قسم المنتجات المطروحة للمقايضة (Products View) -->
             <div class="products-section" id="productsSection">
                 <div class="products-header" id="productsTopAnchor">
                     <h2>المنتجات المطروحة للمقايضة</h2>
                     <p>اختر ما يناسبك وابدأ عملية التبادل فوراً بـ 0 درهم</p>
                 </div>
-                <div class="products-grid" id="productsGridContainer">
-                    <!-- يتم تعبئة المنتجات ديناميكياً مباشرة من Supabase -->
-                </div>
-                <!-- أزرار التصفح (Pagination) -->
+                <div class="products-grid" id="productsGridContainer"></div>
                 <div class="pagination-container" id="paginationContainer">
                     <button class="page-btn" id="prevPageBtn">سابق</button>
                     <div id="pageNumbersContainer" style="display: flex; gap: 5px;"></div>
                     <button class="page-btn" id="nextPageBtn">التالي</button>
                 </div>
             </div>
-
         </div>
     </section>
 
-    <!-- الفوتر (Footer) -->
     <footer class="main-footer">
         <div class="container footer-container">
             <div class="footer-brand">
@@ -1625,19 +1577,16 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.7.1</span>
+            <span class="version-tag">v0.8.1</span>
         </div>
     </footer>
 
     <script>
-        // إعدادات اتصال Supabase للمشروع الجديد بدل.ma
         const SUPABASE_URL = 'https://pjhkvfuknzvwsiznhhfn.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_WbY6CQps3E0OJobdxS6cBQ_hNGrxtyP';
         
-        // تهيئة عميل Supabase بأسماء متغيرة تجنباً للتضارب
         const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-        // دالة ضغط الصور المضاعفة بأبعاد أصغر وجودة مخفضة لسرعة خيالية وصاروخية
         function compressImage(file, maxWidth = 350, maxHeight = 350, quality = 0.4) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -1670,7 +1619,6 @@
             });
         }
 
-        // دالة عرض التنبيه العادي المتناسق مع ألوان الموقع
         function showCustomAlert(message, isSuccess = true) {
             const alertModal = document.getElementById('customAlertModal');
             const alertMsg = document.getElementById('customAlertMessage');
@@ -1699,7 +1647,6 @@
             }
         });
 
-        // نافذة تأكيد الحذف المخصصة
         const customConfirmModal = document.getElementById('customConfirmModal');
         const closeCustomConfirmBtn = document.getElementById('closeCustomConfirmBtn');
         const customConfirmNoBtn = document.getElementById('customConfirmNoBtn');
@@ -1738,7 +1685,6 @@
         const dots = document.querySelectorAll('.dot');
         let slideInterval;
 
-        // إظهار الشريحة المحددة
         function showSlide(index) {
             if (index >= slides.length) {
                 currentSlideIndex = 0;
@@ -1773,7 +1719,6 @@
 
         startSlider();
 
-        // متغيرات جلب العروض مباشرة من Supabase مع التحديث التلقائي اللحظي
         let allProducts = [];
         let currentPage = 1;
         const itemsPerPage = 8;
@@ -1803,6 +1748,7 @@
                     }
                 }
                 renderProducts(currentPage);
+                updateFavoritesBadge();
             } catch (err) {
                 console.error('فشل الاتصال بـ Supabase:', err);
                 renderProducts(currentPage);
@@ -1811,7 +1757,6 @@
             }
         }
 
-        // تفعيل الاستماع الفوري والتلقائي (Realtime Sync) لتحديث المنتجات والرسائل تلقائياً بدون إعادة تحميل الصفحة
         if (_supabase) {
             _supabase
                 .channel('public:products')
@@ -1828,7 +1773,6 @@
                 .subscribe();
         }
 
-        // إدارة المفضلة المحلية (LocalStorage)
         function getFavorites() {
             try {
                 return JSON.parse(localStorage.getItem('badal_favorites') || '[]');
@@ -1837,8 +1781,22 @@
             }
         }
 
+        function updateFavoritesBadge() {
+            const favs = getFavorites();
+            const badge = document.getElementById('favBadgeCount');
+            if (badge) {
+                if (favs.length > 0) {
+                    badge.textContent = favs.length;
+                    badge.classList.add('active');
+                } else {
+                    badge.textContent = '0';
+                    badge.classList.remove('active');
+                }
+            }
+        }
+
         window.toggleFavorite = function(productId, event) {
-            if(event) event.preventDefault();
+            if(event) event.stopPropagation();
             const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openRegistrationTab();
@@ -1855,6 +1813,10 @@
             }
             localStorage.setItem('badal_favorites', JSON.stringify(favs));
             renderProducts(currentPage);
+            updateFavoritesBadge();
+            if(document.getElementById('favoritesModal').classList.contains('active')) {
+                openFavoritesModal();
+            }
         }
 
         function renderProducts(page) {
@@ -1910,14 +1872,53 @@
                         </div>
                         <h3 class="product-title">${prod.title}</h3>
                         <p class="product-desc">${cleanDesc}</p>
-                        <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>
+                        <a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>
                     </div>
                 `;
+                
+                card.addEventListener('click', () => {
+                    openProductDetailsModal(prod, cleanDesc, prodCity, ownerPhone);
+                });
+
                 gridContainer.appendChild(card);
             });
 
             renderPaginationControls();
         }
+
+        const productDetailsModal = document.getElementById('productDetailsModal');
+        const closeProductDetailsBtn = document.getElementById('closeProductDetailsBtn');
+        const productDetailsModalBody = document.getElementById('productDetailsModalBody');
+
+        function openProductDetailsModal(prod, cleanDesc, prodCity, ownerPhone) {
+            const iconClass = prod.icon || 'fa-box-open';
+            const displayImgFull = prod.image_url ? `<div style="width:100%; height:260px; background-image:url('${prod.image_url}'); background-size:cover; background-position:center; border-radius:10px; border:1px solid #d2ded7;"></div>` : `<div style="width:100%; height:220px; background-color:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:3rem;"><i class="fa-solid ${iconClass}"></i></div>`;
+
+            productDetailsModalBody.innerHTML = `
+                <h2 style="font-size:1.3rem; font-weight:900; color:var(--dark-blue); font-family:'Cairo', sans-serif; text-align:center; margin-bottom:5px;">${prod.title}</h2>
+                <div style="display:flex; justify-content:center; gap:8px; margin-bottom:5px;">
+                    <span class="product-badge">${prod.category}</span>
+                    <span class="product-city-badge"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${prodCity}</span>
+                </div>
+                ${displayImgFull}
+                <div style="background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:8px; margin-top:5px;">
+                    <h4 style="font-size:0.9rem; font-weight:800; color:var(--dark-blue); margin-bottom:4px;">وصف السلعة:</h4>
+                    <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.5; word-break:break-word;">${cleanDesc}</p>
+                </div>
+                <button type="button" class="form-submit-btn" style="margin-top:10px;" onclick="productDetailsModal.classList.remove('active'); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</button>
+            `;
+            productDetailsModal.classList.add('active');
+        }
+
+        closeProductDetailsBtn.addEventListener('click', () => {
+            productDetailsModal.classList.remove('active');
+        });
+
+        productDetailsModal.addEventListener('click', (e) => {
+            if (e.target === productDetailsModal) {
+                productDetailsModal.classList.remove('active');
+            }
+        });
 
         function renderPaginationControls() {
             const totalPages = Math.ceil(allProducts.length / itemsPerPage);
@@ -1986,7 +1987,6 @@
             authModal.classList.add('active');
         }
 
-        // نافذة طلب التبادل مع رفع الصورة والوصف وكود منع كتابة أرقام الهواتف
         const exchangeRequestModal = document.getElementById('exchangeRequestModal');
         const closeExchangeModalBtn = document.getElementById('closeExchangeModalBtn');
         const exchangeRequestForm = document.getElementById('exchangeRequestForm');
@@ -2007,7 +2007,7 @@
         if(exchangeItemDesc) {
             exchangeItemDesc.addEventListener('input', (e) => {
                 const val = e.target.value;
-                const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
+                const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9])[0-9]{8})/g;
                 if (phoneRegex.test(val)) {
                     showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف حفاظاً على الأمان!', false);
                     e.target.value = val.replace(phoneRegex, '');
@@ -2057,18 +2057,12 @@
                 const descText = exchangeItemDesc.value.trim();
                 const ownerPhone = document.getElementById('target-owner-phone').value;
 
-                const phoneRegex = /(\d{6,})|((\+212|0)([ \-_/]?[0-9]){9})/g;
-                if (phoneRegex.test(descText)) {
-                    showCustomAlert('ممنوع كتابة أرقام الهواتف في الوصف!', false);
-                    return;
-                }
-
                 try {
                     const compressedImage = await compressImage(file, 350, 350, 0.4);
                     if (_supabase) {
                         const reqPayload = {
                             title: "طلب مقايضة من " + userData.name,
-                            description: `[EXCHANGE_REQUEST] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [DESC:${descText}]`,
+                            description: `[EXCHANGE_REQUEST] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [SENDER_CITY:${userData.city || 'القنيطرة'}] [DESC:${descText}]`,
                             category: "تلفونات",
                             city: userData.city || 'القنيطرة',
                             image_url: compressedImage
@@ -2084,11 +2078,6 @@
                         } else {
                             showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
                         }
-                    } else {
-                        showCustomAlert('تم إرسال طلب التبادل بنجاح!', true);
-                        exchangeRequestModal.classList.remove('active');
-                        exchangeRequestForm.reset();
-                        exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
                     }
                 } catch (err) {
                     console.error(err);
@@ -2097,28 +2086,24 @@
             });
         }
 
-        // فحص عدد الطلبات الواردة الخاصة بالمستخدم الحالي مباشرة من Supabase
         async function checkIncomingRequestsCount() {
             try {
                 const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
                 if (!currentSupabaseUser) return;
                 const userData = JSON.parse(currentSupabaseUser);
 
-                if (_supabase) {
-                    const { data, error } = await _supabase.from('products').select('description');
-                    if (!error && data) {
-                        const requests = data.filter(item => {
-                            const desc = item.description || '';
-                            if (!desc.includes('[EXCHANGE_REQUEST]')) return false;
-                            return userData.phone && desc.includes(`[OWNER_PHONE:${userData.phone}]`);
-                        });
-                        const badge = document.getElementById('msgBadgeCount');
-                        if (requests.length > 0) {
-                            badge.textContent = requests.length;
-                            badge.classList.add('active');
-                        } else {
-                            badge.classList.remove('active');
-                        }
+                if (_supabase && userData.phone) {
+                    const { data, error } = await _supabase
+                        .from('products')
+                        .select('id, description')
+                        .ilike('description', `%[EXCHANGE_REQUEST]%[OWNER_PHONE:${userData.phone}]%`);
+
+                    const badge = document.getElementById('msgBadgeCount');
+                    if (!error && data && data.length > 0) {
+                        badge.textContent = data.length;
+                        badge.classList.add('active');
+                    } else {
+                        badge.classList.remove('active');
                     }
                 }
             } catch (err) {
@@ -2126,7 +2111,6 @@
             }
         }
 
-        // نافذة الرسائل والطلبات الواردة (تعتمد حصراً وبشكل مباشر على Supabase)
         const messagesModal = document.getElementById('messagesModal');
         const closeMessagesModalBtn = document.getElementById('closeMessagesModalBtn');
         const incomingRequestsContainer = document.getElementById('incomingRequestsContainer');
@@ -2141,29 +2125,30 @@
             const userData = JSON.parse(currentSupabaseUser);
             setActiveBottomNav(bottomMessagesBtn);
 
-            incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);">جاري تحميل الطلبات الواردة الخاصة بك...</p>';
+            incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل الطلبات الواردة...</p>';
             messagesModal.classList.add('active');
 
             try {
-                if (_supabase) {
-                    const { data, error } = await _supabase.from('products').select('id, title, description, image_url, created_at').order('created_at', { ascending: false });
-                    if (!error && data) {
-                        const requests = data.filter(item => {
-                            const desc = item.description || '';
-                            if (!desc.includes('[EXCHANGE_REQUEST]')) return false;
-                            return userData.phone && desc.includes(`[OWNER_PHONE:${userData.phone}]`);
-                        });
+                if (_supabase && userData.phone) {
+                    const { data, error } = await _supabase
+                        .from('products')
+                        .select('id, title, description, image_url, created_at')
+                        .ilike('description', `%[EXCHANGE_REQUEST]%[OWNER_PHONE:${userData.phone}]%`)
+                        .order('created_at', { ascending: false });
 
-                        if (requests.length > 0) {
+                    if (!error && data) {
+                        if (data.length > 0) {
                             incomingRequestsContainer.innerHTML = '';
-                            requests.forEach(req => {
+                            data.forEach(req => {
                                 const desc = req.description || '';
                                 const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
                                 const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                                const cityMatch = desc.match(/\[SENDER_CITY:(.*?)\]/);
                                 const descMatch = desc.match(/\[DESC:(.*?)\]/);
                                 
                                 const senderName = nameMatch ? nameMatch[1] : 'مستخدم';
                                 const senderPhone = phoneMatch ? phoneMatch[1] : '';
+                                const senderCity = (cityMatch && cityMatch[1].trim() !== '' && cityMatch[1].trim() !== 'المغرب') ? cityMatch[1].trim() : 'القنيطرة';
                                 const senderDesc = descMatch ? descMatch[1] : '';
 
                                 const card = document.createElement('div');
@@ -2173,14 +2158,14 @@
 
                                 card.innerHTML = `
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                                        <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);">طلب من: ${senderName}</h4>
+                                        <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${senderCity}</h4>
                                         <span style="font-size:0.75rem; color:var(--primary-green); font-weight:700;">مقايضة جديدة</span>
                                     </div>
                                     ${imgBox}
-                                    <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة الطرف الثاني:</b> ${senderDesc}</p>
+                                    <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف المنتوج للمقايض:</b> ${senderDesc}</p>
                                     <div style="display:flex; gap:10px; margin-top:5px;">
-                                        <button id="btn-accept-${req.id}" onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; justify-content:center; gap:6px;"><i class="fa-solid fa-check"></i> موافق</button>
-                                        <button onclick="cancelExchangeRequest('${req.id}')" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-xmark"></i> رفض الطلب</button>
+                                        <button onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">موافق</button>
+                                        <button onclick="cancelExchangeRequest(${req.id})" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">رفض الطلب</button>
                                     </div>
                                 `;
                                 incomingRequestsContainer.appendChild(card);
@@ -2188,6 +2173,8 @@
                         } else {
                             incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
                         }
+                    } else {
+                        incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
                     }
                 }
             } catch (err) {
@@ -2200,6 +2187,7 @@
             messagesModal.classList.remove('active');
         });
 
+        messagesModal.classList.remove('active');
         messagesModal.addEventListener('click', (e) => {
             if (e.target === messagesModal) {
                 messagesModal.classList.remove('active');
@@ -2212,22 +2200,13 @@
                 cleanPhone = '212' + cleanPhone.substring(1);
             }
             const whatsappUrl = `https://wa.me/${cleanPhone}?text=مرحباً ${name}، وافقت على طلب المقايضة الخاص بك عبر منصة بدل.ma`;
-            
-            const btn = document.getElementById(`btn-accept-${reqId}`);
-            if(btn) {
-                btn.style.backgroundColor = '#25D366';
-                btn.innerHTML = `<i class="fa-brands fa-whatsapp" style="font-size:1.1rem;"></i> تواصل عبر الواتساب`;
-                btn.onclick = () => {
-                    window.open(whatsappUrl, '_blank');
-                };
-            }
             window.open(whatsappUrl, '_blank');
         };
 
         window.cancelExchangeRequest = async function(reqId) {
             showCustomConfirm(async () => {
                 if (_supabase) {
-                    const { error } = await _supabase.from('products').delete().eq('id', reqId);
+                    const { error } = await _supabase.from('products').delete().eq('id', Number(reqId));
                     if (!error) {
                         showCustomAlert('تم رفض وحذف طلب المقايضة بنجاح من قاعدة البيانات.', true);
                         messagesModal.classList.remove('active');
@@ -2240,7 +2219,6 @@
             });
         };
 
-        // نافذة المفضلة
         const favoritesModal = document.getElementById('favoritesModal');
         const closeFavoritesModalBtn = document.getElementById('closeFavoritesModalBtn');
         const favoritesGridContainer = document.getElementById('favoritesGridContainer');
@@ -2267,7 +2245,7 @@
                     const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
 
                     card.innerHTML = `
-                        <button class="product-fav-btn active" style="display: flex;" onclick="toggleFavorite(${prod.id}, event); openFavoritesModal();" title="إزالة من المفضلة">
+                        <button class="product-fav-btn active" style="display: flex;" onclick="toggleFavorite(${prod.id}, event)" title="إزالة من المفضلة">
                             <i class="fa-solid fa-heart"></i>
                         </button>
                         ${displayImg}
@@ -2278,9 +2256,14 @@
                             </div>
                             <h3 class="product-title">${prod.title}</h3>
                             <p class="product-desc">${cleanDesc}</p>
-                            <a href="#" class="product-btn" onclick="event.preventDefault(); handleExchangeRequest('${prod.title}', ${prod.id});">طلب تبدل معاه</a>
+                            <a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title}', ${prod.id});">طلب تبدل معاه</a>
                         </div>
                     `;
+
+                    card.addEventListener('click', () => {
+                        openProductDetailsModal(prod, cleanDesc, prodCity, '');
+                    });
+
                     favoritesGridContainer.appendChild(card);
                 });
             } else {
@@ -2298,13 +2281,13 @@
             favoritesModal.classList.remove('active');
         });
 
+        favoritesModal.classList.remove('active');
         favoritesModal.addEventListener('click', (e) => {
             if (e.target === favoritesModal) {
                 favoritesModal.classList.remove('active');
             }
         });
 
-        // التبديل بين الرئيسية وعرض المنتجات
         const sliderWrapper = document.getElementById('sliderWrapper');
         const productsSection = document.getElementById('productsSection');
         const startExchangeBtn = document.getElementById('startExchangeBtn');
@@ -2354,7 +2337,6 @@
         footerHomeBtn.addEventListener('click', showHomeView);
         logoHomeBtn.addEventListener('click', showHomeView);
 
-        // تفاعل أزرار شريط التنقل السفلي الجديد
         const bottomAdsBtn = document.getElementById('bottomAdsBtn');
         const bottomCameraBtn = document.getElementById('bottomCameraBtn');
         const bottomAccountBtn = document.getElementById('bottomAccountBtn');
@@ -2413,6 +2395,7 @@
             addAdModal.classList.remove('active');
         });
 
+        addAdModal.classList.remove('active');
         addAdModal.addEventListener('click', (e) => {
             if (e.target === addAdModal) {
                 addAdModal.classList.remove('active');
@@ -2473,7 +2456,6 @@
                         adDescTextarea.style.color = 'var(--dark-blue)';
                         fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
                         
-                        // إضافة الإعلان مباشرة للقائمة المحلية وإعادة العرض فوراً بدون انتظار التخزين المؤقت
                         if (insertedData && insertedData.length > 0) {
                             allProducts.unshift(insertedData[0]);
                         } else {
@@ -2490,13 +2472,7 @@
                         renderProducts(currentPage);
                         showProductsView();
                     }
-                } else {
-                    showCustomAlert('تم نشر إعلانك بنجاح!', true);
-                    addAdModal.classList.remove('active');
-                    addAdForm.reset();
-                    showProductsView();
                 }
-
             } catch (err) {
                 console.error(err);
                 showCustomAlert('حدث خطأ أثناء رفع الإعلان.', false);
@@ -2525,6 +2501,7 @@
             accountMenuModal.classList.remove('active');
         });
 
+        accountMenuModal.classList.remove('active');
         accountMenuModal.addEventListener('click', (e) => {
             if (e.target === accountMenuModal) {
                 accountMenuModal.classList.remove('active');
@@ -2554,6 +2531,7 @@
             settingsModal.classList.remove('active');
         });
 
+        settingsModal.classList.remove('active');
         settingsModal.addEventListener('click', (e) => {
             if (e.target === settingsModal) {
                 settingsModal.classList.remove('active');
@@ -2600,8 +2578,6 @@
                         } else {
                             showCustomAlert('فشل تحديث الحساب: ' + updateError.message, false);
                         }
-                    } else {
-                        showCustomAlert('لم يتم العثور على سجل الحساب في قاعدة البيانات.', false);
                     }
                 }
             } catch (err) {
@@ -2610,7 +2586,6 @@
             }
         });
 
-        // نافذة اعلاناتي (تعتمد حصراً ومباشرة على Supabase)
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
         const myAdsContainer = document.getElementById('myAdsContainer');
@@ -2623,7 +2598,9 @@
             }
 
             const userData = JSON.parse(currentSupabaseUser);
-            myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);">جاري تحميل إعلاناتك...</p>';
+            const targetPhone = userData.phone || "0601749553";
+
+            myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل إعلاناتك...</p>';
             myAdsModal.classList.add('active');
 
             try {
@@ -2631,46 +2608,36 @@
                     const { data, error } = await _supabase
                         .from('products')
                         .select('id, title, description, category, city, image_url, created_at')
+                        .ilike('description', `%${targetPhone}%`)
                         .order('created_at', { ascending: false });
 
-                    if (!error && data) {
-                        const filteredAds = data.filter(ad => {
+                    if (!error && data && data.length > 0) {
+                        myAdsContainer.innerHTML = '';
+                        data.forEach(ad => {
                             const desc = ad.description || '';
-                            if (desc.includes('[USER_ACCOUNT]') || desc.includes('[EXCHANGE_REQUEST]')) return false;
+                            if (desc.includes('[USER_ACCOUNT]') || desc.includes('[EXCHANGE_REQUEST]')) return;
+
+                            const adCard = document.createElement('div');
+                            adCard.style.cssText = "display:flex; flex-direction:column; gap:8px; background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:10px;";
                             
-                            const matchPhone = userData.phone && desc.includes(userData.phone);
-                            const matchName = userData.name && desc.includes(userData.name);
-                            return matchPhone || matchName;
+                            let cleanDesc = desc.split(' (الهاتف:')[0];
+                            const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:55px; height:55px; object-fit:cover; border-radius:8px; flex-shrink:0;">` : `<div style="width:55px; height:55px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.3rem; flex-shrink:0;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                            adCard.innerHTML = `
+                                <div style="display:flex; align-items:center; gap:10px; width:100%;">
+                                    ${imgThumb}
+                                    <div style="flex-grow:1; overflow:hidden;">
+                                        <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ad.title}</h4>
+                                        <p style="font-size:0.8rem; color:var(--text-gray); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cleanDesc}</p>
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:8px; justify-content:flex-end; border-top:1px solid #e2ece8; padding-top:8px; margin-top:2px;">
+                                    <button onclick="openEditAdModal(${ad.id}, '${encodeURIComponent(ad.title)}', '${encodeURIComponent(cleanDesc)}', '${encodeURIComponent(ad.category || '')}', '${encodeURIComponent(ad.city || userData.city || '')}')" style="background:#e6f7f0; color:var(--primary-green); border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
+                                    <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-trash"></i> حذف</button>
+                                </div>
+                            `;
+                            myAdsContainer.appendChild(adCard);
                         });
-
-                        if (filteredAds.length > 0) {
-                            myAdsContainer.innerHTML = '';
-                            filteredAds.forEach(ad => {
-                                const adCard = document.createElement('div');
-                                adCard.style.cssText = "display:flex; flex-direction:column; gap:8px; background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:10px;";
-                                
-                                let rawDesc = ad.description || '';
-                                let cleanDesc = rawDesc.split(' (الهاتف:')[0];
-                                const imgThumb = ad.image_url ? `<img src="${ad.image_url}" style="width:55px; height:55px; object-fit:cover; border-radius:8px; flex-shrink:0;">` : `<div style="width:55px; height:55px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.3rem; flex-shrink:0;"><i class="fa-solid fa-box-open"></i></div>`;
-
-                                adCard.innerHTML = `
-                                    <div style="display:flex; align-items:center; gap:10px; width:100%;">
-                                        ${imgThumb}
-                                        <div style="flex-grow:1; overflow:hidden;">
-                                            <h4 style="font-size:0.95rem; font-weight:800; color:var(--dark-blue); font-family:'Cairo', sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ad.title}</h4>
-                                            <p style="font-size:0.8rem; color:var(--text-gray); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cleanDesc}</p>
-                                        </div>
-                                    </div>
-                                    <div style="display:flex; gap:8px; justify-content:flex-end; border-top:1px solid #e2ece8; padding-top:8px; margin-top:2px;">
-                                        <button onclick="openEditAdModal(${ad.id}, '${encodeURIComponent(ad.title)}', '${encodeURIComponent(cleanDesc)}', '${encodeURIComponent(ad.category || '')}', '${encodeURIComponent(ad.city || userData.city || '')}')" style="background:#e6f7f0; color:var(--primary-green); border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-pen-to-square"></i> تعديل</button>
-                                        <button onclick="deleteMyAd(${ad.id})" style="background:#fadbd8; color:#e74c3c; border:none; padding:6px 14px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;"><i class="fa-solid fa-trash"></i> حذف</button>
-                                    </div>
-                                `;
-                                myAdsContainer.appendChild(adCard);
-                            });
-                        } else {
-                            myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي إعلانات منشورة حتى الآن.</p>';
-                        }
                     } else {
                         myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي إعلانات منشورة حتى الآن.</p>';
                     }
@@ -2691,6 +2658,7 @@
             myAdsModal.classList.remove('active');
         });
 
+        myAdsModal.classList.remove('active');
         myAdsModal.addEventListener('click', (e) => {
             if (e.target === myAdsModal) {
                 myAdsModal.classList.remove('active');
@@ -2714,6 +2682,7 @@
             editAdModal.classList.remove('active');
         });
 
+        editAdModal.classList.remove('active');
         editAdModal.addEventListener('click', (e) => {
             if (e.target === editAdModal) {
                 editAdModal.classList.remove('active');
@@ -2733,12 +2702,12 @@
                 if (_supabase) {
                     const updatePayload = {
                         title: title,
-                        description: description + " (الهاتف: " + currentSupabaseUser.phone + " - المدينة: " + city + ")",
+                        description: description + " (الهاتف: " + (currentSupabaseUser.phone || '0601749553') + " - المدينة: " + city + ")",
                         category: category,
                         city: city
                     };
 
-                    const { error } = await _supabase.from('products').update(updatePayload).eq('id', id);
+                    const { error } = await _supabase.from('products').update(updatePayload).eq('id', Number(id));
                     if (!error) {
                         showCustomAlert('تم تعديل الإعلان بنجاح', true);
                         editAdModal.classList.remove('active');
@@ -2757,7 +2726,6 @@
             showCustomConfirm(async () => {
                 try {
                     if (_supabase) {
-                        // تنفيذ أمر الحذف الصارم من جدول products باستخدام معرف الإعلان مباشرة
                         const { error } = await _supabase.from('products').delete().eq('id', Number(adId));
                         if (!error) {
                             showCustomAlert('تم حذف الإعلان نهائياً من قاعدة البيانات', true);
@@ -2814,6 +2782,7 @@
             authModal.classList.remove('active');
         });
 
+        authModal.classList.remove('active');
         authModal.addEventListener('click', (e) => {
             if (e.target === authModal) {
                 authModal.classList.remove('active');
@@ -2884,6 +2853,7 @@
                     checkAuthSession();
                     registerForm.reset();
                     renderProducts(currentPage);
+                    updateFavoritesBadge();
                 }
             } catch (err) {
                 console.error(err);
@@ -2941,6 +2911,7 @@
                     loginForm.reset();
                     checkIncomingRequestsCount();
                     renderProducts(currentPage);
+                    updateFavoritesBadge();
                 } else {
                     showCustomAlert('رقم الهاتف/الاسم أو كلمة المرور غير صحيحة، أو الحساب غير مسجل!', false);
                 }
@@ -2964,7 +2935,7 @@
                     logoutBtn.addEventListener('click', () => {
                         sessionStorage.removeItem('badal_supabase_user');
                         showCustomAlert('تم تسجيل الخروج بنجاح.', true);
-                        location.reload();
+                        setTimeout(() => location.reload(), 1000);
                     });
                 }
             }
@@ -2993,6 +2964,7 @@
             howToModal.classList.remove('active');
         });
 
+        howToModal.classList.remove('active');
         howToModal.addEventListener('click', (e) => {
             if (e.target === howToModal) {
                 howToModal.classList.remove('active');
@@ -3012,16 +2984,17 @@
             contactModal.classList.remove('active');
         });
 
+        contactModal.classList.remove('active');
         contactModal.addEventListener('click', (e) => {
             if (e.target === contactModal) {
                 contactModal.classList.remove('active');
             }
         });
 
-        // تشغيل الجلب الأولي والتحديث التلقائي للطلبات والمنتجات من Supabase عند بدء التشغيل
         setTimeout(() => {
             fetchProductsFromSupabase();
             checkIncomingRequestsCount();
+            updateFavoritesBadge();
         }, 500);
     </script>
 </body>
