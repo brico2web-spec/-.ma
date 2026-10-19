@@ -1625,7 +1625,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.6.9</span>
+            <span class="version-tag">v0.7.0</span>
         </div>
     </footer>
 
@@ -2743,21 +2743,24 @@
             showCustomConfirm(async () => {
                 try {
                     if (_supabase) {
-                        // تنفيذ أمر الحذف الصارم من جدول products باستخدام معرف الإعلان مباشرة
+                        // إزالة الإعلان فوراً من المصفوفة المحلية وتحديث الواجهة لمنع ظهور أي بيانات قديمة أو مخزنة مؤقتاً
+                        allProducts = allProducts.filter(p => p.id !== Number(adId));
+                        renderProducts(currentPage);
+
                         const { error } = await _supabase.from('products').delete().eq('id', Number(adId));
                         if (!error) {
                             showCustomAlert('تم حذف الإعلان نهائياً من قاعدة البيانات', true);
-                            allProducts = allProducts.filter(p => p.id !== adId);
-                            renderProducts(currentPage);
                             openMyAdsModalFunc();
                             fetchProductsFromSupabase(true);
                         } else {
                             showCustomAlert('فشل حذف الإعلان: ' + error.message, false);
+                            fetchProductsFromSupabase(true);
                         }
                     }
                 } catch (err) {
                     console.error(err);
                     showCustomAlert('حدث خطأ أثناء الحذف', false);
+                    fetchProductsFromSupabase(true);
                 }
             });
         };
