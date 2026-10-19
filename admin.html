@@ -492,6 +492,7 @@
             <!-- أزرار التنقل بين الأقسام -->
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" onclick="switchAdminTab('ads')"><i class="fa-solid fa-box-archive"></i> إدارة الإعلانات</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('requests')"><i class="fa-solid fa-right-left"></i> طلبات المقايضة المرسلة</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('users')"><i class="fa-solid fa-user-gear"></i> إدارة المستخدمين والحظر</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('traffic')"><i class="fa-solid fa-chart-column"></i> إحصائيات الترافيك والمبيان</button>
             </div>
@@ -513,6 +514,28 @@
                         </thead>
                         <tbody id="adminAdsTableBody">
                             <tr><td colspan="6" style="text-align: center; color: var(--text-gray);">جاري تحميل الإعلانات...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- قسم طلبات المقايضة المرسلة الجديد -->
+            <div id="adminRequestsSection" class="admin-panel-section">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-right-left"></i> تفاصيل طلبات المقايضة وحالة الموافقة (من قاعدة البيانات)</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المرسل (الذي أرسل الطلب)</th>
+                                <th>المستقبل (صاحب السلعة المستهدفة)</th>
+                                <th>تفاصيل السلعة البديلة</th>
+                                <th>حالة الموافقة الواتساب</th>
+                                <th>تاريخ الطلب</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminRequestsTableBody">
+                            <tr><td colspan="6" style="text-align: center; color: var(--text-gray);">جاري تحميل طلبات المقايضة...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -572,7 +595,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.0.9
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.11
     </footer>
 
     <!-- نافذة تكبير الصورة -->
@@ -616,6 +639,7 @@
         let globalCachedAds = [];
         let globalCachedRawData = [];
         let globalCachedUsersMap = {};
+        let globalCachedAdsMap = {};
         let currentTrafficMode = 'year';
 
         function showCustomAlert(msg, isSuccess = true) {
@@ -691,7 +715,7 @@
             document.getElementById('adminDashboardSection').classList.add('active');
             document.getElementById('logoutAdminBtn').style.display = 'flex';
             loadAdminData();
-            setupRealtimeSubscription(); // تفعيل التحديث الفوري المباشر
+            setupRealtimeSubscription(); // تفعيل التحديث الفوري المباشر أوتوماتيكياً
             setupOnlinePresenceTracking(); // تفعيل نظام تتبع المتواجدين أونلاين
         }
 
@@ -718,13 +742,13 @@
             });
         }
 
-        // الاستماع للتغييرات في جدول products مباشرة أوتوماتيكياً
+        // الاستماع الفوري للتغييرات في جدول products أوتوماتيكياً دون تحديث يدوياً
         function setupRealtimeSubscription() {
             if (!_supabase) return;
             _supabase
                 .channel('public:products')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
-                    loadAdminData(); // إعادة جلب وتحديث البيانات فوراً عند حدوث أي إضافة أو حذف
+                    loadAdminData(); // إعادة جلب وتحديث الجدول والإحصائيات والرسوم البيانية فوراً
                 })
                 .subscribe();
         }
@@ -737,6 +761,10 @@
                 event.currentTarget.classList.add('active');
                 document.getElementById('adminAdsSection').classList.add('active');
                 renderAdsTable(globalCachedAds);
+            } else if (tab === 'requests') {
+                event.currentTarget.classList.add('active');
+                document.getElementById('adminRequestsSection').classList.add('active');
+                renderRequestsTable(globalCachedRawData);
             } else if (tab === 'users') {
                 event.currentTarget.classList.add('active');
                 document.getElementById('adminUsersSection').classList.add('active');
@@ -762,28 +790,140 @@
                     document.getElementById('statTotalUsers').textContent = users.length;
                     document.getElementById('statTotalRequests').textContent = requests.length;
 
-                    // تجهيز قاموس المستخدمين للمطابقة الصحيحة حسب رقم الهاتف
+                    // تخزين الخرائط للمطابقة
                     parseAndStoreUsers(users);
+                    parseAndStoreAds(pureAds);
                     globalCachedAds = pureAds;
 
                     renderAdsTable(pureAds);
+                    renderRequestsTable(data);
                     renderTrafficChart(currentTrafficMode);
+                    if (document.getElementById('adminUsersSection').classList.contains('active')) {
+                        renderUsersTable(allLoadedUsers);
+                    }
                 }
             } catch (err) {
                 console.error(err);
             }
         }
 
-        async function loadAdminAds() {
-            if (!_supabase) return;
-            const { data } = await _supabase.from('products').select('*').order('created_at', { ascending: false });
-            if (data) {
-                globalCachedRawData = data;
-                const pureAds = data.filter(i => !i.description.includes('[USER_ACCOUNT]') && !i.description.includes('[EXCHANGE_REQUEST]'));
-                globalCachedAds = pureAds;
-                renderAdsTable(pureAds);
-            }
+        function parseAndStoreUsers(data) {
+            globalCachedUsersMap = {};
+            allLoadedUsers = data.map(userRec => {
+                const desc = userRec.description || '';
+                const nameMatch = desc.match(/\[NAME:(.*?)\]/);
+                const phoneMatch = desc.match(/\[USER_PHONE:(.*?)\]/);
+                const cityMatch = desc.match(/\[CITY:(.*?)\]/);
+                const passMatch = desc.match(/\[PASSWORD:(.*?)\]/);
+
+                const uName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
+                const uPhone = phoneMatch ? phoneMatch[1].trim() : '';
+
+                if (uPhone) {
+                    globalCachedUsersMap[uPhone] = uName;
+                }
+
+                return {
+                    id: userRec.id,
+                    name: uName,
+                    phone: uPhone,
+                    city: cityMatch ? cityMatch[1] : 'القنيطرة',
+                    password: passMatch ? passMatch[1] : '***'
+                };
+            });
         }
+
+        function parseAndStoreAds(ads) {
+            globalCachedAdsMap = {};
+            ads.forEach(ad => {
+                globalCachedAdsMap[ad.id] = ad;
+            });
+        }
+
+        // دالة إنشاء وعرض جدول طلبات المقايضة المرسلة وحالة واتساب
+        function renderRequestsTable(allData) {
+            const tbody = document.getElementById('adminRequestsTableBody');
+            tbody.innerHTML = '';
+            
+            const requests = allData.filter(i => (i.description || '').includes('[EXCHANGE_REQUEST]'));
+            
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مقايضة مرسلة حالياً.</td></tr>';
+                return;
+            }
+
+            requests.forEach(req => {
+                const desc = req.description || '';
+                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
+                const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
+                const descMatch = desc.match(/\[DESC:(.*?)\]/);
+
+                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
+                const senderPhone = phoneMatch ? phoneMatch[1].trim() : '';
+                const targetProductId = targetIdMatch ? targetIdMatch[1].trim() : '';
+                const ownerPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim() : '';
+                const senderDesc = descMatch ? descMatch[1].trim() : 'بدون وصف';
+                const dateStr = req.created_at ? new Date(req.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
+
+                // معرفة اسم المستقبل (صاحب السلعة المستهدفة)
+                let receiverName = 'مستخدم الموقع';
+                if (ownerPhone && globalCachedUsersMap[ownerPhone]) {
+                    receiverName = globalCachedUsersMap[ownerPhone];
+                } else if (targetProductId && globalCachedAdsMap[targetProductId]) {
+                    const targetAd = globalCachedAdsMap[targetProductId];
+                    let adOwnerPhone = '';
+                    const pMatch = (targetAd.description || '').match(/\(الهاتف:\s*([^\s-]+)/);
+                    if (pMatch) adOwnerPhone = pMatch[1].trim();
+                    if (adOwnerPhone && globalCachedUsersMap[adOwnerPhone]) {
+                        receiverName = globalCachedUsersMap[adOwnerPhone];
+                    }
+                }
+
+                // تحديد حالة الموافقة الواتساب الحقيقية بناءً على الأرشيف أو القواعد
+                let acceptedList = [];
+                try {
+                    acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
+                } catch(e) { acceptedList = []; }
+
+                const isAcceptedInArchive = acceptedList.some(item => String(item.id) === String(req.id));
+                
+                let whatsappStatusHTML = '';
+                if (isAcceptedInArchive) {
+                    whatsappStatusHTML = `<span class="badge-user" style="background:#e6f7f0; color:var(--primary-green);"><i class="fa-solid fa-circle-check"></i> تمت الموافقة عليه (تم النقر على واتساب)</span>`;
+                } else {
+                    whatsappStatusHTML = `<span class="badge-user" style="background:#fff3f2; color:var(--danger);"><i class="fa-solid fa-clock"></i> قيد إنتظار الموافقة</span>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);">${senderPhone}</span></td>
+                    <td><span class="badge-user"><i class="fa-solid fa-user-shield"></i> ${receiverName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);">${ownerPhone}</span></td>
+                    <td style="font-weight:700;">${senderDesc}</td>
+                    <td>${whatsappStatusHTML}</td>
+                    <td>${dateStr}</td>
+                    <td>
+                        <button onclick="adminDeleteRequest(${req.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف الطلب</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.adminDeleteRequest = function(id) {
+            showCustomConfirm('هل أنت متأكد من رغبتك في حذف طلب المقايضة هذا نهائياً؟', async () => {
+                if (_supabase) {
+                    const { error } = await _supabase.from('products').delete().eq('id', Number(id));
+                    if (!error) {
+                        showCustomAlert('تم حذف طلب المقايضة بنجاح من قاعدة البيانات.', true);
+                        loadAdminData();
+                    } else {
+                        showCustomAlert('فشل حذف الطلب: ' + error.message, false);
+                    }
+                }
+            });
+        };
 
         // دالة إنشاء وعرض مبيان الترافيك المفصل والمتصل بقاعدة البيانات حقيقة
         function renderTrafficChart(mode, eventObj = null) {
@@ -835,7 +975,6 @@
                 for (let i = 4; i >= 0; i--) {
                     buckets[`الأسبوع ${5 - i}`] = 0;
                 }
-                // توزيع تقريبي حسب الأيام الماضية للبيانات الحقيقية
                 items.forEach(item => {
                     if (!item.created_at) return;
                     const d = new Date(item.created_at);
@@ -902,7 +1041,6 @@
                 const imgTag = ad.image_url ? `<img src="${ad.image_url}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${ad.image_url}')" title="انقر لتكبير الصورة">` : '<span style="color:#aaa;">بدون صورة</span>';
                 const dateStr = ad.created_at ? new Date(ad.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
 
-                // استخراج رقم الهاتف الخاص بصاحب الإعلان
                 let ownerPhone = ad.phone || ad.user_phone || ad.whatsapp || ad.phoneNumber || ad.tel;
                 if (!ownerPhone) {
                     const phoneMatch = (ad.description || '').match(/\[USER_PHONE:(.*?)\]/) || (ad.description || '').match(/الهاتف:\s*([\d\+\-]+)/);
@@ -910,7 +1048,6 @@
                 }
                 ownerPhone = ownerPhone || 'غير متوفر';
 
-                // المطابقة الذكية: البحث عن اسم المستخدم في النظام باستخدام رقم الهاتف المطابق تماماً
                 let ownerName = 'مستخدم الموقع';
                 if (ownerPhone !== 'غير متوفر' && globalCachedUsersMap[ownerPhone]) {
                     ownerName = globalCachedUsersMap[ownerPhone];
@@ -949,41 +1086,6 @@
             });
         };
 
-        async function loadAdminUsers() {
-            if (!_supabase) return;
-            const { data } = await _supabase.from('products').select('*').ilike('description', '%[USER_ACCOUNT]%');
-            if (data) {
-                parseAndStoreUsers(data);
-                renderUsersTable(allLoadedUsers);
-            }
-        }
-
-        function parseAndStoreUsers(data) {
-            globalCachedUsersMap = {}; // إعادة تهيئة الخريطة للربط السريع برقم الهاتف
-            allLoadedUsers = data.map(userRec => {
-                const desc = userRec.description || '';
-                const nameMatch = desc.match(/\[NAME:(.*?)\]/);
-                const phoneMatch = desc.match(/\[USER_PHONE:(.*?)\]/);
-                const cityMatch = desc.match(/\[CITY:(.*?)\]/);
-                const passMatch = desc.match(/\[PASSWORD:(.*?)\]/);
-
-                const uName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
-                const uPhone = phoneMatch ? phoneMatch[1].trim() : '';
-
-                if (uPhone) {
-                    globalCachedUsersMap[uPhone] = uName; // ربط رقم الهاتف بالاسم الحقيقي للمستخدم
-                }
-
-                return {
-                    id: userRec.id,
-                    name: uName,
-                    phone: uPhone,
-                    city: cityMatch ? cityMatch[1] : 'القنيطرة',
-                    password: passMatch ? passMatch[1] : '***'
-                };
-            });
-        }
-
         function renderUsersTable(users) {
             const tbody = document.getElementById('adminUsersTableBody');
             tbody.innerHTML = '';
@@ -1006,7 +1108,6 @@
             });
         }
 
-        // وظيفة البحث الفوري الأوتوماتيكي بالاسم أو الهاتف
         function filterUsersTable() {
             const query = document.getElementById('userSearchInput').value.trim().toLowerCase();
             if (!query) {
