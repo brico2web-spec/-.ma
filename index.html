@@ -1230,12 +1230,21 @@
             <form class="contact-form" id="exchangeRequestForm">
                 <input type="hidden" id="target-product-id">
                 <input type="hidden" id="target-owner-phone">
-                <div class="form-group">
+                <input type="hidden" id="selected-my-ad-image" value="">
+                
+                <div class="form-group" id="myAdsSelectionGroup">
+                    <label>اختر سلعة من إعلاناتك المنشورة للمقايضة:</label>
+                    <div id="userAdsSelectionList" style="display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; background: #f2f7f4; padding: 8px; border-radius: 8px; border: 1px solid #d2ded7;">
+                        <p style="text-align: center; color: var(--text-gray); font-size: 0.85rem;">جاري تحميل إعلاناتك...</p>
+                    </div>
+                </div>
+
+                <div class="form-group" id="exchangeImageFieldGroup">
                     <label for="exchange-item-image">صورة المنتوج الذي ترغب في المقايضة به:</label>
                     <label class="custom-file-upload">
                         <span class="file-name-display" id="exchangeFileNameDisplay">لم يتم اختيار أي صورة</span>
                         <span class="file-upload-btn-text"><i class="fa-solid fa-cloud-arrow-up"></i> اختر الصورة</span>
-                        <input type="file" id="exchange-item-image" accept="image/*" required>
+                        <input type="file" id="exchange-item-image" accept="image/*">
                     </label>
                 </div>
                 <div class="form-group">
@@ -1703,7 +1712,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.13</span>
+            <span class="version-tag">v0.9.14</span>
         </div>
     </footer>
 
@@ -2169,6 +2178,9 @@
         const exchangeItemImage = document.getElementById('exchange-item-image');
         const exchangeFileNameDisplay = document.getElementById('exchangeFileNameDisplay');
         const exchangeItemDesc = document.getElementById('exchange-item-desc');
+        const userAdsSelectionList = document.getElementById('userAdsSelectionList');
+        const selectedMyAdImageInput = document.getElementById('selected-my-ad-image');
+        const exchangeImageFieldGroup = document.getElementById('exchangeImageFieldGroup');
 
         if(exchangeItemImage) {
             exchangeItemImage.addEventListener('change', async (e) => {
@@ -2191,6 +2203,76 @@
             });
         }
 
+        async function loadUserAdsIntoExchangeModal() {
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) return;
+            const userData = JSON.parse(currentSupabaseUser);
+            const targetPhone = userData.phone || "";
+
+            userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">جاري تحميل إعلاناتك...</p>';
+            selectedMyAdImageInput.value = '';
+            exchangeImageFieldGroup.style.display = 'flex';
+
+            try {
+                if (_supabase && targetPhone) {
+                    const { data, error } = await _supabase
+                        .from('products')
+                        .select('id, title, description, image_url')
+                        .ilike('description', `%${targetPhone}%`);
+
+                    if (!error && data && data.length > 0) {
+                        const validAds = data.filter(ad => {
+                            const desc = ad.description || '';
+                            return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
+                        });
+
+                        if (validAds.length > 0) {
+                            userAdsSelectionList.innerHTML = '';
+                            validAds.forEach(ad => {
+                                let cleanDesc = (ad.description || '').split(' (الهاتف:')[0];
+                                const itemCard = document.createElement('div');
+                                itemCard.style.cssText = "display:flex; align-items:center; gap:10px; background:#fff; padding:8px; border-radius:6px; border:1px solid #d2ded7; cursor:pointer; transition:all 0.3s;";
+                                
+                                const thumb = ad.image_url ? `<img src="${ad.image_url}" style="width:45px; height:45px; object-fit:cover; border-radius:6px;">` : `<div style="width:45px; height:45px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:1.1rem;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                                itemCard.innerHTML = `
+                                    ${thumb}
+                                    <div style="flex-grow:1; overflow:hidden;">
+                                        <h5 style="font-size:0.85rem; font-weight:800; color:var(--dark-blue); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${ad.title}</h5>
+                                        <p style="font-size:0.75rem; color:var(--text-gray); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cleanDesc}</p>
+                                    </div>
+                                    <input type="radio" name="selected_user_ad" value="${ad.id}" style="accent-color:var(--primary-green); cursor:pointer;">
+                                `;
+
+                                itemCard.addEventListener('click', (e) => {
+                                    const radio = itemCard.querySelector('input[type="radio"]');
+                                    radio.checked = true;
+                                    selectedMyAdImageInput.value = ad.image_url || '';
+                                    exchangeItemDesc.value = ad.title + ' - ' + cleanDesc;
+                                    
+                                    // إخفاء مكان رفع الصورة اليدوية بمجرد اختيار إعلان
+                                    exchangeImageFieldGroup.style.display = 'none';
+
+                                    userAdsSelectionList.querySelectorAll('div').forEach(d => d.style.borderColor = '#d2ded7');
+                                    itemCard.style.borderColor = 'var(--primary-green)';
+                                    itemCard.style.background = '#e6f7f0';
+                                });
+
+                                userAdsSelectionList.appendChild(itemCard);
+                            });
+                        } else {
+                            userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">ليس لديك أي إعلانات منشورة. يمكنك رفع صورة يدوياً أدناه.</p>';
+                        }
+                    } else {
+                        userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">ليس لديك أي إعلانات منشورة. يمكنك رفع صورة يدوياً أدناه.</p>';
+                    }
+                }
+            } catch(err) {
+                console.error(err);
+                userAdsSelectionList.innerHTML = '<p style="text-align:center; color:#e74c3c; font-size:0.85rem;">تعذر تحميل إعلاناتك.</p>';
+            }
+        }
+
         function handleExchangeRequest(productTitle, productId, ownerPhone) {
             const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
@@ -2198,7 +2280,10 @@
             } else {
                 document.getElementById('target-product-id').value = productId;
                 document.getElementById('target-owner-phone').value = ownerPhone || '';
+                exchangeRequestForm.reset();
+                exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
                 exchangeRequestModal.classList.add('active');
+                loadUserAdsIntoExchangeModal();
             }
         }
 
@@ -2224,25 +2309,36 @@
                 }
                 const userData = JSON.parse(currentSupabaseUser);
 
-                if (!exchangeItemImage.files || exchangeItemImage.files.length === 0) {
-                    showCustomAlert('المرجو اختيار صورة المنتوج البديل!', false);
-                    return;
+                const selectedImgUrl = selectedMyAdImageInput.value;
+                let finalImageToSubmit = selectedImgUrl;
+
+                if (!selectedImgUrl) {
+                    if (!exchangeItemImage.files || exchangeItemImage.files.length === 0) {
+                        showCustomAlert('المرجو اختيار سلعة من إعلاناتك أو رفع صورة المنتوج البديل!', false);
+                        return;
+                    }
+                    const file = exchangeItemImage.files[0];
+                    try {
+                        finalImageToSubmit = await compressImage(file, 1000, 1000, 0.85);
+                    } catch(err) {
+                        console.error(err);
+                        showCustomAlert('حدث خطأ أثناء معالجة الصورة.', false);
+                        return;
+                    }
                 }
 
-                const file = exchangeItemImage.files[0];
                 const descText = exchangeItemDesc.value.trim();
                 const ownerPhone = document.getElementById('target-owner-phone').value;
                 const targetProductId = document.getElementById('target-product-id').value;
 
                 try {
-                    const compressedImage = await compressImage(file, 1000, 1000, 0.85);
                     if (_supabase) {
                         const reqPayload = {
                             title: "طلب مقايضة من " + userData.name,
                             description: `[EXCHANGE_REQUEST] [TARGET_PRODUCT_ID:${targetProductId}] [OWNER_PHONE:${ownerPhone}] [SENDER_NAME:${userData.name}] [SENDER_PHONE:${userData.phone}] [SENDER_CITY:${userData.city || 'القنيطرة'}] [DESC:${descText}]`,
                             category: "تلفونات",
                             city: userData.city || 'القنيطرة',
-                            image_url: compressedImage
+                            image_url: finalImageToSubmit
                         };
 
                         const { error } = await _supabase.from('products').insert([reqPayload]);
