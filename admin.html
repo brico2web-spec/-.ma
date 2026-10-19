@@ -18,6 +18,24 @@
             font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
         }
 
+        /* تخصيص أشرطة التمرير (عصا الهبوط) لجميع النوافذ والجداول */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f2f7f4;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d2ded7;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-green);
+        }
+
         :root {
             --primary-green: #00a86b;
             --dark-blue: #0e1726;
@@ -204,6 +222,8 @@
             border-bottom: 2px solid #e2ece8;
             padding-bottom: 10px;
             flex-wrap: wrap;
+            overflow-x: auto;
+            max-width: 100%;
         }
 
         .admin-tab-btn {
@@ -216,6 +236,7 @@
             padding: 8px 18px;
             border-radius: 10px;
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .admin-tab-btn.active {
@@ -230,6 +251,8 @@
             padding: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             border: 1px solid #e2ece8;
+            max-height: 650px;
+            overflow-y: auto;
         }
 
         .admin-panel-section.active {
@@ -258,6 +281,8 @@
         .table-responsive {
             width: 100%;
             overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
         }
 
         table {
@@ -277,6 +302,9 @@
             background-color: #f2f7f4;
             color: var(--dark-blue);
             font-weight: 800;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         tr:hover {
@@ -318,6 +346,7 @@
             display: flex;
             gap: 8px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         .traffic-filter-btn {
             background: #f2f7f4;
@@ -395,6 +424,8 @@
             background-color: var(--white); width: 100%; max-width: 380px;
             border-radius: 14px; padding: 25px; text-align: center;
             box-shadow: 0 5px 20px rgba(14, 23, 38, 0.15);
+            max-height: 85vh;
+            overflow-y: auto;
         }
 
         .logout-admin-btn {
@@ -655,7 +686,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.16
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.17
     </footer>
 
     <!-- نافذة تكبير الصورة -->
