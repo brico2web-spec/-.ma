@@ -1697,7 +1697,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.6</span>
+            <span class="version-tag">v0.9.7</span>
         </div>
     </footer>
 
@@ -1919,7 +1919,7 @@
 
         window.toggleFavorite = function(productId, event) {
             if(event) event.stopPropagation();
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openRegistrationTab();
                 return;
@@ -1949,12 +1949,12 @@
             const endIndex = startIndex + itemsPerPage;
             const paginatedItems = allProducts.slice(startIndex, endIndex);
             const favs = getFavorites();
-            const isUserLoggedIn = sessionStorage.getItem('badal_supabase_user') !== null;
+            const isUserLoggedIn = localStorage.getItem('badal_supabase_user') !== null;
             
             let currentUserPhone = '';
             if (isUserLoggedIn) {
                 try {
-                    const uData = JSON.parse(sessionStorage.getItem('badal_supabase_user'));
+                    const uData = JSON.parse(localStorage.getItem('badal_supabase_user'));
                     currentUserPhone = uData.phone || '';
                 } catch(e){}
             }
@@ -2181,7 +2181,7 @@
         }
 
         function handleExchangeRequest(productTitle, productId, ownerPhone) {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openRegistrationTab();
             } else {
@@ -2205,7 +2205,7 @@
         if(exchangeRequestForm) {
             exchangeRequestForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+                const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
                 if (!currentSupabaseUser) {
                     exchangeRequestModal.classList.remove('active');
                     openRegistrationTab();
@@ -2254,7 +2254,7 @@
 
         async function checkIncomingRequestsCount() {
             try {
-                const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+                const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
                 if (!currentSupabaseUser) return;
                 const userData = JSON.parse(currentSupabaseUser);
 
@@ -2283,7 +2283,7 @@
         const bottomMessagesBtn = document.getElementById('bottomMessagesBtn');
 
         bottomMessagesBtn.addEventListener('click', async () => {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openLoginTab();
                 return;
@@ -2296,7 +2296,6 @@
 
             try {
                 if (_supabase && userData.phone) {
-                    // جلب جميع المنتجات بما فيها الإعلانات العادية لضمان العثور على صورة المنتج المطلوب بدقة
                     const { data: allDbProducts } = await _supabase.from('products').select('id, title, image_url, description');
                     
                     const { data, error } = await _supabase
@@ -2322,7 +2321,6 @@
                                 const senderDesc = descMatch ? descMatch[1] : '';
                                 const targetId = targetIdMatch ? targetIdMatch[1].trim() : null;
 
-                                // البحث بدقة عن المنتوج المطلوب تبديله الخاص بي (من قاعدة البيانات العامة أو الذاكرة)
                                 let myTargetProductImg = '';
                                 const searchPool = (allDbProducts && allDbProducts.length > 0) ? allDbProducts : allProducts;
                                 if (targetId && searchPool) {
@@ -2425,7 +2423,7 @@
         const bottomFavoritesBtn = document.getElementById('bottomFavoritesBtn');
 
         function openFavoritesModal() {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openRegistrationTab();
                 return;
@@ -2635,7 +2633,7 @@
             e.preventDefault();
 
             try {
-                const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+                const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
                 
                 if (!currentSupabaseUser) {
                     addAdModal.classList.remove('active');
@@ -2714,7 +2712,7 @@
         const accountMenuUserCity = document.getElementById('accountMenuUserCity');
 
         bottomAccountBtn.addEventListener('click', () => {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openLoginTab();
             } else {
@@ -2744,7 +2742,7 @@
         document.getElementById('menuSettings').addEventListener('click', (e) => {
             e.preventDefault();
             accountMenuModal.classList.remove('active');
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openLoginTab();
                 return;
@@ -2769,7 +2767,7 @@
 
         settingsForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const currentSupabaseUser = JSON.parse(sessionStorage.getItem('badal_supabase_user') || '{}');
+            const currentSupabaseUser = JSON.parse(localStorage.getItem('badal_supabase_user') || '{}');
             const newPhone = document.getElementById('settings-phone').value.trim();
             const newCity = document.getElementById('settings-city').value.trim();
             const enteredPassword = document.getElementById('settings-password').value;
@@ -2801,7 +2799,7 @@
 
                         if (!updateError) {
                             const updatedUserData = { name: currentSupabaseUser.name, phone: newPhone, city: newCity, password: currentSupabaseUser.password };
-                            sessionStorage.setItem('badal_supabase_user', JSON.stringify(updatedUserData));
+                            localStorage.setItem('badal_supabase_user', JSON.stringify(updatedUserData));
                             showCustomAlert('تم تحديث معلومات الحساب في قاعدة البيانات بنجاح!', true);
                             settingsModal.classList.remove('active');
                         } else {
@@ -2820,7 +2818,7 @@
         const myAdsContainer = document.getElementById('myAdsContainer');
 
         async function openMyAdsModalFunc() {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser) {
                 openLoginTab();
                 return;
@@ -2924,7 +2922,7 @@
             const title = document.getElementById('edit-ad-title').value;
             const description = document.getElementById('edit-ad-desc').value;
             const category = document.getElementById('edit-ad-category').value;
-            const currentSupabaseUser = JSON.parse(sessionStorage.getItem('badal_supabase_user') || '{}');
+            const currentSupabaseUser = JSON.parse(localStorage.getItem('badal_supabase_user') || '{}');
             const city = currentSupabaseUser.city || 'القنيطرة';
 
             try {
@@ -2981,7 +2979,7 @@
 
         document.getElementById('menuLogout').addEventListener('click', (e) => {
             e.preventDefault();
-            sessionStorage.removeItem('badal_supabase_user');
+            localStorage.removeItem('badal_supabase_user');
             accountMenuModal.classList.remove('active');
             showCustomAlert('تم تسجيل الخروج بنجاح.', true);
             setTimeout(() => location.reload(), 1000);
@@ -3076,7 +3074,7 @@
                     showCustomAlert('خطأ أثناء التسجيل في قاعدة البيانات: ' + insertError.message, false);
                 } else {
                     const userData = { name, city, phone, password };
-                    sessionStorage.setItem('badal_supabase_user', JSON.stringify(userData));
+                    localStorage.setItem('badal_supabase_user', JSON.stringify(userData));
                     showCustomAlert('تم إنشاء الحساب مرحبا في منصة بدل', true);
                     authModal.classList.remove('active');
                     checkAuthSession();
@@ -3133,7 +3131,7 @@
                 }
 
                 if (foundUser) {
-                    sessionStorage.setItem('badal_supabase_user', JSON.stringify(foundUser));
+                    localStorage.setItem('badal_supabase_user', JSON.stringify(foundUser));
                     showCustomAlert(`مرحبا ${foundUser.name} في منصة بدل`, true);
                     authModal.classList.remove('active');
                     checkAuthSession();
@@ -3151,7 +3149,7 @@
         });
 
         function checkAuthSession() {
-            const currentSupabaseUser = sessionStorage.getItem('badal_supabase_user');
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             const topAuthBar = document.getElementById('topAuthBar');
             if (currentSupabaseUser) {
                 const userData = JSON.parse(currentSupabaseUser);
@@ -3162,7 +3160,7 @@
                 const logoutBtn = document.getElementById('logoutBtn');
                 if(logoutBtn) {
                     logoutBtn.addEventListener('click', () => {
-                        sessionStorage.removeItem('badal_supabase_user');
+                        localStorage.removeItem('badal_supabase_user');
                         showCustomAlert('تم تسجيل الخروج بنجاح.', true);
                         setTimeout(() => location.reload(), 1000);
                     });
