@@ -1267,6 +1267,9 @@
                 <a class="account-menu-item" id="menuMyAds">
                     <i class="fa-solid fa-bullhorn"></i> اعلاناتي
                 </a>
+                <a class="account-menu-item" id="menuAcceptedExchanges">
+                    <i class="fa-solid fa-handshake"></i> المقايضات المقبولة
+                </a>
                 <a class="account-menu-item" id="menuFavorites">
                     <i class="fa-solid fa-heart"></i> المفضلة
                 </a>
@@ -1277,6 +1280,14 @@
                     <i class="fa-solid fa-right-from-bracket"></i> خروج
                 </a>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="acceptedExchangesModal">
+        <div class="modal-content" style="max-width: 550px; padding: 18px;">
+            <button class="modal-close" id="closeAcceptedExchangesModalBtn">&times;</button>
+            <h2 class="modal-title">المقايضات <span class="logo-green">المقبولة</span></h2>
+            <div id="acceptedExchangesContainer" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;"></div>
         </div>
     </div>
 
@@ -1697,7 +1708,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.7</span>
+            <span class="version-tag">v0.9.8</span>
         </div>
     </footer>
 
@@ -1888,6 +1899,9 @@
                     }
                     if (document.getElementById('myAdsModal').classList.contains('active')) {
                         openMyAdsModalFunc();
+                    }
+                    if (document.getElementById('acceptedExchangesModal').classList.contains('active')) {
+                        openAcceptedExchangesModalFunc();
                     }
                 })
                 .subscribe();
@@ -2392,13 +2406,36 @@
             }
         });
 
-        window.acceptExchangeRequest = function(reqId, phone, name) {
-            let cleanPhone = phone.replace(/[^0-9]/g, '');
-            if (cleanPhone.startsWith('0')) {
-                cleanPhone = '212' + cleanPhone.substring(1);
+        window.acceptExchangeRequest = async function(reqId, phone, name) {
+            try {
+                let acceptedList = [];
+                try {
+                    acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
+                } catch(e) { acceptedList = []; }
+
+                if (_supabase) {
+                    const { data: reqData } = await _supabase.from('products').select('*').eq('id', Number(reqId)).single();
+                    if (reqData) {
+                        acceptedList.push(reqData);
+                        localStorage.setItem('badal_accepted_exchanges', JSON.stringify(acceptedList));
+                        await _supabase.from('products').delete().eq('id', Number(reqId));
+                    }
+                }
+
+                let cleanPhone = phone.replace(/[^0-9]/g, '');
+                if (cleanPhone.startsWith('0')) {
+                    cleanPhone = '212' + cleanPhone.substring(1);
+                }
+                const whatsappUrl = `https://wa.me/${cleanPhone}?text=مرحباً ${name}، وافقت على طلب المقايضة الخاص بك عبر منصة بدل.ma`;
+                window.open(whatsappUrl, '_blank');
+
+                messagesModal.classList.remove('active');
+                bottomMessagesBtn.click();
+                checkIncomingRequestsCount();
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء قبول الطلب.', false);
             }
-            const whatsappUrl = `https://wa.me/${cleanPhone}?text=مرحباً ${name}، وافقت على طلب المقايضة الخاص بك عبر منصة بدل.ma`;
-            window.open(whatsappUrl, '_blank');
         };
 
         window.cancelExchangeRequest = async function(reqId) {
@@ -2413,6 +2450,108 @@
                     } else {
                         showCustomAlert('فشل رفض وحذف الطلب: ' + error.message, false);
                     }
+                }
+            });
+        };
+
+        const acceptedExchangesModal = document.getElementById('acceptedExchangesModal');
+        const closeAcceptedExchangesModalBtn = document.getElementById('closeAcceptedExchangesModalBtn');
+        const acceptedExchangesContainer = document.getElementById('acceptedExchangesContainer');
+
+        function openAcceptedExchangesModalFunc() {
+            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
+            if (!currentSupabaseUser) {
+                openLoginTab();
+                return;
+            }
+
+            acceptedExchangesContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل المقايضات المقبولة...</p>';
+            acceptedExchangesModal.classList.add('active');
+
+            try {
+                let acceptedList = [];
+                try {
+                    acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
+                } catch(e) { acceptedList = []; }
+
+                if (acceptedList.length > 0) {
+                    acceptedExchangesContainer.innerHTML = '';
+                    acceptedList.forEach((req, index) => {
+                        const desc = req.description || '';
+                        const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                        const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                        const cityMatch = desc.match(/\[SENDER_CITY:(.*?)\]/);
+                        const descMatch = desc.match(/\[DESC:(.*?)\]/);
+                        
+                        const senderName = nameMatch ? nameMatch[1] : 'مستخدم';
+                        const senderPhone = phoneMatch ? phoneMatch[1] : '';
+                        const senderCity = (cityMatch && cityMatch[1].trim() !== '' && cityMatch[1].trim() !== 'المغرب') ? cityMatch[1].trim() : 'القنيطرة';
+                        const senderDesc = descMatch ? descMatch[1] : desc;
+
+                        const card = document.createElement('div');
+                        card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
+                        
+                        const senderImgTag = req.image_url ? `<img src="${req.image_url}" style="width:75px; height:75px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7;">` : `<div style="width:75px; height:75px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.3rem;"><i class="fa-solid fa-box-open"></i></div>`;
+
+                        let cleanPhone = senderPhone.replace(/[^0-9]/g, '');
+                        if (cleanPhone.startsWith('0')) {
+                            cleanPhone = '212' + cleanPhone.substring(1);
+                        }
+                        const whatsappUrl = `https://wa.me/${cleanPhone}?text=مرحباً ${senderName}، بخصوص المقايضة عبر منصة بدل.ma`;
+
+                        card.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${senderCity} (${senderName})</h4>
+                                <span style="font-size:0.75rem; color:var(--primary-green); font-weight:700;">مقبولة (أرشيف)</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px; background:#ffffff; padding:10px; border-radius:8px; border:1px solid #e2ece8;">
+                                ${senderImgTag}
+                                <p style="font-size:0.85rem; color:var(--text-gray); line-height:1.4; flex-grow:1;"><b>وصف السلعة:</b> ${senderDesc}</p>
+                            </div>
+                            <div style="display:flex; gap:10px; margin-top:5px;">
+                                <a href="${whatsappUrl}" target="_blank" style="flex:1; background:var(--primary-green); color:#fff; text-decoration:none; text-align:center; padding:8px; border-radius:8px; font-weight:700; font-size:0.9rem;"><i class="fa-brands fa-whatsapp"></i> واتساب</a>
+                                <button onclick="deleteAcceptedExchange(${index})" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;"><i class="fa-solid fa-trash"></i> حذف</button>
+                            </div>
+                        `;
+                        acceptedExchangesContainer.appendChild(card);
+                    });
+                } else {
+                    acceptedExchangesContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي مقايضات مقبولة حتى الآن.</p>';
+                }
+            } catch (err) {
+                console.error(err);
+                acceptedExchangesContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل المقايضات المقبولة.</p>';
+            }
+        }
+
+        document.getElementById('menuAcceptedExchanges').addEventListener('click', (e) => {
+            e.preventDefault();
+            accountMenuModal.classList.remove('active');
+            openAcceptedExchangesModalFunc();
+        });
+
+        closeAcceptedExchangesModalBtn.addEventListener('click', () => {
+            acceptedExchangesModal.classList.remove('active');
+        });
+
+        acceptedExchangesModal.classList.remove('active');
+        acceptedExchangesModal.addEventListener('click', (e) => {
+            if (e.target === acceptedExchangesModal) {
+                acceptedExchangesModal.classList.remove('active');
+            }
+        });
+
+        window.deleteAcceptedExchange = function(index) {
+            showCustomConfirm(() => {
+                try {
+                    let acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
+                    acceptedList.splice(index, 1);
+                    localStorage.setItem('badal_accepted_exchanges', JSON.stringify(acceptedList));
+                    showCustomAlert('تم حذف المقايضة المقبولة من الأرشيف', true);
+                    openAcceptedExchangesModalFunc();
+                } catch(err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء الحذف', false);
                 }
             });
         };
