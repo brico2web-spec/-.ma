@@ -756,6 +756,24 @@
             word-break: break-word;
         }
 
+        /* تنسيق مميز للعرض المفتوح داخل البطاقات */
+        .open-exchange-highlight {
+            background: linear-gradient(135deg, #e6f7f0 0%, #f2f7f4 100%);
+            border: 1.5px dashed var(--primary-green);
+            padding: 8px 10px;
+            border-radius: 8px;
+            color: var(--dark-blue);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0, 168, 107, 0.1);
+        }
+        .open-exchange-highlight i {
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+
         .product-badge-group {
             display: flex;
             gap: 6px;
@@ -1052,22 +1070,30 @@
             color: var(--white);
         }
 
+        .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+
         .social-icons a {
-            display: inline-block;
-            width: 32px;
-            height: 32px;
-            background: rgba(255,255,255,0.1);
+            display: inline-flex;
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.06);
             color: var(--white);
-            border-radius: 50%;
-            text-align: center;
-            line-height: 32px;
-            margin-left: 8px;
-            font-size: 0.9rem;
-            transition: 0.3s;
+            border-radius: 10px;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
         }
 
         .social-icons a:hover {
             background: var(--primary-green);
+            border-color: var(--primary-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 168, 107, 0.3);
         }
 
         .footer-bottom {
@@ -1179,7 +1205,7 @@
         </button>
         <button class="bottom-nav-item active" id="bottomAdsBtn">
             <i class="fa-solid fa-house"></i>
-            <span>الإعلانات</span>
+            <span>مقايضة 0 درهم</span>
         </button>
     </nav>
 
@@ -1275,7 +1301,6 @@
         </div>
     </div>
 
-    <!-- نافذة اعلاناتي (محدثة لتبحث برقم الهاتف 0601749553 حصراً لضمان ظهور إعلاناتك) -->
     <div class="modal-overlay" id="myAdsModal">
         <div class="modal-content" style="max-width: 550px; padding: 18px;">
             <button class="modal-close" id="closeMyAdsModalBtn">&times;</button>
@@ -1468,6 +1493,93 @@
         </div>
     </div>
 
+    <!-- نافذة عن المنصة للمقايضة الجديدة -->
+    <div class="modal-overlay" id="aboutPlatformModal">
+        <div class="modal-content" style="max-width: 480px;">
+            <button class="modal-close" id="closeAboutPlatformBtn">&times;</button>
+            <h2 class="modal-title">عن المنصة <span class="logo-green">للمقايضة</span></h2>
+            <div class="steps-container" style="margin-top: 10px;">
+                <div class="step-item">
+                    <h3>التعريف بالمنصة وهدفها الأساسي:</h3>
+                    <p>بدل.ma هي أول منصة مغربية 100% مخصصة للمقايضة المباشرة وتبادل الأغراض بدون مصاريف أو فلوس. الفكرة بسيطة: "بلاصة ما تلوحو، بدلو!".</p>
+                </div>
+                <div class="step-item">
+                    <h3>شنو كنقدمو للزوار (المميزات):</h3>
+                    <p>كنمنحوك فرصة باش تستبدل أي حاجة معندك ما تدير بها (تلفونات، ملابس، أدوات...) بأشياء أخرى محتاجها اليوم وبكل سهولة وأمان.</p>
+                </div>
+                <div class="step-item">
+                    <h3>الرؤية أو الرسالة ديالكم:</h3>
+                    <p>هدفنا هو تشجيع الاقتصاد التضامني، توفير فلوس المواطنين، وخلق مجتمع رقمي مغربي متكامل للتبادل المباشر.</p>
+                </div>
+            </div>
+            <button type="button" class="modal-footer-btn" id="aboutPlatformOkBtn" style="margin-top: 10px;">فهمت، شكراً</button>
+        </div>
+    </div>
+
+    <!-- نافذة الشروط والأحكام الجديدة -->
+    <div class="modal-overlay" id="termsModal">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="modal-close" id="closeTermsModalBtn">&times;</button>
+            <h2 class="modal-title">أهم البنود <span class="logo-green">الشروط والأحكام</span></h2>
+            <div class="steps-container" style="margin-top: 10px;">
+                <div class="step-item">
+                    <h3>قبول الشروط:</h3>
+                    <p>مجرد استخدامك لمنصة بدل.ma أو نشرك لأي إعلان، فهذا كيعني أنك موافق تماماً على جميع الشروط والأحكام الخاصة بالموقع.</p>
+                </div>
+                <div class="step-item">
+                    <h3>طبيعة المنصة (مقايضة فقط):</h3>
+                    <p>المنصة مخصصة حصرياً للمقايضة المباشرة وتبادل الأغراض بين المستخدمين. الموقع لا يتدفق عبره أي بيع أو شراء مالي، وهو وسيط إعلاني فقط للتواصل بين الطرفين.</p>
+                </div>
+                <div class="step-item">
+                    <h3>مسؤولية المستخدم (الأمان والصدق):</h3>
+                    <p>المستخدم هو المسؤول الوحيد عن صحة ومصداقية المعلومات وصور السلعة المعروضة.</p>
+                    <p>يجب وصف السلعة بكل أمانة وذكر أي عيوب موجودة فيها باش تتفادى أي مشاكل.</p>
+                </div>
+                <div class="step-item">
+                    <h3>اللقاء وإتمام الصفقة (خارج الموقع):</h3>
+                    <p>بما أن التبادل كيكون يد بيد، فإن إدارة بدل.ma لا تتحمل أي مسؤولية قانونية أو مادية عن المعاملات التي تتم بين المستخدمين خارج المنصة.</p>
+                    <p>ننصح دائماً بلقاء الطرف الآخر في أمان، أماكن عامة، ومضاضة لفحص السلعة جيداً قبل إتمام المقايضة.</p>
+                </div>
+                <div class="step-item">
+                    <h3>المحتوى الممنوع:</h3>
+                    <p>يمنع منعاً كباتاً نشر أو عرض أي سلع غير قانونية، مسروقة، مقلدة، أو مخالفة للقوانين المعمول بها في المغرب (مثل الأسلحة، المواد الممنوعة، إلخ). للإدارة الحق في حذف أي إعلان مخالف بدون إنذار.</p>
+                </div>
+                <div class="step-item">
+                    <h3>تعديل الشروط:</h3>
+                    <p>يحق لإدارة المنصة تغيير أو تحديث هذه الشروط في أي وقت، ويعتبر استمرار استخدامك للموقع موافقة على تلك التعديلات.</p>
+                </div>
+            </div>
+            <button type="button" class="modal-footer-btn" id="termsOkBtn" style="margin-top: 10px;">فهمت، شكراً</button>
+        </div>
+    </div>
+
+    <!-- نافذة سياسة الخصوصية الجديدة -->
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="modal-close" id="closePrivacyModalBtn">&times;</button>
+            <h2 class="modal-title">سياسة <span class="logo-green">الخصوصية</span></h2>
+            <div class="steps-container" style="margin-top: 10px;">
+                <div class="step-item">
+                    <h3>حماية بياناتك أولويتنا:</h3>
+                    <p>نحن في منصة بدل.ma نحترم خصوصيتك ونلتزم بحماية سرية معلوماتك الشخصية.</p>
+                </div>
+                <div class="step-item">
+                    <h3>إخفاء الأرقام والأسماء:</h3>
+                    <p>لضمان أمانك، لا يتم عرض أرقام الهواتف أو الأسماء للعلن؛ إذ تظل مخفية ولا تظهر للطرف الآخر إلا بعد موافقة المستخدم والضغط صراحة على زر "أوافق" للتواصل عبر الواتساب لإتمام المقايضة.</p>
+                </div>
+                <div class="step-item">
+                    <h3>استخدام البيانات:</h3>
+                    <p>تُستعمل المعلومات فقط لتسهيل التواصل المباشر بين الطرفين الراغبين في تبادل الأغراض، ولا يتم مشاركة أي بيانات مع أي جهة خارجية.</p>
+                </div>
+                <div class="step-item">
+                    <h3>الأمان والمسؤولية:</h3>
+                    <p>ننصح دائماً بالحرص عند مشاركة التفاصيل الشخصية أثناء اللقاء الميداني لإتمام الصفقة يداً بيد.</p>
+                </div>
+            </div>
+            <button type="button" class="modal-footer-btn" id="privacyOkBtn" style="margin-top: 10px;">فهمت، شكراً</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="contactModal">
         <div class="modal-content">
             <button class="modal-close" id="closeContactModalBtn">&times;</button>
@@ -1521,7 +1633,7 @@
                         <a id="slideDiscoverBtn" class="slide-btn">اكتشف الآن</a>
                         <h2>سهل، تواصل، بدل</h2>
                         <p class="subtitle">سهل، سريع، وبلا فلوس</p>
-                        <p class="desc">وفر فلوسك واستبدل الأشياء لي معندك ما تدير بيها بأشياء محتاجها اليوم!</p>
+                        <p class="desc">وفر فلوسك واستبدال الأشياء لي معندك ما تدير بيها بأشياء محتاجها اليوم!</p>
                         <p class="tagline">مجاني • سريع • آمن • 100% مغربي</p>
                     </div>
                 </div>
@@ -1560,24 +1672,23 @@
                 <h4>روابط سريعة</h4>
                 <ul>
                     <li><a href="#" id="footerHomeBtn">الرئيسية</a></li>
-                    <li><a href="#" id="footerAboutBtn">عن المنصة</a></li>
+                    <li><a href="#" id="footerAboutBtn">عن المنصة للمقايضة</a></li>
                     <li><a href="#" id="contactUsBtn">تواصل معنا</a></li>
-                    <li><a href="#">الشروط والأحكام</a></li>
-                    <li><a href="#">سياسة الخصوصية</a></li>
+                    <li><a href="#" id="footerTermsBtn">الشروط والأحكام</a></li>
+                    <li><a href="#" id="footerPrivacyBtn">سياسة الخصوصية</a></li>
                 </ul>
             </div>
             <div class="footer-social">
                 <h4>تابعنا على</h4>
                 <div class="social-icons">
-                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" title="فيسبوك"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" title="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.8.5</span>
+            <span class="version-tag">v0.9.3</span>
         </div>
     </footer>
 
@@ -1858,6 +1969,19 @@
                 }
 
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
+                
+                // تطبيق التنسيق المميز في حال كان الوصف يدل على العرض المفتوح
+                let descHTML = `<p class="product-desc">${cleanDesc}</p>`;
+                if (cleanDesc.includes('أقبل المقايضة بأي منتوج مقترح')) {
+                    let formattedText = cleanDesc.replace('🔓', '').trim();
+                    descHTML = `
+                        <div class="open-exchange-highlight">
+                            <i class="fa-solid fa-handshake-angle"></i>
+                            <span>${formattedText}</span>
+                        </div>
+                    `;
+                }
+
                 const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 
                 const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
@@ -1873,7 +1997,7 @@
                             <span class="product-city-badge"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${prodCity}</span>
                         </div>
                         <h3 class="product-title">${prod.title}</h3>
-                        <p class="product-desc">${cleanDesc}</p>
+                        ${descHTML}
                         <a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>
                     </div>
                 `;
@@ -1896,6 +2020,17 @@
             const iconClass = prod.icon || 'fa-box-open';
             const displayImgFull = prod.image_url ? `<div style="width:100%; height:260px; background-image:url('${prod.image_url}'); background-size:cover; background-position:center; border-radius:10px; border:1px solid #d2ded7;"></div>` : `<div style="width:100%; height:220px; background-color:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:3rem;"><i class="fa-solid ${iconClass}"></i></div>`;
 
+            let modalDescHTML = `<p style="font-size:0.9rem; color:var(--text-gray); line-height:1.5; word-break:break-word;">${cleanDesc}</p>`;
+            if (cleanDesc.includes('أقبل المقايضة بأي منتوج مقترح')) {
+                let formattedText = cleanDesc.replace('🔓', '').trim();
+                modalDescHTML = `
+                    <div class="open-exchange-highlight" style="padding:10px; font-size:0.9rem;">
+                        <i class="fa-solid fa-handshake-angle" style="font-size:1.2rem;"></i>
+                        <span>${formattedText}</span>
+                    </div>
+                `;
+            }
+
             productDetailsModalBody.innerHTML = `
                 <h2 style="font-size:1.3rem; font-weight:900; color:var(--dark-blue); font-family:'Cairo', sans-serif; text-align:center; margin-bottom:5px;">${prod.title}</h2>
                 <div style="display:flex; justify-content:center; gap:8px; margin-bottom:5px;">
@@ -1905,7 +2040,7 @@
                 ${displayImgFull}
                 <div style="background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:8px; margin-top:5px;">
                     <h4 style="font-size:0.9rem; font-weight:800; color:var(--dark-blue); margin-bottom:4px;">وصف السلعة:</h4>
-                    <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.5; word-break:break-word;">${cleanDesc}</p>
+                    ${modalDescHTML}
                 </div>
                 <button type="button" class="form-submit-btn" style="margin-top:10px;" onclick="productDetailsModal.classList.remove('active'); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</button>
             `;
@@ -2244,6 +2379,18 @@
                     let prodCity = prod.city || 'القنيطرة';
                     let rawDesc = prod.description || prod.desc || '';
                     let cleanDesc = rawDesc.split(' (الهاتف:')[0];
+                    
+                    let descHTML = `<p class="product-desc">${cleanDesc}</p>`;
+                    if (cleanDesc.includes('أقبل المقايضة بأي منتوج مقترح')) {
+                        let formattedText = cleanDesc.replace('🔓', '').trim();
+                        descHTML = `
+                            <div class="open-exchange-highlight">
+                                <i class="fa-solid fa-handshake-angle"></i>
+                                <span>${formattedText}</span>
+                            </div>
+                        `;
+                    }
+
                     const displayImg = prod.image_url ? `<div class="product-img" style="background-image:url('${prod.image_url}'); background-size:cover; background-position:center;"></div>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
 
                     card.innerHTML = `
@@ -2257,7 +2404,7 @@
                                 <span class="product-city-badge"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${prodCity}</span>
                             </div>
                             <h3 class="product-title">${prod.title}</h3>
-                            <p class="product-desc">${cleanDesc}</p>
+                            ${descHTML}
                             <a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title}', ${prod.id});">طلب تبدل معاه</a>
                         </div>
                     `;
@@ -2850,7 +2997,7 @@
                 } else {
                     const userData = { name, city, phone, password };
                     sessionStorage.setItem('badal_supabase_user', JSON.stringify(userData));
-                    showCustomAlert('تم إنشاء الحساب الحقيقي بنجاح في قاعدة البيانات!', true);
+                    showCustomAlert('تم إنشاء الحساب مرحبا في منصة بدل', true);
                     authModal.classList.remove('active');
                     checkAuthSession();
                     registerForm.reset();
@@ -2907,7 +3054,7 @@
 
                 if (foundUser) {
                     sessionStorage.setItem('badal_supabase_user', JSON.stringify(foundUser));
-                    showCustomAlert('تم تسجيل الدخول بنجاح من قاعدة البيانات!', true);
+                    showCustomAlert(`مرحبا ${foundUser.name} في منصة بدل`, true);
                     authModal.classList.remove('active');
                     checkAuthSession();
                     loginForm.reset();
@@ -2970,6 +3117,81 @@
         howToModal.addEventListener('click', (e) => {
             if (e.target === howToModal) {
                 howToModal.classList.remove('active');
+            }
+        });
+
+        // تشغيل نافذة عن المنصة للمقايضة
+        const footerAboutBtn = document.getElementById('footerAboutBtn');
+        const aboutPlatformModal = document.getElementById('aboutPlatformModal');
+        const closeAboutPlatformBtn = document.getElementById('closeAboutPlatformBtn');
+        const aboutPlatformOkBtn = document.getElementById('aboutPlatformOkBtn');
+
+        footerAboutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            aboutPlatformModal.classList.add('active');
+        });
+
+        closeAboutPlatformBtn.addEventListener('click', () => {
+            aboutPlatformModal.classList.remove('active');
+        });
+
+        aboutPlatformOkBtn.addEventListener('click', () => {
+            aboutPlatformModal.classList.remove('active');
+        });
+
+        aboutPlatformModal.addEventListener('click', (e) => {
+            if (e.target === aboutPlatformModal) {
+                aboutPlatformModal.classList.remove('active');
+            }
+        });
+
+        // تشغيل نافذة الشروط والأحكام
+        const footerTermsBtn = document.getElementById('footerTermsBtn');
+        const termsModal = document.getElementById('termsModal');
+        const closeTermsModalBtn = document.getElementById('closeTermsModalBtn');
+        const termsOkBtn = document.getElementById('termsOkBtn');
+
+        footerTermsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            termsModal.classList.add('active');
+        });
+
+        closeTermsModalBtn.addEventListener('click', () => {
+            termsModal.classList.remove('active');
+        });
+
+        termsOkBtn.addEventListener('click', () => {
+            termsModal.classList.remove('active');
+        });
+
+        termsModal.addEventListener('click', (e) => {
+            if (e.target === termsModal) {
+                termsModal.classList.remove('active');
+            }
+        });
+
+        // تشغيل نافذة سياسة الخصوصية
+        const footerPrivacyBtn = document.getElementById('footerPrivacyBtn');
+        const privacyModal = document.getElementById('privacyModal');
+        const closePrivacyModalBtn = document.getElementById('closePrivacyModalBtn');
+        const privacyOkBtn = document.getElementById('privacyOkBtn');
+
+        footerPrivacyBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            privacyModal.classList.add('active');
+        });
+
+        closePrivacyModalBtn.addEventListener('click', () => {
+            privacyModal.classList.remove('active');
+        });
+
+        privacyOkBtn.addEventListener('click', () => {
+            privacyModal.classList.remove('active');
+        });
+
+        privacyModal.addEventListener('click', (e) => {
+            if (e.target === privacyModal) {
+                privacyModal.classList.remove('active');
             }
         });
 
