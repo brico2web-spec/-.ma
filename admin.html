@@ -73,16 +73,11 @@
         .logo-green { color: var(--primary-green); }
         .logo-dark { color: var(--dark-blue); }
 
-        .admin-badge {
-            background-color: #e6f7f0;
-            color: var(--primary-green);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .admin-cpanel-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            font-family: 'Cairo', sans-serif;
+            text-decoration: none;
         }
 
         .container {
@@ -459,8 +454,10 @@
         <a href="index.html" class="logo">
             <span class="logo-green">بدل</span><span class="logo-dark">.ma</span>
         </a>
-        <div style="display: flex; gap: 10px; align-items: center;">
-            <div class="admin-badge"><i class="fa-solid fa-shield-halved"></i> لوحة إدارة الموقع</div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <div class="admin-cpanel-title">
+                <span class="logo-green">Admin</span><span class="logo-dark">cPanel</span>
+            </div>
             <button id="logoutAdminBtn" class="logout-admin-btn" style="display: none;"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
         </div>
     </header>
@@ -686,7 +683,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.17
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.19
     </footer>
 
     <!-- نافذة تكبير الصورة -->
