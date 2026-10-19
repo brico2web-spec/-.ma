@@ -1148,8 +1148,7 @@
             <nav class="nav-links">
                 <a id="homeNavBtn" class="active">الرئيسية</a>
                 <a id="howToExchangeBtn">كيفاش نتبادل؟</a>
-                <a id="contactUsBtn">تواصل معنا</a>
-                <a id="offersNavBtn">العروض</a>
+                <a id="offersNavBtn">منتوجات 0 درهم</a>
             </nav>
 
             <div class="header-btn" id="headerBtnContainer">
@@ -1562,6 +1561,7 @@
                 <ul>
                     <li><a href="#" id="footerHomeBtn">الرئيسية</a></li>
                     <li><a href="#" id="footerAboutBtn">عن المنصة</a></li>
+                    <li><a href="#" id="contactUsBtn">تواصل معنا</a></li>
                     <li><a href="#">الشروط والأحكام</a></li>
                     <li><a href="#">سياسة الخصوصية</a></li>
                 </ul>
@@ -1577,7 +1577,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.8.1</span>
+            <span class="version-tag">v0.8.5</span>
         </div>
     </footer>
 
@@ -1775,7 +1775,8 @@
 
         function getFavorites() {
             try {
-                return JSON.parse(localStorage.getItem('badal_favorites') || '[]');
+                const parsed = JSON.parse(localStorage.getItem('badal_favorites') || '[]');
+                return Array.isArray(parsed) ? parsed : [];
             } catch(e) {
                 return [];
             }
@@ -1785,8 +1786,9 @@
             const favs = getFavorites();
             const badge = document.getElementById('favBadgeCount');
             if (badge) {
-                if (favs.length > 0) {
-                    badge.textContent = favs.length;
+                const validFavs = allProducts.length > 0 ? favs.filter(id => allProducts.some(p => p.id === id)) : favs;
+                if (validFavs.length > 0) {
+                    badge.textContent = validFavs.length;
                     badge.classList.add('active');
                 } else {
                     badge.textContent = '0';
@@ -2728,7 +2730,7 @@
                     if (_supabase) {
                         const { error } = await _supabase.from('products').delete().eq('id', Number(adId));
                         if (!error) {
-                            showCustomAlert('تم حذف الإعلان نهائياً من قاعدة البيانات', true);
+                            showCustomAlert('تم حذف الإعلان', true);
                             allProducts = allProducts.filter(p => p.id !== adId);
                             renderProducts(currentPage);
                             openMyAdsModalFunc();
