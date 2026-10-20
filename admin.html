@@ -710,7 +710,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.20
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.21
     </footer>
 
     <!-- نافذة تكبير الصورة -->
@@ -905,9 +905,12 @@
                 const { data, error } = await _supabase.from('products').select('*');
                 if (!error && data) {
                     globalCachedRawData = data;
-                    const pureAds = data.filter(i => !i.description.includes('[USER_ACCOUNT]') && !i.description.includes('[EXCHANGE_REQUEST]') && !i.description.includes('[CONTACT_MESSAGE]'));
-                    const users = data.filter(i => i.description.includes('[USER_ACCOUNT]'));
-                    const requests = data.filter(i => i.description.includes('[EXCHANGE_REQUEST]'));
+                    const pureAds = data.filter(i => {
+                        const desc = i.description || '';
+                        return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]') && !desc.includes('[CONTACT_MESSAGE]') && !desc.includes('[USER_MESSAGE]');
+                    });
+                    const users = data.filter(i => (i.description || '').includes('[USER_ACCOUNT]'));
+                    const requests = data.filter(i => (i.description || '').includes('[EXCHANGE_REQUEST]'));
 
                     document.getElementById('statTotalAds').textContent = pureAds.length;
                     document.getElementById('statTotalUsers').textContent = users.length;
@@ -1252,7 +1255,10 @@
             const tbody = document.getElementById('adminMessagesTableBody');
             tbody.innerHTML = '';
             
-            let messages = allData.filter(i => (i.description || '').includes('[CONTACT_MESSAGE]'));
+            let messages = allData.filter(i => {
+                const desc = i.description || '';
+                return desc.includes('[CONTACT_MESSAGE]') || desc.includes('[USER_MESSAGE]');
+            });
             messages.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
             if (filterQuery) {
@@ -1280,9 +1286,9 @@
                 const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
                 const msgMatch = desc.match(/\[MESSAGE:(.*?)\]/);
 
-                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
-                const senderPhone = phoneMatch ? phoneMatch[1].trim() : '';
-                const messageText = msgMatch ? msgMatch[1].trim() : msg.title;
+                const senderName = nameMatch ? nameMatch[1].trim() : (msg.title ? msg.title.replace('رسالة اتصال من: ', '') : 'مستخدم');
+                const senderPhone = phoneMatch ? phoneMatch[1].trim() : 'غير متوفر';
+                const messageText = msgMatch ? msgMatch[1].trim() : desc;
                 const dateStr = msg.created_at ? new Date(msg.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
 
                 const tr = document.createElement('tr');
