@@ -1733,7 +1733,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.25</span>
+            <span class="version-tag">v0.9.26</span>
         </div>
     </footer>
 
@@ -3337,7 +3337,7 @@
             // التحقق من صحة رقم الهاتف المغربي (يبدأ بـ 0 أو +212 ويحتوي على 10 أرقام صحيحة)
             const phoneRegex = /^(?:\+212|0)[5-7]\d{8}$/;
             if (!phoneRegex.test(phone)) {
-                showCustomAlert('المرجو إدخال رقم هاتف مغربي صحيح (مثال: 06xxxxxxxx أو 07xxxxxxxx)!', false);
+                showCustomAlert('رقم الهاتف غير صحيح', false);
                 registerSubmitBtn.disabled = false;
                 registerSubmitBtn.textContent = 'تسجيل الحساب';
                 return;
