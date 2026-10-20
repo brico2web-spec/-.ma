@@ -524,6 +524,7 @@
                 <button class="admin-tab-btn" onclick="switchAdminTab('approvedRequests')"><i class="fa-solid fa-circle-check"></i> المقايضة الموافقة</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('rejectedRequests')"><i class="fa-solid fa-circle-xmark"></i> المقايضة المرفوضة</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('users')"><i class="fa-solid fa-user-gear"></i> إدارة المستخدمين والحظر</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('messages')"><i class="fa-solid fa-envelope"></i> رسائل المستخدمين</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('traffic')"><i class="fa-solid fa-chart-column"></i> إحصائيات الترافيك والمبيان</button>
             </div>
 
@@ -660,6 +661,32 @@
                 </div>
             </div>
 
+            <!-- قسم رسائل المستخدمين (تواصل معنا) -->
+            <div id="adminMessagesSection" class="admin-panel-section">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-envelope"></i> رسائل المستخدمين الواردة (تواصل معنا)</h3>
+                
+                <div class="search-box-container">
+                    <input type="text" id="messagesSearchInput" placeholder="ابحث باسم المرسل أو رقم الهاتف..." oninput="filterMessagesTable()">
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم المرسل</th>
+                                <th>رقم الهاتف</th>
+                                <th>محتوى الرسالة</th>
+                                <th>التاريخ</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMessagesTableBody">
+                            <tr><td colspan="5" style="text-align: center; color: var(--text-gray);">لا توجد رسائل واردة حالياً.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- قسم إحصائيات الترافيك والمبيان المفصل -->
             <div id="adminTrafficSection" class="admin-panel-section">
                 <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-chart-line"></i> تحليل وترافيك المنصة المرتبط بقاعدة البيانات حقيقة</h3>
@@ -683,7 +710,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.19
+        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.20
     </footer>
 
     <!-- نافذة تكبير الصورة -->
@@ -861,6 +888,10 @@
                 event.currentTarget.classList.add('active');
                 document.getElementById('adminUsersSection').classList.add('active');
                 renderUsersTable(allLoadedUsers);
+            } else if (tab === 'messages') {
+                event.currentTarget.classList.add('active');
+                document.getElementById('adminMessagesSection').classList.add('active');
+                renderMessagesTable(globalCachedRawData);
             } else if (tab === 'traffic') {
                 event.currentTarget.classList.add('active');
                 document.getElementById('adminTrafficSection').classList.add('active');
@@ -874,7 +905,7 @@
                 const { data, error } = await _supabase.from('products').select('*');
                 if (!error && data) {
                     globalCachedRawData = data;
-                    const pureAds = data.filter(i => !i.description.includes('[USER_ACCOUNT]') && !i.description.includes('[EXCHANGE_REQUEST]'));
+                    const pureAds = data.filter(i => !i.description.includes('[USER_ACCOUNT]') && !i.description.includes('[EXCHANGE_REQUEST]') && !i.description.includes('[CONTACT_MESSAGE]'));
                     const users = data.filter(i => i.description.includes('[USER_ACCOUNT]'));
                     const requests = data.filter(i => i.description.includes('[EXCHANGE_REQUEST]'));
 
@@ -890,6 +921,7 @@
                     renderRequestsTable(data);
                     renderApprovedRequestsTable(data);
                     renderRejectedRequestsTable(data);
+                    renderMessagesTable(data);
                     renderTrafficChart(currentTrafficMode);
                     if (document.getElementById('adminUsersSection').classList.contains('active')) {
                         renderUsersTable(allLoadedUsers);
@@ -1210,6 +1242,77 @@
                         loadAdminData();
                     } else {
                         showCustomAlert('فشل حذف الطلب: ' + error.message, false);
+                    }
+                }
+            });
+        };
+
+        // عرض وإدارة رسائل "تواصل معنا"
+        function renderMessagesTable(allData, filterQuery = '') {
+            const tbody = document.getElementById('adminMessagesTableBody');
+            tbody.innerHTML = '';
+            
+            let messages = allData.filter(i => (i.description || '').includes('[CONTACT_MESSAGE]'));
+            messages.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+            if (filterQuery) {
+                const q = filterQuery.toLowerCase();
+                messages = messages.filter(msg => {
+                    const desc = msg.description || '';
+                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                    
+                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
+                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
+
+                    return sName.includes(q) || sPhone.includes(q);
+                });
+            }
+
+            if (messages.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-gray);">لا توجد رسائل واردة مطابقة.</td></tr>';
+                return;
+            }
+
+            messages.forEach(msg => {
+                const desc = msg.description || '';
+                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                const msgMatch = desc.match(/\[MESSAGE:(.*?)\]/);
+
+                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
+                const senderPhone = phoneMatch ? phoneMatch[1].trim() : '';
+                const messageText = msgMatch ? msgMatch[1].trim() : msg.title;
+                const dateStr = msg.created_at ? new Date(msg.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span></td>
+                    <td><i class="fa-solid fa-phone"></i> ${senderPhone}</td>
+                    <td style="font-weight:700;">${messageText}</td>
+                    <td>${dateStr}</td>
+                    <td>
+                        <button onclick="adminDeleteMessage(${msg.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterMessagesTable() {
+            const query = document.getElementById('messagesSearchInput').value.trim();
+            renderMessagesTable(globalCachedRawData, query);
+        }
+
+        window.adminDeleteMessage = function(id) {
+            showCustomConfirm('هل أنت متأكد من رغبتك في حذف هذه الرسالة نهائياً؟', async () => {
+                if (_supabase) {
+                    const { error } = await _supabase.from('products').delete().eq('id', Number(id));
+                    if (!error) {
+                        showCustomAlert('تم حذف الرسالة بنجاح.', true);
+                        loadAdminData();
+                    } else {
+                        showCustomAlert('فشل حذف الرسالة: ' + error.message, false);
                     }
                 }
             });
