@@ -1735,7 +1735,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.31</span>
+            <span class="version-tag">v0.9.32</span>
         </div>
     </footer>
 
@@ -2603,11 +2603,24 @@
                                         ${imagesComparisonHTML}
                                         <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة المقايض:</b> ${senderDesc}</p>
                                         <div style="display:flex; gap:10px; margin-top:5px;">
-                                            <button onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName.replace(/'/g, "\\'")}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">موافق</button>
-                                            <button onclick="cancelExchangeRequest(${req.id})" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">رفض الطلب</button>
+                                            <button id="acceptBtn_${req.id}" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">موافق</button>
+                                            <button id="rejectBtn_${req.id}" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">رفض الطلب</button>
                                         </div>
                                     `;
                                     incomingRequestsContainer.appendChild(card);
+
+                                    // إضافة ربط الأحداث بالأزرار مباشرة وبشكل حساس وفوري لمنع أي تأخير في الاستجابة
+                                    setTimeout(() => {
+                                        const acceptBtn = document.getElementById(`acceptBtn_${req.id}`);
+                                        const rejectBtn = document.getElementById(`rejectBtn_${req.id}`);
+                                        
+                                        if (acceptBtn) {
+                                            acceptBtn.onclick = () => acceptExchangeRequest(req.id, senderPhone, senderName);
+                                        }
+                                        if (rejectBtn) {
+                                            rejectBtn.onclick = () => cancelExchangeRequest(req.id);
+                                        }
+                                    }, 50);
                                 });
                             } else {
                                 incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
@@ -2651,7 +2664,6 @@
                         acceptedList.push(reqData);
                         localStorage.setItem('badal_accepted_exchanges', JSON.stringify(acceptedList));
                         
-                        // تحديث السجل في Supabase ليصبح مقبولاً أو إزالته فوراً مع المزامنة
                         const updatedDesc = (reqData.description || '') + ' [ACCEPTED]';
                         await _supabase.from('products').update({ description: updatedDesc }).eq('id', Number(reqId));
                         await _supabase.from('products').delete().eq('id', Number(reqId));
@@ -2662,7 +2674,7 @@
                 if (cleanPhone.startsWith('0')) {
                     cleanPhone = '212' + cleanPhone.substring(1);
                 }
-                const whatsappUrl = `https://wa.me/${cleanPhone}?text=سلام ${name} ، قبلت العرض ديالك فـ بدل.ma! دوزي للواتساب باش نتفقو على كلشي 🚀`;
+                const whatsappUrl = `https://wa.me/${cleanPhone}?text=سلام ${name} ، قبلت العرض ديالك فـ بدل.ma! دوز للواتساب باش نتفقو على كلشي 🚀`;
                 window.open(whatsappUrl, '_blank');
 
                 if(messagesModal) messagesModal.classList.remove('active');
@@ -2772,7 +2784,7 @@
                         if (cleanPhone.startsWith('0')) {
                             cleanPhone = '212' + cleanPhone.substring(1);
                         }
-                        const whatsappUrl = `https://wa.me/${cleanPhone}?text=سلام ${senderName} ، قبلت العرض ديالك فـ بدل.ma! دوزي للواتساب باش نتفقو على كلشي 🚀`;
+                        const whatsappUrl = `https://wa.me/${cleanPhone}?text=سلام ${senderName} ، قبلت العرض ديالك فـ بدل.ma! دوز للواتساب باش نتفقو على كلشي 🚀`;
 
                         card.innerHTML = `
                             <div style="display:flex; justify-content:space-between; align-items:center;">
