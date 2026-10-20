@@ -1642,7 +1642,7 @@
                     <label for="message">رسالتك:</label>
                     <textarea id="message" placeholder="اكتب رسالتك هنا..." required></textarea>
                 </div>
-                <button type="submit" class="form-submit-btn">إرسال الرسالة</button>
+                <button type="submit" class="form-submit-btn" id="contactSubmitBtn">إرسال الرسالة</button>
             </form>
         </div>
     </div>
@@ -1733,7 +1733,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.27</span>
+            <span class="version-tag">v0.9.28</span>
         </div>
     </footer>
 
@@ -1939,7 +1939,7 @@
                     if (!error && data) {
                         allProducts = data.filter(item => {
                             const desc = item.description || '';
-                            return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
+                            return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]') && !desc.includes('[USER_MESSAGE]');
                         });
                     }
                 }
@@ -2287,7 +2287,7 @@
                     if (!error && data && data.length > 0) {
                         const validAds = data.filter(ad => {
                             const desc = ad.description || '';
-                            return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]');
+                            return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]') && !desc.includes('[USER_MESSAGE]');
                         });
 
                         if (validAds.length > 0) {
@@ -3201,7 +3201,7 @@
                         myAdsContainer.innerHTML = '';
                         data.forEach(ad => {
                             const desc = ad.description || '';
-                            if (desc.includes('[USER_ACCOUNT]') || desc.includes('[EXCHANGE_REQUEST]')) return;
+                            if (desc.includes('[USER_ACCOUNT]') || desc.includes('[EXCHANGE_REQUEST]') || desc.includes('[USER_MESSAGE]')) return;
 
                             const adCard = document.createElement('div');
                             adCard.style.cssText = "display:flex; flex-direction:column; gap:8px; background:#f8faf9; border:1px solid #d2ded7; padding:12px; border-radius:10px;";
@@ -3579,11 +3579,58 @@
         checkAuthSession();
 
         const contactForm = document.getElementById('contactForm');
-        contactForm.addEventListener('submit', (e) => {
+        const contactSubmitBtn = document.getElementById('contactSubmitBtn');
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            showCustomAlert('تم إرسال رسالتك بنجاح!', true);
-            contactModal.classList.remove('active');
-            contactForm.reset();
+
+            const senderName = document.getElementById('name').value.trim();
+            const senderPhone = document.getElementById('contact-info').value.trim();
+            const senderMessage = document.getElementById('message').value.trim();
+
+            // التحقق من صحة رقم الهاتف
+            const phoneRegex = /^(?:\+212|0)[5-7]\d{8}$/;
+            if (!phoneRegex.test(senderPhone)) {
+                showCustomAlert('رقم الهاتف غير صحيح', false);
+                return;
+            }
+
+            if (!_supabase) {
+                showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
+                return;
+            }
+
+            if (contactSubmitBtn) {
+                contactSubmitBtn.disabled = true;
+                contactSubmitBtn.textContent = 'جاري الإرسال...';
+            }
+
+            try {
+                const msgPayload = {
+                    title: "رسالة اتصال من: " + senderName,
+                    description: `[USER_MESSAGE] [SENDER_NAME:${senderName}] [SENDER_PHONE:${senderPhone}] [MESSAGE:${senderMessage}]`,
+                    category: "أغراض متنوّعة",
+                    city: "القنيطرة",
+                    image_url: ""
+                };
+
+                const { error: insertErr } = await _supabase.from('products').insert([msgPayload]);
+
+                if (!insertErr) {
+                    showCustomAlert('تم إرسال رسالتك بنجاح!', true);
+                    contactModal.classList.remove('active');
+                    contactForm.reset();
+                } else {
+                    showCustomAlert('فشل إرسال الرسالة: ' + insertErr.message, false);
+                }
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('حدث خطأ أثناء إرسال الرسالة.', false);
+            } finally {
+                if (contactSubmitBtn) {
+                    contactSubmitBtn.disabled = false;
+                    contactSubmitBtn.textContent = 'إرسال الرسالة';
+                }
+            }
         });
 
         const howToBtn = document.getElementById('howToExchangeBtn');
