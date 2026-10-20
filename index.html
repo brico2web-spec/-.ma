@@ -1505,7 +1505,8 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="customAlertModal">
+    <!-- رفع الـ z-index إلى 3000 لضمان ظهور التنبيه فوق نافذة تواصل معنا وتحت أي إخفاء -->
+    <div class="modal-overlay" id="customAlertModal" style="z-index: 3000;">
         <div class="modal-content" style="max-width: 380px; text-align: center;">
             <button class="modal-close" id="closeCustomAlertBtn">&times;</button>
             <div class="custom-alert-box">
@@ -1716,7 +1717,7 @@
             <div class="footer-links">
                 <h4>روابط سريعة</h4>
                 <ul>
-                    <li><a href="#" id="footerHomeBtn">الرئيسية</a></li>
+                    <!-- تم حذف رابط وكلمة الرئيسية من هنا بناءً على طلبك -->
                     <li><a href="#" id="footerAboutBtn">عن المنصة للمقايضة</a></li>
                     <li><a href="#" id="contactUsBtn">تواصل معنا</a></li>
                     <li><a href="#" id="footerTermsBtn">الشروط والأحكام</a></li>
@@ -1726,14 +1727,15 @@
             <div class="footer-social">
                 <h4>تابعنا على</h4>
                 <div class="social-icons">
-                    <a href="#" title="فيسبوك"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" title="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61595554653164" target="_blank" title="فيسبوك"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/bedal.ma/" target="_blank" title="إنستغرام"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@badal88130?is_from_webapp=1&sender_device=pc" target="_blank" title="تيكتوك"><i class="fa-brands fa-tiktok"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.28</span>
+            <span class="version-tag">v0.9.30</span>
         </div>
     </footer>
 
@@ -1820,26 +1822,35 @@
             const alertMsg = document.getElementById('customAlertMessage');
             const alertIcon = document.getElementById('customAlertIcon');
             
-            alertMsg.textContent = message;
-            if(isSuccess) {
-                alertIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-                alertIcon.style.color = 'var(--primary-green)';
-            } else {
-                alertIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
-                alertIcon.style.color = '#e74c3c';
+            if(alertMsg) alertMsg.textContent = message;
+            if(alertIcon) {
+                if(isSuccess) {
+                    alertIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                    alertIcon.style.color = 'var(--primary-green)';
+                } else {
+                    alertIcon.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+                    alertIcon.style.color = '#e74c3c';
+                }
             }
-            alertModal.classList.add('active');
+            if(alertModal) alertModal.classList.add('active');
         }
 
-        document.getElementById('closeCustomAlertBtn').addEventListener('click', () => {
-            document.getElementById('customAlertModal').classList.remove('active');
+        const closeCustomAlertBtn = document.getElementById('closeCustomAlertBtn');
+        if(closeCustomAlertBtn) closeCustomAlertBtn.addEventListener('click', () => {
+            const m = document.getElementById('customAlertModal');
+            if(m) m.classList.remove('active');
         });
-        document.getElementById('customAlertOkBtn').addEventListener('click', () => {
-            document.getElementById('customAlertModal').classList.remove('active');
+
+        const customAlertOkBtn = document.getElementById('customAlertOkBtn');
+        if(customAlertOkBtn) customAlertOkBtn.addEventListener('click', () => {
+            const m = document.getElementById('customAlertModal');
+            if(m) m.classList.remove('active');
         });
-        document.getElementById('customAlertModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('customAlertModal')) {
-                document.getElementById('customAlertModal').classList.remove('active');
+
+        const customAlertModal = document.getElementById('customAlertModal');
+        if(customAlertModal) customAlertModal.addEventListener('click', (e) => {
+            if (e.target === customAlertModal) {
+                customAlertModal.classList.remove('active');
             }
         });
 
@@ -1851,25 +1862,25 @@
 
         function showCustomConfirm(onConfirm) {
             pendingDeleteAction = onConfirm;
-            customConfirmModal.classList.add('active');
+            if(customConfirmModal) customConfirmModal.classList.add('active');
         }
 
-        closeCustomConfirmBtn.addEventListener('click', () => {
-            customConfirmModal.classList.remove('active');
+        if(closeCustomConfirmBtn) closeCustomConfirmBtn.addEventListener('click', () => {
+            if(customConfirmModal) customConfirmModal.classList.remove('active');
             pendingDeleteAction = null;
         });
-        customConfirmNoBtn.addEventListener('click', () => {
-            customConfirmModal.classList.remove('active');
+        if(customConfirmNoBtn) customConfirmNoBtn.addEventListener('click', () => {
+            if(customConfirmModal) customConfirmModal.classList.remove('active');
             pendingDeleteAction = null;
         });
-        customConfirmYesBtn.addEventListener('click', () => {
-            customConfirmModal.classList.remove('active');
+        if(customConfirmYesBtn) customConfirmYesBtn.addEventListener('click', () => {
+            if(customConfirmModal) customConfirmModal.classList.remove('active');
             if(pendingDeleteAction) {
                 pendingDeleteAction();
                 pendingDeleteAction = null;
             }
         });
-        customConfirmModal.addEventListener('click', (e) => {
+        if(customConfirmModal) customConfirmModal.addEventListener('click', (e) => {
             if (e.target === customConfirmModal) {
                 customConfirmModal.classList.remove('active');
                 pendingDeleteAction = null;
@@ -1882,6 +1893,7 @@
         let slideInterval;
 
         function showSlide(index) {
+            if (slides.length === 0) return;
             if (index >= slides.length) {
                 currentSlideIndex = 0;
             } else if (index < 0) {
@@ -1895,6 +1907,8 @@
 
             if(slides[currentSlideIndex]) {
                 slides[currentSlideIndex].classList.add('active');
+            }
+            if(dots[currentSlideIndex]) {
                 dots[currentSlideIndex].classList.add('active');
             }
         }
@@ -1904,9 +1918,11 @@
         }
 
         function startSlider() {
-            slideInterval = setInterval(() => {
-                showSlide(currentSlideIndex + 1);
-            }, 5000);
+            if (slides.length > 0) {
+                slideInterval = setInterval(() => {
+                    showSlide(currentSlideIndex + 1);
+                }, 5000);
+            }
         }
 
         function stopSlider() {
@@ -1925,7 +1941,7 @@
             isFetchingProducts = true;
 
             const gridContainer = document.getElementById('productsGridContainer');
-            if(allProducts.length === 0) {
+            if(gridContainer && allProducts.length === 0) {
                 gridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:30px;"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل العروض...</p>';
             }
 
@@ -1960,13 +1976,17 @@
                     checkCurrentAccountBanStatus();
                     fetchProductsFromSupabase(true);
                     checkIncomingRequestsCount();
-                    if (document.getElementById('messagesModal').classList.contains('active')) {
-                        document.getElementById('bottomMessagesBtn').click();
+                    const mModal = document.getElementById('messagesModal');
+                    if (mModal && mModal.classList.contains('active')) {
+                        const mBtn = document.getElementById('bottomMessagesBtn');
+                        if(mBtn) mBtn.click();
                     }
-                    if (document.getElementById('myAdsModal').classList.contains('active')) {
+                    const myModal = document.getElementById('myAdsModal');
+                    if (myModal && myModal.classList.contains('active')) {
                         openMyAdsModalFunc();
                     }
-                    if (document.getElementById('acceptedExchangesModal').classList.contains('active')) {
+                    const accModal = document.getElementById('acceptedExchangesModal');
+                    if (accModal && accModal.classList.contains('active')) {
                         openAcceptedExchangesModalFunc();
                     }
                 })
@@ -2016,13 +2036,15 @@
             localStorage.setItem('badal_favorites', JSON.stringify(favs));
             renderProducts(currentPage);
             updateFavoritesBadge();
-            if(document.getElementById('favoritesModal').classList.contains('active')) {
+            const favModal = document.getElementById('favoritesModal');
+            if(favModal && favModal.classList.contains('active')) {
                 openFavoritesModal();
             }
         }
 
         function renderProducts(page) {
             const gridContainer = document.getElementById('productsGridContainer');
+            if (!gridContainer) return;
             gridContainer.innerHTML = '';
 
             const startIndex = (page - 1) * itemsPerPage;
@@ -2084,7 +2106,7 @@
                 
                 const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
 
-                let actionButtonHTML = `<a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>`;
+                let actionButtonHTML = `<a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title.replace(/'/g, "\\'")}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>`;
                 if (isMyAd) {
                     actionButtonHTML = `<a href="#" class="product-btn product-btn-disabled" onclick="event.preventDefault();">منصة بدل.ma</a>`;
                 }
@@ -2120,6 +2142,7 @@
         const productDetailsModalBody = document.getElementById('productDetailsModalBody');
 
         function openProductDetailsModal(prod, cleanDesc, prodCity, ownerPhone, isMyAd) {
+            if (!productDetailsModal || !productDetailsModalBody) return;
             const iconClass = prod.icon || 'fa-box-open';
             const displayImgFull = prod.image_url ? `<img src="${prod.image_url}" style="width:100%; height:320px; object-fit:cover; border-radius:10px; border:1px solid #d2ded7;" alt="${prod.title}">` : `<div style="width:100%; height:260px; background-color:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:10px; font-size:3rem;"><i class="fa-solid ${iconClass}"></i></div>`;
 
@@ -2134,7 +2157,7 @@
                 `;
             }
 
-            let modalActionButtonHTML = `<button type="button" class="form-submit-btn" style="margin-top:5px;" onclick="productDetailsModal.classList.remove('active'); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</button>`;
+            let modalActionButtonHTML = `<button type="button" class="form-submit-btn" style="margin-top:5px;" onclick="document.getElementById('productDetailsModal').classList.remove('active'); handleExchangeRequest('${prod.title.replace(/'/g, "\\'")}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</button>`;
             if (isMyAd) {
                 modalActionButtonHTML = `<button type="button" class="form-submit-btn product-btn-disabled" style="margin-top:5px;" onclick="event.preventDefault();">منصة بدل.ma</button>`;
             }
@@ -2155,15 +2178,19 @@
             productDetailsModal.classList.add('active');
         }
 
-        closeProductDetailsBtn.addEventListener('click', () => {
-            productDetailsModal.classList.remove('active');
-        });
+        if(closeProductDetailsBtn) {
+            closeProductDetailsBtn.addEventListener('click', () => {
+                if(productDetailsModal) productDetailsModal.classList.remove('active');
+            });
+        }
 
-        productDetailsModal.addEventListener('click', (e) => {
-            if (e.target === productDetailsModal) {
-                productDetailsModal.classList.remove('active');
-            }
-        });
+        if(productDetailsModal) {
+            productDetailsModal.addEventListener('click', (e) => {
+                if (e.target === productDetailsModal) {
+                    productDetailsModal.classList.remove('active');
+                }
+            });
+        }
 
         function renderPaginationControls() {
             const totalPages = Math.ceil(allProducts.length / itemsPerPage);
@@ -2171,10 +2198,11 @@
             const nextBtn = document.getElementById('nextPageBtn');
             const pageNumbersContainer = document.getElementById('pageNumbersContainer');
 
+            if(!pageNumbersContainer) return;
             pageNumbersContainer.innerHTML = '';
 
-            prevBtn.disabled = currentPage === 1;
-            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+            if(prevBtn) prevBtn.disabled = currentPage === 1;
+            if(nextBtn) nextBtn.disabled = currentPage === totalPages || totalPages === 0;
 
             for (let i = 1; i <= totalPages; i++) {
                 const btn = document.createElement('button');
@@ -2188,21 +2216,28 @@
         function goToPage(page) {
             currentPage = page;
             renderProducts(currentPage);
-            document.getElementById('productsTopAnchor').scrollIntoView({ behavior: 'smooth' });
+            const topAnchor = document.getElementById('productsTopAnchor');
+            if(topAnchor) topAnchor.scrollIntoView({ behavior: 'smooth' });
         }
 
-        document.getElementById('prevPageBtn').onclick = () => {
-            if (currentPage > 1) {
-                goToPage(currentPage - 1);
-            }
-        };
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        if(prevPageBtn) {
+            prevPageBtn.onclick = () => {
+                if (currentPage > 1) {
+                    goToPage(currentPage - 1);
+                }
+            };
+        }
 
-        document.getElementById('nextPageBtn').onclick = () => {
-            const totalPages = Math.ceil(allProducts.length / itemsPerPage);
-            if (currentPage < totalPages) {
-                goToPage(currentPage + 1);
-            }
-        };
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        if(nextPageBtn) {
+            nextPageBtn.onclick = () => {
+                const totalPages = Math.ceil(allProducts.length / itemsPerPage);
+                if (currentPage < totalPages) {
+                    goToPage(currentPage + 1);
+                }
+            };
+        }
 
         function openRegistrationTab() {
             const authModal = document.getElementById('authModal');
@@ -2211,11 +2246,11 @@
             const registerPanel = document.getElementById('registerPanel');
             const loginPanel = document.getElementById('loginPanel');
 
-            tabRegisterBtn.classList.add('active');
-            tabLoginBtn.classList.remove('active');
-            registerPanel.classList.add('active');
-            loginPanel.classList.remove('active');
-            authModal.classList.add('active');
+            if(tabRegisterBtn) tabRegisterBtn.classList.add('active');
+            if(tabLoginBtn) tabLoginBtn.classList.remove('active');
+            if(registerPanel) registerPanel.classList.add('active');
+            if(loginPanel) loginPanel.classList.remove('active');
+            if(authModal) authModal.classList.add('active');
         }
 
         function openLoginTab() {
@@ -2225,11 +2260,11 @@
             const registerPanel = document.getElementById('registerPanel');
             const loginPanel = document.getElementById('loginPanel');
 
-            tabLoginBtn.classList.add('active');
-            tabRegisterBtn.classList.remove('active');
-            loginPanel.classList.add('active');
-            registerPanel.classList.remove('active');
-            authModal.classList.add('active');
+            if(tabLoginBtn) tabLoginBtn.classList.add('active');
+            if(tabRegisterBtn) tabRegisterBtn.classList.remove('active');
+            if(loginPanel) loginPanel.classList.add('active');
+            if(registerPanel) registerPanel.classList.remove('active');
+            if(authModal) authModal.classList.add('active');
         }
 
         const exchangeRequestModal = document.getElementById('exchangeRequestModal');
@@ -2246,9 +2281,9 @@
         if(exchangeItemImage) {
             exchangeItemImage.addEventListener('change', async (e) => {
                 if (e.target.files.length > 0) {
-                    exchangeFileNameDisplay.textContent = e.target.files[0].name;
+                    if(exchangeFileNameDisplay) exchangeFileNameDisplay.textContent = e.target.files[0].name;
                 } else {
-                    exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                    if(exchangeFileNameDisplay) exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
                 }
             });
         }
@@ -2273,9 +2308,9 @@
             const userData = JSON.parse(currentSupabaseUser);
             const targetPhone = userData.phone || "";
 
-            userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">جاري تحميل إعلاناتك...</p>';
-            selectedMyAdImageInput.value = '';
-            exchangeImageFieldGroup.style.display = 'flex';
+            if(userAdsSelectionList) userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">جاري تحميل إعلاناتك...</p>';
+            if(selectedMyAdImageInput) selectedMyAdImageInput.value = '';
+            if(exchangeImageFieldGroup) exchangeImageFieldGroup.style.display = 'flex';
 
             try {
                 if (_supabase && targetPhone) {
@@ -2291,7 +2326,7 @@
                         });
 
                         if (validAds.length > 0) {
-                            userAdsSelectionList.innerHTML = '';
+                            if(userAdsSelectionList) userAdsSelectionList.innerHTML = '';
                             validAds.forEach(ad => {
                                 let cleanDesc = (ad.description || '').split(' (الهاتف:')[0];
                                 const itemCard = document.createElement('div');
@@ -2310,29 +2345,31 @@
 
                                 itemCard.addEventListener('click', (e) => {
                                     const radio = itemCard.querySelector('input[type="radio"]');
-                                    radio.checked = true;
-                                    selectedMyAdImageInput.value = ad.image_url || '';
-                                    exchangeItemDesc.value = ad.title + ' - ' + cleanDesc;
+                                    if(radio) radio.checked = true;
+                                    if(selectedMyAdImageInput) selectedMyAdImageInput.value = ad.image_url || '';
+                                    if(exchangeItemDesc) exchangeItemDesc.value = ad.title + ' - ' + cleanDesc;
                                     
-                                    exchangeImageFieldGroup.style.display = 'none';
+                                    if(exchangeImageFieldGroup) exchangeImageFieldGroup.style.display = 'none';
 
-                                    userAdsSelectionList.querySelectorAll('div').forEach(d => d.style.borderColor = '#d2ded7');
+                                    if(userAdsSelectionList) {
+                                        userAdsSelectionList.querySelectorAll('div').forEach(d => d.style.borderColor = '#d2ded7');
+                                    }
                                     itemCard.style.borderColor = 'var(--primary-green)';
                                     itemCard.style.background = '#e6f7f0';
                                 });
 
-                                userAdsSelectionList.appendChild(itemCard);
+                                if(userAdsSelectionList) userAdsSelectionList.appendChild(itemCard);
                             });
                         } else {
-                            userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">ليس لديك أي إعلانات منشورة. يمكنك رفع صورة يدوياً أدناه.</p>';
+                            if(userAdsSelectionList) userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">ليس لديك أي إعلانات منشورة. يمكنك رفع صورة يدوياً أدناه.</p>';
                         }
                     } else {
-                        userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">ليس لديك أي إعلانات منشورة. يمكنك رفع صورة يدوياً أدناه.</p>';
+                        if(userAdsSelectionList) userAdsSelectionList.innerHTML = '<p style="text-align:center; color:var(--text-gray); font-size:0.85rem;">ليس لديك أي إعلانات منشورة. يمكنك رفع صورة يدوياً أدناه.</p>';
                     }
                 }
             } catch(err) {
                 console.error(err);
-                userAdsSelectionList.innerHTML = '<p style="text-align:center; color:#e74c3c; font-size:0.85rem;">تعذر تحميل إعلاناتك.</p>';
+                if(userAdsSelectionList) userAdsSelectionList.innerHTML = '<p style="text-align:center; color:#e74c3c; font-size:0.85rem;">تعذر تحميل إعلاناتك.</p>';
             }
         }
 
@@ -2344,25 +2381,31 @@
             if (!currentSupabaseUser) {
                 openRegistrationTab();
             } else {
-                document.getElementById('target-product-id').value = productId;
-                document.getElementById('target-owner-phone').value = ownerPhone || '';
-                exchangeRequestForm.reset();
-                exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
-                exchangeRequestModal.classList.add('active');
+                const targetProdId = document.getElementById('target-product-id');
+                const targetOwnerPh = document.getElementById('target-owner-phone');
+                if(targetProdId) targetProdId.value = productId;
+                if(targetOwnerPh) targetOwnerPh.value = ownerPhone || '';
+                if(exchangeRequestForm) exchangeRequestForm.reset();
+                if(exchangeFileNameDisplay) exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                if(exchangeRequestModal) exchangeRequestModal.classList.add('active');
                 loadUserAdsIntoExchangeModal();
             }
         }
 
-        closeExchangeModalBtn.addEventListener('click', () => {
-            exchangeRequestModal.classList.remove('active');
-        });
+        if(closeExchangeModalBtn) {
+            closeExchangeModalBtn.addEventListener('click', () => {
+                if(exchangeRequestModal) exchangeRequestModal.classList.remove('active');
+            });
+        }
 
-        exchangeRequestModal.classList.remove('active');
-        exchangeRequestModal.addEventListener('click', (e) => {
-            if (e.target === exchangeRequestModal) {
-                exchangeRequestModal.classList.remove('active');
-            }
-        });
+        if(exchangeRequestModal) {
+            exchangeRequestModal.classList.remove('active');
+            exchangeRequestModal.addEventListener('click', (e) => {
+                if (e.target === exchangeRequestModal) {
+                    exchangeRequestModal.classList.remove('active');
+                }
+            });
+        }
 
         if(exchangeRequestForm) {
             exchangeRequestForm.addEventListener('submit', async (e) => {
@@ -2371,38 +2414,46 @@
                 const isBanned = await checkCurrentAccountBanStatus();
                 if (isBanned) return;
                 
-                if(exchangeSubmitBtn.disabled) return;
-                exchangeSubmitBtn.disabled = true;
-                exchangeSubmitBtn.textContent = 'جاري الإرسال...';
+                if(exchangeSubmitBtn && exchangeSubmitBtn.disabled) return;
+                if(exchangeSubmitBtn) {
+                    exchangeSubmitBtn.disabled = true;
+                    exchangeSubmitBtn.textContent = 'جاري الإرسال...';
+                }
 
                 const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
                 if (!currentSupabaseUser) {
-                    exchangeRequestModal.classList.remove('active');
-                    exchangeSubmitBtn.disabled = false;
-                    exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
+                    if(exchangeRequestModal) exchangeRequestModal.classList.remove('active');
+                    if(exchangeSubmitBtn) {
+                        exchangeSubmitBtn.disabled = false;
+                        exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
+                    }
                     openRegistrationTab();
                     return;
                 }
                 const userData = JSON.parse(currentSupabaseUser);
 
-                const selectedImgUrl = selectedMyAdImageInput.value;
+                const selectedImgUrl = selectedMyAdImageInput ? selectedMyAdImageInput.value : '';
                 let finalImageToSubmit = selectedImgUrl;
 
                 try {
                     if (!selectedImgUrl) {
-                        if (!exchangeItemImage.files || exchangeItemImage.files.length === 0) {
+                        if (!exchangeItemImage || !exchangeItemImage.files || exchangeItemImage.files.length === 0) {
                             showCustomAlert('المرجو اختيار سلعة من إعلاناتك أو رفع صورة المنتوج البديل!', false);
-                            exchangeSubmitBtn.disabled = false;
-                            exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
+                            if(exchangeSubmitBtn) {
+                                exchangeSubmitBtn.disabled = false;
+                                exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
+                            }
                             return;
                         }
                         const file = exchangeItemImage.files[0];
                         finalImageToSubmit = await compressImage(file, 1000, 1000, 0.85);
                     }
 
-                    const descText = exchangeItemDesc.value.trim();
-                    const ownerPhone = document.getElementById('target-owner-phone').value;
-                    const targetProductId = document.getElementById('target-product-id').value;
+                    const descText = exchangeItemDesc ? exchangeItemDesc.value.trim() : '';
+                    const ownerPhoneEl = document.getElementById('target-owner-phone');
+                    const targetProductIdEl = document.getElementById('target-product-id');
+                    const ownerPhone = ownerPhoneEl ? ownerPhoneEl.value : '';
+                    const targetProductId = targetProductIdEl ? targetProductIdEl.value : '';
 
                     if (_supabase) {
                         const reqPayload = {
@@ -2416,9 +2467,9 @@
                         const { error } = await _supabase.from('products').insert([reqPayload]);
                         if (!error) {
                             showCustomAlert('تم إرسال طلب التبادل بنجاح وإشعاره في الرسائل لصاحب المنتوج!', true);
-                            exchangeRequestModal.classList.remove('active');
-                            exchangeRequestForm.reset();
-                            exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
+                            if(exchangeRequestModal) exchangeRequestModal.classList.remove('active');
+                            if(exchangeRequestForm) exchangeRequestForm.reset();
+                            if(exchangeFileNameDisplay) exchangeFileNameDisplay.textContent = 'لم يتم اختيار أي صورة';
                             checkIncomingRequestsCount();
                         } else {
                             showCustomAlert('فشل إرسال الطلب: ' + error.message, false);
@@ -2428,8 +2479,10 @@
                     console.error(err);
                     showCustomAlert('حدث خطأ أثناء إرسال الطلب.', false);
                 } finally {
-                    exchangeSubmitBtn.disabled = false;
-                    exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
+                    if(exchangeSubmitBtn) {
+                        exchangeSubmitBtn.disabled = false;
+                        exchangeSubmitBtn.textContent = 'إرسال طلب التبادل';
+                    }
                 }
             });
         }
@@ -2447,11 +2500,13 @@
                         .ilike('description', `%[EXCHANGE_REQUEST]%[OWNER_PHONE:${userData.phone}]%`);
 
                     const badge = document.getElementById('msgBadgeCount');
-                    if (!error && data && data.length > 0) {
-                        badge.textContent = data.length;
-                        badge.classList.add('active');
-                    } else {
-                        badge.classList.remove('active');
+                    if (badge) {
+                        if (!error && data && data.length > 0) {
+                            badge.textContent = data.length;
+                            badge.classList.add('active');
+                        } else {
+                            badge.classList.remove('active');
+                        }
                     }
                 }
             } catch (err) {
@@ -2464,118 +2519,124 @@
         const incomingRequestsContainer = document.getElementById('incomingRequestsContainer');
         const bottomMessagesBtn = document.getElementById('bottomMessagesBtn');
 
-        bottomMessagesBtn.addEventListener('click', async () => {
-            const isBanned = await checkCurrentAccountBanStatus();
-            if (isBanned) return;
+        if(bottomMessagesBtn) {
+            bottomMessagesBtn.addEventListener('click', async () => {
+                const isBanned = await checkCurrentAccountBanStatus();
+                if (isBanned) return;
 
-            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
-            if (!currentSupabaseUser) {
-                openLoginTab();
-                return;
-            }
-            const userData = JSON.parse(currentSupabaseUser);
-            setActiveBottomNav(bottomMessagesBtn);
+                const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
+                if (!currentSupabaseUser) {
+                    openLoginTab();
+                    return;
+                }
+                const userData = JSON.parse(currentSupabaseUser);
+                setActiveBottomNav(bottomMessagesBtn);
 
-            incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل الطلبات الواردة...</p>';
-            messagesModal.classList.add('active');
+                if(incomingRequestsContainer) incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل الطلبات الواردة...</p>';
+                if(messagesModal) messagesModal.classList.add('active');
 
-            try {
-                if (_supabase && userData.phone) {
-                    const { data: allDbProducts } = await _supabase.from('products').select('id, title, image_url, description');
-                    
-                    const { data, error } = await _supabase
-                        .from('products')
-                        .select('id, title, description, image_url, created_at')
-                        .ilike('description', `%[EXCHANGE_REQUEST]%[OWNER_PHONE:${userData.phone}]%`)
-                        .order('created_at', { ascending: false });
+                try {
+                    if (_supabase && userData.phone) {
+                        const { data: allDbProducts } = await _supabase.from('products').select('id, title, image_url, description');
+                        
+                        const { data, error } = await _supabase
+                            .from('products')
+                            .select('id, title, description, image_url, created_at')
+                            .ilike('description', `%[EXCHANGE_REQUEST]%[OWNER_PHONE:${userData.phone}]%`)
+                            .order('created_at', { ascending: false });
 
-                    if (!error && data) {
-                        if (data.length > 0) {
-                            incomingRequestsContainer.innerHTML = '';
-                            data.forEach(req => {
-                                const desc = req.description || '';
-                                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
-                                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
-                                const cityMatch = desc.match(/\[SENDER_CITY:(.*?)\]/);
-                                const descMatch = desc.match(/\[DESC:(.*?)\]/);
-                                const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
-                                
-                                const senderName = nameMatch ? nameMatch[1] : 'مستخدم';
-                                const senderPhone = phoneMatch ? phoneMatch[1] : '';
-                                const senderCity = (cityMatch && cityMatch[1].trim() !== '' && cityMatch[1].trim() !== 'المغرب') ? cityMatch[1].trim() : 'القنيطرة';
-                                const senderDesc = descMatch ? descMatch[1] : '';
-                                const targetId = targetIdMatch ? targetIdMatch[1].trim() : null;
+                        if (!error && data && incomingRequestsContainer) {
+                            if (data.length > 0) {
+                                incomingRequestsContainer.innerHTML = '';
+                                data.forEach(req => {
+                                    const desc = req.description || '';
+                                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
+                                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
+                                    const cityMatch = desc.match(/\[SENDER_CITY:(.*?)\]/);
+                                    const descMatch = desc.match(/\[DESC:(.*?)\]/);
+                                    const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
+                                    
+                                    const senderName = nameMatch ? nameMatch[1] : 'مستخدم';
+                                    const senderPhone = phoneMatch ? phoneMatch[1] : '';
+                                    const senderCity = (cityMatch && cityMatch[1].trim() !== '' && cityMatch[1].trim() !== 'المغرب') ? cityMatch[1].trim() : 'القنيطرة';
+                                    const senderDesc = descMatch ? descMatch[1] : '';
+                                    const targetId = targetIdMatch ? targetIdMatch[1].trim() : null;
 
-                                let myTargetProductImg = '';
-                                const searchPool = (allDbProducts && allDbProducts.length > 0) ? allDbProducts : allProducts;
-                                if (targetId && searchPool) {
-                                    const targetProd = searchPool.find(p => String(p.id) === String(targetId));
-                                    if (targetProd && targetProd.image_url) {
-                                        myTargetProductImg = targetProd.image_url;
+                                    let myTargetProductImg = '';
+                                    const searchPool = (allDbProducts && allDbProducts.length > 0) ? allDbProducts : allProducts;
+                                    if (targetId && searchPool) {
+                                        const targetProd = searchPool.find(p => String(p.id) === String(targetId));
+                                        if (targetProd && targetProd.image_url) {
+                                            myTargetProductImg = targetProd.image_url;
+                                        }
                                     }
-                                }
 
-                                const card = document.createElement('div');
-                                card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
-                                
-                                let imagesComparisonHTML = '';
-                                const senderImgTag = req.image_url ? `<img src="${req.image_url}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
-                                
-                                const myImgTag = myTargetProductImg ? `<img src="${myTargetProductImg}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
+                                    const card = document.createElement('div');
+                                    card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
+                                    
+                                    let imagesComparisonHTML = '';
+                                    const senderImgTag = req.image_url ? `<img src="${req.image_url}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
+                                    
+                                    const myImgTag = myTargetProductImg ? `<img src="${myTargetProductImg}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
 
-                                imagesComparisonHTML = `
-                                    <div style="display:flex; align-items:center; justify-content:center; gap:12px; background:#ffffff; padding:10px; border-radius:8px; border:1px solid #e2ece8;">
-                                        <div style="text-align:center;">
-                                            <span style="font-size:0.75rem; font-weight:800; color:var(--dark-blue); display:block; margin-bottom:4px;">سلعتك المطلوبة</span>
-                                            ${myImgTag}
+                                    imagesComparisonHTML = `
+                                        <div style="display:flex; align-items:center; justify-content:center; gap:12px; background:#ffffff; padding:10px; border-radius:8px; border:1px solid #e2ece8;">
+                                            <div style="text-align:center;">
+                                                <span style="font-size:0.75rem; font-weight:800; color:var(--dark-blue); display:block; margin-bottom:4px;">سلعتك المطلوبة</span>
+                                                ${myImgTag}
+                                            </div>
+                                            <div style="color:var(--primary-green); font-size:1.4rem; font-weight:bold;">
+                                                <i class="fa-solid fa-right-left"></i>
+                                            </div>
+                                            <div style="text-align:center;">
+                                                <span style="font-size:0.75rem; font-weight:800; color:var(--dark-blue); display:block; margin-bottom:4px;">سلعة المقايض</span>
+                                                ${senderImgTag}
+                                            </div>
                                         </div>
-                                        <div style="color:var(--primary-green); font-size:1.4rem; font-weight:bold;">
-                                            <i class="fa-solid fa-right-left"></i>
-                                        </div>
-                                        <div style="text-align:center;">
-                                            <span style="font-size:0.75rem; font-weight:800; color:var(--dark-blue); display:block; margin-bottom:4px;">سلعة المقايض</span>
-                                            ${senderImgTag}
-                                        </div>
-                                    </div>
-                                `;
+                                    `;
 
-                                card.innerHTML = `
-                                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                                        <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${senderCity} (${senderName})</h4>
-                                        <span style="font-size:0.75rem; color:var(--primary-green); font-weight:700;">مقايضة جديدة</span>
-                                    </div>
-                                    ${imagesComparisonHTML}
-                                    <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة المقايض:</b> ${senderDesc}</p>
-                                    <div style="display:flex; gap:10px; margin-top:5px;">
-                                        <button onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">موافق</button>
-                                        <button onclick="cancelExchangeRequest(${req.id})" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">رفض الطلب</button>
-                                    </div>
-                                `;
-                                incomingRequestsContainer.appendChild(card);
-                            });
-                        } else {
+                                    card.innerHTML = `
+                                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                                            <h4 style="font-size:1rem; font-weight:800; color:var(--dark-blue);"><i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> ${senderCity} (${senderName})</h4>
+                                            <span style="font-size:0.75rem; color:var(--primary-green); font-weight:700;">مقايضة جديدة</span>
+                                        </div>
+                                        ${imagesComparisonHTML}
+                                        <p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4;"><b>وصف سلعة المقايض:</b> ${senderDesc}</p>
+                                        <div style="display:flex; gap:10px; margin-top:5px;">
+                                            <button onclick="acceptExchangeRequest('${req.id}', '${senderPhone}', '${senderName.replace(/'/g, "\\'")}')" style="flex:1; background:var(--primary-green); color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">موافق</button>
+                                            <button onclick="cancelExchangeRequest(${req.id})" style="flex:1; background:#e74c3c; color:#fff; border:none; padding:8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">رفض الطلب</button>
+                                        </div>
+                                    `;
+                                    incomingRequestsContainer.appendChild(card);
+                                });
+                            } else {
+                                incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
+                            }
+                        } else if(incomingRequestsContainer) {
                             incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
                         }
-                    } else {
-                        incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي طلبات مقايضة واردة حالياً.</p>';
                     }
+                } catch (err) {
+                    console.error(err);
+                    if(incomingRequestsContainer) incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل الرسائل.</p>';
                 }
-            } catch (err) {
-                console.error(err);
-                incomingRequestsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل الرسائل.</p>';
-            }
-        });
+            });
+        }
 
-        closeMessagesModalBtn.addEventListener('click', () => {
+        if(closeMessagesModalBtn) {
+            closeMessagesModalBtn.addEventListener('click', () => {
+                if(messagesModal) messagesModal.classList.remove('active');
+            });
+        }
+
+        if(messagesModal) {
             messagesModal.classList.remove('active');
-        });
-
-        messagesModal.classList.remove('active');
-        messagesModal.addEventListener('click', (e) => {
-            if (e.target === messagesModal) {
-                messagesModal.classList.remove('active');
-            }
-        });
+            messagesModal.addEventListener('click', (e) => {
+                if (e.target === messagesModal) {
+                    messagesModal.classList.remove('active');
+                }
+            });
+        }
 
         window.acceptExchangeRequest = async function(reqId, phone, name) {
             try {
@@ -2600,8 +2661,8 @@
                 const whatsappUrl = `https://wa.me/${cleanPhone}?text=سلام ${name} ، قبلت العرض ديالك فـ بدل.ma! دوزي للواتساب باش نتفقو على كلشي 🚀`;
                 window.open(whatsappUrl, '_blank');
 
-                messagesModal.classList.remove('active');
-                bottomMessagesBtn.click();
+                if(messagesModal) messagesModal.classList.remove('active');
+                if(bottomMessagesBtn) bottomMessagesBtn.click();
                 checkIncomingRequestsCount();
             } catch (err) {
                 console.error(err);
@@ -2615,8 +2676,8 @@
                     const { error } = await _supabase.from('products').delete().eq('id', Number(reqId));
                     if (!error) {
                         showCustomAlert('تم رفض وحذف طلب المقايضة بنجاح من قاعدة البيانات.', true);
-                        messagesModal.classList.remove('active');
-                        bottomMessagesBtn.click();
+                        if(messagesModal) messagesModal.classList.remove('active');
+                        if(bottomMessagesBtn) bottomMessagesBtn.click();
                         checkIncomingRequestsCount();
                     } else {
                         showCustomAlert('فشل رفض وحذف الطلب: ' + error.message, false);
@@ -2639,8 +2700,8 @@
                 return;
             }
 
-            acceptedExchangesContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل المقايضات المقبولة...</p>';
-            acceptedExchangesModal.classList.add('active');
+            if(acceptedExchangesContainer) acceptedExchangesContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل المقايضات المقبولة...</p>';
+            if(acceptedExchangesModal) acceptedExchangesModal.classList.add('active');
 
             try {
                 let acceptedList = [];
@@ -2654,7 +2715,7 @@
                     if (dbProds) allDbProducts = dbProds;
                 }
 
-                if (acceptedList.length > 0) {
+                if (acceptedList.length > 0 && acceptedExchangesContainer) {
                     acceptedExchangesContainer.innerHTML = '';
                     acceptedList.forEach((req, index) => {
                         const desc = req.description || '';
@@ -2722,31 +2783,38 @@
                         `;
                         acceptedExchangesContainer.appendChild(card);
                     });
-                } else {
+                } else if(acceptedExchangesContainer) {
                     acceptedExchangesContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي مقايضات مقبولة حتى الآن.</p>';
                 }
             } catch (err) {
                 console.error(err);
-                acceptedExchangesContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل المقايضات المقبولة.</p>';
+                if(acceptedExchangesContainer) acceptedExchangesContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل المقايضات المقبولة.</p>';
             }
         }
 
-        document.getElementById('menuAcceptedExchanges').addEventListener('click', (e) => {
-            e.preventDefault();
-            accountMenuModal.classList.remove('active');
-            openAcceptedExchangesModalFunc();
-        });
+        const menuAcceptedExchanges = document.getElementById('menuAcceptedExchanges');
+        if(menuAcceptedExchanges) {
+            menuAcceptedExchanges.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(accountMenuModal) accountMenuModal.classList.remove('active');
+                openAcceptedExchangesModalFunc();
+            });
+        }
 
-        closeAcceptedExchangesModalBtn.addEventListener('click', () => {
+        if(closeAcceptedExchangesModalBtn) {
+            closeAcceptedExchangesModalBtn.addEventListener('click', () => {
+                if(acceptedExchangesModal) acceptedExchangesModal.classList.remove('active');
+            });
+        }
+
+        if(acceptedExchangesModal) {
             acceptedExchangesModal.classList.remove('active');
-        });
-
-        acceptedExchangesModal.classList.remove('active');
-        acceptedExchangesModal.addEventListener('click', (e) => {
-            if (e.target === acceptedExchangesModal) {
-                acceptedExchangesModal.classList.remove('active');
-            }
-        });
+            acceptedExchangesModal.addEventListener('click', (e) => {
+                if (e.target === acceptedExchangesModal) {
+                    acceptedExchangesModal.classList.remove('active');
+                }
+            });
+        }
 
         window.deleteAcceptedExchange = function(index) {
             showCustomConfirm(() => {
@@ -2778,7 +2846,7 @@
                 return;
             }
             const favs = getFavorites();
-            favoritesGridContainer.innerHTML = '';
+            if(favoritesGridContainer) favoritesGridContainer.innerHTML = '';
             
             let currentUserPhone = '';
             try {
@@ -2787,7 +2855,7 @@
             } catch(e){}
 
             const matchedProducts = allProducts.filter(p => favs.includes(p.id));
-            if(matchedProducts.length > 0) {
+            if(matchedProducts.length > 0 && favoritesGridContainer) {
                 matchedProducts.forEach(prod => {
                     const card = document.createElement('div');
                     card.className = 'product-card';
@@ -2815,7 +2883,7 @@
 
                     const displayImg = prod.image_url ? `<img src="${prod.image_url}" class="product-img" alt="${prod.title}">` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
 
-                    let favActionBtnHTML = `<a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>`;
+                    let favActionBtnHTML = `<a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title.replace(/'/g, "\\'")}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>`;
                     if (isMyAd) {
                         favActionBtnHTML = `<a href="#" class="product-btn product-btn-disabled" onclick="event.preventDefault();">منصة بدل.ma</a>`;
                     }
@@ -2842,32 +2910,37 @@
 
                     favoritesGridContainer.appendChild(card);
                 });
-            } else {
+            } else if(favoritesGridContainer) {
                 favoritesGridContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); grid-column:span 2; padding:20px;">قائمة المفضلة لديك فارغة حالياً.</p>';
             }
-            favoritesModal.classList.add('active');
+            if(favoritesModal) favoritesModal.classList.add('active');
         }
 
-        bottomFavoritesBtn.addEventListener('click', () => {
-            openFavoritesModal();
-            setActiveBottomNav(bottomFavoritesBtn);
-        });
+        if(bottomFavoritesBtn) {
+            bottomFavoritesBtn.addEventListener('click', () => {
+                openFavoritesModal();
+                setActiveBottomNav(bottomFavoritesBtn);
+            });
+        }
 
-        closeFavoritesModalBtn.addEventListener('click', () => {
+        if(closeFavoritesModalBtn) {
+            closeFavoritesModalBtn.addEventListener('click', () => {
+                if(favoritesModal) favoritesModal.classList.remove('active');
+            });
+        }
+
+        if(favoritesModal) {
             favoritesModal.classList.remove('active');
-        });
-
-        favoritesModal.classList.remove('active');
-        favoritesModal.addEventListener('click', (e) => {
-            if (e.target === favoritesModal) {
-                favoritesModal.classList.remove('active');
-            }
-        });
+            favoritesModal.addEventListener('click', (e) => {
+                if (e.target === favoritesModal) {
+                    favoritesModal.classList.remove('active');
+                }
+            });
+        }
 
         const sliderWrapper = document.getElementById('sliderWrapper');
         const productsSection = document.getElementById('productsSection');
         const homeNavBtn = document.getElementById('homeNavBtn');
-        const footerHomeBtn = document.getElementById('footerHomeBtn');
         const logoHomeBtn = document.getElementById('logoHomeBtn');
         const slideDiscoverBtn = document.getElementById('slideDiscoverBtn');
         const modalDiscoverBtn = document.getElementById('modalDiscoverBtn');
@@ -2875,34 +2948,37 @@
         function showProductsView(e) {
             if(e) e.preventDefault();
             stopSlider();
-            sliderWrapper.style.display = 'block';
-            productsSection.classList.add('active');
-            homeNavBtn.classList.remove('active');
+            if(sliderWrapper) sliderWrapper.style.display = 'block';
+            if(productsSection) productsSection.classList.add('active');
+            if(homeNavBtn) homeNavBtn.classList.remove('active');
             currentPage = 1;
             fetchProductsFromSupabase();
-            document.getElementById('productsTopAnchor').scrollIntoView({ behavior: 'smooth' });
+            const topAnchor = document.getElementById('productsTopAnchor');
+            if(topAnchor) topAnchor.scrollIntoView({ behavior: 'smooth' });
         }
 
         function showHomeView(e) {
             if(e) e.preventDefault();
-            productsSection.classList.add('active');
-            sliderWrapper.style.display = 'block';
-            homeNavBtn.classList.add('active');
+            if(productsSection) productsSection.classList.add('active');
+            if(sliderWrapper) sliderWrapper.style.display = 'block';
+            if(homeNavBtn) homeNavBtn.classList.add('active');
             startSlider();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        slideDiscoverBtn.addEventListener('click', showProductsView);
+        if(slideDiscoverBtn) slideDiscoverBtn.addEventListener('click', showProductsView);
         
-        modalDiscoverBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            howToModal.classList.remove('active');
-            showProductsView();
-        });
+        if(modalDiscoverBtn) {
+            modalDiscoverBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const howModal = document.getElementById('howToModal');
+                if(howModal) howModal.classList.remove('active');
+                showProductsView();
+            });
+        }
 
-        homeNavBtn.addEventListener('click', showHomeView);
-        footerHomeBtn.addEventListener('click', showHomeView);
-        logoHomeBtn.addEventListener('click', showHomeView);
+        if(homeNavBtn) homeNavBtn.addEventListener('click', showHomeView);
+        if(logoHomeBtn) logoHomeBtn.addEventListener('click', showHomeView);
 
         const bottomAdsBtn = document.getElementById('bottomAdsBtn');
         const bottomCameraBtn = document.getElementById('bottomCameraBtn');
@@ -2937,237 +3013,272 @@
                     if (e.target.files.length > 2) {
                         showCustomAlert('يمكنك اختيار صورتين كحد أقصى!', false);
                         e.target.value = '';
-                        fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                        if(fileNameDisplay) fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
                     } else if (e.target.files.length === 1) {
-                        fileNameDisplay.textContent = e.target.files[0].name;
+                        if(fileNameDisplay) fileNameDisplay.textContent = e.target.files[0].name;
                     } else {
-                        fileNameDisplay.textContent = `تم اختيار ${e.target.files.length} صور`;
+                        if(fileNameDisplay) fileNameDisplay.textContent = `تم اختيار ${e.target.files.length} صور`;
                     }
                 } else {
-                    fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                    if(fileNameDisplay) fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
                 }
             });
         }
 
-        bottomAdsBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            setActiveBottomNav(bottomAdsBtn);
-            openMyAdsModalFunc();
-        });
+        if(bottomAdsBtn) {
+            bottomAdsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                setActiveBottomNav(bottomAdsBtn);
+                openMyAdsModalFunc();
+            });
+        }
 
-        bottomCameraBtn.addEventListener('click', async () => {
-            const isBanned = await checkCurrentAccountBanStatus();
-            if (isBanned) return;
-            addAdModal.classList.add('active');
-        });
-
-        closeAddAdModalBtn.addEventListener('click', () => {
-            addAdModal.classList.remove('active');
-        });
-
-        addAdModal.classList.remove('active');
-        addAdModal.addEventListener('click', (e) => {
-            if (e.target === addAdModal) {
-                addAdModal.classList.remove('active');
-            }
-        });
-
-        addAdForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            try {
+        if(bottomCameraBtn) {
+            bottomCameraBtn.addEventListener('click', async () => {
                 const isBanned = await checkCurrentAccountBanStatus();
-                if (isBanned) {
+                if (isBanned) return;
+                if(addAdModal) addAdModal.classList.add('active');
+            });
+        }
+
+        if(closeAddAdModalBtn) {
+            closeAddAdModalBtn.addEventListener('click', () => {
+                if(addAdModal) addAdModal.classList.remove('active');
+            });
+        }
+
+        if(addAdModal) {
+            addAdModal.classList.remove('active');
+            addAdModal.addEventListener('click', (e) => {
+                if (e.target === addAdModal) {
                     addAdModal.classList.remove('active');
-                    return;
                 }
+            });
+        }
 
-                const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
-                
-                if (!currentSupabaseUser) {
-                    addAdModal.classList.remove('active');
-                    openRegistrationTab();
-                    return;
-                }
+        if(addAdForm) {
+            addAdForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-                const userData = JSON.parse(currentSupabaseUser);
-                const title = document.getElementById('ad-title').value;
-                const description = adDescTextarea.value;
-                const category = document.getElementById('ad-category').value;
-                const city = userData.city || 'القنيطرة';
-
-                if (imageInput.files.length === 0) {
-                    showCustomAlert('المرجو إدراج صورة واحدة على الأقل!', false);
-                    return;
-                }
-
-                if (imageInput.files.length > 2) {
-                    showCustomAlert('يمكنك رفع 2 صور كحد أقصى!', false);
-                    return;
-                }
-
-                const file = imageInput.files[0];
-                const compressedImage = await compressImage(file, 1000, 1000, 0.85);
-
-                if (_supabase) {
-                    const insertPayload = {
-                        title: title,
-                        description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
-                        category: category,
-                        city: city,
-                        image_url: compressedImage || ''
-                    };
-
-                    const { data: insertedData, error: insertError } = await _supabase.from('products').insert([insertPayload]).select();
-
-                    if (insertError) {
-                        showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
-                    } else {
-                        showCustomAlert('تم نشر إعلانك بنجاح!', true);
-                        addAdModal.classList.remove('active');
-                        addAdForm.reset();
-                        if(openExchangeCheckbox) openExchangeCheckbox.checked = false;
-                        adDescTextarea.disabled = false;
-                        adDescTextarea.style.backgroundColor = '#f8faf9';
-                        adDescTextarea.style.color = 'var(--dark-blue)';
-                        fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
-                        
-                        if (insertedData && insertedData.length > 0) {
-                            allProducts.unshift(insertedData[0]);
-                        } else {
-                            allProducts.unshift({
-                                id: Date.now(),
-                                title: title,
-                                description: insertPayload.description,
-                                category: category,
-                                city: city,
-                                image_url: compressedImage,
-                                created_at: new Date().toISOString()
-                            });
-                        }
-                        renderProducts(currentPage);
-                        showProductsView();
+                try {
+                    const isBanned = await checkCurrentAccountBanStatus();
+                    if (isBanned) {
+                        if(addAdModal) addAdModal.classList.remove('active');
+                        return;
                     }
+
+                    const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
+                    
+                    if (!currentSupabaseUser) {
+                        if(addAdModal) addAdModal.classList.remove('active');
+                        openRegistrationTab();
+                        return;
+                    }
+
+                    const userData = JSON.parse(currentSupabaseUser);
+                    const titleEl = document.getElementById('ad-title');
+                    const categoryEl = document.getElementById('ad-category');
+                    const title = titleEl ? titleEl.value : '';
+                    const description = adDescTextarea ? adDescTextarea.value : '';
+                    const category = categoryEl ? categoryEl.value : '';
+                    const city = userData.city || 'القنيطرة';
+
+                    if (!imageInput || imageInput.files.length === 0) {
+                        showCustomAlert('المرجو إدراج صورة واحدة على الأقل!', false);
+                        return;
+                    }
+
+                    if (imageInput.files.length > 2) {
+                        showCustomAlert('يمكنك رفع 2 صور كحد أقصى!', false);
+                        return;
+                    }
+
+                    const file = imageInput.files[0];
+                    const compressedImage = await compressImage(file, 1000, 1000, 0.85);
+
+                    if (_supabase) {
+                        const insertPayload = {
+                            title: title,
+                            description: description + " (الهاتف: " + userData.phone + " - المدينة: " + city + ")",
+                            category: category,
+                            city: city,
+                            image_url: compressedImage || ''
+                        };
+
+                        const { data: insertedData, error: insertError } = await _supabase.from('products').insert([insertPayload]).select();
+
+                        if (insertError) {
+                            showCustomAlert('خطأ في نشر الإعلان: ' + insertError.message, false);
+                        } else {
+                            showCustomAlert('تم نشر إعلانك بنجاح!', true);
+                            if(addAdModal) addAdModal.classList.remove('active');
+                            addAdForm.reset();
+                            if(openExchangeCheckbox) openExchangeCheckbox.checked = false;
+                            if(adDescTextarea) {
+                                adDescTextarea.disabled = false;
+                                adDescTextarea.style.backgroundColor = '#f8faf9';
+                                adDescTextarea.style.color = 'var(--dark-blue)';
+                            }
+                            if(fileNameDisplay) fileNameDisplay.textContent = 'لم يتم اختيار أي صور';
+                            
+                            if (insertedData && insertedData.length > 0) {
+                                allProducts.unshift(insertedData[0]);
+                            } else {
+                                allProducts.unshift({
+                                    id: Date.now(),
+                                    title: title,
+                                    description: insertPayload.description,
+                                    category: category,
+                                    city: city,
+                                    image_url: compressedImage,
+                                    created_at: new Date().toISOString()
+                                });
+                            }
+                            renderProducts(currentPage);
+                            showProductsView();
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء رفع الإعلان.', false);
                 }
-            } catch (err) {
-                console.error(err);
-                showCustomAlert('حدث خطأ أثناء رفع الإعلان.', false);
-            }
-        });
+            });
+        }
 
         const accountMenuModal = document.getElementById('accountMenuModal');
         const closeAccountMenuBtn = document.getElementById('closeAccountMenuBtn');
         const accountMenuUserName = document.getElementById('accountMenuUserName');
         const accountMenuUserCity = document.getElementById('accountMenuUserCity');
 
-        bottomAccountBtn.addEventListener('click', async () => {
-            const isBanned = await checkCurrentAccountBanStatus();
-            if (isBanned) return;
+        if(bottomAccountBtn) {
+            bottomAccountBtn.addEventListener('click', async () => {
+                const isBanned = await checkCurrentAccountBanStatus();
+                if (isBanned) return;
 
-            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
-            if (!currentSupabaseUser) {
-                openLoginTab();
-            } else {
-                const userData = JSON.parse(currentSupabaseUser);
-                accountMenuUserName.textContent = `(${userData.name})`;
-                accountMenuUserCity.innerHTML = `<i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> مدينة: ${userData.city || 'القنيطرة'}`;
-                accountMenuModal.classList.add('active');
-            }
-            setActiveBottomNav(bottomAccountBtn);
-        });
+                const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
+                if (!currentSupabaseUser) {
+                    openLoginTab();
+                } else {
+                    const userData = JSON.parse(currentSupabaseUser);
+                    if(accountMenuUserName) accountMenuUserName.textContent = `(${userData.name})`;
+                    if(accountMenuUserCity) accountMenuUserCity.innerHTML = `<i class="fa-solid fa-location-dot" style="color:var(--primary-green);"></i> مدينة: ${userData.city || 'القنيطرة'}`;
+                    if(accountMenuModal) accountMenuModal.classList.add('active');
+                }
+                setActiveBottomNav(bottomAccountBtn);
+            });
+        }
 
-        closeAccountMenuBtn.addEventListener('click', () => {
+        if(closeAccountMenuBtn) {
+            closeAccountMenuBtn.addEventListener('click', () => {
+                if(accountMenuModal) accountMenuModal.classList.remove('active');
+            });
+        }
+
+        if(accountMenuModal) {
             accountMenuModal.classList.remove('active');
-        });
-
-        accountMenuModal.classList.remove('active');
-        accountMenuModal.addEventListener('click', (e) => {
-            if (e.target === accountMenuModal) {
-                accountMenuModal.classList.remove('active');
-            }
-        });
+            accountMenuModal.addEventListener('click', (e) => {
+                if (e.target === accountMenuModal) {
+                    accountMenuModal.classList.remove('active');
+                }
+            });
+        }
 
         const settingsModal = document.getElementById('settingsModal');
         const closeSettingsModalBtn = document.getElementById('closeSettingsModalBtn');
         const settingsForm = document.getElementById('settingsForm');
 
-        document.getElementById('menuSettings').addEventListener('click', async (e) => {
-            e.preventDefault();
-            accountMenuModal.classList.remove('active');
-            
-            const isBanned = await checkCurrentAccountBanStatus();
-            if (isBanned) return;
+        const menuSettings = document.getElementById('menuSettings');
+        if(menuSettings) {
+            menuSettings.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if(accountMenuModal) accountMenuModal.classList.remove('active');
+                
+                const isBanned = await checkCurrentAccountBanStatus();
+                if (isBanned) return;
 
-            const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
-            if (!currentSupabaseUser) {
-                openLoginTab();
-                return;
-            }
-            const userData = JSON.parse(currentSupabaseUser);
-            document.getElementById('settings-phone').value = userData.phone || '';
-            document.getElementById('settings-city').value = userData.city || '';
-            document.getElementById('settings-password').value = '';
-            settingsModal.classList.add('active');
-        });
+                const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
+                if (!currentSupabaseUser) {
+                    openLoginTab();
+                    return;
+                }
+                const userData = JSON.parse(currentSupabaseUser);
+                const sPhone = document.getElementById('settings-phone');
+                const sCity = document.getElementById('settings-city');
+                const sPass = document.getElementById('settings-password');
+                if(sPhone) sPhone.value = userData.phone || '';
+                if(sCity) sCity.value = userData.city || '';
+                if(sPass) sPass.value = '';
+                if(settingsModal) settingsModal.classList.add('active');
+            });
+        }
 
-        closeSettingsModalBtn.addEventListener('click', () => {
+        if(closeSettingsModalBtn) {
+            closeSettingsModalBtn.addEventListener('click', () => {
+                if(settingsModal) settingsModal.classList.remove('active');
+            });
+        }
+
+        if(settingsModal) {
             settingsModal.classList.remove('active');
-        });
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) {
+                    settingsModal.classList.remove('active');
+                }
+            });
+        }
 
-        settingsModal.classList.remove('active');
-        settingsModal.addEventListener('click', (e) => {
-            if (e.target === settingsModal) {
-                settingsModal.classList.remove('active');
-            }
-        });
+        if(settingsForm) {
+            settingsForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const currentSupabaseUser = JSON.parse(localStorage.getItem('badal_supabase_user') || '{}');
+                const sPhoneEl = document.getElementById('settings-phone');
+                const sCityEl = document.getElementById('settings-city');
+                const sPassEl = document.getElementById('settings-password');
+                const newPhone = sPhoneEl ? sPhoneEl.value.trim() : '';
+                const newCity = sCityEl ? sCityEl.value.trim() : '';
+                const enteredPassword = sPassEl ? sPassEl.value : '';
 
-        settingsForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const currentSupabaseUser = JSON.parse(localStorage.getItem('badal_supabase_user') || '{}');
-            const newPhone = document.getElementById('settings-phone').value.trim();
-            const newCity = document.getElementById('settings-city').value.trim();
-            const enteredPassword = document.getElementById('settings-password').value;
+                if (enteredPassword !== currentSupabaseUser.password) {
+                    showCustomAlert('كلمة المرور الحالية غير صحيحة، يرجى إدخال كلمة المرور الصحيحة لتأكيد التغيير.', false);
+                    return;
+                }
 
-            if (enteredPassword !== currentSupabaseUser.password) {
-                showCustomAlert('كلمة المرور الحالية غير صحيحة، يرجى إدخال كلمة المرور الصحيحة لتأكيد التغيير.', false);
-                return;
-            }
+                if (!_supabase) {
+                    showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
+                    return;
+                }
 
-            if (!_supabase) {
-                showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
-                return;
-            }
+                try {
+                    const { data: records, error: queryError } = await _supabase
+                        .from('products')
+                        .select('id, description')
+                        .ilike('description', '%[USER_ACCOUNT]%');
 
-            try {
-                const { data: records, error: queryError } = await _supabase
-                    .from('products')
-                    .select('id, description')
-                    .ilike('description', '%[USER_ACCOUNT]%');
+                    if (!queryError && records) {
+                        let userRecord = records.find(r => r.description.includes(`[USER_PHONE:${currentSupabaseUser.phone}]`));
+                        if (userRecord) {
+                            const updatedDesc = `[USER_ACCOUNT] [USER_PHONE:${newPhone}] [PASSWORD:${currentSupabaseUser.password}] [CITY:${newCity}] [NAME:${currentSupabaseUser.name}]`;
+                            const { error: updateError } = await _supabase
+                                .from('products')
+                                .update({ description: updatedDesc, city: newCity })
+                                .eq('id', userRecord.id);
 
-                if (!queryError && records) {
-                    let userRecord = records.find(r => r.description.includes(`[USER_PHONE:${currentSupabaseUser.phone}]`));
-                    if (userRecord) {
-                        const updatedDesc = `[USER_ACCOUNT] [USER_PHONE:${newPhone}] [PASSWORD:${currentSupabaseUser.password}] [CITY:${newCity}] [NAME:${currentSupabaseUser.name}]`;
-                        const { error: updateError } = await _supabase
-                            .from('products')
-                            .update({ description: updatedDesc, city: newCity })
-                            .eq('id', userRecord.id);
-
-                        if (!updateError) {
-                            const updatedUserData = { name: currentSupabaseUser.name, phone: newPhone, city: newCity, password: currentSupabaseUser.password };
-                            localStorage.setItem('badal_supabase_user', JSON.stringify(updatedUserData));
-                            showCustomAlert('تم تحديث معلومات الحساب في قاعدة البيانات بنجاح!', true);
-                            settingsModal.classList.remove('active');
-                        } else {
-                            showCustomAlert('فشل تحديث الحساب: ' + updateError.message, false);
+                            if (!updateError) {
+                                const updatedUserData = { name: currentSupabaseUser.name, phone: newPhone, city: newCity, password: currentSupabaseUser.password };
+                                localStorage.setItem('badal_supabase_user', JSON.stringify(updatedUserData));
+                                showCustomAlert('تم تحديث معلومات الحساب في قاعدة البيانات بنجاح!', true);
+                                if(settingsModal) settingsModal.classList.remove('active');
+                            } else {
+                                showCustomAlert('فشل تحديث الحساب: ' + updateError.message, false);
+                            }
                         }
                     }
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء تحديث الإعدادات.', false);
                 }
-            } catch (err) {
-                console.error(err);
-                showCustomAlert('حدث خطأ أثناء تحديث الإعدادات.', false);
-            }
-        });
+            });
+        }
 
         const myAdsModal = document.getElementById('myAdsModal');
         const closeMyAdsModalBtn = document.getElementById('closeMyAdsModalBtn');
@@ -3186,8 +3297,8 @@
             const userData = JSON.parse(currentSupabaseUser);
             const targetPhone = userData.phone || "0601749553";
 
-            myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل إعلاناتك...</p>';
-            myAdsModal.classList.add('active');
+            if(myAdsContainer) myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray);"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل إعلاناتك...</p>';
+            if(myAdsModal) myAdsModal.classList.add('active');
 
             try {
                 if (_supabase) {
@@ -3197,7 +3308,7 @@
                         .ilike('description', `%${targetPhone}%`)
                         .order('created_at', { ascending: false });
 
-                    if (!error && data && data.length > 0) {
+                    if (!error && data && data.length > 0 && myAdsContainer) {
                         myAdsContainer.innerHTML = '';
                         data.forEach(ad => {
                             const desc = ad.description || '';
@@ -3224,96 +3335,118 @@
                             `;
                             myAdsContainer.appendChild(adCard);
                         });
-                    } else {
+                    } else if(myAdsContainer) {
                         myAdsContainer.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">ليس لديك أي إعلانات منشورة حتى الآن.</p>';
                     }
                 }
             } catch (err) {
                 console.error(err);
-                myAdsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل إعلاناتك.</p>';
+                if(myAdsContainer) myAdsContainer.innerHTML = '<p style="text-align:center; color:#e74c3c; padding:20px;">حدث خطأ أثناء تحميل إعلاناتك.</p>';
             }
         }
 
-        document.getElementById('menuMyAds').addEventListener('click', (e) => {
-            e.preventDefault();
-            accountMenuModal.classList.remove('active');
-            openMyAdsModalFunc();
-        });
+        const menuMyAds = document.getElementById('menuMyAds');
+        if(menuMyAds) {
+            menuMyAds.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(accountMenuModal) accountMenuModal.classList.remove('active');
+                openMyAdsModalFunc();
+            });
+        }
 
-        closeMyAdsModalBtn.addEventListener('click', () => {
+        if(closeMyAdsModalBtn) {
+            closeMyAdsModalBtn.addEventListener('click', () => {
+                if(myAdsModal) myAdsModal.classList.remove('active');
+            });
+        }
+
+        if(myAdsModal) {
             myAdsModal.classList.remove('active');
-        });
-
-        myAdsModal.classList.remove('active');
-        myAdsModal.addEventListener('click', (e) => {
-            if (e.target === myAdsModal) {
-                myAdsModal.classList.remove('active');
-            }
-        });
+            myAdsModal.addEventListener('click', (e) => {
+                if (e.target === myAdsModal) {
+                    myAdsModal.classList.remove('active');
+                }
+            });
+        }
 
         const editAdModal = document.getElementById('editAdModal');
         const closeEditAdModalBtn = document.getElementById('closeEditAdModalBtn');
         const editAdForm = document.getElementById('editAdForm');
 
         window.openEditAdModal = function(id, title, desc, category, city) {
-            myAdsModal.classList.remove('active');
-            document.getElementById('edit-ad-id').value = id;
-            document.getElementById('edit-ad-title').value = decodeURIComponent(title);
-            document.getElementById('edit-ad-desc').value = decodeURIComponent(desc);
-            document.getElementById('edit-ad-category').value = decodeURIComponent(category);
-            editAdModal.classList.add('active');
+            if(myAdsModal) myAdsModal.classList.remove('active');
+            const editAdId = document.getElementById('edit-ad-id');
+            const editAdTitle = document.getElementById('edit-ad-title');
+            const editAdDesc = document.getElementById('edit-ad-desc');
+            const editAdCategory = document.getElementById('edit-ad-category');
+            if(editAdId) editAdId.value = id;
+            if(editAdTitle) editAdTitle.value = decodeURIComponent(title);
+            if(editAdDesc) editAdDesc.value = decodeURIComponent(desc);
+            if(editAdCategory) editAdCategory.value = decodeURIComponent(category);
+            if(editAdModal) editAdModal.classList.add('active');
         };
 
-        closeEditAdModalBtn.addEventListener('click', () => {
+        if(closeEditAdModalBtn) {
+            closeEditAdModalBtn.addEventListener('click', () => {
+                if(editAdModal) editAdModal.classList.remove('active');
+            });
+        }
+
+        if(editAdModal) {
             editAdModal.classList.remove('active');
-        });
-
-        editAdModal.classList.remove('active');
-        editAdModal.addEventListener('click', (e) => {
-            if (e.target === editAdModal) {
-                editAdModal.classList.remove('active');
-            }
-        });
-
-        editAdForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const isBanned = await checkCurrentAccountBanStatus();
-            if (isBanned) {
-                editAdModal.classList.remove('active');
-                return;
-            }
-
-            const id = document.getElementById('edit-ad-id').value;
-            const title = document.getElementById('edit-ad-title').value;
-            const description = document.getElementById('edit-ad-desc').value;
-            const category = document.getElementById('edit-ad-category').value;
-            const currentSupabaseUser = JSON.parse(localStorage.getItem('badal_supabase_user') || '{}');
-            const city = currentSupabaseUser.city || 'القنيطرة';
-
-            try {
-                if (_supabase) {
-                    const updatePayload = {
-                        title: title,
-                        description: description + " (الهاتف: " + (currentSupabaseUser.phone || '0601749553') + " - المدينة: " + city + ")",
-                        category: category,
-                        city: city
-                    };
-
-                    const { error } = await _supabase.from('products').update(updatePayload).eq('id', Number(id));
-                    if (!error) {
-                        showCustomAlert('تم تعديل الإعلان بنجاح', true);
-                        editAdModal.classList.remove('active');
-                        fetchProductsFromSupabase(true);
-                    } else {
-                        showCustomAlert('فشل تعديل الإعلان: ' + error.message, false);
-                    }
+            editAdModal.addEventListener('click', (e) => {
+                if (e.target === editAdModal) {
+                    editAdModal.classList.remove('active');
                 }
-            } catch (err) {
-                console.error(err);
-                showCustomAlert('حدث خطأ أثناء تعديل الإعلان', false);
-            }
-        });
+            });
+        }
+
+        if(editAdForm) {
+            editAdForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const isBanned = await checkCurrentAccountBanStatus();
+                if (isBanned) {
+                    if(editAdModal) editAdModal.classList.remove('active');
+                    return;
+                }
+
+                const editAdIdEl = document.getElementById('edit-ad-id');
+                const editAdTitleEl = document.getElementById('edit-ad-title');
+                const editAdDescEl = document.getElementById('edit-ad-desc');
+                const editAdCategoryEl = document.getElementById('edit-ad-category');
+
+                const id = editAdIdEl ? editAdIdEl.value : '';
+                const title = editAdTitleEl ? editAdTitleEl.value : '';
+                const description = editAdDescEl ? editAdDescEl.value : '';
+                const category = editAdCategoryEl ? editAdCategoryEl.value : '';
+                const currentSupabaseUser = JSON.parse(localStorage.getItem('badal_supabase_user') || '{}');
+                const city = currentSupabaseUser.city || 'القنيطرة';
+
+                try {
+                    if (_supabase) {
+                        const updatePayload = {
+                            title: title,
+                            description: description + " (الهاتف: " + (currentSupabaseUser.phone || '0601749553') + " - المدينة: " + city + ")",
+                            category: category,
+                            city: city
+                        };
+
+                        const { error } = await _supabase.from('products').update(updatePayload).eq('id', Number(id));
+                        if (!error) {
+                            showCustomAlert('تم تعديل الإعلان بنجاح', true);
+                            if(editAdModal) editAdModal.classList.remove('active');
+                            fetchProductsFromSupabase(true);
+                        } else {
+                            showCustomAlert('فشل تعديل الإعلان: ' + error.message, false);
+                        }
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء تعديل الإعلان', false);
+                }
+            });
+        }
 
         window.deleteMyAd = async function(adId) {
             showCustomConfirm(async () => {
@@ -3337,23 +3470,29 @@
             });
         };
 
-        document.getElementById('menuFavorites').addEventListener('click', (e) => {
-            e.preventDefault();
-            accountMenuModal.classList.remove('active');
-            openFavoritesModal();
-        });
+        const menuFavorites = document.getElementById('menuFavorites');
+        if(menuFavorites) {
+            menuFavorites.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(accountMenuModal) accountMenuModal.classList.remove('active');
+                openFavoritesModal();
+            });
+        }
 
-        document.getElementById('menuLogout').addEventListener('click', (e) => {
-            e.preventDefault();
-            localStorage.removeItem('badal_supabase_user');
-            accountMenuModal.classList.remove('active');
-            showCustomAlert('تم تسجيل الخروج بنجاح.', true);
-            setTimeout(() => location.reload(), 1000);
-        });
+        const menuLogout = document.getElementById('menuLogout');
+        if(menuLogout) {
+            menuLogout.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('badal_supabase_user');
+                if(accountMenuModal) accountMenuModal.classList.remove('active');
+                showCustomAlert('تم تسجيل الخروج بنجاح.', true);
+                setTimeout(() => location.reload(), 1000);
+            });
+        }
 
         function setActiveBottomNav(btn) {
             document.querySelectorAll('.bottom-nav-bar .bottom-nav-item').forEach(item => item.classList.remove('active'));
-            if(btn.classList.contains('bottom-nav-item')) {
+            if(btn && btn.classList.contains('bottom-nav-item')) {
                 btn.classList.add('active');
             }
         }
@@ -3366,192 +3505,226 @@
         const loginPanel = document.getElementById('loginPanel');
         const registerPanel = document.getElementById('registerPanel');
 
-        openAuthModalBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            openLoginTab();
-        });
+        if(openAuthModalBtn) {
+            openAuthModalBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                openLoginTab();
+            });
+        }
 
-        closeAuthModalBtn.addEventListener('click', () => {
+        if(closeAuthModalBtn) {
+            closeAuthModalBtn.addEventListener('click', () => {
+                if(authModal) authModal.classList.remove('active');
+            });
+        }
+
+        if(authModal) {
             authModal.classList.remove('active');
-        });
+            authModal.addEventListener('click', (e) => {
+                if (e.target === authModal) {
+                    authModal.classList.remove('active');
+                }
+            });
+        }
 
-        authModal.classList.remove('active');
-        authModal.addEventListener('click', (e) => {
-            if (e.target === authModal) {
-                authModal.classList.remove('active');
-            }
-        });
+        if(tabLoginBtn) {
+            tabLoginBtn.addEventListener('click', () => {
+                tabLoginBtn.classList.add('active');
+                if(tabRegisterBtn) tabRegisterBtn.classList.remove('active');
+                if(loginPanel) loginPanel.classList.add('active');
+                if(registerPanel) registerPanel.classList.remove('active');
+            });
+        }
 
-        tabLoginBtn.addEventListener('click', () => {
-            tabLoginBtn.classList.add('active');
-            tabRegisterBtn.classList.remove('active');
-            loginPanel.classList.add('active');
-            registerPanel.classList.remove('active');
-        });
-
-        tabRegisterBtn.addEventListener('click', () => {
-            tabRegisterBtn.classList.add('active');
-            tabLoginBtn.classList.remove('active');
-            registerPanel.classList.add('active');
-            loginPanel.classList.remove('active');
-        });
+        if(tabRegisterBtn) {
+            tabRegisterBtn.addEventListener('click', () => {
+                tabRegisterBtn.classList.add('active');
+                if(tabLoginBtn) tabLoginBtn.classList.remove('active');
+                if(registerPanel) registerPanel.classList.add('active');
+                if(loginPanel) loginPanel.classList.remove('active');
+            });
+        }
 
         const registerForm = document.getElementById('registerForm');
         const registerSubmitBtn = document.getElementById('registerSubmitBtn');
 
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        if(registerForm) {
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            if (registerSubmitBtn.disabled) return;
-            registerSubmitBtn.disabled = true;
-            registerSubmitBtn.textContent = 'جاري التسجيل...';
+                if(registerSubmitBtn && registerSubmitBtn.disabled) return;
+                if(registerSubmitBtn) {
+                    registerSubmitBtn.disabled = true;
+                    registerSubmitBtn.textContent = 'جاري التسجيل...';
+                }
 
-            const name = document.getElementById('reg-name').value.trim();
-            const city = document.getElementById('reg-city').value.trim();
-            const phone = document.getElementById('reg-phone').value.trim();
-            const password = document.getElementById('reg-password').value;
-            const confirmPassword = document.getElementById('reg-confirm-password').value;
+                const regNameEl = document.getElementById('reg-name');
+                const regCityEl = document.getElementById('reg-city');
+                const regPhoneEl = document.getElementById('reg-phone');
+                const regPassEl = document.getElementById('reg-password');
+                const regConfPassEl = document.getElementById('reg-confirm-password');
 
-            // التحقق من صحة رقم الهاتف المغربي (يبدأ بـ 0 أو +212 ويحتوي على 10 أرقام صحيحة)
-            const phoneRegex = /^(?:\+212|0)[5-7]\d{8}$/;
-            if (!phoneRegex.test(phone)) {
-                showCustomAlert('رقم الهاتف غير صحيح', false);
-                registerSubmitBtn.disabled = false;
-                registerSubmitBtn.textContent = 'تسجيل الحساب';
-                return;
-            }
+                const name = regNameEl ? regNameEl.value.trim() : '';
+                const city = regCityEl ? regCityEl.value.trim() : '';
+                const phone = regPhoneEl ? regPhoneEl.value.trim() : '';
+                const password = regPassEl ? regPassEl.value : '';
+                const confirmPassword = regConfPassEl ? regConfPassEl.value : '';
 
-            if (password !== confirmPassword) {
-                showCustomAlert('كلمتا المرور غير متطابقتين!', false);
-                registerSubmitBtn.disabled = false;
-                registerSubmitBtn.textContent = 'تسجيل الحساب';
-                return;
-            }
-
-            if (!_supabase) {
-                showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
-                registerSubmitBtn.disabled = false;
-                registerSubmitBtn.textContent = 'تسجيل الحساب';
-                return;
-            }
-
-            try {
-                // التحقق الفوري المزدوج من عدم وجود الرقم مسبقاً قبل الإرسال
-                const { data: existingRecords, error: checkError } = await _supabase
-                    .from('products')
-                    .select('id, description')
-                    .ilike('description', `%[USER_PHONE:${phone}]%`);
-
-                if (existingRecords && existingRecords.length > 0) {
-                    showCustomAlert('رقم الهاتف مسجل مسبقاً، يرجى تسجيل الدخول مباشرة!', false);
-                    registerSubmitBtn.disabled = false;
-                    registerSubmitBtn.textContent = 'تسجيل الحساب';
+                const phoneRegex = /^(?:\+212|0)[5-7]\d{8}$/;
+                if (!phoneRegex.test(phone)) {
+                    showCustomAlert('رقم الهاتف غير صحيح', false);
+                    if(registerSubmitBtn) {
+                        registerSubmitBtn.disabled = false;
+                        registerSubmitBtn.textContent = 'تسجيل الحساب';
+                    }
                     return;
                 }
 
-                const userPayload = {
-                    title: "حساب مستخدم: " + name,
-                    description: `[USER_ACCOUNT] [USER_PHONE:${phone}] [PASSWORD:${password}] [CITY:${city}] [NAME:${name}]`,
-                    category: "أغراض متنوّعة",
-                    city: city,
-                    image_url: ""
-                };
-
-                const { error: insertError } = await _supabase.from('products').insert([userPayload]);
-
-                if (insertError) {
-                    showCustomAlert('خطأ أثناء التسجيل في قاعدة البيانات: ' + insertError.message, false);
-                    registerSubmitBtn.disabled = false;
-                    registerSubmitBtn.textContent = 'تسجيل الحساب';
-                } else {
-                    const userData = { name, city, phone, password };
-                    localStorage.setItem('badal_supabase_user', JSON.stringify(userData));
-                    showCustomAlert('تم إنشاء الحساب مرحبا في منصة بدل', true);
-                    authModal.classList.remove('active');
-                    checkAuthSession();
-                    registerForm.reset();
-                    renderProducts(currentPage);
-                    updateFavoritesBadge();
-                }
-            } catch (err) {
-                console.error(err);
-                showCustomAlert('حدث خطأ غير متوقع أثناء التسجيل.', false);
-                registerSubmitBtn.disabled = false;
-                registerSubmitBtn.textContent = 'تسجيل الحساب';
-            }
-        });
-
-        const loginForm = document.getElementById('loginForm');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const inputVal = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
-
-            if (!_supabase) {
-                showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
-                return;
-            }
-
-            try {
-                const { data: records, error: queryError } = await _supabase
-                    .from('products')
-                    .select('id, description')
-                    .ilike('description', '%[USER_ACCOUNT]%');
-
-                if (queryError || !records) {
-                    showCustomAlert('خطأ في الاتصال بقاعدة البيانات للتحقق من الحساب.', false);
+                if (password !== confirmPassword) {
+                    showCustomAlert('كلمتا المرور غير متطابقتين!', false);
+                    if(registerSubmitBtn) {
+                        registerSubmitBtn.disabled = false;
+                        registerSubmitBtn.textContent = 'تسجيل الحساب';
+                    }
                     return;
                 }
 
-                let foundUser = null;
-                let isUserBanned = false;
+                if (!_supabase) {
+                    showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
+                    if(registerSubmitBtn) {
+                        registerSubmitBtn.disabled = false;
+                        registerSubmitBtn.textContent = 'تسجيل الحساب';
+                    }
+                    return;
+                }
 
-                for (let record of records) {
-                    const desc = record.description || '';
-                    if (desc.includes(`[USER_PHONE:${inputVal}]`) || desc.includes(`[NAME:${inputVal}]`)) {
-                        if (desc.includes(`[PASSWORD:${password}]`)) {
-                            if (desc.includes('[BANNED]') || desc.includes('[BLOCKED]')) {
-                                isUserBanned = true;
-                                break;
-                            }
+                try {
+                    const { data: existingRecords, error: checkError } = await _supabase
+                        .from('products')
+                        .select('id, description')
+                        .ilike('description', `%[USER_PHONE:${phone}]%`);
 
-                            const nameMatch = desc.match(/\[NAME:(.*?)\]/);
-                            const cityMatch = desc.match(/\[CITY:(.*?)\]/);
-                            const phoneMatch = desc.match(/\[USER_PHONE:(.*?)\]/);
-                            
-                            foundUser = {
-                                name: nameMatch ? nameMatch[1] : inputVal,
-                                city: cityMatch ? cityMatch[1] : 'القنيطرة',
-                                phone: phoneMatch ? phoneMatch[1] : inputVal,
-                                password: password
-                            };
-                            break;
+                    if (existingRecords && existingRecords.length > 0) {
+                        showCustomAlert('رقم الهاتف مسجل مسبقاً، يرجى تسجيل الدخول مباشرة!', false);
+                        if(registerSubmitBtn) {
+                            registerSubmitBtn.disabled = false;
+                            registerSubmitBtn.textContent = 'تسجيل الحساب';
                         }
+                        return;
+                    }
+
+                    const userPayload = {
+                        title: "حساب مستخدم: " + name,
+                        description: `[USER_ACCOUNT] [USER_PHONE:${phone}] [PASSWORD:${password}] [CITY:${city}] [NAME:${name}]`,
+                        category: "أغراض متنوّعة",
+                        city: city,
+                        image_url: ""
+                    };
+
+                    const { error: insertError } = await _supabase.from('products').insert([userPayload]);
+
+                    if (insertError) {
+                        showCustomAlert('خطأ أثناء التسجيل في قاعدة البيانات: ' + insertError.message, false);
+                        if(registerSubmitBtn) {
+                            registerSubmitBtn.disabled = false;
+                            registerSubmitBtn.textContent = 'تسجيل الحساب';
+                        }
+                    } else {
+                        const userData = { name, city, phone, password };
+                        localStorage.setItem('badal_supabase_user', JSON.stringify(userData));
+                        showCustomAlert('تم إنشاء الحساب مرحبا في منصة بدل', true);
+                        if(authModal) authModal.classList.remove('active');
+                        checkAuthSession();
+                        registerForm.reset();
+                        renderProducts(currentPage);
+                        updateFavoritesBadge();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ غير متوقع أثناء التسجيل.', false);
+                    if(registerSubmitBtn) {
+                        registerSubmitBtn.disabled = false;
+                        registerSubmitBtn.textContent = 'تسجيل الحساب';
                     }
                 }
+            });
+        }
 
-                if (isUserBanned) {
-                    showCustomAlert('هذا الحساب محظور من طرف الإدارة ولا يمكنه تسجيل الدخول.', false);
+        const loginForm = document.getElementById('loginForm');
+        if(loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const loginEmailEl = document.getElementById('login-email');
+                const loginPassEl = document.getElementById('login-password');
+                const inputVal = loginEmailEl ? loginEmailEl.value.trim() : '';
+                const password = loginPassEl ? loginPassEl.value : '';
+
+                if (!_supabase) {
+                    showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
                     return;
                 }
 
-                if (foundUser) {
-                    localStorage.setItem('badal_supabase_user', JSON.stringify(foundUser));
-                    showCustomAlert(`مرحبا ${foundUser.name} في منصة بدل`, true);
-                    authModal.classList.remove('active');
-                    checkAuthSession();
-                    loginForm.reset();
-                    checkIncomingRequestsCount();
-                    renderProducts(currentPage);
-                    updateFavoritesBadge();
-                } else {
-                    showCustomAlert('رقم الهاتف/الاسم أو كلمة المرور غير صحيحة، أو الحساب غير مسجل!', false);
+                try {
+                    const { data: records, error: queryError } = await _supabase
+                        .from('products')
+                        .select('id, description')
+                        .ilike('description', '%[USER_ACCOUNT]%');
+
+                    if (queryError || !records) {
+                        showCustomAlert('خطأ في الاتصال بقاعدة البيانات للتحقق من الحساب.', false);
+                        return;
+                    }
+
+                    let foundUser = null;
+                    let isUserBanned = false;
+
+                    for (let record of records) {
+                        const desc = record.description || '';
+                        if (desc.includes(`[USER_PHONE:${inputVal}]`) || desc.includes(`[NAME:${inputVal}]`)) {
+                            if (desc.includes(`[PASSWORD:${password}]`)) {
+                                if (desc.includes('[BANNED]') || desc.includes('[BLOCKED]')) {
+                                    isUserBanned = true;
+                                    break;
+                                }
+
+                                const nameMatch = desc.match(/\[NAME:(.*?)\]/);
+                                const cityMatch = desc.match(/\[CITY:(.*?)\]/);
+                                const phoneMatch = desc.match(/\[USER_PHONE:(.*?)\]/);
+                                
+                                foundUser = {
+                                    name: nameMatch ? nameMatch[1] : inputVal,
+                                    city: cityMatch ? cityMatch[1] : 'القنيطرة',
+                                    phone: phoneMatch ? phoneMatch[1] : inputVal,
+                                    password: password
+                                };
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isUserBanned) {
+                        showCustomAlert('هذا الحساب محظور من طرف الإدارة ولا يمكنه تسجيل الدخول.', false);
+                        return;
+                    }
+
+                    if (foundUser) {
+                        localStorage.setItem('badal_supabase_user', JSON.stringify(foundUser));
+                        showCustomAlert(`مرحبا ${foundUser.name} في منصة بدل`, true);
+                        if(authModal) authModal.classList.remove('active');
+                        checkAuthSession();
+                        loginForm.reset();
+                        checkIncomingRequestsCount();
+                        renderProducts(currentPage);
+                        updateFavoritesBadge();
+                    } else {
+                        showCustomAlert('رقم الهاتف/الاسم أو كلمة المرور غير صحيحة، أو الحساب غير مسجل!', false);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء محاولة تسجيل الدخول.', false);
                 }
-            } catch (err) {
-                console.error(err);
-                showCustomAlert('حدث خطأ أثناء محاولة تسجيل الدخول.', false);
-            }
-        });
+            });
+        }
 
         async function checkAuthSession() {
             const isBanned = await checkCurrentAccountBanStatus();
@@ -3559,7 +3732,7 @@
 
             const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             const topAuthBar = document.getElementById('topAuthBar');
-            if (currentSupabaseUser) {
+            if (currentSupabaseUser && topAuthBar) {
                 const userData = JSON.parse(currentSupabaseUser);
                 topAuthBar.innerHTML = `
                     <span style="color: var(--dark-blue); font-weight: 700;">مرحباً، ${userData.name}</span> | 
@@ -3580,170 +3753,213 @@
 
         const contactForm = document.getElementById('contactForm');
         const contactSubmitBtn = document.getElementById('contactSubmitBtn');
-        contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        if(contactForm) {
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            const senderName = document.getElementById('name').value.trim();
-            const senderPhone = document.getElementById('contact-info').value.trim();
-            const senderMessage = document.getElementById('message').value.trim();
+                const nameEl = document.getElementById('name');
+                const contactInfoEl = document.getElementById('contact-info');
+                const messageEl = document.getElementById('message');
 
-            // التحقق من صحة رقم الهاتف
-            const phoneRegex = /^(?:\+212|0)[5-7]\d{8}$/;
-            if (!phoneRegex.test(senderPhone)) {
-                showCustomAlert('رقم الهاتف غير صحيح', false);
-                return;
-            }
+                const senderName = nameEl ? nameEl.value.trim() : '';
+                const senderPhone = contactInfoEl ? contactInfoEl.value.trim() : '';
+                const senderMessage = messageEl ? messageEl.value.trim() : '';
 
-            if (!_supabase) {
-                showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
-                return;
-            }
-
-            if (contactSubmitBtn) {
-                contactSubmitBtn.disabled = true;
-                contactSubmitBtn.textContent = 'جاري الإرسال...';
-            }
-
-            try {
-                const msgPayload = {
-                    title: "رسالة اتصال من: " + senderName,
-                    description: `[USER_MESSAGE] [SENDER_NAME:${senderName}] [SENDER_PHONE:${senderPhone}] [MESSAGE:${senderMessage}]`,
-                    category: "أغراض متنوّعة",
-                    city: "القنيطرة",
-                    image_url: ""
-                };
-
-                const { error: insertErr } = await _supabase.from('products').insert([msgPayload]);
-
-                if (!insertErr) {
-                    showCustomAlert('تم إرسال رسالتك بنجاح!', true);
-                    contactModal.classList.remove('active');
-                    contactForm.reset();
-                } else {
-                    showCustomAlert('فشل إرسال الرسالة: ' + insertErr.message, false);
+                const phoneRegex = /^(?:\+212|0)[5-7]\d{8}$/;
+                if (!phoneRegex.test(senderPhone)) {
+                    showCustomAlert('رقم الهاتف غير صحيح', false);
+                    return;
                 }
-            } catch (err) {
-                console.error(err);
-                showCustomAlert('حدث خطأ أثناء إرسال الرسالة.', false);
-            } finally {
+
+                if (!_supabase) {
+                    showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
+                    return;
+                }
+
                 if (contactSubmitBtn) {
-                    contactSubmitBtn.disabled = false;
-                    contactSubmitBtn.textContent = 'إرسال الرسالة';
+                    contactSubmitBtn.disabled = true;
+                    contactSubmitBtn.textContent = 'جاري الإرسال...';
                 }
-            }
-        });
+
+                try {
+                    const msgPayload = {
+                        title: "رسالة اتصال من: " + senderName,
+                        description: `[USER_MESSAGE] [SENDER_NAME:${senderName}] [SENDER_PHONE:${senderPhone}] [MESSAGE:${senderMessage}]`,
+                        category: "أغراض متنوّعة",
+                        city: "القنيطرة",
+                        image_url: ""
+                    };
+
+                    const { error: insertErr } = await _supabase.from('products').insert([msgPayload]);
+
+                    if (!insertErr) {
+                        showCustomAlert('تم إرسال رسالتك بنجاح!', true);
+                        if(contactModal) contactModal.classList.remove('active');
+                        contactForm.reset();
+                    } else {
+                        showCustomAlert('فشل إرسال الرسالة: ' + insertErr.message, false);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showCustomAlert('حدث خطأ أثناء إرسال الرسالة.', false);
+                } finally {
+                    if (contactSubmitBtn) {
+                        contactSubmitBtn.disabled = false;
+                        contactSubmitBtn.textContent = 'إرسال الرسالة';
+                    }
+                }
+            });
+        }
 
         const howToBtn = document.getElementById('howToExchangeBtn');
         const howToModal = document.getElementById('howToModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
 
-        howToBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            howToModal.classList.add('active');
-        });
+        if(howToBtn) {
+            howToBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(howToModal) howToModal.classList.add('active');
+            });
+        }
 
-        closeModalBtn.addEventListener('click', () => {
+        if(closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => {
+                if(howToModal) howToModal.classList.remove('active');
+            });
+        }
+
+        if(howToModal) {
             howToModal.classList.remove('active');
-        });
-
-        howToModal.classList.remove('active');
-        howToModal.addEventListener('click', (e) => {
-            if (e.target === howToModal) {
-                howToModal.classList.remove('active');
-            }
-        });
+            howToModal.addEventListener('click', (e) => {
+                if (e.target === howToModal) {
+                    howToModal.classList.remove('active');
+                }
+            });
+        }
 
         const footerAboutBtn = document.getElementById('footerAboutBtn');
         const aboutPlatformModal = document.getElementById('aboutPlatformModal');
         const closeAboutPlatformBtn = document.getElementById('closeAboutPlatformBtn');
         const aboutPlatformOkBtn = document.getElementById('aboutPlatformOkBtn');
 
-        footerAboutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            aboutPlatformModal.classList.add('active');
-        });
+        if(footerAboutBtn) {
+            footerAboutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(aboutPlatformModal) aboutPlatformModal.classList.add('active');
+            });
+        }
 
-        closeAboutPlatformBtn.addEventListener('click', () => {
-            aboutPlatformModal.classList.remove('active');
-        });
+        if(closeAboutPlatformBtn) {
+            closeAboutPlatformBtn.addEventListener('click', () => {
+                if(aboutPlatformModal) aboutPlatformModal.classList.remove('active');
+            });
+        }
 
-        aboutPlatformOkBtn.addEventListener('click', () => {
-            aboutPlatformModal.classList.remove('active');
-        });
+        if(aboutPlatformOkBtn) {
+            aboutPlatformOkBtn.addEventListener('click', () => {
+                if(aboutPlatformModal) aboutPlatformModal.classList.remove('active');
+            });
+        }
 
-        aboutPlatformModal.addEventListener('click', (e) => {
-            if (e.target === aboutPlatformModal) {
-                aboutPlatformModal.classList.remove('active');
-            }
-        });
+        if(aboutPlatformModal) {
+            aboutPlatformModal.addEventListener('click', (e) => {
+                if (e.target === aboutPlatformModal) {
+                    aboutPlatformModal.classList.remove('active');
+                }
+            });
+        }
 
         const footerTermsBtn = document.getElementById('footerTermsBtn');
         const termsModal = document.getElementById('termsModal');
         const closeTermsModalBtn = document.getElementById('closeTermsModalBtn');
         const termsOkBtn = document.getElementById('termsOkBtn');
 
-        footerTermsBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            termsModal.classList.add('active');
-        });
+        if(footerTermsBtn) {
+            footerTermsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(termsModal) termsModal.classList.add('active');
+            });
+        }
 
-        closeTermsModalBtn.addEventListener('click', () => {
+        if(closeTermsModalBtn) {
+            closeTermsModalBtn.addEventListener('click', () => {
+                if(termsModal) termsModal.classList.remove('active');
+            });
+        }
+
+        if(termsOkBtn) {
+            termsOkBtn.addEventListener('click', () => {
+                if(termsModal) termsModal.classList.remove('active');
+            });
+        }
+
+        if(termsModal) {
             termsModal.classList.remove('active');
-        });
-
-        termsOkBtn.addEventListener('click', () => {
-            termsModal.classList.remove('active');
-        });
-
-        termsModal.addEventListener('click', (e) => {
-            if (e.target === termsModal) {
-                termsModal.classList.remove('active');
-            }
-        });
+            termsModal.addEventListener('click', (e) => {
+                if (e.target === termsModal) {
+                    termsModal.classList.remove('active');
+                }
+            });
+        }
 
         const footerPrivacyBtn = document.getElementById('footerPrivacyBtn');
         const privacyModal = document.getElementById('privacyModal');
         const closePrivacyModalBtn = document.getElementById('closePrivacyModalBtn');
         const privacyOkBtn = document.getElementById('privacyOkBtn');
 
-        footerPrivacyBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            privacyModal.classList.add('active');
-        });
+        if(footerPrivacyBtn) {
+            footerPrivacyBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(privacyModal) privacyModal.classList.add('active');
+            });
+        }
 
-        closePrivacyModalBtn.addEventListener('click', () => {
+        if(closePrivacyModalBtn) {
+            closePrivacyModalBtn.addEventListener('click', () => {
+                if(privacyModal) privacyModal.classList.remove('active');
+            });
+        }
+
+        if(privacyOkBtn) {
+            privacyOkBtn.addEventListener('click', () => {
+                if(privacyModal) privacyModal.classList.remove('active');
+            });
+        }
+
+        if(privacyModal) {
             privacyModal.classList.remove('active');
-        });
-
-        privacyOkBtn.addEventListener('click', () => {
-            privacyModal.classList.remove('active');
-        });
-
-        privacyModal.addEventListener('click', (e) => {
-            if (e.target === privacyModal) {
-                privacyModal.classList.remove('active');
-            }
-        });
+            privacyModal.addEventListener('click', (e) => {
+                if (e.target === privacyModal) {
+                    privacyModal.classList.remove('active');
+                }
+            });
+        }
 
         const contactBtn = document.getElementById('contactUsBtn');
         const contactModal = document.getElementById('contactModal');
         const closeContactModalBtn = document.getElementById('closeContactModalBtn');
 
-        contactBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            contactModal.classList.add('active');
-        });
+        if(contactBtn) {
+            contactBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(contactModal) contactModal.classList.add('active');
+            });
+        }
 
-        closeContactModalBtn.addEventListener('click', () => {
+        if(closeContactModalBtn) {
+            closeContactModalBtn.addEventListener('click', () => {
+                if(contactModal) contactModal.classList.remove('active');
+            });
+        }
+
+        if(contactModal) {
             contactModal.classList.remove('active');
-        });
-
-        contactModal.classList.remove('active');
-        contactModal.addEventListener('click', (e) => {
-            if (e.target === contactModal) {
-                contactModal.classList.remove('active');
-            }
-        });
+            contactModal.addEventListener('click', (e) => {
+                if (e.target === contactModal) {
+                    contactModal.classList.remove('active');
+                }
+            });
+        }
 
         setTimeout(() => {
             checkCurrentAccountBanStatus();
