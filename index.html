@@ -1469,7 +1469,7 @@
                         <label for="login-password">كلمة المرور:</label>
                         <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required>
                     </div>
-                    <button type="submit" class="form-submit-btn">دخول</button>
+                    <button type="submit" class="form-submit-btn" id="loginSubmitBtn">دخول</button>
                 </form>
             </div>
 
@@ -1499,7 +1499,7 @@
                     <label class="form-checkbox-group">
                         <input type="checkbox" id="reg-terms" required> الموافقة على شروط الموقع
                     </label>
-                    <button type="submit" class="form-submit-btn">تسجيل الحساب</button>
+                    <button type="submit" class="form-submit-btn" id="registerSubmitBtn">تسجيل الحساب</button>
                 </form>
             </div>
         </div>
@@ -1733,7 +1733,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 بدل.ma - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.23</span>
+            <span class="version-tag">v0.9.24</span>
         </div>
     </footer>
 
@@ -1772,7 +1772,7 @@
                         resolve(canvas.toDataURL('image/jpeg', quality));
                     };
                     img.onerror = () => {
-                        resolve(event.target.result); // في حال فشل معالجة الصورة نمررها كما هي
+                        resolve(event.target.result);
                     }
                 };
                 reader.onerror = () => {
@@ -3319,8 +3319,15 @@
         });
 
         const registerForm = document.getElementById('registerForm');
+        const registerSubmitBtn = document.getElementById('registerSubmitBtn');
+
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if (registerSubmitBtn.disabled) return;
+            registerSubmitBtn.disabled = true;
+            registerSubmitBtn.textContent = 'جاري التسجيل...';
+
             const name = document.getElementById('reg-name').value.trim();
             const city = document.getElementById('reg-city').value.trim();
             const phone = document.getElementById('reg-phone').value.trim();
@@ -3329,15 +3336,20 @@
 
             if (password !== confirmPassword) {
                 showCustomAlert('كلمتا المرور غير متطابقتين!', false);
+                registerSubmitBtn.disabled = false;
+                registerSubmitBtn.textContent = 'تسجيل الحساب';
                 return;
             }
 
             if (!_supabase) {
                 showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
+                registerSubmitBtn.disabled = false;
+                registerSubmitBtn.textContent = 'تسجيل الحساب';
                 return;
             }
 
             try {
+                // التحقق الفوري المزدوج من عدم وجود الرقم مسبقاً قبل الإرسال
                 const { data: existingRecords, error: checkError } = await _supabase
                     .from('products')
                     .select('id, description')
@@ -3345,6 +3357,8 @@
 
                 if (existingRecords && existingRecords.length > 0) {
                     showCustomAlert('رقم الهاتف مسجل مسبقاً، يرجى تسجيل الدخول مباشرة!', false);
+                    registerSubmitBtn.disabled = false;
+                    registerSubmitBtn.textContent = 'تسجيل الحساب';
                     return;
                 }
 
@@ -3360,6 +3374,8 @@
 
                 if (insertError) {
                     showCustomAlert('خطأ أثناء التسجيل في قاعدة البيانات: ' + insertError.message, false);
+                    registerSubmitBtn.disabled = false;
+                    registerSubmitBtn.textContent = 'تسجيل الحساب';
                 } else {
                     const userData = { name, city, phone, password };
                     localStorage.setItem('badal_supabase_user', JSON.stringify(userData));
@@ -3373,6 +3389,8 @@
             } catch (err) {
                 console.error(err);
                 showCustomAlert('حدث خطأ غير متوقع أثناء التسجيل.', false);
+                registerSubmitBtn.disabled = false;
+                registerSubmitBtn.textContent = 'تسجيل الحساب';
             }
         });
 
