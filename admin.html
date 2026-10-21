@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X28DB1WJ8D"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-X28DB1WJ8D');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بدل.ma - لوحة التحكم والتحكم الشامل (Admin Panel)</title>
-    <!-- خطوط Cairo و Tajawal -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@800;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <title>online.بدل - لوحة التحكم والتحكم الشامل (Admin Panel)</title>
+    <!-- استيراد خط Cairo المميز للشعار و Tajawal للنصوص -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Supabase JS Client Library -->
@@ -64,20 +73,27 @@
         }
 
         .logo {
-            font-size: 1.8rem;
+            font-size: 1.85rem;
             font-weight: 900;
             font-family: 'Cairo', sans-serif;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            line-height: 1.1;
         }
 
         .logo-green { color: var(--primary-green); }
         .logo-dark { color: var(--dark-blue); }
 
         .admin-cpanel-title {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 900;
             font-family: 'Cairo', sans-serif;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .container {
@@ -468,7 +484,7 @@
 
     <header class="main-header">
         <a href="index.html" class="logo">
-            <span class="logo-green">بدل</span><span class="logo-dark">.ma</span>
+            <span class="logo-green">online</span><span class="logo-dark">.بدل</span>
         </a>
         <div style="display: flex; gap: 15px; align-items: center;">
             <div class="admin-cpanel-title">
@@ -733,7 +749,7 @@
     </div>
 
     <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 بدل.ma - v0.9.40
+        جميع الحقوق محفوظة &copy; 2026 online.بدل - مجاني • سريع • آمن <span class="version-tag" style="color: #718096; font-size: 0.75rem;">v0.9.41</span>
     </footer>
 
     <!-- نافذة تكبير الصورة -->
