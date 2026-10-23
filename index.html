@@ -21,12 +21,13 @@
     <meta name="description" content="أول منصة مغربية للمقايضة المباشرة وتبادل الأغراض بـ 0 درهم. بدل تلفونك، حوايجك وأي حاجة ما محتاجهاش بلا فلوس وبكل سهولة وأمان!">
     <title>online.بدل - منصة المقايضة المباشرة بـ 0 درهم</title>
     
-    <!-- التحميل المحسن للموارد والخطوط لمنع حظر العرض -->
+    <!-- التحسين السريع لأداء العرض الأول (LCP & FCP & SI) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" as="style">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://pjhkvfuknzvwsiznhhfn.supabase.co">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800&display=swap">
     
     <noscript>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1769,7 +1770,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 online.بدل - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.45</span>
+            <span class="version-tag">v0.9.47</span>
         </div>
     </footer>
 
@@ -3945,12 +3946,10 @@
             });
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            checkCurrentAccountBanStatus();
-            fetchProductsFromSupabase();
-            checkIncomingRequestsCount();
-            updateFavoritesBadge();
-        });
+        // تحسين الأداء: جلب البيانات فوراً عند بدء التحميل بدون تأخير
+        fetchProductsFromSupabase();
+        checkAuthSession();
+        checkIncomingRequestsCount();
     </script>
 </body>
 </html>
