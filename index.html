@@ -1768,7 +1768,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 online.بدل - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.43</span>
+            <span class="version-tag">v0.9.44</span>
         </div>
     </footer>
 
@@ -2117,7 +2117,7 @@
                 }
 
                 const isFirstPageFirstItems = (page === 1 && index < 2);
-                const loadingAttr = isFirstPageFirstItems ? 'fetchpriority="high"' : 'loading="lazy"';
+                const loadingAttr = isFirstPageFirstItems ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"';
                 const displayImg = prod.image_url ? `<img src="${prod.image_url}" class="product-img" alt="${prod.title}" width="160" height="140" ${loadingAttr}>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
 
