@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X28DB1WJ8D"></script>
+    <!-- Google tag (gtag.js) المؤجل لتحسين أداء العرض الأول -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-X28DB1WJ8D');
+      window.addEventListener('load', function() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-X28DB1WJ8D';
+        document.head.appendChild(script);
+        script.onload = function() {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-X28DB1WJ8D');
+        };
+      });
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="أول منصة مغربية للمقايضة المباشرة وتبادل الأغراض بـ 0 درهم. بدل تلفونك، حوايجك وأي حاجة ما محتاجهاش بلا فلوس وبكل سهولة وأمان!">
     <title>online.بدل - منصة المقايضة المباشرة بـ 0 درهم</title>
     
-    <!-- Preload لتحسين أداء العرض الأول وسرعة التحميل (LCP / FCP) ومعالجة عرض الخطوط font-display -->
+    <!-- التحميل المحسن للموارد والخطوط لمنع حظر العرض -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
     <noscript>
@@ -27,11 +32,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800&display=swap">
     </noscript>
 
-    <!-- Supabase JS Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-        
         * {
             margin: 0;
             padding: 0;
@@ -1529,7 +1530,6 @@
         </div>
     </div>
 
-    <!-- رفع الـ z-index إلى 3000 لضمان ظهور التنبيه فوق نافذة تواصل معنا وتحت أي إخفاء -->
     <div class="modal-overlay" id="customAlertModal" style="z-index: 3000;">
         <div class="modal-content" style="max-width: 380px; text-align: center;">
             <button class="modal-close" id="closeCustomAlertBtn">&times;</button>
@@ -1758,25 +1758,44 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 online.بدل - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.41</span>
+            <span class="version-tag">v0.9.42</span>
         </div>
     </footer>
 
+    <!-- تحميل مكتبة Supabase بشكل ديناميكي بعد تحميل الصفحة لتسريع العرض -->
     <script>
+        let _supabase = null;
         const SUPABASE_URL = 'https://pjhkvfuknzvwsiznhhfn.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_WbY6CQps3E0OJobdxS6cBQ_hNGrxtyP';
-        
-        const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-        // دالة التحقق التلقائي والفوري من حظر الحساب في قاعدة البيانات
+        function loadSupabaseScript() {
+            return new Promise((resolve) => {
+                if (window.supabase) {
+                    _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    resolve(_supabase);
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+                script.async = true;
+                script.onload = () => {
+                    if (window.supabase) {
+                        _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    }
+                    resolve(_supabase);
+                };
+                document.head.appendChild(script);
+            });
+        }
+
         async function checkCurrentAccountBanStatus() {
+            if (!_supabase) await loadSupabaseScript();
             const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
             if (!currentSupabaseUser || !_supabase) return false;
 
             try {
                 const userData = JSON.parse(currentSupabaseUser);
                 const userPhone = userData.phone;
-
                 if (!userPhone) return false;
 
                 const { data: records, error } = await _supabase
@@ -1830,13 +1849,9 @@
                         ctx.drawImage(img, 0, 0, width, height);
                         resolve(canvas.toDataURL('image/jpeg', quality));
                     };
-                    img.onerror = () => {
-                        resolve(event.target.result);
-                    }
+                    img.onerror = () => resolve(event.target.result);
                 };
-                reader.onerror = () => {
-                    resolve(null);
-                }
+                reader.onerror = () => resolve(null);
             });
         }
 
@@ -1872,9 +1887,7 @@
 
         const customAlertModal = document.getElementById('customAlertModal');
         if(customAlertModal) customAlertModal.addEventListener('click', (e) => {
-            if (e.target === customAlertModal) {
-                customAlertModal.classList.remove('active');
-            }
+            if (e.target === customAlertModal) customAlertModal.classList.remove('active');
         });
 
         const customConfirmModal = document.getElementById('customConfirmModal');
@@ -1917,41 +1930,26 @@
 
         function showSlide(index) {
             if (slides.length === 0) return;
-            if (index >= slides.length) {
-                currentSlideIndex = 0;
-            } else if (index < 0) {
-                currentSlideIndex = slides.length - 1;
-            } else {
-                currentSlideIndex = index;
-            }
+            if (index >= slides.length) currentSlideIndex = 0;
+            else if (index < 0) currentSlideIndex = slides.length - 1;
+            else currentSlideIndex = index;
 
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
 
-            if(slides[currentSlideIndex]) {
-                slides[currentSlideIndex].classList.add('active');
-            }
-            if(dots[currentSlideIndex]) {
-                dots[currentSlideIndex].classList.add('active');
-            }
+            if(slides[currentSlideIndex]) slides[currentSlideIndex].classList.add('active');
+            if(dots[currentSlideIndex]) dots[currentSlideIndex].classList.add('active');
         }
 
-        function currentSlide(index) {
-            showSlide(index);
-        }
+        function currentSlide(index) { showSlide(index); }
 
         function startSlider() {
             if (slides.length > 0) {
-                slideInterval = setInterval(() => {
-                    showSlide(currentSlideIndex + 1);
-                }, 5000);
+                slideInterval = setInterval(() => { showSlide(currentSlideIndex + 1); }, 5000);
             }
         }
 
-        function stopSlider() {
-            clearInterval(slideInterval);
-        }
-
+        function stopSlider() { clearInterval(slideInterval); }
         startSlider();
 
         let allProducts = [];
@@ -1962,6 +1960,8 @@
         async function fetchProductsFromSupabase(forceRefresh = false) {
             if (isFetchingProducts && !forceRefresh) return;
             isFetchingProducts = true;
+
+            if (!_supabase) await loadSupabaseScript();
 
             const gridContainer = document.getElementById('productsGridContainer');
             if(gridContainer && allProducts.length === 0) {
@@ -1992,37 +1992,24 @@
             }
         }
 
-        if (_supabase) {
-            _supabase
-                .channel('public:products')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
-                    checkCurrentAccountBanStatus();
-                    fetchProductsFromSupabase(true);
-                    checkIncomingRequestsCount();
-                    const mModal = document.getElementById('messagesModal');
-                    if (mModal && mModal.classList.contains('active')) {
-                        const mBtn = document.getElementById('bottomMessagesBtn');
-                        if(mBtn) mBtn.click();
-                    }
-                    const myModal = document.getElementById('myAdsModal');
-                    if (myModal && myModal.classList.contains('active')) {
-                        openMyAdsModalFunc();
-                    }
-                    const accModal = document.getElementById('acceptedExchangesModal');
-                    if (accModal && accModal.classList.contains('active')) {
-                        openAcceptedExchangesModalFunc();
-                    }
-                })
-                .subscribe();
-        }
+        loadSupabaseScript().then(() => {
+            if (_supabase) {
+                _supabase
+                    .channel('public:products')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
+                        checkCurrentAccountBanStatus();
+                        fetchProductsFromSupabase(true);
+                        checkIncomingRequestsCount();
+                    })
+                    .subscribe();
+            }
+        });
 
         function getFavorites() {
             try {
                 const parsed = JSON.parse(localStorage.getItem('badal_favorites') || '[]');
                 return Array.isArray(parsed) ? parsed : [];
-            } catch(e) {
-                return [];
-            }
+            } catch(e) { return []; }
         }
 
         function updateFavoritesBadge() {
@@ -2060,9 +2047,7 @@
             renderProducts(currentPage);
             updateFavoritesBadge();
             const favModal = document.getElementById('favoritesModal');
-            if(favModal && favModal.classList.contains('active')) {
-                openFavoritesModal();
-            }
+            if(favModal && favModal.classList.contains('active')) openFavoritesModal();
         }
 
         function renderProducts(page) {
@@ -2106,21 +2091,17 @@
 
                 let ownerPhone = '';
                 const phoneMatch = rawDesc.match(/\(الهاتف:\s*([^\s-]+)/);
-                if (phoneMatch) {
-                    ownerPhone = phoneMatch[1].trim();
-                }
+                if (phoneMatch) ownerPhone = phoneMatch[1].trim();
 
                 let cleanDesc = rawDesc.split(' (الهاتف:')[0];
-                
                 const isMyAd = currentUserPhone && ownerPhone && currentUserPhone === ownerPhone;
 
                 let descHTML = `<p class="product-desc">${cleanDesc}</p>`;
                 if (cleanDesc.includes('أقبل بأي منتوج') || cleanDesc.includes('أقبل المقايضة بأي منتوج مقترح')) {
-                    let formattedText = "أقبل بأي منتوج";
                     descHTML = `
                         <div class="open-exchange-highlight">
                             <i class="fa-solid fa-handshake-angle"></i>
-                            <span>${formattedText}</span>
+                            <span>أقبل بأي منتوج</span>
                         </div>
                     `;
                 }
@@ -2128,7 +2109,6 @@
                 const isFirstPageFirstItems = (page === 1 && index < 2);
                 const loadingAttr = isFirstPageFirstItems ? 'fetchpriority="high"' : 'loading="lazy"';
                 const displayImg = prod.image_url ? `<img src="${prod.image_url}" class="product-img" alt="${prod.title}" ${loadingAttr}>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
-                
                 const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
 
                 let actionButtonHTML = `<a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title.replace(/'/g, "\\'")}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>`;
@@ -2173,11 +2153,10 @@
 
             let modalDescHTML = `<p style="font-size:0.9rem; color:var(--text-gray); line-height:1.4; word-break:break-word;">${cleanDesc}</p>`;
             if (cleanDesc.includes('أقبل بأي منتوج') || cleanDesc.includes('أقبل المقايضة بأي منتوج مقترح')) {
-                let formattedText = "أقبل بأي منتوج";
                 modalDescHTML = `
                     <div class="open-exchange-highlight" style="padding:8px; font-size:0.85rem;">
                         <i class="fa-solid fa-handshake-angle" style="font-size:1.1rem;"></i>
-                        <span>${formattedText}</span>
+                        <span>أقبل بأي منتوج</span>
                     </div>
                 `;
             }
@@ -2211,9 +2190,7 @@
 
         if(productDetailsModal) {
             productDetailsModal.addEventListener('click', (e) => {
-                if (e.target === productDetailsModal) {
-                    productDetailsModal.classList.remove('active');
-                }
+                if (e.target === productDetailsModal) productDetailsModal.classList.remove('active');
             });
         }
 
@@ -2247,20 +2224,14 @@
 
         const prevPageBtn = document.getElementById('prevPageBtn');
         if(prevPageBtn) {
-            prevPageBtn.onclick = () => {
-                if (currentPage > 1) {
-                    goToPage(currentPage - 1);
-                }
-            };
+            prevPageBtn.onclick = () => { if (currentPage > 1) goToPage(currentPage - 1); };
         }
 
         const nextPageBtn = document.getElementById('nextPageBtn');
         if(nextPageBtn) {
             nextPageBtn.onclick = () => {
                 const totalPages = Math.ceil(allProducts.length / itemsPerPage);
-                if (currentPage < totalPages) {
-                    goToPage(currentPage + 1);
-                }
+                if (currentPage < totalPages) goToPage(currentPage + 1);
             };
         }
 
@@ -2304,7 +2275,7 @@
         const exchangeSubmitBtn = document.getElementById('exchangeSubmitBtn');
 
         if(exchangeItemImage) {
-            exchangeItemImage.addEventListener('change', async (e) => {
+            exchangeItemImage.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
                     if(exchangeFileNameDisplay) exchangeFileNameDisplay.textContent = e.target.files[0].name;
                 } else {
@@ -2338,6 +2309,7 @@
             if(exchangeImageFieldGroup) exchangeImageFieldGroup.style.display = 'flex';
 
             try {
+                if (!_supabase) await loadSupabaseScript();
                 if (_supabase && targetPhone) {
                     const { data, error } = await _supabase
                         .from('products')
@@ -2368,12 +2340,11 @@
                                     <input type="radio" name="selected_user_ad" value="${ad.id}" style="accent-color:var(--primary-green); cursor:pointer;">
                                 `;
 
-                                itemCard.addEventListener('click', (e) => {
+                                itemCard.addEventListener('click', () => {
                                     const radio = itemCard.querySelector('input[type="radio"]');
                                     if(radio) radio.checked = true;
                                     if(selectedMyAdImageInput) selectedMyAdImageInput.value = ad.image_url || '';
                                     if(exchangeItemDesc) exchangeItemDesc.value = ad.title + ' - ' + cleanDesc;
-                                    
                                     if(exchangeImageFieldGroup) exchangeImageFieldGroup.style.display = 'none';
 
                                     if(userAdsSelectionList) {
@@ -2426,9 +2397,7 @@
         if(exchangeRequestModal) {
             exchangeRequestModal.classList.remove('active');
             exchangeRequestModal.addEventListener('click', (e) => {
-                if (e.target === exchangeRequestModal) {
-                    exchangeRequestModal.classList.remove('active');
-                }
+                if (e.target === exchangeRequestModal) exchangeRequestModal.classList.remove('active');
             });
         }
 
@@ -2480,6 +2449,7 @@
                     const ownerPhone = ownerPhoneEl ? ownerPhoneEl.value : '';
                     const targetProductId = targetProductIdEl ? targetProductIdEl.value : '';
 
+                    if (!_supabase) await loadSupabaseScript();
                     if (_supabase) {
                         const reqPayload = {
                             title: "طلب مقايضة من " + userData.name,
@@ -2518,6 +2488,7 @@
                 if (!currentSupabaseUser) return;
                 const userData = JSON.parse(currentSupabaseUser);
 
+                if (!_supabase) await loadSupabaseScript();
                 if (_supabase && userData.phone) {
                     const { data, error } = await _supabase
                         .from('products')
@@ -2534,9 +2505,7 @@
                         }
                     }
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); }
         }
 
         const messagesModal = document.getElementById('messagesModal');
@@ -2561,6 +2530,7 @@
                 if(messagesModal) messagesModal.classList.add('active');
 
                 try {
+                    if (!_supabase) await loadSupabaseScript();
                     if (_supabase && userData.phone) {
                         const { data: allDbProducts } = await _supabase.from('products').select('id, title, image_url, description');
                         
@@ -2591,20 +2561,16 @@
                                     const searchPool = (allDbProducts && allDbProducts.length > 0) ? allDbProducts : allProducts;
                                     if (targetId && searchPool) {
                                         const targetProd = searchPool.find(p => String(p.id) === String(targetId));
-                                        if (targetProd && targetProd.image_url) {
-                                            myTargetProductImg = targetProd.image_url;
-                                        }
+                                        if (targetProd && targetProd.image_url) myTargetProductImg = targetProd.image_url;
                                     }
 
                                     const card = document.createElement('div');
                                     card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
                                     
-                                    let imagesComparisonHTML = '';
                                     const senderImgTag = req.image_url ? `<img src="${req.image_url}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);" loading="lazy">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
-                                    
                                     const myImgTag = myTargetProductImg ? `<img src="${myTargetProductImg}" style="width:85px; height:85px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7; box-shadow:0 2px 6px rgba(0,0,0,0.05);" loading="lazy">` : `<div style="width:85px; height:85px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.5rem;"><i class="fa-solid fa-box-open"></i></div>`;
 
-                                    imagesComparisonHTML = `
+                                    let imagesComparisonHTML = `
                                         <div style="display:flex; align-items:center; justify-content:center; gap:12px; background:#ffffff; padding:10px; border-radius:8px; border:1px solid #e2ece8;">
                                             <div style="text-align:center;">
                                                 <span style="font-size:0.75rem; font-weight:800; color:var(--dark-blue); display:block; margin-bottom:4px;">سلعتك المطلوبة</span>
@@ -2637,13 +2603,8 @@
                                     setTimeout(() => {
                                         const acceptBtn = document.getElementById(`acceptBtn_${req.id}`);
                                         const rejectBtn = document.getElementById(`rejectBtn_${req.id}`);
-                                        
-                                        if (acceptBtn) {
-                                            acceptBtn.onclick = () => acceptExchangeRequest(req.id, senderPhone, senderName);
-                                        }
-                                        if (rejectBtn) {
-                                            rejectBtn.onclick = () => cancelExchangeRequest(req.id);
-                                        }
+                                        if (acceptBtn) acceptBtn.onclick = () => acceptExchangeRequest(req.id, senderPhone, senderName);
+                                        if (rejectBtn) rejectBtn.onclick = () => cancelExchangeRequest(req.id);
                                     }, 50);
                                 });
                             } else {
@@ -2669,9 +2630,7 @@
         if(messagesModal) {
             messagesModal.classList.remove('active');
             messagesModal.addEventListener('click', (e) => {
-                if (e.target === messagesModal) {
-                    messagesModal.classList.remove('active');
-                }
+                if (e.target === messagesModal) messagesModal.classList.remove('active');
             });
         }
 
@@ -2682,6 +2641,7 @@
                     acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || '[]');
                 } catch(e) { acceptedList = []; }
 
+                if (!_supabase) await loadSupabaseScript();
                 if (_supabase) {
                     const { data: reqData } = await _supabase.from('products').select('*').eq('id', Number(reqId)).single();
                     if (reqData) {
@@ -2695,9 +2655,7 @@
                 }
 
                 let cleanPhone = phone.replace(/[^0-9]/g, '');
-                if (cleanPhone.startsWith('0')) {
-                    cleanPhone = '212' + cleanPhone.substring(1);
-                }
+                if (cleanPhone.startsWith('0')) cleanPhone = '212' + cleanPhone.substring(1);
                 const whatsappUrl = `https://wa.me/${cleanPhone}?text=سلام ${name} ، قبلت العرض ديالك فـ online.بدل! دوز للواتساب باش نتفقو على كلشي 🚀`;
                 window.open(whatsappUrl, '_blank');
 
@@ -2712,6 +2670,7 @@
 
         window.cancelExchangeRequest = async function(reqId) {
             showCustomConfirm(async () => {
+                if (!_supabase) await loadSupabaseScript();
                 if (_supabase) {
                     const { error } = await _supabase.from('products').delete().eq('id', Number(reqId));
                     if (!error) {
@@ -2751,6 +2710,7 @@
                 } catch(e) { acceptedList = []; }
 
                 let allDbProducts = [];
+                if (!_supabase) await loadSupabaseScript();
                 if (_supabase) {
                     const { data: dbProds } = await _supabase.from('products').select('id, title, image_url, description');
                     if (dbProds) allDbProducts = dbProds;
@@ -2776,16 +2736,13 @@
                         const searchPool = (allDbProducts.length > 0) ? allDbProducts : allProducts;
                         if (targetId && searchPool) {
                             const targetProd = searchPool.find(p => String(p.id) === String(targetId));
-                            if (targetProd && targetProd.image_url) {
-                                myTargetProductImg = targetProd.image_url;
-                            }
+                            if (targetProd && targetProd.image_url) myTargetProductImg = targetProd.image_url;
                         }
 
                         const card = document.createElement('div');
                         card.style.cssText = "display:flex; flex-direction:column; gap:10px; background:#f8faf9; border:1px solid #d2ded7; padding:15px; border-radius:10px;";
                         
                         const senderImgTag = req.image_url ? `<img src="${req.image_url}" style="width:75px; height:75px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7;" loading="lazy">` : `<div style="width:75px; height:75px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.3rem;"><i class="fa-solid fa-box-open"></i></div>`;
-                        
                         const myImgTag = myTargetProductImg ? `<img src="${myTargetProductImg}" style="width:75px; height:75px; object-fit:cover; border-radius:8px; border:1px solid #d2ded7;" loading="lazy">` : `<div style="width:75px; height:75px; background:#e6f7f0; color:var(--primary-green); display:flex; align-items:center; justify-content:center; border-radius:8px; font-size:1.3rem;"><i class="fa-solid fa-box-open"></i></div>`;
 
                         let imagesComparisonHTML = `
@@ -2805,9 +2762,7 @@
                         `;
 
                         let cleanPhone = senderPhone.replace(/[^0-9]/g, '');
-                        if (cleanPhone.startsWith('0')) {
-                            cleanPhone = '212' + cleanPhone.substring(1);
-                        }
+                        if (cleanPhone.startsWith('0')) cleanPhone = '212' + cleanPhone.substring(1);
                         const whatsappUrl = `https://wa.me/${cleanPhone}?text=سلام ${senderName} ، قبلت العرض ديالك فـ online.بدل! دوز للواتساب باش نتفقو على كلشي 🚀`;
 
                         card.innerHTML = `
@@ -2851,9 +2806,7 @@
         if(acceptedExchangesModal) {
             acceptedExchangesModal.classList.remove('active');
             acceptedExchangesModal.addEventListener('click', (e) => {
-                if (e.target === acceptedExchangesModal) {
-                    acceptedExchangesModal.classList.remove('active');
-                }
+                if (e.target === acceptedExchangesModal) acceptedExchangesModal.classList.remove('active');
             });
         }
 
@@ -2913,11 +2866,10 @@
 
                     let descHTML = `<p class="product-desc">${cleanDesc}</p>`;
                     if (cleanDesc.includes('أقبل بأي منتوج') || cleanDesc.includes('أقبل المقايضة بأي منتوج مقترح')) {
-                        let formattedText = "أقبل بأي منتوج";
                         descHTML = `
                             <div class="open-exchange-highlight">
                                 <i class="fa-solid fa-handshake-angle"></i>
-                                <span>${formattedText}</span>
+                                <span>أقبل بأي منتوج</span>
                             </div>
                         `;
                     }
@@ -2973,9 +2925,7 @@
         if(favoritesModal) {
             favoritesModal.classList.remove('active');
             favoritesModal.addEventListener('click', (e) => {
-                if (e.target === favoritesModal) {
-                    favoritesModal.classList.remove('active');
-                }
+                if (e.target === favoritesModal) favoritesModal.classList.remove('active');
             });
         }
 
@@ -3008,7 +2958,6 @@
         }
 
         if(slideDiscoverBtn) slideDiscoverBtn.addEventListener('click', showProductsView);
-        
         if(modalDiscoverBtn) {
             modalDiscoverBtn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -3091,9 +3040,7 @@
         if(addAdModal) {
             addAdModal.classList.remove('active');
             addAdModal.addEventListener('click', (e) => {
-                if (e.target === addAdModal) {
-                    addAdModal.classList.remove('active');
-                }
+                if (e.target === addAdModal) addAdModal.classList.remove('active');
             });
         }
 
@@ -3109,7 +3056,6 @@
                     }
 
                     const currentSupabaseUser = localStorage.getItem('badal_supabase_user');
-                    
                     if (!currentSupabaseUser) {
                         if(addAdModal) addAdModal.classList.remove('active');
                         openRegistrationTab();
@@ -3137,6 +3083,7 @@
                     const file = imageInput.files[0];
                     const compressedImage = await compressImage(file, 1000, 1000, 0.85);
 
+                    if (!_supabase) await loadSupabaseScript();
                     if (_supabase) {
                         const insertPayload = {
                             title: title,
@@ -3218,9 +3165,7 @@
         if(accountMenuModal) {
             accountMenuModal.classList.remove('active');
             accountMenuModal.addEventListener('click', (e) => {
-                if (e.target === accountMenuModal) {
-                    accountMenuModal.classList.remove('active');
-                }
+                if (e.target === accountMenuModal) accountMenuModal.classList.remove('active');
             });
         }
 
@@ -3262,9 +3207,7 @@
         if(settingsModal) {
             settingsModal.classList.remove('active');
             settingsModal.addEventListener('click', (e) => {
-                if (e.target === settingsModal) {
-                    settingsModal.classList.remove('active');
-                }
+                if (e.target === settingsModal) settingsModal.classList.remove('active');
             });
         }
 
@@ -3284,6 +3227,7 @@
                     return;
                 }
 
+                if (!_supabase) await loadSupabaseScript();
                 if (!_supabase) {
                     showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
                     return;
@@ -3342,6 +3286,7 @@
             if(myAdsModal) myAdsModal.classList.add('active');
 
             try {
+                if (!_supabase) await loadSupabaseScript();
                 if (_supabase) {
                     const { data, error } = await _supabase
                         .from('products')
@@ -3404,9 +3349,7 @@
         if(myAdsModal) {
             myAdsModal.classList.remove('active');
             myAdsModal.addEventListener('click', (e) => {
-                if (e.target === myAdsModal) {
-                    myAdsModal.classList.remove('active');
-                }
+                if (e.target === myAdsModal) myAdsModal.classList.remove('active');
             });
         }
 
@@ -3436,9 +3379,7 @@
         if(editAdModal) {
             editAdModal.classList.remove('active');
             editAdModal.addEventListener('click', (e) => {
-                if (e.target === editAdModal) {
-                    editAdModal.classList.remove('active');
-                }
+                if (e.target === editAdModal) editAdModal.classList.remove('active');
             });
         }
 
@@ -3465,6 +3406,7 @@
                 const city = currentSupabaseUser.city || 'القنيطرة';
 
                 try {
+                    if (!_supabase) await loadSupabaseScript();
                     if (_supabase) {
                         const updatePayload = {
                             title: title,
@@ -3492,6 +3434,7 @@
         window.deleteMyAd = async function(adId) {
             showCustomConfirm(async () => {
                 try {
+                    if (!_supabase) await loadSupabaseScript();
                     if (_supabase) {
                         const { error } = await _supabase.from('products').delete().eq('id', Number(adId));
                         if (!error) {
@@ -3533,9 +3476,7 @@
 
         function setActiveBottomNav(btn) {
             document.querySelectorAll('.bottom-nav-bar .bottom-nav-item').forEach(item => item.classList.remove('active'));
-            if(btn && btn.classList.contains('bottom-nav-item')) {
-                btn.classList.add('active');
-            }
+            if(btn && btn.classList.contains('bottom-nav-item')) btn.classList.add('active');
         }
 
         const openAuthModalBtn = document.getElementById('openAuthModalBtn');
@@ -3562,9 +3503,7 @@
         if(authModal) {
             authModal.classList.remove('active');
             authModal.addEventListener('click', (e) => {
-                if (e.target === authModal) {
-                    authModal.classList.remove('active');
-                }
+                if (e.target === authModal) authModal.classList.remove('active');
             });
         }
 
@@ -3630,6 +3569,7 @@
                     return;
                 }
 
+                if (!_supabase) await loadSupabaseScript();
                 if (!_supabase) {
                     showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
                     if(registerSubmitBtn) {
@@ -3640,7 +3580,7 @@
                 }
 
                 try {
-                    const { data: existingRecords, error: checkError } = await _supabase
+                    const { data: existingRecords } = await _supabase
                         .from('products')
                         .select('id, description')
                         .ilike('description', `%[USER_PHONE:${phone}]%`);
@@ -3700,6 +3640,7 @@
                 const inputVal = loginEmailEl ? loginEmailEl.value.trim() : '';
                 const password = loginPassEl ? loginPassEl.value : '';
 
+                if (!_supabase) await loadSupabaseScript();
                 if (!_supabase) {
                     showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
                     return;
@@ -3812,6 +3753,7 @@
                     return;
                 }
 
+                if (!_supabase) await loadSupabaseScript();
                 if (!_supabase) {
                     showCustomAlert('خطأ في الاتصال بقاعدة البيانات', false);
                     return;
@@ -3872,9 +3814,7 @@
         if(howToModal) {
             howToModal.classList.remove('active');
             howToModal.addEventListener('click', (e) => {
-                if (e.target === howToModal) {
-                    howToModal.classList.remove('active');
-                }
+                if (e.target === howToModal) howToModal.classList.remove('active');
             });
         }
 
@@ -3904,9 +3844,7 @@
 
         if(aboutPlatformModal) {
             aboutPlatformModal.addEventListener('click', (e) => {
-                if (e.target === aboutPlatformModal) {
-                    aboutPlatformModal.classList.remove('active');
-                }
+                if (e.target === aboutPlatformModal) aboutPlatformModal.classList.remove('active');
             });
         }
 
@@ -3937,9 +3875,7 @@
         if(termsModal) {
             termsModal.classList.remove('active');
             termsModal.addEventListener('click', (e) => {
-                if (e.target === termsModal) {
-                    termsModal.classList.remove('active');
-                }
+                if (e.target === termsModal) termsModal.classList.remove('active');
             });
         }
 
@@ -3970,9 +3906,7 @@
         if(privacyModal) {
             privacyModal.classList.remove('active');
             privacyModal.addEventListener('click', (e) => {
-                if (e.target === privacyModal) {
-                    privacyModal.classList.remove('active');
-                }
+                if (e.target === privacyModal) privacyModal.classList.remove('active');
             });
         }
 
@@ -3996,18 +3930,16 @@
         if(contactModal) {
             contactModal.classList.remove('active');
             contactModal.addEventListener('click', (e) => {
-                if (e.target === contactModal) {
-                    contactModal.classList.remove('active');
-                }
+                if (e.target === contactModal) contactModal.classList.remove('active');
             });
         }
 
-        setTimeout(() => {
+        window.addEventListener('DOMContentLoaded', () => {
             checkCurrentAccountBanStatus();
             fetchProductsFromSupabase();
             checkIncomingRequestsCount();
             updateFavoritesBadge();
-        }, 500);
+        });
     </script>
 </body>
 </html>
