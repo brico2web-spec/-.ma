@@ -24,8 +24,8 @@
     <!-- التحميل المحسن للموارد والخطوط لمنع حظر العرض -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" media="print" onload="this.media='all'">
     
     <noscript>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,6 +38,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
+            font-display: swap;
         }
 
         :root {
@@ -53,6 +54,7 @@
             color: var(--dark-blue);
             direction: rtl;
             padding-bottom: 70px;
+            text-rendering: optimizeSpeed;
         }
 
         .container {
@@ -67,6 +69,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            min-height: 70px;
         }
 
         .top-auth-bar {
@@ -76,6 +79,7 @@
             font-size: 0.8rem;
             border-bottom: 1px solid #e2ece8;
             word-break: break-word;
+            min-height: 29px;
         }
 
         .top-auth-bar a {
@@ -709,6 +713,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
+            min-height: 300px;
         }
 
         .product-card {
@@ -723,6 +728,7 @@
             position: relative;
             cursor: pointer;
             height: 100%;
+            aspect-ratio: 3/4;
         }
 
         .product-card:hover {
@@ -764,6 +770,7 @@
             color: var(--primary-green);
             font-size: 1.8rem;
             position: relative;
+            aspect-ratio: 16/9;
         }
 
         .product-body {
@@ -878,6 +885,7 @@
             gap: 10px;
             margin-top: 25px;
             flex-wrap: wrap;
+            min-height: 40px;
         }
 
         .page-btn {
@@ -950,6 +958,7 @@
         .slider-dots {
             text-align: center;
             margin-top: 12px;
+            min-height: 20px;
         }
 
         .dot {
@@ -982,6 +991,7 @@
             padding: 6px 8px;
             z-index: 1500;
             border-top: 1px solid #e2ece8;
+            height: 60px;
         }
 
         .bottom-nav-item {
@@ -1453,7 +1463,7 @@
                     <label class="custom-file-upload">
                         <span class="file-name-display" id="fileNameDisplay">لم يتم اختيار أي صور</span>
                         <span class="file-upload-btn-text"><i class="fa-solid fa-cloud-arrow-up"></i> اختر الصور</span>
-                        <input type="file" id="ad-images" accept="image/*" multiple fetchpriority="high">
+                        <input type="file" id="ad-images" accept="image/*" multiple>
                     </label>
                 </div>
                 <div class="form-group">
@@ -1758,7 +1768,7 @@
         </div>
         <div class="footer-bottom">
             <p>جميع الحقوق محفوظة &copy; 2026 online.بدل - مجاني • سريع • آمن</p>
-            <span class="version-tag">v0.9.42</span>
+            <span class="version-tag">v0.9.43</span>
         </div>
     </footer>
 
@@ -2108,7 +2118,7 @@
 
                 const isFirstPageFirstItems = (page === 1 && index < 2);
                 const loadingAttr = isFirstPageFirstItems ? 'fetchpriority="high"' : 'loading="lazy"';
-                const displayImg = prod.image_url ? `<img src="${prod.image_url}" class="product-img" alt="${prod.title}" ${loadingAttr}>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
+                const displayImg = prod.image_url ? `<img src="${prod.image_url}" class="product-img" alt="${prod.title}" width="160" height="140" ${loadingAttr}>` : `<div class="product-img"><i class="fa-solid ${iconClass}"></i></div>`;
                 const favBtnStyle = isUserLoggedIn ? 'display: flex;' : 'display: none;';
 
                 let actionButtonHTML = `<a href="#" class="product-btn" onclick="event.stopPropagation(); handleExchangeRequest('${prod.title.replace(/'/g, "\\'")}', ${prod.id}, '${ownerPhone}');">طلب تبدل معاه</a>`;
