@@ -12,9 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
-        body {
-            font-family: 'Cairo', sans-serif;
-        }
+        body { font-family: 'Cairo', sans-serif; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
@@ -23,15 +21,11 @@
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="window.location.href='index.html'">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-200">
-                    B
-                </div>
-                <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-                    bedal.online - لوحة الإدارة
-                </span>
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">B</div>
+                <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">bedal.online - لوحة الإدارة</span>
             </div>
             <div class="flex items-center gap-3">
-                <a href="index.html" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 rounded-xl transition-colors flex items-center gap-1.5 border border-indigo-100">
+                <a href="index.html" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 rounded-xl border border-indigo-100 flex items-center gap-1.5">
                     <i data-lucide="home" class="w-4 h-4"></i> العودة للموقع الرئيسي
                 </a>
                 <span class="text-xs font-semibold bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl border border-emerald-100 flex items-center gap-1.5">
@@ -47,367 +41,213 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600"></i>
-                    لوحة التحليلات والإدارة الذكية (متصلة بـ Supabase)
+                    <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600"></i> لوحة التحليلات والإدارة الذكية
                 </h1>
-                <p class="text-gray-500 text-sm">جميع التعديلات والإضافات يتم حفظها واسترجاعها مباشرة من قاعدة بيانات Supabase لتظهر في الموقع الرئيسي فوراً.</p>
+                <p class="text-gray-500 text-sm">جميع التعديلات والإضافات يتم حفظها واسترجاعها مباشرة من Supabase لتظهر في الموقع الرئيسي فوراً.</p>
             </div>
             <div>
-                <button onclick="toggleProductModal()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg shadow-indigo-100">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                    إضافة منتج جديد مع تحديد المتجر
+                <button onclick="toggleProductModal()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> إضافة منتج جديد
                 </button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
-                    <i data-lucide="dollar-sign" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500 font-medium">إجمالي المبيعات</p>
-                    <h4 id="stat-total-sales" class="text-xl font-extrabold text-gray-900 mt-0.5">0.00 د.م</h4>
-                </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
+                <div><p class="text-xs text-gray-500">إجمالي المبيعات</p><h4 id="stat-total-sales" class="text-xl font-extrabold">0.00 د.م</h4></div>
             </div>
-
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
-                    <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500 font-medium">عدد الطلبات</p>
-                    <h4 id="stat-total-orders" class="text-xl font-extrabold text-gray-900 mt-0.5">0 طلبات</h4>
-                </div>
+            <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
+                <div><p class="text-xs text-gray-500">عدد الطلبات</p><h4 id="stat-total-orders" class="text-xl font-extrabold">0 طلبات</h4></div>
             </div>
-
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
-                    <i data-lucide="package" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500 font-medium">إجمالي المنتجات</p>
-                    <h4 id="stat-total-products" class="text-xl font-extrabold text-gray-900 mt-0.5">0 منتج</h4>
-                </div>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center">
-                    <i data-lucide="trending-up" class="w-6 h-6"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-500 font-medium">معدل التحويل والأرباح</p>
-                    <h4 class="text-xl font-extrabold text-emerald-600 mt-0.5">+14.2%</h4>
-                </div>
+            <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i data-lucide="package" class="w-6 h-6"></i></div>
+                <div><p class="text-xs text-gray-500">إجمالي المنتجات</p><h4 id="stat-total-products" class="text-xl font-extrabold">0 منتج</h4></div>
             </div>
         </div>
 
+        <!-- أزرار تبديل الأقسام -->
         <div class="flex items-center gap-3 border-b border-gray-200 overflow-x-auto pb-1">
-            <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="shopping-cart" class="w-4 h-4"></i> تتبع المبيعات والطلبات وزر إرسالها للمتاجر
-            </button>
-            <button onclick="switchAdminTab('accounting')" id="admin-tab-btn-accounting" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="calculator" class="w-4 h-4"></i> قسم الحسابات والأرباح
-            </button>
-            <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="box" class="w-4 h-4"></i> إدارة المنتجات والمتاجر المرتبطة
-            </button>
-            <button onclick="switchAdminTab('black_free_day')" id="admin-tab-btn-black_free_day" class="px-5 py-3 border-b-2 border-transparent text-amber-600 font-bold text-sm hover:text-amber-700 flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> إدارة منتجات Black Free Day 🔥
-            </button>
-            <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="sliders" class="w-4 h-4"></i> تعديل السلايدر (صور وعناوين)
-            </button>
-            <button onclick="switchAdminTab('vendors')" id="admin-tab-btn-vendors" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                <i data-lucide="store" class="w-4 h-4"></i> إدارة المتاجر ومعلوماتها (هاتف، مدينة)
-            </button>
+            <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap">سجل الطلبات</button>
+            <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة المنتجات</button>
+            <button onclick="switchAdminTab('vendors')" id="admin-tab-btn-vendors" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة نخبة المتاجر الشريكة</button>
+            <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة شرائح السلايدر</button>
         </div>
 
+        <!-- قسم سجل الطلبات -->
         <div id="admin-subtab-orders" class="block space-y-4">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-gray-100 flex items-center justify-between">
-                    <h3 class="font-bold text-gray-900 flex items-center gap-2">
-                        <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-600"></i> سجل طلبات الزبناء، المتجر المعني، وإرسال الطلب لصاحب المتجر
-                    </h3>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right text-sm text-gray-600">
-                        <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b">
-                            <tr>
-                                <th class="p-4">اسم الزبون</th>
-                                <th class="p-4">رقم الهاتف</th>
-                                <th class="p-4">العنوان والمدينة</th>
-                                <th class="p-4">المنتج المطلوب</th>
-                                <th class="p-4">المتجر المسؤول عن السلعة</th>
-                                <th class="p-4">المبلغ</th>
-                                <th class="p-4">الحالة الحالية</th>
-                                <th class="p-4">إرسال الطلب لمول المتجر (واتساب)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-orders-table-body" class="divide-y divide-gray-100">
-                            <!-- Dynamic Orders from Supabase -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
+                <table class="w-full text-right text-sm text-gray-600">
+                    <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b">
+                        <tr>
+                            <th class="p-4">اسم الزبون</th>
+                            <th class="p-4">الهاتف</th>
+                            <th class="p-4">العنوان</th>
+                            <th class="p-4">المنتج</th>
+                            <th class="p-4">المبلغ</th>
+                            <th class="p-4">الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-orders-table-body" class="divide-y divide-gray-100"></tbody>
+                </table>
             </div>
         </div>
 
-        <div id="admin-subtab-accounting" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                <div class="border-b pb-4">
-                    <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                        <i data-lucide="calculator" class="w-5 h-5 text-indigo-600"></i>
-                        حاسبة الحسابات ومصاريف الشحن والإعلانات
-                    </h3>
-                    <p class="text-xs text-gray-500 mt-1">أدخل التكاليف لحساب الربح الصافي بدقة لكل طلب أو للحملات الإعلانية.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">مصاريف الشحن والتوصيل (د.م)</label>
-                        <input type="number" id="acc-shipping-cost" placeholder="35" value="35" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600" oninput="calculateNetProfit()">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">تكلفة الإعلان (Ads) لكل طلب (د.م)</label>
-                        <input type="number" id="acc-ads-cost" placeholder="25" value="25" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600" oninput="calculateNetProfit()">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 mb-1">تكلفة شراء المنتج / السلعة (د.م)</label>
-                        <input type="number" id="acc-product-cost" placeholder="100" value="100" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600" oninput="calculateNetProfit()">
-                    </div>
-                </div>
-
-                <div class="bg-indigo-50/60 rounded-2xl p-5 border border-indigo-100 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                    <div>
-                        <span class="block text-xs text-gray-500 font-bold">إجمالي المداخيل</span>
-                        <span id="acc-total-revenue" class="text-xl font-extrabold text-gray-900 mt-1 block">0.00 د.م</span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-gray-500 font-bold">مجموع المصاريف (شحن + إعلان + سلعة)</span>
-                        <span id="acc-total-expenses" class="text-xl font-extrabold text-rose-600 mt-1 block">0.00 د.م</span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-gray-500 font-bold">صافي الربح الحقيقي</span>
-                        <span id="acc-net-profit" class="text-2xl font-black text-emerald-600 mt-1 block">0.00 د.م</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <!-- قسم إدارة المنتجات -->
         <div id="admin-subtab-products" class="hidden space-y-4">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-gray-100 flex items-center justify-between">
-                    <h3 class="font-bold text-gray-900 flex items-center gap-2">
-                        <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> قائمة المنتجات العادية (المرتبطة بالمتاجر)، الصور والخصومات (Supabase)
-                    </h3>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right text-sm text-gray-600">
-                        <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b">
-                            <tr>
-                                <th class="p-4">الصور</th>
-                                <th class="p-4">اسم المنتج</th>
-                                <th class="p-4">المتجر المسؤول</th>
-                                <th class="p-4">التصنيف</th>
-                                <th class="p-4">السعر الأصلي / الجديد</th>
-                                <th class="p-4">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-products-table-body" class="divide-y divide-gray-100">
-                            <!-- Dynamic Products from Supabase -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
+                <table class="w-full text-right text-sm text-gray-600">
+                    <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b">
+                        <tr>
+                            <th class="p-4">الصورة</th>
+                            <th class="p-4">اسم المنتج</th>
+                            <th class="p-4">السعر</th>
+                            <th class="p-4">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-products-table-body" class="divide-y divide-gray-100"></tbody>
+                </table>
             </div>
         </div>
 
-        <div id="admin-subtab-black_free_day" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm space-y-6">
+        <!-- قسم إدارة نخبة المتاجر الشريكة -->
+        <div id="admin-subtab-vendors" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
                 <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="flame" class="w-5 h-5 text-amber-500 fill-amber-500"></i>
-                            إدارة عروض وتخفيضات Black Free Day (السبت والأحد)
+                            <i data-lucide="store" class="w-5 h-5 text-indigo-600"></i> إدارة وتعديل نخبة المتاجر الشريكة
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">اختر المنتجات من القناة العادية وأضفها مباشرة لعروض نهاية الأسبوع.</p>
+                        <p class="text-xs text-gray-500 mt-1">تعديل معلومات وأسعار وشعارات المتاجر في Supabase.</p>
                     </div>
-                </div>
-
-                <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 space-y-3">
-                    <h4 class="font-bold text-amber-900 text-sm flex items-center gap-2">
-                        <i data-lucide="plus-circle" class="w-4 h-4 text-amber-600"></i> اختر منتجاً من المتجر لإضافته إلى Black Free Day:
-                    </h4>
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <select id="select-product-to-bfd" class="flex-grow px-4 py-2.5 rounded-xl border border-amber-300 text-sm bg-white font-bold text-gray-800 focus:outline-none focus:border-amber-500">
-                            <!-- Dynamic Product Options -->
-                        </select>
-                        <button onclick="addSelectedProductToBlackFreeDay()" class="bg-amber-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-amber-700 transition-colors shadow-md text-sm flex items-center justify-center gap-2">
-                            <i data-lucide="zap" class="w-4 h-4"></i> إضافة لـ Black Free Day وإلغاؤه من العادي
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleVendorModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center gap-1.5">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة متجر جديد
+                        </button>
+                        <button onclick="saveVendorChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
+                            حفظ تغييرات المتاجر
                         </button>
                     </div>
                 </div>
-
-                <div class="rounded-2xl border border-gray-200 overflow-hidden">
-                    <div class="p-4 bg-gray-50 border-b font-bold text-gray-800 text-sm flex items-center justify-content">
-                        <span>المنتجات الحالية المعروضة في صفحة Black Free Day</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-sm text-gray-600">
-                            <thead class="bg-gray-50/70 text-gray-700 font-semibold text-xs border-b">
-                               <tr>
-                                   <th class="p-3">الصورة</th>
-                                   <th class="p-3">اسم المنتج</th>
-                                   <th class="p-3">ثمن العرض</th>
-                                   <th class="p-3">الثمن الأصلي</th>
-                                   <th class="p-3">الإجراء (إزالة وإعادة للعادي)</th>
-                               </tr>
-                            </thead>
-                            <tbody id="admin-bfd-table-body" class="divide-y divide-gray-100">
-                                <!-- Dynamic BFD Products -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <div id="admin-vendors-editor-container" class="space-y-6"></div>
             </div>
         </div>
 
+        <!-- قسم إدارة شرائح السلايدر -->
         <div id="admin-subtab-slider" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                <div class="border-b pb-4 flex items-center justify-between">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+                <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i>
-                            إدارة وتعديل شرائح السلايدر (Hero Slider) في Supabase
+                            <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i> إدارة وتعديل شرائح السلايدر (Hero Slider)
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">قم بتعديل العناوين، الأوصاف، وصور الخلفية للسلايدر.</p>
+                        <p class="text-xs text-gray-500 mt-1">تعديل العناوين، الأوصاف، وصور الخلفية للسلايدر.</p>
                     </div>
-                    <button onclick="saveSliderChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
-                        حفظ وتطبيق السلايدر في Supabase
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button onclick="toggleSliderModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center gap-1.5">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة سلايدر جديد
+                        </button>
+                        <button onclick="saveSliderChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
+                            حفظ تغييرات السلايدر
+                        </button>
+                    </div>
                 </div>
-
-                <div id="admin-slider-editor-container" class="space-y-6">
-                    <!-- Dynamic Slider Edit Cards -->
-                </div>
+                <div id="admin-slider-editor-container" class="space-y-6"></div>
             </div>
         </div>
-
-        <div id="admin-subtab-vendors" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                <div class="border-b pb-4 flex items-center justify-between">
-                    <div>
-                        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="store" class="w-5 h-5 text-indigo-600"></i>
-                            إدارة المتاجر الشريكة (معلومات الاتصال: الإسم، الهاتف، المدينة) في Supabase
-                        </h3>
-                        <p class="text-xs text-gray-500 mt-1">تحديد رقم الهاتف والمدينة لكل متجر.</p>
-                    </div>
-                    <button onclick="saveVendorChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
-                        حفظ وتطبيق معلومات المتاجر في Supabase
-                    </button>
-                </div>
-
-                <div id="admin-vendors-editor-container" class="space-y-6">
-                    <!-- Dynamic Vendor Edit Cards -->
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- Modal Form: Add / Edit Product -->
+    <!-- Modal Form: Add Product -->
     <div id="product-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="toggleProductModal()" class="absolute top-5 left-5 text-gray-400 hover:text-gray-600">
-                <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
-
-            <h3 id="modal-form-title" class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <i data-lucide="plus-circle" class="w-6 h-6 text-indigo-600"></i>
-                إضافة منتج جديد وتحديد المتجر المعني
-            </h3>
-
-            <input type="hidden" id="edit-prod-id" value="">
-
+            <button onclick="toggleProductModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
+            <h3 class="text-xl font-bold text-gray-900">إضافة منتج جديد</h3>
+            
             <div class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-semibold text-gray-700 mb-1">اسم المنتج *</label>
-                    <input type="text" id="prod-form-title" placeholder="اسم المنتج" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600">
+                    <label class="block font-semibold mb-1">اسم المنتج *</label>
+                    <input type="text" id="prod-form-title" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:border-indigo-600">
                 </div>
-
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold mb-1">الثمن الأصلي *</label>
+                        <input type="number" id="prod-form-price" class="w-full px-4 py-2.5 rounded-xl border">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">الثمن بعد الخصم</label>
+                        <input type="number" id="prod-form-discount-price" class="w-full px-4 py-2.5 rounded-xl border">
+                    </div>
+                </div>
                 <div>
-                    <label class="block font-semibold text-gray-700 mb-1">اختر المتجر الشريك الذي تم أخذ المنتوج عنده *</label>
-                    <select id="prod-form-store" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600 bg-white font-bold text-indigo-600">
-                        <!-- Dynamic Store Options -->
-                    </select>
+                    <label class="block font-semibold mb-1">رابط الصورة الرئيسية (رابط مباشر) *</label>
+                    <input type="url" id="prod-form-img-1" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block font-semibold text-gray-700 mb-1">الثمن الأصلي (د.م) *</label>
-                        <input type="number" id="prod-form-price" placeholder="350" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-gray-700 mb-1">الثمن بعد الخصم</label>
-                        <input type="number" id="prod-form-discount-price" placeholder="299" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-gray-700 mb-1">التصنيف *</label>
-                        <select id="prod-form-category" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600 bg-white">
-                            <option value="women">نساء</option>
-                            <option value="men">رجال</option>
-                            <option value="kids">أطفال</option>
-                            <option value="various">منتجات متنوعة</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="border-t border-b py-4 space-y-3">
-                    <h4 class="font-bold text-gray-800 flex items-center gap-2">
-                        <i data-lucide="images" class="w-4 h-4 text-indigo-600"></i>
-                        روابط صور المنتج (5 صور مدعومة لـ ibb.co)
-                    </h4>
-                    
-                    <div class="space-y-2">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">1. الصورة الرئيسية *</label>
-                            <input type="url" id="prod-form-img-1" placeholder="https://i.ibb.co/..." class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">2. الصورة الثانية</label>
-                            <input type="url" id="prod-form-img-2" placeholder="رابط الصورة 2" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">3. الصورة الثالثة</label>
-                            <input type="url" id="prod-form-img-3" placeholder="رابط الصورة 3" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">4. الصورة الرابعة</label>
-                            <input type="url" id="prod-form-img-4" placeholder="رابط الصورة 4" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">5. الصورة الخامسة</label>
-                            <input type="url" id="prod-form-img-5" placeholder="رابط الصورة 5" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
-                        </div>
-                    </div>
-
-                    <div class="pt-2">
-                        <span class="block text-xs font-semibold text-gray-500 mb-2">معاينة الصور الـ 5:</span>
-                        <div class="grid grid-cols-5 gap-2" id="modal-images-preview-grid">
-                            <!-- Preview Items -->
-                        </div>
-                    </div>
-                </div>
-
                 <div>
-                    <label class="block font-semibold text-gray-700 mb-1">وصف المنتج *</label>
-                    <textarea id="prod-form-desc" rows="2" placeholder="تفاصيل المنتج..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600"></textarea>
+                    <label class="block font-semibold mb-1">وصف المنتج *</label>
+                    <textarea id="prod-form-desc" rows="2" class="w-full px-4 py-2.5 rounded-xl border"></textarea>
                 </div>
+                <button onclick="saveProductForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ في Supabase</button>
+            </div>
+        </div>
+    </div>
 
-                <button onclick="saveProductForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i>
-                    حفظ التغييرات في Supabase
-                </button>
+    <!-- Modal Form: Add Vendor -->
+    <div id="vendor-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="toggleVendorModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
+            <h3 class="text-xl font-bold text-gray-900">إضافة متجر شريك جديد</h3>
+            
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block font-semibold mb-1">اسم المتجر *</label>
+                    <input type="text" id="vendor-form-name" placeholder="اسم المتجر" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:border-indigo-600">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">رابط الصورة / الشعار (Logo) *</label>
+                    <input type="url" id="vendor-form-logo" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">وصف المتجر / التخصص *</label>
+                    <textarea id="vendor-form-desc" rows="2" placeholder="وصف المتجر..." class="w-full px-4 py-2.5 rounded-xl border"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">رقم الهاتف *</label>
+                    <input type="text" id="vendor-form-phone" placeholder="212600000000" class="w-full px-4 py-2.5 rounded-xl border" dir="ltr">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">المدينة *</label>
+                    <input type="text" id="vendor-form-city" placeholder="المدينة" class="w-full px-4 py-2.5 rounded-xl border">
+                </div>
+                <button onclick="saveNewVendor()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg">حفظ المتجر في Supabase</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form: Add Slider -->
+    <div id="slider-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="toggleSliderModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
+            <h3 class="text-xl font-bold text-gray-900">إضافة شريحة سلايدر جديدة</h3>
+            
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block font-semibold mb-1">شارة البادج (Badge)</label>
+                    <input type="text" id="slider-form-badge" placeholder="تخفيضات الكبرى" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:border-indigo-600">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">رابط الصورة *</label>
+                    <input type="url" id="slider-form-img" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">العنوان الرئيسي *</label>
+                    <input type="text" id="slider-form-title" placeholder="عنوان السلايدر..." class="w-full px-4 py-2.5 rounded-xl border">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">العبارة / الوصف الفرعي *</label>
+                    <textarea id="slider-form-desc" rows="2" placeholder="العبارة أو الوصف..." class="w-full px-4 py-2.5 rounded-xl border"></textarea>
+                </div>
+                <button onclick="saveNewSlider()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg">حفظ السلايدر في Supabase</button>
             </div>
         </div>
     </div>
@@ -415,37 +255,28 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <div>
-                © 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.
-            </div>
+            <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.9-release</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.14-release</span>
                 </span>
             </div>
         </div>
     </footer>
 
-    <!-- Supabase Configuration & App Logic Script -->
+    <!-- Script -->
     <script>
-        // إعدادات اتصال Supabase الموحدة والمحدثة
         const SUPABASE_URL = 'https://xgdtszzzxzlhtgmrextl.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
-        
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let partnerStoresDatabase = [];
         let productsDatabase = [];
-        let adminBlackFreeDayProducts = [];
         let salesOrdersDatabase = [];
+        let partnerStoresDatabase = [];
         let sliderDatabase = [];
 
         async function fetchSupabaseData() {
             try {
-                const { data: stores } = await supabaseClient.from('partner_stores').select('*');
-                if (stores) partnerStoresDatabase = stores;
-
                 const { data: prods } = await supabaseClient.from('products').select('*');
                 if (prods) {
                     productsDatabase = prods.map(p => ({
@@ -454,30 +285,48 @@
                     }));
                 }
 
-                const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
-                if (bfd) adminBlackFreeDayProducts = bfd;
-
                 const { data: orders } = await supabaseClient.from('orders').select('*');
                 if (orders) salesOrdersDatabase = orders;
+
+                const { data: stores } = await supabaseClient.from('partner_stores').select('*');
+                if (stores) {
+                    partnerStoresDatabase = stores.filter(s => s.name && s.name.trim() !== '');
+                }
 
                 const { data: slider } = await supabaseClient.from('slider').select('*');
                 if (slider) sliderDatabase = slider;
 
-                renderAdminOrders();
                 renderAdminProducts();
-                calculateNetProfit();
-                renderSliderEditor();
+                renderAdminOrders();
                 renderVendorEditor();
-                renderBlackFreeDayAdminTable();
-                populateBlackFreeDaySelector();
-                populateStoreSelectOptions();
+                renderSliderEditor();
             } catch (err) {
                 console.error("خطأ في جلب بيانات Supabase:", err);
             }
         }
 
-        function getStoreByKey(key) {
-            return partnerStoresDatabase.find(s => s.key === key) || { name: 'متجر عام', phone: '212600000000', city: 'المغرب' };
+        function renderAdminProducts() {
+            const tbody = document.getElementById('admin-products-table-body');
+            if (!tbody) return;
+            let html = '';
+            if (productsDatabase.length === 0) {
+                html = `<tr><td colspan="4" class="p-6 text-center text-gray-400">لا توجد منتجات مسجلة حالياً.</td></tr>`;
+            } else {
+                productsDatabase.forEach((prod, idx) => {
+                    const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : '';
+                    html += `
+                        <tr>
+                            <td class="p-4"><img src="${mainImg}" class="w-12 h-12 object-cover rounded-xl border"></td>
+                            <td class="p-4 font-bold text-gray-900">${prod.title}</td>
+                            <td class="p-4 text-indigo-600 font-bold">${prod.price} د.م</td>
+                            <td class="p-4"><button onclick="deleteProduct(${idx})" class="text-rose-600 font-bold text-xs p-2 bg-rose-50 rounded-lg">حذف</button></td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+            document.getElementById('stat-total-products').innerText = productsDatabase.length + ' منتج';
+            lucide.createIcons();
         }
 
         function renderAdminOrders() {
@@ -485,215 +334,130 @@
             if (!tbody) return;
             let html = '';
             let totalSum = 0;
-            salesOrdersDatabase.forEach((order, idx) => {
+            salesOrdersDatabase.forEach(order => {
                 totalSum += order.price || 0;
-                const store = getStoreByKey(order.storeKey);
-                
                 html += `
                     <tr>
-                        <td class="p-4 font-bold text-gray-900">${order.name}</td>
+                        <td class="p-4 font-bold">${order.name}</td>
                         <td class="p-4">${order.phone}</td>
                         <td class="p-4">${order.address}</td>
-                        <td class="p-4 font-semibold text-indigo-600">${order.product}</td>
-                        <td class="p-4">
-                            <span class="font-bold text-gray-800 block">${store.name}</span>
-                            <span class="text-xs text-gray-400 block">${store.city} - ${store.phone}</span>
-                        </td>
-                        <td class="p-4 font-bold">${(order.price || 0).toFixed(2)} د.م</td>
-                        <td class="p-4">
-                            <select onchange="updateOrderAction(${idx}, this.value)" class="text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg p-2 focus:outline-none focus:border-indigo-600">
-                                <option value="قيد الانتظار" ${order.status === 'قيد الانتظار' ? 'selected' : ''}>⏳ قيد الاتصال</option>
-                                <option value="تم التأكيد" ${order.status === 'تم التأكيد' ? 'selected' : ''}>📞 تم التأكيد</option>
-                                <option value="تم الشحن" ${order.status === 'تم الشحن' ? 'selected' : ''}>🚚 تم الشحن</option>
-                                <option value="مكتمل" ${order.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
-                                <option value="ملغى" ${order.status === 'ملغى' ? 'selected' : ''}>❌ ملغى</option>
-                            </select>
-                        </td>
-                        <td class="p-4">
-                            <button onclick="sendOrderToStoreOwner(${idx})" class="bg-emerald-600 text-white px-3 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm">
-                                <i data-lucide="message-circle" class="w-4 h-4"></i> إرسال الطلب لمول المتجر
-                            </button>
-                        </td>
+                        <td class="p-4 text-indigo-600">${order.product}</td>
+                        <td class="p-4 font-bold">${order.price} د.م</td>
+                        <td class="p-4"><span class="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md text-xs font-semibold">${order.status || 'قيد الانتظار'}</span></td>
                     </tr>
                 `;
             });
             tbody.innerHTML = html;
             document.getElementById('stat-total-sales').innerText = totalSum.toFixed(2) + ' د.م';
             document.getElementById('stat-total-orders').innerText = salesOrdersDatabase.length + ' طلبات';
-            calculateNetProfit();
             lucide.createIcons();
         }
 
-        function sendOrderToStoreOwner(idx) {
-            const order = salesOrdersDatabase[idx];
-            const store = getStoreByKey(order.storeKey);
-            const message = `السلام عليكم صاحب متجر ${store.name} (${store.city}):\n\nلديك طلب جديد مؤكد عبر منصة bedal.online:\n🛍️ *المنتج:* ${order.product}\n💰 *الثمن:* ${(order.price || 0).toFixed(2)} د.م\n\n👤 *معلومات الزبون للتوصيل:*\n- الاسم: ${order.name}\n- الهاتف: ${order.phone}\n- العنوان: ${order.address}`;
-            window.open(`https://wa.me/${store.phone}?text=${encodeURIComponent(message)}`, '_blank');
-        }
-
-        async function updateOrderAction(idx, newStatus) {
-            salesOrdersDatabase[idx].status = newStatus;
-            const order = salesOrdersDatabase[idx];
-            if(order.id) {
-                await supabaseClient.from('orders').update({ status: newStatus }).eq('id', order.id);
-            }
-        }
-
-        function calculateNetProfit() {
-            let totalRevenue = 0;
-            salesOrdersDatabase.forEach(o => totalRevenue += (o.price || 0));
-
-            const shippingCost = parseFloat(document.getElementById('acc-shipping-cost').value) || 0;
-            const adsCost = parseFloat(document.getElementById('acc-ads-cost').value) || 0;
-            const productCost = parseFloat(document.getElementById('acc-product-cost').value) || 0;
-
-            const totalExpensesPerOrder = (shippingCost + adsCost + productCost) * salesOrdersDatabase.length;
-            const netProfit = totalRevenue - totalExpensesPerOrder;
-
-            document.getElementById('acc-total-revenue').innerText = totalRevenue.toFixed(2) + ' د.م';
-            document.getElementById('acc-total-expenses').innerText = totalExpensesPerOrder.toFixed(2) + ' د.م';
-            document.getElementById('acc-net-profit').innerText = netProfit.toFixed(2) + ' د.م';
-        }
-
-        function renderAdminProducts() {
-            const tbody = document.getElementById('admin-products-table-body');
-            if (!tbody) return;
+        function renderVendorEditor() {
+            const container = document.getElementById('admin-vendors-editor-container');
+            if (!container) return;
             let html = '';
-            productsDatabase.forEach((prod, idx) => {
-                let priceDisplay = prod.discountPrice ? `
-                    <span class="text-indigo-600 font-bold">${prod.discountPrice.toFixed(2)} د.م</span>
-                    <span class="text-gray-400 line-through text-xs mr-2">${prod.price.toFixed(2)} د.م</span>
-                ` : `<span class="text-indigo-600 font-bold">${prod.price.toFixed(2)} د.م</span>`;
-
-                const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : '';
-                const store = getStoreByKey(prod.storeKey);
-
+            partnerStoresDatabase.forEach((store, idx) => {
                 html += `
-                    <tr>
-                        <td class="p-4">
-                            <img src="${mainImg}" class="w-12 h-12 object-cover rounded-xl border border-gray-200">
-                        </td>
-                        <td class="p-4 font-bold text-gray-900">${prod.title}</td>
-                        <td class="p-4 font-semibold text-indigo-600">${store.name}</td>
-                        <td class="p-4"><span class="bg-indigo-50 text-indigo-600 text-xs px-2.5 py-1 rounded-md font-semibold">${prod.catLabel || 'متنوع'}</span></td>
-                        <td class="p-4">${priceDisplay}</td>
-                        <td class="p-4 flex gap-2">
-                            <button onclick="openEditProductModal(${idx})" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold border border-blue-100">
-                                <i data-lucide="edit-2" class="w-4 h-4"></i> تعديل
-                            </button>
-                            <button onclick="deleteProduct(${idx})" class="text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold border border-rose-100">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i> حذف
-                            </button>
-                        </td>
-                    </tr>
+                    <div class="p-5 bg-gray-50 rounded-2xl border space-y-4 relative">
+                        <div class="flex items-center justify-between border-b pb-2">
+                            <h4 class="font-bold text-gray-900 text-sm">متجر: ${store.name}</h4>
+                            <div class="flex items-center gap-2">
+                                <img src="${store.logo}" class="w-10 h-10 object-cover rounded-xl border">
+                                <button onclick="deleteVendor(${idx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl transition-colors text-xs font-bold flex items-center gap-1">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i> حذف
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">اسم المتجر</label>
+                                <input type="text" id="vendor-name-${idx}" value="${store.name || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف (واتساب)</label>
+                                <input type="text" id="vendor-phone-${idx}" value="${store.phone || ''}" class="w-full px-3 py-2 rounded-xl border bg-white" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">المدينة</label>
+                                <input type="text" id="vendor-city-${idx}" value="${store.city || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
+                            </div>
+                            <div class="sm:col-span-3">
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">رابط الشعار (Logo)</label>
+                                <input type="url" id="vendor-logo-${idx}" value="${store.logo || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
+                            </div>
+                            <div class="sm:col-span-3">
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">وصف المتجر</label>
+                                <input type="text" id="vendor-desc-${idx}" value="${store.desc || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
+                            </div>
+                        </div>
+                    </div>
                 `;
             });
-            tbody.innerHTML = html;
-            document.getElementById('stat-total-products').innerText = productsDatabase.length + ' منتج';
-            populateBlackFreeDaySelector();
-            renderBlackFreeDayAdminTable();
+            container.innerHTML = html;
             lucide.createIcons();
         }
 
-        function populateBlackFreeDaySelector() {
-            const select = document.getElementById('select-product-to-bfd');
-            if(!select) return;
-            let html = '';
-            if(productsDatabase.length === 0) {
-                html = `<option value="">لا توجد منتجات عادية متاحة حالياً</option>`;
-            } else {
-                productsDatabase.forEach((p, idx) => {
-                    const priceVal = p.discountPrice ? p.discountPrice : p.price;
-                    html += `<option value="${idx}">${p.title} (${priceVal.toFixed(2)} د.م)</option>`;
-                });
+        async function saveVendorChanges() {
+            partnerStoresDatabase.forEach((store, idx) => {
+                store.name = document.getElementById(`vendor-name-${idx}`).value.trim();
+                store.phone = document.getElementById(`vendor-phone-${idx}`).value.trim();
+                store.city = document.getElementById(`vendor-city-${idx}`).value.trim();
+                store.logo = document.getElementById(`vendor-logo-${idx}`).value.trim();
+                store.desc = document.getElementById(`vendor-desc-${idx}`).value.trim();
+            });
+
+            for (let store of partnerStoresDatabase) {
+                if (store.id) {
+                    await supabaseClient.from('partner_stores').update(store).eq('id', store.id);
+                } else {
+                    await supabaseClient.from('partner_stores').insert([store]);
+                }
             }
-            select.innerHTML = html;
+            alert('تم حفظ وتحديث معلومات المتاجر الشريكة في Supabase بنجاح!');
         }
 
-        async function addSelectedProductToBlackFreeDay() {
-            const select = document.getElementById('select-product-to-bfd');
-            if(!select || select.value === "") {
-                alert('الرجاء اختيار منتج صالح للإضافة!');
+        async function deleteVendor(idx) {
+            if (confirm('هل أنت متأكد من حذف هذا المتجر؟')) {
+                const store = partnerStoresDatabase[idx];
+                if (store && store.id) {
+                    await supabaseClient.from('partner_stores').delete().eq('id', store.id);
+                }
+                partnerStoresDatabase.splice(idx, 1);
+                renderVendorEditor();
+                alert('تم حذف المتجر بنجاح!');
+            }
+        }
+
+        function toggleVendorModal() {
+            document.getElementById('vendor-modal').classList.toggle('hidden');
+        }
+
+        async function saveNewVendor() {
+            const name = document.getElementById('vendor-form-name').value.trim();
+            const logo = document.getElementById('vendor-form-logo').value.trim();
+            const desc = document.getElementById('vendor-form-desc').value.trim();
+            const phone = document.getElementById('vendor-form-phone').value.trim();
+            const city = document.getElementById('vendor-form-city').value.trim();
+
+            if (!name || !logo || !desc || !phone || !city) {
+                alert('يرجى ملء جميع الحقول المطلوبة!');
                 return;
             }
-            const prodIdx = parseInt(select.value);
-            const prod = productsDatabase[prodIdx];
 
-            const effectivePrice = prod.discountPrice ? prod.discountPrice : prod.price;
-            const bfdObj = {
-                title: prod.title,
-                price: effectivePrice,
-                oldPrice: prod.price,
-                discountBadge: 'خصم Black Free Day الخاص 🔥',
-                img: (prod.images && prod.images.length > 0) ? prod.images[0] : '',
-                cat: prod.catLabel || 'متنوع',
-                desc: prod.description || 'عرض خاص حصري لعطلة نهاية الأسبوع.'
-            };
+            // توليد key فريد لمنع خطأ التكرار في قاعدة البيانات
+            const key = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
+            const newStore = { key, name, logo, desc, phone, city };
 
-            await supabaseClient.from('black_free_day').insert([bfdObj]);
-            if(prod.id) {
-                await supabaseClient.from('products').delete().eq('id', prod.id);
+            const { error } = await supabaseClient.from('partner_stores').insert([newStore]);
+            if (error) {
+                alert('حدث خطأ أثناء حفظ المتجر: ' + error.message);
+                return;
             }
 
-            adminBlackFreeDayProducts.push(bfdObj);
-            productsDatabase.splice(prodIdx, 1);
-
-            renderAdminProducts();
-            alert(`تم نقل المنتج "${prod.title}" بنجاح إلى Supabase وBlack Free Day!`);
-        }
-
-        function renderBlackFreeDayAdminTable() {
-            const tbody = document.getElementById('admin-bfd-table-body');
-            if(!tbody) return;
-            let html = '';
-            if(adminBlackFreeDayProducts.length === 0) {
-                html = `<tr><td colspan="5" class="p-6 text-center text-gray-400">لا توجد منتجات مضافة لـ Black Free Day حالياً.</td></tr>`;
-            } else {
-                adminBlackFreeDayProducts.forEach((p, idx) => {
-                    html += `
-                        <tr>
-                            <td class="p-3">
-                                <img src="${p.img}" class="w-12 h-12 object-cover rounded-xl border">
-                            </td>
-                            <td class="p-3 font-bold text-gray-900">${p.title}</td>
-                            <td class="p-3 font-bold text-amber-600">${p.price.toFixed(2)} د.م</td>
-                            <td class="p-3 text-gray-400 line-through text-xs">${p.oldPrice.toFixed(2)} د.م</td>
-                            <td class="p-3">
-                                <button onclick="removeProductFromBlackFreeDay(${idx})" class="bg-rose-50 text-rose-600 hover:bg-rose-100 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors border border-rose-200 flex items-center gap-1">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i> إزالة وإعادة للعادي
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-            tbody.innerHTML = html;
-            lucide.createIcons();
-        }
-
-        async function removeProductFromBlackFreeDay(idx) {
-            const p = adminBlackFreeDayProducts[idx];
-            const regularProd = {
-                title: p.title,
-                storeKey: partnerStoresDatabase[0]?.key || 'tech_zone',
-                price: p.oldPrice,
-                discountPrice: p.price,
-                images: [p.img],
-                category: 'various',
-                catLabel: p.cat || 'منتجات متنوعة',
-                description: p.desc
-            };
-
-            await supabaseClient.from('products').insert([regularProd]);
-            if(p.id) {
-                await supabaseClient.from('black_free_day').delete().eq('id', p.id);
-            }
-
-            productsDatabase.push(regularProd);
-            adminBlackFreeDayProducts.splice(idx, 1);
-
-            renderAdminProducts();
-            alert(`تم إرجاع المنتج "${p.title}" للمنتجات العادية في Supabase بنجاح!`);
+            alert('تم إضافة المتجر الشريك بنجاح!');
+            toggleVendorModal();
+            fetchSupabaseData();
         }
 
         function renderSliderEditor() {
@@ -702,29 +466,32 @@
             let html = '';
             sliderDatabase.forEach((slide, idx) => {
                 html += `
-                    <div class="p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
+                    <div class="p-5 bg-gray-50 rounded-2xl border space-y-4 relative">
                         <div class="flex items-center justify-between border-b pb-2">
-                            <h4 class="font-bold text-gray-900 text-sm flex items-center gap-2">
-                                <i data-lucide="image" class="w-4 h-4 text-indigo-600"></i> الشريحة رقم ${idx + 1}
-                            </h4>
-                            <img src="${slide.img}" class="w-16 h-10 object-cover rounded-lg border">
+                            <h4 class="font-bold text-gray-900 text-sm">الشريحة رقم ${idx + 1}</h4>
+                            <div class="flex items-center gap-2">
+                                <img src="${slide.img}" class="w-16 h-10 object-cover rounded-lg border">
+                                <button onclick="deleteSlider(${idx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl transition-colors text-xs font-bold flex items-center gap-1">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i> حذف
+                                </button>
+                            </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">شارة البادج (Badge)</label>
-                                <input type="text" id="slide-badge-${idx}" value="${slide.badge || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="text" id="slide-badge-${idx}" value="${slide.badge || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">رابط صورة الخلفية</label>
-                                <input type="url" id="slide-img-${idx}" value="${slide.img || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="url" id="slide-img-${idx}" value="${slide.img || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">العنوان الرئيسي</label>
-                                <input type="text" id="slide-title-${idx}" value="${slide.title || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="text" id="slide-title-${idx}" value="${slide.title || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">الوصف الفرعي</label>
-                                <input type="text" id="slide-desc-${idx}" value="${slide.desc || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="text" id="slide-desc-${idx}" value="${slide.desc || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
                             </div>
                         </div>
                     </div>
@@ -742,8 +509,8 @@
                 slide.desc = document.getElementById(`slide-desc-${idx}`).value.trim();
             });
 
-            for(let slide of sliderDatabase) {
-                if(slide.id) {
+            for (let slide of sliderDatabase) {
+                if (slide.id) {
                     await supabaseClient.from('slider').update(slide).eq('id', slide.id);
                 } else {
                     await supabaseClient.from('slider').insert([slide]);
@@ -752,175 +519,88 @@
             alert('تم حفظ وتحديث بيانات السلايدر في Supabase بنجاح!');
         }
 
-        function renderVendorEditor() {
-            const container = document.getElementById('admin-vendors-editor-container');
-            if (!container) return;
-            let html = '';
-            partnerStoresDatabase.forEach((store, idx) => {
-                html += `
-                    <div class="p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
-                        <div class="flex items-center justify-between border-b pb-2">
-                            <h4 class="font-bold text-gray-900 text-sm flex items-center gap-2">
-                                <i data-lucide="store" class="w-4 h-4 text-indigo-600"></i> متجر: ${store.name}
-                            </h4>
-                            <img src="${store.logo}" class="w-10 h-10 object-cover rounded-xl border">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-700 mb-1">اسم المتجر</label>
-                                <input type="text" id="vendor-name-${idx}" value="${store.name || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف (واتساب)</label>
-                                <input type="text" id="vendor-phone-${idx}" value="${store.phone || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white text-right" dir="ltr">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-700 mb-1">المدينة</label>
-                                <input type="text" id="vendor-city-${idx}" value="${store.city || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
-                            </div>
-                            <div class="sm:col-span-3">
-                                <label class="block text-xs font-semibold text-gray-700 mb-1">رابط الشعار (Logo)</label>
-                                <input type="url" id="vendor-logo-${idx}" value="${store.logo || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-            populateStoreSelectOptions();
-            lucide.createIcons();
-        }
-
-        function populateStoreSelectOptions() {
-            const select = document.getElementById('prod-form-store');
-            if (!select) return;
-            let html = '';
-            partnerStoresDatabase.forEach(store => {
-                html += `<option value="${store.key}">${store.name} (${store.city})</option>`;
-            });
-            select.innerHTML = html;
-        }
-
-        async function saveVendorChanges() {
-            partnerStoresDatabase.forEach((store, idx) => {
-                store.name = document.getElementById(`vendor-name-${idx}`).value.trim();
-                store.phone = document.getElementById(`vendor-phone-${idx}`).value.trim();
-                store.city = document.getElementById(`vendor-city-${idx}`).value.trim();
-                store.logo = document.getElementById(`vendor-logo-${idx}`).value.trim();
-            });
-
-            for(let store of partnerStoresDatabase) {
-                if(store.id) {
-                    await supabaseClient.from('partner_stores').update(store).eq('id', store.id);
-                } else {
-                    await supabaseClient.from('partner_stores').insert([store]);
+        async function deleteSlider(idx) {
+            if (confirm('هل أنت متأكد من حذف هذه الشريحة؟')) {
+                const slide = sliderDatabase[idx];
+                if (slide && slide.id) {
+                    await supabaseClient.from('slider').delete().eq('id', slide.id);
                 }
-            }
-            populateStoreSelectOptions();
-            alert('تم حفظ وتحديث معلومات المتاجر الشريكة في Supabase بنجاح!');
-        }
-
-        function toggleProductModal() {
-            const modal = document.getElementById('product-modal');
-            modal.classList.toggle('hidden');
-            if (modal.classList.contains('hidden')) {
-                document.getElementById('edit-prod-id').value = "";
-                document.getElementById('modal-form-title').innerText = "إضافة منتج جديد وتحديد المتجر المعني";
-                document.getElementById('prod-form-title').value = "";
-                document.getElementById('prod-form-price').value = "";
-                document.getElementById('prod-form-discount-price').value = "";
-                for(let i = 1; i <= 5; i++) {
-                    document.getElementById(`prod-form-img-${i}`).value = "";
-                }
-                document.getElementById('prod-form-desc').value = "";
-                updateImagesPreview();
-            } else {
-                populateStoreSelectOptions();
+                sliderDatabase.splice(idx, 1);
+                renderSliderEditor();
+                alert('تم حذف الشريحة بنجاح!');
             }
         }
 
-        function openEditProductModal(idx) {
-            const prod = productsDatabase[idx];
-            document.getElementById('edit-prod-id').value = prod.id || idx;
-            document.getElementById('modal-form-title').innerText = "تعديل المنتج والمتجر المرتبط";
-            document.getElementById('prod-form-title').value = prod.title;
-            document.getElementById('prod-form-store').value = prod.storeKey || partnerStoresDatabase[0]?.key;
-            document.getElementById('prod-form-price').value = prod.price;
-            document.getElementById('prod-form-discount-price').value = prod.discountPrice || '';
-            document.getElementById('prod-form-category').value = prod.category;
-            
-            for(let i = 1; i <= 5; i++) {
-                document.getElementById(`prod-form-img-${i}`).value = (prod.images && prod.images[i-1]) ? prod.images[i-1] : '';
-            }
-
-            document.getElementById('prod-form-desc').value = prod.description;
-            updateImagesPreview();
-            document.getElementById('product-modal').classList.remove('hidden');
+        function toggleSliderModal() {
+            document.getElementById('slider-modal').classList.toggle('hidden');
         }
 
-        function updateImagesPreview() {
-            const container = document.getElementById('modal-images-preview-grid');
-            let html = '';
-            for(let i = 1; i <= 5; i++) {
-                const url = document.getElementById(`prod-form-img-${i}`).value.trim();
-                if(url !== "") {
-                    html += `
-                        <div class="h-16 rounded-lg bg-gray-100 border overflow-hidden relative group">
-                            <img src="${url}" class="w-full h-full object-cover">
-                            <span class="absolute bottom-0 right-0 bg-black/60 text-white text-[9px] px-1 font-bold">${i}</span>
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="h-16 rounded-lg bg-gray-50 border border-dashed flex flex-col items-center justify-center text-gray-300">
-                            <span class="text-[10px] font-bold">${i}</span>
-                        </div>
-                    `;
-                }
-            }
-            container.innerHTML = html;
-        }
+        async function saveNewSlider() {
+            const badge = document.getElementById('slider-form-badge').value.trim();
+            const img = document.getElementById('slider-form-img').value.trim();
+            const title = document.getElementById('slider-form-title').value.trim();
+            const desc = document.getElementById('slider-form-desc').value.trim();
 
-        async function saveProductForm() {
-            const prodId = document.getElementById('edit-prod-id').value;
-            const title = document.getElementById('prod-form-title').value.trim();
-            const storeKey = document.getElementById('prod-form-store').value;
-            const price = parseFloat(document.getElementById('prod-form-price').value);
-            const discountPriceInput = document.getElementById('prod-form-discount-price').value;
-            const discountPrice = discountPriceInput ? parseFloat(discountPriceInput) : null;
-            const category = document.getElementById('prod-form-category').value;
-            
-            let images = [];
-            for(let i = 1; i <= 5; i++) {
-                const imgVal = document.getElementById(`prod-form-img-${i}`).value.trim();
-                if(imgVal !== "") images.push(imgVal);
-            }
-
-            const description = document.getElementById('prod-form-desc').value.trim();
-
-            if (!title || isNaN(price) || images.length === 0 || !description) {
-                alert('يرجى ملء جميع الحقول المطلوبة ورابط صورة واحدة على الأقل!');
+            if (!img || !title || !desc) {
+                alert('يرجى ملء الحقول المطلوبة (الصورة، العنوان، والعبارة)!');
                 return;
             }
 
-            const catMap = { women: 'نساء', men: 'رجال', kids: 'أطفال', various: 'منتجات متنوعة' };
-            const prodData = { title, storeKey, price, discountPrice, images, category, catLabel: catMap[category] || 'منتجات متنوعة', description };
+            const newSlide = { badge, img, title, desc };
 
-            if (prodId && prodId !== "") {
-                await supabaseClient.from('products').update(prodData).eq('id', prodId);
-            } else {
-                await supabaseClient.from('products').insert([prodData]);
+            const { error } = await supabaseClient.from('slider').insert([newSlide]);
+            if (error) {
+                alert('حدث خطأ أثناء حفظ السلايدر: ' + error.message);
+                return;
             }
 
-            await fetchSupabaseData();
+            alert('تم إضافة السلايدر بنجاح!');
+            toggleSliderModal();
+            fetchSupabaseData();
+        }
+
+        function toggleProductModal() {
+            document.getElementById('product-modal').classList.toggle('hidden');
+        }
+
+        async function saveProductForm() {
+            const title = document.getElementById('prod-form-title').value.trim();
+            const price = parseFloat(document.getElementById('prod-form-price').value);
+            const discountPriceInput = document.getElementById('prod-form-discount-price').value;
+            const discountPrice = discountPriceInput ? parseFloat(discountPriceInput) : null;
+            const imgVal = document.getElementById('prod-form-img-1').value.trim();
+            const description = document.getElementById('prod-form-desc').value.trim();
+
+            if (!title || isNaN(price) || !imgVal || !description) {
+                alert('يرجى ملء جميع الحقول المطلوبة!');
+                return;
+            }
+
+            const prodData = {
+                title,
+                price,
+                discountPrice,
+                images: [imgVal],
+                category: 'various',
+                catLabel: 'منتجات متنوعة',
+                description
+            };
+
+            const { error } = await supabaseClient.from('products').insert([prodData]);
+            if (error) {
+                alert('حدث خطأ أثناء الحفظ في Supabase: ' + error.message);
+                return;
+            }
+
+            alert('تم حفظ المنتج بنجاح في Supabase!');
             toggleProductModal();
-            alert('تم حفظ وتحديث بيانات المنتج في Supabase بنجاح!');
+            fetchSupabaseData();
         }
 
         async function deleteProduct(idx) {
             if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
                 const prod = productsDatabase[idx];
-                if(prod.id) {
+                if (prod.id) {
                     await supabaseClient.from('products').delete().eq('id', prod.id);
                 }
                 productsDatabase.splice(idx, 1);
@@ -929,56 +609,30 @@
         }
 
         function switchAdminTab(tabKey) {
-            const ordersTab = document.getElementById('admin-subtab-orders');
-            const accountingTab = document.getElementById('admin-subtab-accounting');
-            const productsTab = document.getElementById('admin-subtab-products');
-            const bfdTab = document.getElementById('admin-subtab-black_free_day');
-            const sliderTab = document.getElementById('admin-subtab-slider');
-            const vendorsTab = document.getElementById('admin-subtab-vendors');
-            
-            const ordersBtn = document.getElementById('admin-tab-btn-orders');
-            const accountingBtn = document.getElementById('admin-tab-btn-accounting');
-            const productsBtn = document.getElementById('admin-tab-btn-products');
-            const bfdBtn = document.getElementById('admin-tab-btn-black_free_day');
-            const sliderBtn = document.getElementById('admin-tab-btn-slider');
-            const vendorsBtn = document.getElementById('admin-tab-btn-vendors');
+            document.getElementById('admin-subtab-orders').classList.add('hidden');
+            document.getElementById('admin-subtab-products').classList.add('hidden');
+            document.getElementById('admin-subtab-vendors').classList.add('hidden');
+            document.getElementById('admin-subtab-slider').classList.add('hidden');
 
-            ordersTab.classList.add('hidden');
-            accountingTab.classList.add('hidden');
-            productsTab.classList.add('hidden');
-            bfdTab.classList.add('hidden');
-            sliderTab.classList.add('hidden');
-            vendorsTab.classList.add('hidden');
-
-            ordersBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
-            accountingBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
-            productsBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
-            bfdBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
-            sliderBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
-            vendorsBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
+            document.getElementById('admin-tab-btn-orders').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
+            document.getElementById('admin-tab-btn-products').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
+            document.getElementById('admin-tab-btn-vendors').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
+            document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
 
             if (tabKey === 'products') {
-                productsTab.classList.remove('hidden');
-                productsBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
-            } else if (tabKey === 'accounting') {
-                accountingTab.classList.remove('hidden');
-                accountingBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
-            } else if (tabKey === 'black_free_day') {
-                bfdTab.classList.remove('hidden');
-                bfdBtn.className = "px-5 py-3 border-b-2 border-amber-600 text-amber-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
-                renderBlackFreeDayAdminTable();
-                populateBlackFreeDaySelector();
-            } else if (tabKey === 'slider') {
-                sliderTab.classList.remove('hidden');
-                sliderBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
-                renderSliderEditor();
+                document.getElementById('admin-subtab-products').classList.remove('hidden');
+                document.getElementById('admin-tab-btn-products').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
             } else if (tabKey === 'vendors') {
-                vendorsTab.classList.remove('hidden');
-                vendorsBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
+                document.getElementById('admin-subtab-vendors').classList.remove('hidden');
+                document.getElementById('admin-tab-btn-vendors').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderVendorEditor();
+            } else if (tabKey === 'slider') {
+                document.getElementById('admin-subtab-slider').classList.remove('hidden');
+                document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
+                renderSliderEditor();
             } else {
-                ordersTab.classList.remove('hidden');
-                ordersBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
+                document.getElementById('admin-subtab-orders').classList.remove('hidden');
+                document.getElementById('admin-tab-btn-orders').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
             }
         }
 
