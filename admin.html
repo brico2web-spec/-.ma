@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
         body {
@@ -47,9 +49,9 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600"></i>
-                    لوحة التحليلات والإدارة الذكية
+                    لوحة التحليلات والإدارة الذكية (متصلة بـ Supabase)
                 </h1>
-                <p class="text-gray-500 text-sm">متابعة المبيعات، الطلبات الواردة، الحسابات، تعديل السلايدر، معلومات المتاجر الشريكة، وعروض Black Free Day.</p>
+                <p class="text-gray-500 text-sm">جميع التعديلات والإضافات يتم حفظها واسترجاعها مباشرة من قاعدة بيانات Supabase لتظهر في الموقع الرئيسي فوراً.</p>
             </div>
             <div>
                 <button onclick="toggleProductModal()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg shadow-indigo-100">
@@ -67,7 +69,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500 font-medium">إجمالي المبيعات</p>
-                    <h4 id="stat-total-sales" class="text-xl font-extrabold text-gray-900 mt-0.5">679.00 د.م</h4>
+                    <h4 id="stat-total-sales" class="text-xl font-extrabold text-gray-900 mt-0.5">0.00 د.م</h4>
                 </div>
             </div>
 
@@ -77,7 +79,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500 font-medium">عدد الطلبات</p>
-                    <h4 id="stat-total-orders" class="text-xl font-extrabold text-gray-900 mt-0.5">2 طلبات</h4>
+                    <h4 id="stat-total-orders" class="text-xl font-extrabold text-gray-900 mt-0.5">0 طلبات</h4>
                 </div>
             </div>
 
@@ -87,7 +89,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-gray-500 font-medium">إجمالي المنتجات</p>
-                    <h4 id="stat-total-products" class="text-xl font-extrabold text-gray-900 mt-0.5">5 منتجات</h4>
+                    <h4 id="stat-total-products" class="text-xl font-extrabold text-gray-900 mt-0.5">0 منتج</h4>
                 </div>
             </div>
 
@@ -147,7 +149,7 @@
                             </tr>
                         </thead>
                         <tbody id="admin-orders-table-body" class="divide-y divide-gray-100">
-                            <!-- Dynamic Orders -->
+                            <!-- Dynamic Orders from Supabase -->
                         </tbody>
                     </table>
                 </div>
@@ -183,15 +185,15 @@
                 <div class="bg-indigo-50/60 rounded-2xl p-5 border border-indigo-100 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                     <div>
                         <span class="block text-xs text-gray-500 font-bold">إجمالي المداخيل</span>
-                        <span id="acc-total-revenue" class="text-xl font-extrabold text-gray-900 mt-1 block">679.00 د.م</span>
+                        <span id="acc-total-revenue" class="text-xl font-extrabold text-gray-900 mt-1 block">0.00 د.م</span>
                     </div>
                     <div>
                         <span class="block text-xs text-gray-500 font-bold">مجموع المصاريف (شحن + إعلان + سلعة)</span>
-                        <span id="acc-total-expenses" class="text-xl font-extrabold text-rose-600 mt-1 block">320.00 د.م</span>
+                        <span id="acc-total-expenses" class="text-xl font-extrabold text-rose-600 mt-1 block">0.00 د.م</span>
                     </div>
                     <div>
                         <span class="block text-xs text-gray-500 font-bold">صافي الربح الحقيقي</span>
-                        <span id="acc-net-profit" class="text-2xl font-black text-emerald-600 mt-1 block">359.00 د.م</span>
+                        <span id="acc-net-profit" class="text-2xl font-black text-emerald-600 mt-1 block">0.00 د.م</span>
                     </div>
                 </div>
             </div>
@@ -202,7 +204,7 @@
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-gray-100 flex items-center justify-between">
                     <h3 class="font-bold text-gray-900 flex items-center gap-2">
-                        <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> قائمة المنتجات العادية (المرتبطة بالمتاجر)، الصور والخصومات
+                        <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> قائمة المنتجات العادية (المرتبطة بالمتاجر)، الصور والخصومات (Supabase)
                     </h3>
                 </div>
                 <div class="overflow-x-auto">
@@ -218,7 +220,7 @@
                             </tr>
                         </thead>
                         <tbody id="admin-products-table-body" class="divide-y divide-gray-100">
-                            <!-- Dynamic Products -->
+                            <!-- Dynamic Products from Supabase -->
                         </tbody>
                     </table>
                 </div>
@@ -234,7 +236,7 @@
                             <i data-lucide="flame" class="w-5 h-5 text-amber-500 fill-amber-500"></i>
                             إدارة عروض وتخفيضات Black Free Day (السبت والأحد)
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">اختر المنتجات من القناة العادية وأضفها مباشرة لعروض نهاية الأسبوع (سيتم إزالتها تلقائياً من المتجر العادي).</p>
+                        <p class="text-xs text-gray-500 mt-1">اختر المنتجات من القناة العادية وأضفها مباشرة لعروض نهاية الأسبوع.</p>
                     </div>
                 </div>
 
@@ -285,12 +287,12 @@
                     <div>
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
                             <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i>
-                            إدارة وتعديل شرائح السلايدر (Hero Slider)
+                            إدارة وتعديل شرائح السلايدر (Hero Slider) في Supabase
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">قم بتعديل العناوين، الأوصاف، الروابط، وصور الخلفية للسلايدر المعروض في الواجهة الرئيسية.</p>
+                        <p class="text-xs text-gray-500 mt-1">قم بتعديل العناوين، الأوصاف، وصور الخلفية للسلايدر.</p>
                     </div>
                     <button onclick="saveSliderChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
-                        حفظ وتطبيق السلايدر
+                        حفظ وتطبيق السلايدر في Supabase
                     </button>
                 </div>
 
@@ -307,12 +309,12 @@
                     <div>
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
                             <i data-lucide="store" class="w-5 h-5 text-indigo-600"></i>
-                            إدارة المتاجر الشريكة (معلومات الاتصال: الإسم، الهاتف، المدينة)
+                            إدارة المتاجر الشريكة (معلومات الاتصال: الإسم، الهاتف، المدينة) في Supabase
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">تحديد رقم الهاتف والمدينة لكل متجر لتسهيل إرسال الطلبات إليهم مباشرة.</p>
+                        <p class="text-xs text-gray-500 mt-1">تحديد رقم الهاتف والمدينة لكل متجر.</p>
                     </div>
                     <button onclick="saveVendorChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
-                        حفظ وتطبيق معلومات المتاجر
+                        حفظ وتطبيق معلومات المتاجر في Supabase
                     </button>
                 </div>
 
@@ -336,7 +338,7 @@
                 إضافة منتج جديد وتحديد المتجر المعني
             </h3>
 
-            <input type="hidden" id="edit-prod-index" value="-1">
+            <input type="hidden" id="edit-prod-id" value="">
 
             <div class="space-y-4 text-sm">
                 <div>
@@ -418,7 +420,7 @@
 
                 <button onclick="saveProductForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
                     <i data-lucide="save" class="w-5 h-5"></i>
-                    حفظ التغييرات في النظام
+                    حفظ التغييرات في Supabase
                 </button>
             </div>
         </div>
@@ -433,138 +435,74 @@
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.7.1-release</span>
+                    الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.7.2-release</span>
                 </span>
             </div>
         </div>
     </footer>
 
-    <!-- App Logic Script -->
+    <!-- Supabase Configuration & App Logic Script -->
     <script>
-        // Partner Stores Database with Name, Phone, and City
-        let partnerStoresDatabase = [
-            { key: '3d_peintures', name: '3D Peintures', phone: '212611223344', city: 'القنيطرة', subtitle: 'صباغة ومواد الديكور', logo: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=400&q=80', desc: 'متجر متخصص في أجود أنواع الصباغة والديكورات الحديثة والمواد الكيماوية.' },
-            { key: 'trio_parfums', name: 'TRIO PARFUMS', phone: '212622334455', city: 'الرباط', subtitle: 'عطور وتجميل فاخر', logo: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=400&q=80', desc: 'تشكيلة فاخرة من العطور العالمية والزيوت العطرية الأصلية.' },
-            { key: 'tech_zone', name: 'Tech Zone', phone: '212633445566', city: 'الدار البيضاء', subtitle: 'إلكترونيات وساعات ذكية', logo: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80', desc: 'أحدث الساعات الذكية والأجهزة الصوتية والإلكترونيات.' },
-            { key: 'fashion_elegance', name: 'Fashion Elegance', phone: '212644556677', city: 'مراكش', subtitle: 'أزياء وحقائب نسائية', logo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=400&q=80', desc: 'أرق الملابس والحقائب النسائية المصممة بأعلى جودة.' }
-        ];
+        // إعدادات اتصال Supabase الخاصة بك
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        
+        // تهيئة عميل Supabase
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Products Database with Store Association (Admin Exclusive view)
-        let productsDatabase = [
-            { 
-                title: 'ساعة ذكية متطورة', 
-                storeKey: 'tech_zone',
-                price: 350.00, 
-                discountPrice: 299.00, 
-                images: [
-                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1510017803434-a899398421b3?auto=format&fit=crop&w=600&q=80'
-                ],
-                category: 'various', 
-                catLabel: 'إلكترونيات', 
-                description: 'تتبع نشاطك اليومي وصحتك بدقة عالية.' 
-            },
-            { 
-                title: 'سماعات رأس لاسلكية', 
-                storeKey: 'tech_zone',
-                price: 500.00, 
-                discountPrice: 450.00, 
-                images: [
-                    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?auto=format&fit=crop&w=600&q=80'
-                ],
-                category: 'various', 
-                catLabel: 'صوتيات', 
-                description: 'جودة صوت عالية ونقية وتصميم مريح.' 
-            },
-            { 
-                title: 'حقيبة يد نسائية فاخرة', 
-                storeKey: 'fashion_elegance',
-                price: 420.00, 
-                discountPrice: 380.00, 
-                images: [
-                    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&w=600&q=80'
-                ],
-                category: 'women', 
-                catLabel: 'نساء', 
-                description: 'حقيبة يد أنيقة مصنوعة من الجلد العالي الجودة.' 
-            },
-            { 
-                title: 'حذاء رياضي رجالي', 
-                storeKey: 'fashion_elegance',
-                price: 360.00, 
-                discountPrice: 320.00, 
-                images: [
-                    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=600&q=80'
-                ],
-                category: 'men', 
-                catLabel: 'رجال', 
-                description: 'حذاء رياضي مريح بجودة ممتازة.' 
-            },
-            { 
-                title: 'طقم ملابس أطفال قطني', 
-                storeKey: '3d_peintures',
-                price: 230.00, 
-                discountPrice: 199.00, 
-                images: [
-                    'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=600&q=80',
-                    'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?auto=format&fit=crop&w=600&q=80'
-                ],
-                category: 'kids', 
-                catLabel: 'أطفال', 
-                description: 'طقم قطني ناعم ومريح لبشرة الأطفال.' 
+        let partnerStoresDatabase = [];
+        let productsDatabase = [];
+        let adminBlackFreeDayProducts = [];
+        let salesOrdersDatabase = [];
+        let sliderDatabase = [];
+
+        // جلب البيانات الحية من Supabase عند تحميل الصفحة
+        async function fetchSupabaseData() {
+            try {
+                // جلب المتاجر
+                const { data: stores } = await supabaseClient.from('partner_stores').select('*');
+                if (stores && stores.length > 0) partnerStoresDatabase = stores;
+
+                // جلب المنتجات
+                const { data: prods } = await supabaseClient.from('products').select('*');
+                if (prods) productsDatabase = prods;
+
+                // جلب منتجات Black Free Day
+                const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
+                if (bfd) adminBlackFreeDayProducts = bfd;
+
+                // جلب الطلبات
+                const { data: orders } = await supabaseClient.from('orders').select('*');
+                if (orders) salesOrdersDatabase = orders;
+
+                // جلب السلايدر
+                const { data: slider } = await supabaseClient.from('slider').select('*');
+                if (slider) sliderDatabase = slider;
+
+                renderAdminOrders();
+                renderAdminProducts();
+                calculateNetProfit();
+                renderSliderEditor();
+                renderVendorEditor();
+                renderBlackFreeDayAdminTable();
+                populateBlackFreeDaySelector();
+                populateStoreSelectOptions();
+            } catch (err) {
+                console.error("خطأ في جلب بيانات Supabase:", err);
             }
-        ];
-
-        // Black Free Day Database in Admin
-        let adminBlackFreeDayProducts = [
-            { title: 'طقم عطور ملكية حصرية', price: 399.00, oldPrice: 799.00, discountBadge: 'خصم Black Free Day 50%', img: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=600&q=80', cat: 'عطور', desc: 'عرض خاص ليومي السبت والأحد: طقم عطور أصلية بتركيبة مركزة.' },
-            { title: 'ساعة فاخرة إصدار محدود', price: 599.00, oldPrice: 1200.00, discountBadge: 'خصم Black Free Day 50%', img: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80', cat: 'إلكترونيات', desc: 'ساعة أنيقة بتصميم فريد متوفرة حصرياً لعطلة نهاية الأسبوع.' },
-            { title: 'جاكيت جلد رجالي فاخر', price: 450.00, oldPrice: 900.00, discountBadge: 'خصم Black Free Day 50%', img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80', cat: 'رجال', desc: 'جلد طبيعي عالي الجودة متوفر حصرياً في تخفيضات السبت والأحد.' }
-        ];
-
-        // Sales Orders Database
-        let salesOrdersDatabase = [
-            { name: 'محمد العلوي', phone: '0661234567', address: 'الدار البيضاء', product: 'ساعة ذكية متطورة', storeKey: 'tech_zone', price: 299.00, status: 'مكتمل' },
-            { name: 'فاطمة الزهراء', phone: '0669876543', address: 'الرباط', product: 'حقيبة يد نسائية فاخرة', storeKey: 'fashion_elegance', price: 380.00, status: 'قيد الانتظار' }
-        ];
-
-        // Slider Database
-        let sliderDatabase = [
-            { badge: 'تخفيضات الكبرى', title: 'عروض حصرية تصل إلى 40%', desc: 'تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.', img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80' },
-            { badge: 'توصيل سريع', title: 'تسوق بكل راحة من منزلك', desc: 'منتجات موثوقة وجودة ممتازة تصلك أينما كنت.', img: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1200&q=80' },
-            { badge: 'متاجر متنوعة', title: 'أقوى الماركات والمتاجر المحلية', desc: 'اختر منتجك المفضل وسجّل طلبك بضغطة زر.', img: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1200&q=80' }
-        ];
+        }
 
         function getStoreByKey(key) {
             return partnerStoresDatabase.find(s => s.key === key) || { name: 'متجر عام', phone: '212600000000', city: 'المغرب' };
         }
 
-        // Render Admin Orders with Store info & WhatsApp Send Button to Store Owner
         function renderAdminOrders() {
             const tbody = document.getElementById('admin-orders-table-body');
             if (!tbody) return;
             let html = '';
             let totalSum = 0;
             salesOrdersDatabase.forEach((order, idx) => {
-                totalSum += order.price;
+                totalSum += order.price || 0;
                 const store = getStoreByKey(order.storeKey);
                 
                 html += `
@@ -577,7 +515,7 @@
                             <span class="font-bold text-gray-800 block">${store.name}</span>
                             <span class="text-xs text-gray-400 block">${store.city} - ${store.phone}</span>
                         </td>
-                        <td class="p-4 font-bold">${order.price.toFixed(2)} د.م</td>
+                        <td class="p-4 font-bold">${(order.price || 0).toFixed(2)} د.م</td>
                         <td class="p-4">
                             <select onchange="updateOrderAction(${idx}, this.value)" class="text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg p-2 focus:outline-none focus:border-indigo-600">
                                 <option value="قيد الانتظار" ${order.status === 'قيد الانتظار' ? 'selected' : ''}>⏳ قيد الاتصال</option>
@@ -602,31 +540,24 @@
             lucide.createIcons();
         }
 
-        // Send Order to Store Owner via WhatsApp
         function sendOrderToStoreOwner(idx) {
             const order = salesOrdersDatabase[idx];
             const store = getStoreByKey(order.storeKey);
-            
-            const message = `السلام عليكم صاحب متجر ${store.name} (${store.city}):\n\n` +
-                            `لديك طلب جديد مؤكد عبر منصة bedal.online:\n` +
-                            `🛍️ *المنتج:* ${order.product}\n` +
-                            `💰 *الثمن:* ${order.price.toFixed(2)} د.م\n\n` +
-                            `👤 *معلومات الزبون للتوصيل:*\n` +
-                            `- الاسم: ${order.name}\n` +
-                            `- الهاتف: ${order.phone}\n` +
-                            `- العنوان: ${order.address}`;
-            
-            const encoded = encodeURIComponent(message);
-            window.open(`https://wa.me/${store.phone}?text=${encoded}`, '_blank');
+            const message = `السلام عليكم صاحب متجر ${store.name} (${store.city}):\n\nلديك طلب جديد مؤكد عبر منصة bedal.online:\n🛍️ *المنتج:* ${order.product}\n💰 *الثمن:* ${(order.price || 0).toFixed(2)} د.م\n\n👤 *معلومات الزبون للتوصيل:*\n- الاسم: ${order.name}\n- الهاتف: ${order.phone}\n- العنوان: ${order.address}`;
+            window.open(`https://wa.me/${store.phone}?text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        function updateOrderAction(idx, newStatus) {
+        async function updateOrderAction(idx, newStatus) {
             salesOrdersDatabase[idx].status = newStatus;
+            const order = salesOrdersDatabase[idx];
+            if(order.id) {
+                await supabaseClient.from('orders').update({ status: newStatus }).eq('id', order.id);
+            }
         }
 
         function calculateNetProfit() {
             let totalRevenue = 0;
-            salesOrdersDatabase.forEach(o => totalRevenue += o.price);
+            salesOrdersDatabase.forEach(o => totalRevenue += (o.price || 0));
 
             const shippingCost = parseFloat(document.getElementById('acc-shipping-cost').value) || 0;
             const adsCost = parseFloat(document.getElementById('acc-ads-cost').value) || 0;
@@ -640,7 +571,6 @@
             document.getElementById('acc-net-profit').innerText = netProfit.toFixed(2) + ' د.م';
         }
 
-        // Render Products with Store Assignment in Admin
         function renderAdminProducts() {
             const tbody = document.getElementById('admin-products-table-body');
             if (!tbody) return;
@@ -681,7 +611,6 @@
             lucide.createIcons();
         }
 
-        // Populate Black Free Day Product Selector dropdown
         function populateBlackFreeDaySelector() {
             const select = document.getElementById('select-product-to-bfd');
             if(!select) return;
@@ -697,8 +626,7 @@
             select.innerHTML = html;
         }
 
-        // Add Selected Product to Black Free Day and remove it from regular products database
-        function addSelectedProductToBlackFreeDay() {
+        async function addSelectedProductToBlackFreeDay() {
             const select = document.getElementById('select-product-to-bfd');
             if(!select || select.value === "") {
                 alert('الرجاء اختيار منتج صالح للإضافة!');
@@ -707,7 +635,6 @@
             const prodIdx = parseInt(select.value);
             const prod = productsDatabase[prodIdx];
 
-            // Format into BFD product structure
             const effectivePrice = prod.discountPrice ? prod.discountPrice : prod.price;
             const bfdObj = {
                 title: prod.title,
@@ -719,18 +646,19 @@
                 desc: prod.description || 'عرض خاص حصري لعطلة نهاية الأسبوع.'
             };
 
-            // Add to BFD list
-            adminBlackFreeDayProducts.push(bfdObj);
+            // حفظ في جدول bfd في Supabase وحذف من products
+            await supabaseClient.from('black_free_day').insert([bfdObj]);
+            if(prod.id) {
+                await supabaseClient.from('products').delete().eq('id', prod.id);
+            }
 
-            // Remove from regular products database (إلغاؤه من المنتجات العادية)
+            adminBlackFreeDayProducts.push(bfdObj);
             productsDatabase.splice(prodIdx, 1);
 
-            // Re-render admin UI
             renderAdminProducts();
-            alert(`تم نقل المنتج "${prod.title}" بنجاح إلى صفحة Black Free Day وإلغاؤه من المنتجات العادية!`);
+            alert(`تم نقل المنتج "${prod.title}" بنجاح إلى Supabase وBlack Free Day!`);
         }
 
-        // Render Admin BFD Table
         function renderBlackFreeDayAdminTable() {
             const tbody = document.getElementById('admin-bfd-table-body');
             if(!tbody) return;
@@ -760,14 +688,11 @@
             lucide.createIcons();
         }
 
-        // Remove from BFD and return back to regular products database
-        function removeProductFromBlackFreeDay(idx) {
+        async function removeProductFromBlackFreeDay(idx) {
             const p = adminBlackFreeDayProducts[idx];
-            
-            // Reconstruct regular product object
             const regularProd = {
                 title: p.title,
-                storeKey: partnerStoresDatabase[0].key,
+                storeKey: partnerStoresDatabase[0]?.key || 'tech_zone',
                 price: p.oldPrice,
                 discountPrice: p.price,
                 images: [p.img],
@@ -776,17 +701,18 @@
                 description: p.desc
             };
 
-            // Push back to regular products
-            productsDatabase.push(regularProd);
+            await supabaseClient.from('products').insert([regularProd]);
+            if(p.id) {
+                await supabaseClient.from('black_free_day').delete().eq('id', p.id);
+            }
 
-            // Remove from BFD
+            productsDatabase.push(regularProd);
             adminBlackFreeDayProducts.splice(idx, 1);
 
             renderAdminProducts();
-            alert(`تمت إزالة المنتج "${p.title}" من عروض Black Free Day وإعادته للمنتجات العادية بنجاح!`);
+            alert(`تم إرجاع المنتج "${p.title}" للمنتجات العادية في Supabase بنجاح!`);
         }
 
-        // Render Slider Editor UI
         function renderSliderEditor() {
             const container = document.getElementById('admin-slider-editor-container');
             if (!container) return;
@@ -803,19 +729,19 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">شارة البادج (Badge)</label>
-                                <input type="text" id="slide-badge-${idx}" value="${slide.badge}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="text" id="slide-badge-${idx}" value="${slide.badge || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">رابط صورة الخلفية</label>
-                                <input type="url" id="slide-img-${idx}" value="${slide.img}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="url" id="slide-img-${idx}" value="${slide.img || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">العنوان الرئيسي</label>
-                                <input type="text" id="slide-title-${idx}" value="${slide.title}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="text" id="slide-title-${idx}" value="${slide.title || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">الوصف الفرعي</label>
-                                <input type="text" id="slide-desc-${idx}" value="${slide.desc}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="text" id="slide-desc-${idx}" value="${slide.desc || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
                             </div>
                         </div>
                     </div>
@@ -825,17 +751,24 @@
             lucide.createIcons();
         }
 
-        function saveSliderChanges() {
+        async function saveSliderChanges() {
             sliderDatabase.forEach((slide, idx) => {
                 slide.badge = document.getElementById(`slide-badge-${idx}`).value.trim();
                 slide.img = document.getElementById(`slide-img-${idx}`).value.trim();
                 slide.title = document.getElementById(`slide-title-${idx}`).value.trim();
                 slide.desc = document.getElementById(`slide-desc-${idx}`).value.trim();
             });
-            alert('تم حفظ وتحديث بيانات السلايدر بنجاح!');
+
+            for(let slide of sliderDatabase) {
+                if(slide.id) {
+                    await supabaseClient.from('slider').update(slide).eq('id', slide.id);
+                } else {
+                    await supabaseClient.from('slider').insert([slide]);
+                }
+            }
+            alert('تم حفظ وتحديث بيانات السلايدر في Supabase بنجاح!');
         }
 
-        // Render Partner Stores Editor UI with Name, Phone, and City
         function renderVendorEditor() {
             const container = document.getElementById('admin-vendors-editor-container');
             if (!container) return;
@@ -852,19 +785,19 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">اسم المتجر</label>
-                                <input type="text" id="vendor-name-${idx}" value="${store.name}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="text" id="vendor-name-${idx}" value="${store.name || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف (واتساب)</label>
-                                <input type="text" id="vendor-phone-${idx}" value="${store.phone}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white text-right" dir="ltr">
+                                <input type="text" id="vendor-phone-${idx}" value="${store.phone || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white text-right" dir="ltr">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">المدينة</label>
-                                <input type="text" id="vendor-city-${idx}" value="${store.city}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="text" id="vendor-city-${idx}" value="${store.city || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
                             </div>
                             <div class="sm:col-span-3">
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">رابط الشعار (Logo)</label>
-                                <input type="url" id="vendor-logo-${idx}" value="${store.logo}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                                <input type="url" id="vendor-logo-${idx}" value="${store.logo || ''}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
                             </div>
                         </div>
                     </div>
@@ -885,22 +818,30 @@
             select.innerHTML = html;
         }
 
-        function saveVendorChanges() {
+        async function saveVendorChanges() {
             partnerStoresDatabase.forEach((store, idx) => {
                 store.name = document.getElementById(`vendor-name-${idx}`).value.trim();
                 store.phone = document.getElementById(`vendor-phone-${idx}`).value.trim();
                 store.city = document.getElementById(`vendor-city-${idx}`).value.trim();
                 store.logo = document.getElementById(`vendor-logo-${idx}`).value.trim();
             });
+
+            for(let store of partnerStoresDatabase) {
+                if(store.id) {
+                    await supabaseClient.from('partner_stores').update(store).eq('id', store.id);
+                } else {
+                    await supabaseClient.from('partner_stores').insert([store]);
+                }
+            }
             populateStoreSelectOptions();
-            alert('تم حفظ وتحديث معلومات المتاجر الشريكة بنجاح!');
+            alert('تم حفظ وتحديث معلومات المتاجر الشريكة في Supabase بنجاح!');
         }
 
         function toggleProductModal() {
             const modal = document.getElementById('product-modal');
             modal.classList.toggle('hidden');
             if (modal.classList.contains('hidden')) {
-                document.getElementById('edit-prod-index').value = "-1";
+                document.getElementById('edit-prod-id').value = "";
                 document.getElementById('modal-form-title').innerText = "إضافة منتج جديد وتحديد المتجر المعني";
                 document.getElementById('prod-form-title').value = "";
                 document.getElementById('prod-form-price').value = "";
@@ -917,10 +858,10 @@
 
         function openEditProductModal(idx) {
             const prod = productsDatabase[idx];
-            document.getElementById('edit-prod-index').value = idx;
+            document.getElementById('edit-prod-id').value = prod.id || idx;
             document.getElementById('modal-form-title').innerText = "تعديل المنتج والمتجر المرتبط";
             document.getElementById('prod-form-title').value = prod.title;
-            document.getElementById('prod-form-store').value = prod.storeKey || partnerStoresDatabase[0].key;
+            document.getElementById('prod-form-store').value = prod.storeKey || partnerStoresDatabase[0]?.key;
             document.getElementById('prod-form-price').value = prod.price;
             document.getElementById('prod-form-discount-price').value = prod.discountPrice || '';
             document.getElementById('prod-form-category').value = prod.category;
@@ -957,8 +898,8 @@
             container.innerHTML = html;
         }
 
-        function saveProductForm() {
-            const idx = parseInt(document.getElementById('edit-prod-index').value);
+        async function saveProductForm() {
+            const prodId = document.getElementById('edit-prod-id').value;
             const title = document.getElementById('prod-form-title').value.trim();
             const storeKey = document.getElementById('prod-form-store').value;
             const price = parseFloat(document.getElementById('prod-form-price').value);
@@ -980,21 +921,25 @@
             }
 
             const catMap = { women: 'نساء', men: 'رجال', kids: 'أطفال', various: 'منتجات متنوعة' };
-            const newProd = { title, storeKey, price, discountPrice, images, category, catLabel: catMap[category] || 'منتجات متنوعة', description };
+            const prodData = { title, storeKey, price, discountPrice, images, category, catLabel: catMap[category] || 'منتجات متنوعة', description };
 
-            if (idx >= 0) {
-                productsDatabase[idx] = newProd;
+            if (prodId && prodId !== "") {
+                await supabaseClient.from('products').update(prodData).eq('id', prodId);
             } else {
-                productsDatabase.unshift(newProd);
+                await supabaseClient.from('products').insert([prodData]);
             }
 
-            renderAdminProducts();
+            await fetchSupabaseData();
             toggleProductModal();
-            alert('تم حفظ وتحديث بيانات المنتج بنجاح!');
+            alert('تم حفظ وتحديث بيانات المنتج في Supabase بنجاح!');
         }
 
-        function deleteProduct(idx) {
+        async function deleteProduct(idx) {
             if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                const prod = productsDatabase[idx];
+                if(prod.id) {
+                    await supabaseClient.from('products').delete().eq('id', prod.id);
+                }
                 productsDatabase.splice(idx, 1);
                 renderAdminProducts();
             }
@@ -1055,13 +1000,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderAdminOrders();
-            renderAdminProducts();
-            calculateNetProfit();
-            renderSliderEditor();
-            renderVendorEditor();
-            renderBlackFreeDayAdminTable();
-            populateBlackFreeDaySelector();
+            fetchSupabaseData();
             lucide.createIcons();
         });
     </script>
