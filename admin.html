@@ -44,7 +44,6 @@
     <!-- Main Admin Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
-        <!-- Top Title & Add Button -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -61,7 +60,6 @@
             </div>
         </div>
 
-        <!-- Analytics & Stats Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
                 <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
@@ -104,7 +102,6 @@
             </div>
         </div>
 
-        <!-- Admin Sub-tabs Navigation -->
         <div class="flex items-center gap-3 border-b border-gray-200 overflow-x-auto pb-1">
             <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap">
                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> تتبع المبيعات والطلبات وزر إرسالها للمتاجر
@@ -126,7 +123,6 @@
             </button>
         </div>
 
-        <!-- TAB 1: Sales & Orders Tracking -->
         <div id="admin-subtab-orders" class="block space-y-4">
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-gray-100 flex items-center justify-between">
@@ -156,7 +152,6 @@
             </div>
         </div>
 
-        <!-- TAB 2: Accounting Section (قسم الحسابات والمصاريف) -->
         <div id="admin-subtab-accounting" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
                 <div class="border-b pb-4">
@@ -199,7 +194,6 @@
             </div>
         </div>
 
-        <!-- TAB 3: Products Management, 5 Images Editing & Discounts -->
         <div id="admin-subtab-products" class="hidden space-y-4">
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-gray-100 flex items-center justify-between">
@@ -227,7 +221,6 @@
             </div>
         </div>
 
-        <!-- TAB 4: Black Free Day Management (قسم إدارة منتجات Black Free Day) -->
         <div id="admin-subtab-black_free_day" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm space-y-6">
                 <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -240,7 +233,6 @@
                     </div>
                 </div>
 
-                <!-- Add Existing Product to Black Free Day Selector -->
                 <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 space-y-3">
                     <h4 class="font-bold text-amber-900 text-sm flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-4 h-4 text-amber-600"></i> اختر منتجاً من المتجر لإضافته إلى Black Free Day:
@@ -255,7 +247,6 @@
                     </div>
                 </div>
 
-                <!-- Active Black Free Day Products Table -->
                 <div class="rounded-2xl border border-gray-200 overflow-hidden">
                     <div class="p-4 bg-gray-50 border-b font-bold text-gray-800 text-sm flex items-center justify-content">
                         <span>المنتجات الحالية المعروضة في صفحة Black Free Day</span>
@@ -280,7 +271,6 @@
             </div>
         </div>
 
-        <!-- TAB 5: Slider Customization (تعديل صور وعناوين السلايدر) -->
         <div id="admin-subtab-slider" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
                 <div class="border-b pb-4 flex items-center justify-between">
@@ -302,7 +292,6 @@
             </div>
         </div>
 
-        <!-- TAB 6: Partner Stores Customization (قسم المتاجر الشريكة ومعلوماتها) -->
         <div id="admin-subtab-vendors" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
                 <div class="border-b pb-4 flex items-center justify-between">
@@ -326,7 +315,7 @@
 
     </main>
 
-    <!-- Modal Form: Add / Edit Product with Store Assignment & 5 Images -->
+    <!-- Modal Form: Add / Edit Product -->
     <div id="product-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
             <button onclick="toggleProductModal()" class="absolute top-5 left-5 text-gray-400 hover:text-gray-600">
@@ -346,7 +335,6 @@
                     <input type="text" id="prod-form-title" placeholder="اسم المنتج" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600">
                 </div>
 
-                <!-- Select Partner Store for the Product -->
                 <div>
                     <label class="block font-semibold text-gray-700 mb-1">اختر المتجر الشريك الذي تم أخذ المنتوج عنده *</label>
                     <select id="prod-form-store" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600 bg-white font-bold text-indigo-600">
@@ -374,7 +362,6 @@
                     </div>
                 </div>
 
-                <!-- 5 Images Section -->
                 <div class="border-t border-b py-4 space-y-3">
                     <h4 class="font-bold text-gray-800 flex items-center gap-2">
                         <i data-lucide="images" class="w-4 h-4 text-indigo-600"></i>
@@ -404,7 +391,6 @@
                         </div>
                     </div>
 
-                    <!-- Images Preview Grid -->
                     <div class="pt-2">
                         <span class="block text-xs font-semibold text-gray-500 mb-2">معاينة الصور الـ 5:</span>
                         <div class="grid grid-cols-5 gap-2" id="modal-images-preview-grid">
@@ -435,7 +421,7 @@
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.7.3-release</span>
+                    الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.9-release</span>
                 </span>
             </div>
         </div>
@@ -443,11 +429,10 @@
 
     <!-- Supabase Configuration & App Logic Script -->
     <script>
-        // إعدادات اتصال Supabase الخاصة بك
-        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        // إعدادات اتصال Supabase الموحدة والمحدثة
+        const SUPABASE_URL = 'https://xgdtszzzxzlhtgmrextl.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         
-        // تهيئة عميل Supabase
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let partnerStoresDatabase = [];
@@ -456,14 +441,11 @@
         let salesOrdersDatabase = [];
         let sliderDatabase = [];
 
-        // جلب البيانات الحية من Supabase عند تحميل الصفحة
         async function fetchSupabaseData() {
             try {
-                // جلب المتاجر
                 const { data: stores } = await supabaseClient.from('partner_stores').select('*');
-                if (stores && stores.length > 0) partnerStoresDatabase = stores;
+                if (stores) partnerStoresDatabase = stores;
 
-                // جلب المنتجات
                 const { data: prods } = await supabaseClient.from('products').select('*');
                 if (prods) {
                     productsDatabase = prods.map(p => ({
@@ -472,15 +454,12 @@
                     }));
                 }
 
-                // جلب منتجات Black Free Day
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
                 if (bfd) adminBlackFreeDayProducts = bfd;
 
-                // جلب الطلبات
                 const { data: orders } = await supabaseClient.from('orders').select('*');
                 if (orders) salesOrdersDatabase = orders;
 
-                // جلب السلايدر
                 const { data: slider } = await supabaseClient.from('slider').select('*');
                 if (slider) sliderDatabase = slider;
 
