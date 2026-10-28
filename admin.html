@@ -1,1683 +1,1066 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X28DB1WJ8D"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-X28DB1WJ8D');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>online.بدل - لوحة التحكم والتحكم الشامل (Admin Panel)</title>
-    <!-- استيراد خط Cairo المميز للشعار و Tajawal للنصوص -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome للأيقونات -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase JS Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>bedal.online - لوحة التحكم والإدارة المتكاملة</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif;
-        }
-
-        /* تخصيص أشرطة التمرير (عصا الهبوط) لجميع النوافذ والجداول */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f2f7f4;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d2ded7;
-            border-radius: 4px;
-            transition: background 0.3s;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-green);
-        }
-
-        :root {
-            --primary-green: #00a86b;
-            --dark-blue: #0e1726;
-            --light-bg: #f8faf9;
-            --text-gray: #555555;
-            --white: #ffffff;
-            --danger: #e74c3c;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
         body {
-            background-color: var(--light-bg);
-            color: var(--dark-blue);
-            direction: rtl;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .main-header {
-            background-color: var(--white);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.85rem;
-            font-weight: 900;
             font-family: 'Cairo', sans-serif;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            line-height: 1.1;
-        }
-
-        .logo-green { color: var(--primary-green); }
-        .logo-dark { color: var(--dark-blue); }
-
-        .admin-cpanel-title {
-            font-size: 1.4rem;
-            font-weight: 900;
-            font-family: 'Cairo', sans-serif;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .container {
-            width: 92%;
-            max-width: 1200px;
-            margin: 30px auto;
-            flex-grow: 1;
-        }
-
-        /* نافذة تسجيل الدخول للآدمن */
-        .admin-login-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 70vh;
-        }
-
-        .admin-login-card {
-            background: var(--white);
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 5px 25px rgba(14, 23, 38, 0.08);
-            width: 100%;
-            max-width: 420px;
-            border: 1px solid #e2ece8;
-            text-align: center;
-        }
-
-        .admin-login-card h2 {
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: var(--dark-blue);
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            text-align: right;
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--dark-blue);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1px solid #d2ded7;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            outline: none;
-            background-color: #f8faf9;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            border-color: var(--primary-green);
-        }
-
-        .btn-submit {
-            background-color: var(--primary-green);
-            color: var(--white);
-            width: 100%;
-            padding: 11px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 5px;
-        }
-
-        .btn-submit:hover {
-            background-color: #008f5a;
-        }
-
-        /* لوحة التحكم الرئيسية */
-        .admin-dashboard-content {
-            display: none;
-        }
-
-        .admin-dashboard-content.active {
-            display: block;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border: 1px solid #e2ece8;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .stat-icon {
-            width: 55px;
-            height: 55px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-info h3 {
-            font-size: 0.85rem;
-            color: var(--text-gray);
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .stat-info p {
-            font-size: 1.6rem;
-            font-weight: 900;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .admin-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e2ece8;
-            padding-bottom: 10px;
-            flex-wrap: wrap;
-            overflow-x: auto;
-            max-width: 100%;
-        }
-
-        .admin-tab-btn {
-            background: none;
-            border: none;
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--text-gray);
-            cursor: pointer;
-            padding: 8px 18px;
-            border-radius: 10px;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .admin-tab-btn.active {
-            background-color: var(--primary-green);
-            color: var(--white);
-        }
-
-        .admin-panel-section {
-            display: none;
-            background: var(--white);
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            border: 1px solid #e2ece8;
-            max-height: 650px;
-            overflow-y: auto;
-        }
-
-        .admin-panel-section.active {
-            display: block;
-        }
-
-        .search-box-container {
-            margin-bottom: 15px;
-        }
-
-        .search-box-container input {
-            width: 100%;
-            max-width: 350px;
-            padding: 10px 14px;
-            border: 1px solid #d2ded7;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            outline: none;
-            background-color: #f8faf9;
-        }
-
-        .search-box-container input:focus {
-            border-color: var(--primary-green);
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: right;
-            margin-top: 10px;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #e2ece8;
-            font-size: 0.9rem;
-        }
-
-        th {
-            background-color: #f2f7f4;
-            color: var(--dark-blue);
-            font-weight: 800;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        tr:hover {
-            background-color: #f9fbf9;
-        }
-
-        .badge-user {
-            background: #e6f7f0;
-            color: var(--primary-green);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            display: inline-block;
-        }
-
-        .action-btn {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 700;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: opacity 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .action-btn:hover { opacity: 0.85; }
-        .btn-danger { background-color: #fadbd8; color: var(--danger); }
-        .btn-success { background-color: #e6f7f0; color: var(--primary-green); }
-
-        /* تصميم محسن وواضح جداً لمبيان الترافيك والبيانات */
-        .traffic-chart-container {
-            padding: 10px 0;
-        }
-        .traffic-filters {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .traffic-filter-btn {
-            background: #f2f7f4;
-            color: var(--dark-blue);
-            border: 1px solid #d2ded7;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .traffic-filter-btn.active {
-            background-color: var(--primary-green);
-            color: var(--white);
-            border-color: var(--primary-green);
-            box-shadow: 0 4px 10px rgba(0, 168, 107, 0.2);
-        }
-        
-        .chart-bars-wrapper {
-            display: flex;
-            align-items: flex-end;
-            gap: 20px;
-            height: 320px;
-            padding: 30px 15px 15px 15px;
-            border-bottom: 3px solid var(--dark-blue);
-            border-right: 3px solid var(--dark-blue);
-            margin-top: 20px;
-            overflow-x: auto;
-            background: #fafcfb;
-            border-radius: 12px;
-        }
-        .chart-bar-col {
-            flex: 1;
-            min-width: 60px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-end;
-        }
-        .chart-bar-fill {
-            width: 100%;
-            max-width: 45px;
-            background: linear-gradient(to top, #008f5a, #00a86b, #2ecc71);
-            border-radius: 8px 8px 0 0;
-            transition: height 0.6s ease;
-            position: relative;
-            box-shadow: 0 4px 12px rgba(0, 168, 107, 0.25);
-        }
-        .chart-bar-fill:hover {
-            opacity: 0.9;
-            transform: scaleY(1.02);
-        }
-        .chart-bar-val {
-            font-size: 0.85rem;
-            font-weight: 900;
-            color: var(--dark-blue);
-            margin-bottom: 8px;
-            background: #e6f7f0;
-            padding: 2px 8px;
-            border-radius: 6px;
-            border: 1px solid #bcead8;
-        }
-        .chart-bar-lbl {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--dark-blue);
-            margin-top: 12px;
-            text-align: center;
-            white-space: nowrap;
-            background: #ffffff;
-            padding: 3px 8px;
-            border-radius: 6px;
-            border: 1px solid #d2ded7;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-
-        /* نافذة التنبيهات المخصصة */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(14, 23, 38, 0.5);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 2000; opacity: 0; visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            padding: 15px;
-        }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-content {
-            background-color: var(--white); width: 100%; max-width: 380px;
-            border-radius: 14px; padding: 25px; text-align: center;
-            box-shadow: 0 5px 20px rgba(14, 23, 38, 0.15);
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-
-        .logout-admin-btn {
-            background: #fadbd8;
-            color: var(--danger);
-            border: none;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 800;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .admin-footer {
-            text-align: center;
-            padding: 15px;
-            font-size: 0.85rem;
-            color: var(--text-gray);
-            background-color: var(--white);
-            border-top: 1px solid #e2ece8;
-            margin-top: auto;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
-    <header class="main-header">
-        <a href="index.html" class="logo">
-            <span class="logo-green">online</span><span class="logo-dark">.بدل</span>
-        </a>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <div class="admin-cpanel-title">
-                <span class="logo-green">Admin</span><span class="logo-dark">cPanel</span>
+    <!-- Header / Navbar -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-indigo-200">
+                    B
+                </div>
+                <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+                    bedal.online - لوحة الإدارة
+                </span>
             </div>
-            <button id="logoutAdminBtn" class="logout-admin-btn" style="display: none;"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl border border-emerald-100 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Supabase Connected
+                </span>
+            </div>
         </div>
     </header>
 
-    <div class="container">
+    <!-- Main Admin Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
-        <!-- صفحة تسجيل الدخول للآدمن -->
-        <div id="adminLoginSection" class="admin-login-wrapper">
-            <div class="admin-login-card">
-                <h2>دخول <span class="logo-green">المشرف (Admin)</span></h2>
-                <form id="adminLoginForm">
-                    <div class="form-group">
-                        <label for="adminUsernameInput">اسم المستخدم:</label>
-                        <input type="text" id="adminUsernameInput" placeholder="أدخل اسم المستخدم..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminPasswordInput">كلمة المرور:</label>
-                        <input type="password" id="adminPasswordInput" placeholder="أدخل كلمة المرور..." required>
-                    </div>
-                    <button type="submit" class="btn-submit">دخول للوحة التحكم</button>
-                </form>
+        <!-- Top Title & Add Button -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600"></i>
+                    لوحة التحليلات والإدارة الذكية
+                </h1>
+                <p class="text-gray-500 text-sm">متابعة المبيعات، الطلبات الواردة، الحسابات، تعديل السلايدر، معلومات المتاجر الشريكة، وعروض Black Free Day.</p>
+            </div>
+            <div>
+                <button onclick="toggleProductModal()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg shadow-indigo-100">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    إضافة منتج جديد مع تحديد المتجر
+                </button>
             </div>
         </div>
 
-        <!-- محتوى لوحة التحكم والتحكم الشامل -->
-        <div id="adminDashboardSection" class="admin-dashboard-content">
-            
-            <!-- إحصائيات فورية -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:#e6f7f0; color:var(--primary-green);"><i class="fa-solid fa-bullhorn"></i></div>
-                    <div class="stat-info">
-                        <h3>إجمالي الإعلانات النشطة</h3>
-                        <p id="statTotalAds">0</p>
-                    </div>
+        <!-- Analytics & Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="dollar-sign" class="w-6 h-6"></i>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:#f2f7f4; color:var(--dark-blue);"><i class="fa-solid fa-users"></i></div>
-                    <div class="stat-info">
-                        <h3>إجمالي المستخدمين</h3>
-                        <p id="statTotalUsers">0</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:#e8f8f5; color:#00a86b;"><i class="fa-solid fa-user-check"></i></div>
-                    <div class="stat-info">
-                        <h3>المستخدمون أونلاين الآن</h3>
-                        <p id="statOnlineUsers">1</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:#fff3f2; color:var(--danger);"><i class="fa-solid fa-handshake"></i></div>
-                    <div class="stat-info">
-                        <h3>طلبات المقايضة الجارية</h3>
-                        <p id="statTotalRequests">0</p>
-                    </div>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium">إجمالي المبيعات</p>
+                    <h4 id="stat-total-sales" class="text-xl font-extrabold text-gray-900 mt-0.5">679.00 د.م</h4>
                 </div>
             </div>
 
-            <!-- أزرار التنقل بين الأقسام -->
-            <div class="admin-tabs">
-                <button class="admin-tab-btn active" onclick="switchAdminTab('ads')"><i class="fa-solid fa-box-archive"></i> إدارة الإعلانات</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('requests')"><i class="fa-solid fa-right-left"></i> طلبات المقايضة المرسلة</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('approvedRequests')"><i class="fa-solid fa-circle-check"></i> المقايضة الموافقة</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('rejectedRequests')"><i class="fa-solid fa-circle-xmark"></i> المقايضة المرفوضة</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('users')"><i class="fa-solid fa-user-gear"></i> إدارة المستخدمين والحظر</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('messages')"><i class="fa-solid fa-envelope"></i> رسائل المستخدمين</button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('traffic')"><i class="fa-solid fa-chart-column"></i> إحصائيات الترافيك والمبيان</button>
-            </div>
-
-            <!-- قسم إدارة الإعلانات -->
-            <div id="adminAdsSection" class="admin-panel-section active">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-list"></i> جميع الإعلانات المنشورة على المنصة</h3>
-                
-                <div class="search-box-container">
-                    <input type="text" id="adsSearchInput" placeholder="ابحث برقم الهاتف أو الإسم..." oninput="filterAdsTable()">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="shopping-bag" class="w-6 h-6"></i>
                 </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>الصورة</th>
-                                <th>عنوان السلعة</th>
-                                <th>إسم و رقم الهاتف</th>
-                                <th>المدينة</th>
-                                <th>تاريخ النشر</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminAdsTableBody">
-                            <tr><td colspan="6" style="text-align: center; color: var(--text-gray);">جاري تحميل الإعلانات...</td></tr>
-                        </tbody>
-                    </table>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium">عدد الطلبات</p>
+                    <h4 id="stat-total-orders" class="text-xl font-extrabold text-gray-900 mt-0.5">2 طلبات</h4>
                 </div>
             </div>
 
-            <!-- قسم طلبات المقايضة المرسلة -->
-            <div id="adminRequestsSection" class="admin-panel-section">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-right-left"></i> تفاصيل طلبات المقايضة وحالة الموافقة (من قاعدة البيانات)</h3>
-                
-                <div class="search-box-container">
-                    <input type="text" id="requestSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterRequestsTable()">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="package" class="w-6 h-6"></i>
                 </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>المرسل (الذي أرسل الطلب)</th>
-                                <th>المستقبل (صاحب السلعة المستهدفة)</th>
-                                <th>صورة المنتوج المرسل</th>
-                                <th>صورة المنتوج المطلوب</th>
-                                <th>تفاصيل السلعة البديلة</th>
-                                <th>حالة الموافقة الواتساب</th>
-                                <th>تاريخ الطلب</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminRequestsTableBody">
-                            <tr><td colspan="8" style="text-align: center; color: var(--text-gray);">جاري تحميل طلبات المقايضة...</td></tr>
-                        </tbody>
-                    </table>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium">إجمالي المنتجات</p>
+                    <h4 id="stat-total-products" class="text-xl font-extrabold text-gray-900 mt-0.5">5 منتجات</h4>
                 </div>
             </div>
 
-            <!-- قسم المقايضة الموافقة -->
-            <div id="adminApprovedRequestsSection" class="admin-panel-section">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-circle-check" style="color:var(--primary-green);"></i> طلبات المقايضة التي وافق عليها المستخدمون</h3>
-                
-                <div class="search-box-container">
-                    <input type="text" id="approvedSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterApprovedRequestsTable()">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center">
+                    <i data-lucide="trending-up" class="w-6 h-6"></i>
                 </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>المرسل (الذي أرسل الطلب)</th>
-                                <th>المستقبل (صاحب السلعة المستهدفة)</th>
-                                <th>صورة المنتوج المرسل</th>
-                                <th>صورة المنتوج المطلوب</th>
-                                <th>تفاصيل السلعة البديلة</th>
-                                <th>حالة الموافقة الواتساب</th>
-                                <th>تاريخ الطلب</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminApprovedRequestsTableBody">
-                            <tr><td colspan="8" style="text-align: center; color: var(--text-gray);">لا توجد طلبات موافق عليها.</td></tr>
-                        </tbody>
-                    </table>
+                <div>
+                    <p class="text-xs text-gray-500 font-medium">معدل التحويل والأرباح</p>
+                    <h4 class="text-xl font-extrabold text-emerald-600 mt-0.5">+14.2%</h4>
                 </div>
             </div>
-
-            <!-- قسم المقايضة المرفوضة -->
-            <div id="adminRejectedRequestsSection" class="admin-panel-section">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);"></i> طلبات المقايضة التي رفضها المستخدمون</h3>
-                
-                <div class="search-box-container">
-                    <input type="text" id="rejectedSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterRejectedRequestsTable()">
-                </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>المرسل (الذي أرسل الطلب)</th>
-                                <th>المستقبل (صاحب السلعة المستهدفة)</th>
-                                <th>صورة المنتوج المرسل</th>
-                                <th>صورة المنتوج المطلوب</th>
-                                <th>تفاصيل السلعة البديلة</th>
-                                <th>حالة الموافقة الواتساب</th>
-                                <th>تاريخ الطلب</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminRejectedRequestsTableBody">
-                            <tr><td colspan="8" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مرفوضة.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- قسم إدارة المستخدمين -->
-            <div id="adminUsersSection" class="admin-panel-section">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-user-shield"></i> قائمة المستخدمين المسجلين في النظام</h3>
-                
-                <div class="search-box-container">
-                    <input type="text" id="userSearchInput" placeholder="ابحث برقم الهاتف أو اسم المستخدم..." oninput="filterUsersTable()">
-                </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>اسم المستخدم</th>
-                                <th>رقم الهاتف</th>
-                                <th>المدينة</th>
-                                <th>كلمة المرور المسجلة</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminUsersTableBody">
-                            <tr><td colspan="5" style="text-align: center; color: var(--text-gray);">جاري تحميل المستخدمين...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- قسم رسائل المستخدمين (تواصل معنا) -->
-            <div id="adminMessagesSection" class="admin-panel-section">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-envelope"></i> رسائل المستخدمين الواردة (تواصل معنا)</h3>
-                
-                <div class="search-box-container">
-                    <input type="text" id="messagesSearchInput" placeholder="ابحث باسم المرسل أو رقم الهاتف..." oninput="filterMessagesTable()">
-                </div>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>اسم المرسل</th>
-                                <th>رقم الهاتف</th>
-                                <th>محتوى الرسالة</th>
-                                <th>التاريخ</th>
-                                <th>الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminMessagesTableBody">
-                            <tr><td colspan="5" style="text-align: center; color: var(--text-gray);">لا توجد رسائل واردة حالياً.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- قسم إحصائيات الترافيك والمبيان المفصل المحسن -->
-            <div id="adminTrafficSection" class="admin-panel-section">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 15px;"><i class="fa-solid fa-chart-line"></i> تحليل وترافيك المنصة المرتبط بقاعدة البيانات حقيقة</h3>
-                
-                <div class="traffic-chart-container">
-                    <div class="traffic-filters">
-                        <button class="traffic-filter-btn active" onclick="renderTrafficChart('day', event)">حسب اليوم</button>
-                        <button class="traffic-filter-btn" onclick="renderTrafficChart('week', event)">حسب الأسبوع</button>
-                        <button class="traffic-filter-btn" onclick="renderTrafficChart('month', event)">حسب الشهر</button>
-                        <button class="traffic-filter-btn" onclick="renderTrafficChart('year', event)">حسب العام</button>
-                    </div>
-
-                    <p id="trafficSummaryText" style="font-size: 0.9rem; font-weight: 800; color: var(--dark-blue); margin-bottom: 15px; background: #f2f7f4; padding: 10px; border-radius: 8px; border: 1px solid #d2ded7;"></p>
-
-                    <div class="chart-bars-wrapper" id="trafficChartBars"></div>
-                </div>
-            </div>
-
         </div>
 
+        <!-- Admin Sub-tabs Navigation -->
+        <div class="flex items-center gap-3 border-b border-gray-200 overflow-x-auto pb-1">
+            <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i> تتبع المبيعات والطلبات وزر إرسالها للمتاجر
+            </button>
+            <button onclick="switchAdminTab('accounting')" id="admin-tab-btn-accounting" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="calculator" class="w-4 h-4"></i> قسم الحسابات والأرباح
+            </button>
+            <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="box" class="w-4 h-4"></i> إدارة المنتجات والمتاجر المرتبطة
+            </button>
+            <button onclick="switchAdminTab('black_free_day')" id="admin-tab-btn-black_free_day" class="px-5 py-3 border-b-2 border-transparent text-amber-600 font-bold text-sm hover:text-amber-700 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> إدارة منتجات Black Free Day 🔥
+            </button>
+            <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="sliders" class="w-4 h-4"></i> تعديل السلايدر (صور وعناوين)
+            </button>
+            <button onclick="switchAdminTab('vendors')" id="admin-tab-btn-vendors" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                <i data-lucide="store" class="w-4 h-4"></i> إدارة المتاجر ومعلوماتها (هاتف، مدينة)
+            </button>
+        </div>
+
+        <!-- TAB 1: Sales & Orders Tracking -->
+        <div id="admin-subtab-orders" class="block space-y-4">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                    <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-600"></i> سجل طلبات الزبناء، المتجر المعني، وإرسال الطلب لصاحب المتجر
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm text-gray-600">
+                        <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b">
+                            <tr>
+                                <th class="p-4">اسم الزبون</th>
+                                <th class="p-4">رقم الهاتف</th>
+                                <th class="p-4">العنوان والمدينة</th>
+                                <th class="p-4">المنتج المطلوب</th>
+                                <th class="p-4">المتجر المسؤول عن السلعة</th>
+                                <th class="p-4">المبلغ</th>
+                                <th class="p-4">الحالة الحالية</th>
+                                <th class="p-4">إرسال الطلب لمول المتجر (واتساب)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-table-body" class="divide-y divide-gray-100">
+                            <!-- Dynamic Orders -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Accounting Section (قسم الحسابات والمصاريف) -->
+        <div id="admin-subtab-accounting" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+                <div class="border-b pb-4">
+                    <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                        <i data-lucide="calculator" class="w-5 h-5 text-indigo-600"></i>
+                        حاسبة الحسابات ومصاريف الشحن والإعلانات
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">أدخل التكاليف لحساب الربح الصافي بدقة لكل طلب أو للحملات الإعلانية.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">مصاريف الشحن والتوصيل (د.م)</label>
+                        <input type="number" id="acc-shipping-cost" placeholder="35" value="35" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600" oninput="calculateNetProfit()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">تكلفة الإعلان (Ads) لكل طلب (د.م)</label>
+                        <input type="number" id="acc-ads-cost" placeholder="25" value="25" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600" oninput="calculateNetProfit()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">تكلفة شراء المنتج / السلعة (د.م)</label>
+                        <input type="number" id="acc-product-cost" placeholder="100" value="100" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600" oninput="calculateNetProfit()">
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50/60 rounded-2xl p-5 border border-indigo-100 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                    <div>
+                        <span class="block text-xs text-gray-500 font-bold">إجمالي المداخيل</span>
+                        <span id="acc-total-revenue" class="text-xl font-extrabold text-gray-900 mt-1 block">679.00 د.م</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-gray-500 font-bold">مجموع المصاريف (شحن + إعلان + سلعة)</span>
+                        <span id="acc-total-expenses" class="text-xl font-extrabold text-rose-600 mt-1 block">320.00 د.م</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-gray-500 font-bold">صافي الربح الحقيقي</span>
+                        <span id="acc-net-profit" class="text-2xl font-black text-emerald-600 mt-1 block">359.00 د.م</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Products Management, 5 Images Editing & Discounts -->
+        <div id="admin-subtab-products" class="hidden space-y-4">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                    <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                        <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> قائمة المنتجات العادية (المرتبطة بالمتاجر)، الصور والخصومات
+                    </h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm text-gray-600">
+                        <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b">
+                            <tr>
+                                <th class="p-4">الصور</th>
+                                <th class="p-4">اسم المنتج</th>
+                                <th class="p-4">المتجر المسؤول</th>
+                                <th class="p-4">التصنيف</th>
+                                <th class="p-4">السعر الأصلي / الجديد</th>
+                                <th class="p-4">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-products-table-body" class="divide-y divide-gray-100">
+                            <!-- Dynamic Products -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: Black Free Day Management (قسم إدارة منتجات Black Free Day) -->
+        <div id="admin-subtab-black_free_day" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-amber-200 shadow-sm space-y-6">
+                <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                            <i data-lucide="flame" class="w-5 h-5 text-amber-500 fill-amber-500"></i>
+                            إدارة عروض وتخفيضات Black Free Day (السبت والأحد)
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">اختر المنتجات من القناة العادية وأضفها مباشرة لعروض نهاية الأسبوع (سيتم إزالتها تلقائياً من المتجر العادي).</p>
+                    </div>
+                </div>
+
+                <!-- Add Existing Product to Black Free Day Selector -->
+                <div class="bg-amber-50/50 p-4 rounded-2xl border border-amber-200 space-y-3">
+                    <h4 class="font-bold text-amber-900 text-sm flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4 h-4 text-amber-600"></i> اختر منتجاً من المتجر لإضافته إلى Black Free Day:
+                    </h4>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <select id="select-product-to-bfd" class="flex-grow px-4 py-2.5 rounded-xl border border-amber-300 text-sm bg-white font-bold text-gray-800 focus:outline-none focus:border-amber-500">
+                            <!-- Dynamic Product Options -->
+                        </select>
+                        <button onclick="addSelectedProductToBlackFreeDay()" class="bg-amber-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-amber-700 transition-colors shadow-md text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="zap" class="w-4 h-4"></i> إضافة لـ Black Free Day وإلغاؤه من العادي
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Active Black Free Day Products Table -->
+                <div class="rounded-2xl border border-gray-200 overflow-hidden">
+                    <div class="p-4 bg-gray-50 border-b font-bold text-gray-800 text-sm flex items-center justify-content">
+                        <span>المنتجات الحالية المعروضة في صفحة Black Free Day</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-sm text-gray-600">
+                            <thead class="bg-gray-50/70 text-gray-700 font-semibold text-xs border-b">
+                               <tr>
+                                   <th class="p-3">الصورة</th>
+                                   <th class="p-3">اسم المنتج</th>
+                                   <th class="p-3">ثمن العرض</th>
+                                   <th class="p-3">الثمن الأصلي</th>
+                                   <th class="p-3">الإجراء (إزالة وإعادة للعادي)</th>
+                               </tr>
+                            </thead>
+                            <tbody id="admin-bfd-table-body" class="divide-y divide-gray-100">
+                                <!-- Dynamic BFD Products -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: Slider Customization (تعديل صور وعناوين السلايدر) -->
+        <div id="admin-subtab-slider" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+                <div class="border-b pb-4 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                            <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i>
+                            إدارة وتعديل شرائح السلايدر (Hero Slider)
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">قم بتعديل العناوين، الأوصاف، الروابط، وصور الخلفية للسلايدر المعروض في الواجهة الرئيسية.</p>
+                    </div>
+                    <button onclick="saveSliderChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
+                        حفظ وتطبيق السلايدر
+                    </button>
+                </div>
+
+                <div id="admin-slider-editor-container" class="space-y-6">
+                    <!-- Dynamic Slider Edit Cards -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: Partner Stores Customization (قسم المتاجر الشريكة ومعلوماتها) -->
+        <div id="admin-subtab-vendors" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+                <div class="border-b pb-4 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                            <i data-lucide="store" class="w-5 h-5 text-indigo-600"></i>
+                            إدارة المتاجر الشريكة (معلومات الاتصال: الإسم، الهاتف، المدينة)
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">تحديد رقم الهاتف والمدينة لكل متجر لتسهيل إرسال الطلبات إليهم مباشرة.</p>
+                    </div>
+                    <button onclick="saveVendorChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
+                        حفظ وتطبيق معلومات المتاجر
+                    </button>
+                </div>
+
+                <div id="admin-vendors-editor-container" class="space-y-6">
+                    <!-- Dynamic Vendor Edit Cards -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Form: Add / Edit Product with Store Assignment & 5 Images -->
+    <div id="product-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="toggleProductModal()" class="absolute top-5 left-5 text-gray-400 hover:text-gray-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <h3 id="modal-form-title" class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <i data-lucide="plus-circle" class="w-6 h-6 text-indigo-600"></i>
+                إضافة منتج جديد وتحديد المتجر المعني
+            </h3>
+
+            <input type="hidden" id="edit-prod-index" value="-1">
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">اسم المنتج *</label>
+                    <input type="text" id="prod-form-title" placeholder="اسم المنتج" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600">
+                </div>
+
+                <!-- Select Partner Store for the Product -->
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">اختر المتجر الشريك الذي تم أخذ المنتوج عنده *</label>
+                    <select id="prod-form-store" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600 bg-white font-bold text-indigo-600">
+                        <!-- Dynamic Store Options -->
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">الثمن الأصلي (د.م) *</label>
+                        <input type="number" id="prod-form-price" placeholder="350" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">الثمن بعد الخصم</label>
+                        <input type="number" id="prod-form-discount-price" placeholder="299" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-1">التصنيف *</label>
+                        <select id="prod-form-category" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600 bg-white">
+                            <option value="women">نساء</option>
+                            <option value="men">رجال</option>
+                            <option value="kids">أطفال</option>
+                            <option value="various">منتجات متنوعة</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 5 Images Section -->
+                <div class="border-t border-b py-4 space-y-3">
+                    <h4 class="font-bold text-gray-800 flex items-center gap-2">
+                        <i data-lucide="images" class="w-4 h-4 text-indigo-600"></i>
+                        روابط صور المنتج (5 صور)
+                    </h4>
+                    
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">1. الصورة الرئيسية *</label>
+                            <input type="url" id="prod-form-img-1" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">2. الصورة الثانية</label>
+                            <input type="url" id="prod-form-img-2" placeholder="رابط الصورة 2" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">3. الصورة الثالثة</label>
+                            <input type="url" id="prod-form-img-3" placeholder="رابط الصورة 3" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">4. الصورة الرابعة</label>
+                            <input type="url" id="prod-form-img-4" placeholder="رابط الصورة 4" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">5. الصورة الخامسة</label>
+                            <input type="url" id="prod-form-img-5" placeholder="رابط الصورة 5" class="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs focus:outline-none focus:border-indigo-600" oninput="updateImagesPreview()">
+                        </div>
+                    </div>
+
+                    <!-- Images Preview Grid -->
+                    <div class="pt-2">
+                        <span class="block text-xs font-semibold text-gray-500 mb-2">معاينة الصور الـ 5:</span>
+                        <div class="grid grid-cols-5 gap-2" id="modal-images-preview-grid">
+                            <!-- Preview Items -->
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">وصف المنتج *</label>
+                    <textarea id="prod-form-desc" rows="2" placeholder="تفاصيل المنتج..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600"></textarea>
+                </div>
+
+                <button onclick="saveProductForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    حفظ التغييرات في النظام
+                </button>
+            </div>
+        </div>
     </div>
 
-    <footer class="admin-footer">
-        جميع الحقوق محفوظة &copy; 2026 online.بدل - مجاني • سريع • آمن <span class="version-tag" style="color: #718096; font-size: 0.75rem;">v0.9.41</span>
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+            <div>
+                © 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.7.0-release</span>
+                </span>
+            </div>
+        </div>
     </footer>
 
-    <!-- نافذة تكبير الصورة -->
-    <div class="modal-overlay" id="imageModalOverlay" onclick="closeImageModal()">
-        <div class="modal-content" style="max-width: 500px; padding: 15px;" onclick="event.stopPropagation()">
-            <img id="modalZoomedImg" src="" style="width: 100%; max-height: 75vh; object-fit: contain; border-radius: 10px; margin-bottom: 15px;">
-            <button type="button" class="btn-submit" onclick="closeImageModal()">إغلاق</button>
-        </div>
-    </div>
-
-    <!-- نافذة التنبيهات العامة -->
-    <div class="modal-overlay" id="customAlertModal">
-        <div class="modal-content">
-            <div id="customAlertIcon" style="font-size: 2.2rem; color: var(--primary-green); margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i></div>
-            <p id="customAlertMessage" style="font-size: 0.95rem; font-weight: 700; color: var(--dark-blue); margin-bottom: 15px;"></p>
-            <button type="button" class="btn-submit" id="customAlertOkBtn">حسناً</button>
-        </div>
-    </div>
-
-    <!-- نافذة تأكيد الحذف أو الحظر -->
-    <div class="modal-overlay" id="customConfirmModal">
-        <div class="modal-content">
-            <div style="font-size: 2.2rem; color: var(--danger); margin-bottom: 10px;"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <p id="customConfirmMessage" style="font-size: 0.95rem; font-weight: 700; color: var(--dark-blue); margin-bottom: 15px;"></p>
-            <div style="display: flex; gap: 10px;">
-                <button type="button" class="btn-submit" id="customConfirmYesBtn" style="background-color: var(--danger);">تأكيد</button>
-                <button type="button" class="btn-submit" id="customConfirmNoBtn" style="background-color: var(--text-gray);">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- App Logic Script -->
     <script>
-        const SUPABASE_URL = 'https://pjhkvfuknzvwsiznhhfn.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_WbY6CQps3E0OJobdxS6cBQ_hNGrxtyP';
-        const _supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+        // Partner Stores Database with Name, Phone, and City
+        let partnerStoresDatabase = [
+            { key: '3d_peintures', name: '3D Peintures', phone: '212611223344', city: 'القنيطرة', subtitle: 'صباغة ومواد الديكور', logo: 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=400&q=80', desc: 'متجر متخصص في أجود أنواع الصباغة والديكورات الحديثة والمواد الكيماوية.' },
+            { key: 'trio_parfums', name: 'TRIO PARFUMS', phone: '212622334455', city: 'الرباط', subtitle: 'عطور وتجميل فاخر', logo: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=400&q=80', desc: 'تشكيلة فاخرة من العطور العالمية والزيوت العطرية الأصلية.' },
+            { key: 'tech_zone', name: 'Tech Zone', phone: '212633445566', city: 'الدار البيضاء', subtitle: 'إلكترونيات وساعات ذكية', logo: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=400&q=80', desc: 'أحدث الساعات الذكية والأجهزة الصوتية والإلكترونيات.' },
+            { key: 'fashion_elegance', name: 'Fashion Elegance', phone: '212644556677', city: 'مراكش', subtitle: 'أزياء وحقائب نسائية', logo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=400&q=80', desc: 'أرق الملابس والحقائب النسائية المصممة بأعلى جودة.' }
+        ];
 
-        const ADMIN_USER = 'ZAMZAMAM';
-        const ADMIN_PASS = 'ZAMZAM14634ALFMRNA';
-
-        let allLoadedUsers = [];
-        let globalCachedAds = [];
-        let globalCachedRawData = [];
-        let globalCachedUsersMap = {};
-        let globalCachedAdsMap = {};
-        let currentTrafficMode = 'day';
-
-        function showCustomAlert(msg, isSuccess = true) {
-            const modal = document.getElementById('customAlertModal');
-            document.getElementById('customAlertMessage').textContent = msg;
-            const icon = document.getElementById('customAlertIcon');
-            icon.innerHTML = isSuccess ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-circle-exclamation"></i>';
-            icon.style.color = isSuccess ? 'var(--primary-green)' : 'var(--danger)';
-            modal.classList.add('active');
-        }
-
-        document.getElementById('customAlertOkBtn').addEventListener('click', () => {
-            document.getElementById('customAlertModal').classList.remove('active');
-        });
-
-        let pendingConfirmCallback = null;
-        function showCustomConfirm(msg, callback) {
-            document.getElementById('customConfirmMessage').textContent = msg;
-            pendingConfirmCallback = callback;
-            document.getElementById('customConfirmModal').classList.add('active');
-        }
-
-        document.getElementById('customConfirmNoBtn').addEventListener('click', () => {
-            document.getElementById('customConfirmModal').classList.remove('active');
-            pendingConfirmCallback = null;
-        });
-        document.getElementById('customConfirmYesBtn').addEventListener('click', () => {
-            document.getElementById('customConfirmModal').classList.remove('active');
-            if (pendingConfirmCallback) {
-                pendingConfirmCallback();
-                pendingConfirmCallback = null;
+        // Products Database with Store Association (Admin Exclusive view)
+        let productsDatabase = [
+            { 
+                title: 'ساعة ذكية متطورة', 
+                storeKey: 'tech_zone',
+                price: 350.00, 
+                discountPrice: 299.00, 
+                images: [
+                    'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1510017803434-a899398421b3?auto=format&fit=crop&w=600&q=80'
+                ],
+                category: 'various', 
+                catLabel: 'إلكترونيات', 
+                description: 'تتبع نشاطك اليومي وصحتك بدقة عالية.' 
+            },
+            { 
+                title: 'سماعات رأس لاسلكية', 
+                storeKey: 'tech_zone',
+                price: 500.00, 
+                discountPrice: 450.00, 
+                images: [
+                    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1524678606370-a47ad25cb82a?auto=format&fit=crop&w=600&q=80'
+                ],
+                category: 'various', 
+                catLabel: 'صوتيات', 
+                description: 'جودة صوت عالية ونقية وتصميم مريح.' 
+            },
+            { 
+                title: 'حقيبة يد نسائية فاخرة', 
+                storeKey: 'fashion_elegance',
+                price: 420.00, 
+                discountPrice: 380.00, 
+                images: [
+                    'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&w=600&q=80'
+                ],
+                category: 'women', 
+                catLabel: 'نساء', 
+                description: 'حقيبة يد أنيقة مصنوعة من الجلد العالي الجودة.' 
+            },
+            { 
+                title: 'حذاء رياضي رجالي', 
+                storeKey: 'fashion_elegance',
+                price: 360.00, 
+                discountPrice: 320.00, 
+                images: [
+                    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=600&q=80'
+                ],
+                category: 'men', 
+                catLabel: 'رجال', 
+                description: 'حذاء رياضي مريح بجودة ممتازة.' 
+            },
+            { 
+                title: 'طقم ملابس أطفال قطني', 
+                storeKey: '3d_peintures',
+                price: 230.00, 
+                discountPrice: 199.00, 
+                images: [
+                    'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=600&q=80',
+                    'https://images.unsplash.com/photo-1503944583220-79d8926ad5e2?auto=format&fit=crop&w=600&q=80'
+                ],
+                category: 'kids', 
+                catLabel: 'أطفال', 
+                description: 'طقم قطني ناعم ومريح لبشرة الأطفال.' 
             }
-        });
+        ];
 
-        window.openImageModal = function(imgUrl) {
-            if (!imgUrl) return;
-            document.getElementById('modalZoomedImg').src = imgUrl;
-            document.getElementById('imageModalOverlay').classList.add('active');
+        // Black Free Day Database in Admin
+        let adminBlackFreeDayProducts = [
+            { title: 'طقم عطور ملكية حصرية', price: 399.00, oldPrice: 799.00, discountBadge: 'خصم Black Free Day 50%', img: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=600&q=80', cat: 'عطور', desc: 'عرض خاص ليومي السبت والأحد: طقم عطور أصلية بتركيبة مركزة.' },
+            { title: 'ساعة فاخرة إصدار محدود', price: 599.00, oldPrice: 1200.00, discountBadge: 'خصم Black Free Day 50%', img: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80', cat: 'إلكترونيات', desc: 'ساعة أنيقة بتصميم فريد متوفرة حصرياً لعطلة نهاية الأسبوع.' },
+            { title: 'جاكيت جلد رجالي فاخر', price: 450.00, oldPrice: 900.00, discountBadge: 'خصم Black Free Day 50%', img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80', cat: 'رجال', desc: 'جلد طبيعي عالي الجودة متوفر حصرياً في تخفيضات السبت والأحد.' }
+        ];
+
+        // Sales Orders Database
+        let salesOrdersDatabase = [
+            { name: 'محمد العلوي', phone: '0661234567', address: 'الدار البيضاء', product: 'ساعة ذكية متطورة', storeKey: 'tech_zone', price: 299.00, status: 'مكتمل' },
+            { name: 'فاطمة الزهراء', phone: '0669876543', address: 'الرباط', product: 'حقيبة يد نسائية فاخرة', storeKey: 'fashion_elegance', price: 380.00, status: 'قيد الانتظار' }
+        ];
+
+        // Slider Database
+        let sliderDatabase = [
+            { badge: 'تخفيضات الكبرى', title: 'عروض حصرية تصل إلى 40%', desc: 'تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.', img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80' },
+            { badge: 'توصيل سريع', title: 'تسوق بكل راحة من منزلك', desc: 'منتجات موثوقة وجودة ممتازة تصلك أينما كنت.', img: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1200&q=80' },
+            { badge: 'متاجر متنوعة', title: 'أقوى الماركات والمتاجر المحلية', desc: 'اختر منتجك المفضل وسجّل طلبك بضغطة زر.', img: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1200&q=80' }
+        ];
+
+        function getStoreByKey(key) {
+            return partnerStoresDatabase.find(s => s.key === key) || { name: 'متجر عام', phone: '212600000000', city: 'المغرب' };
         }
 
-        window.closeImageModal = function() {
-            document.getElementById('imageModalOverlay').classList.remove('active');
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            if (sessionStorage.getItem('badal_admin_logged') === 'true') {
-                activateAdminDashboard();
-            }
-        });
-
-        document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const userInput = document.getElementById('adminUsernameInput').value.trim();
-            const passInput = document.getElementById('adminPasswordInput').value;
-            
-            if (userInput === ADMIN_USER && passInput === ADMIN_PASS) {
-                sessionStorage.setItem('badal_admin_logged', 'true');
-                activateAdminDashboard();
-                showCustomAlert('مرحباً بك في لوحة التحكم الشاملة للآدمن', true);
-            } else {
-                showCustomAlert('اسم المستخدم أو كلمة المرور غير صحيحة!', false);
-            }
-        });
-
-        document.getElementById('logoutAdminBtn').addEventListener('click', () => {
-            sessionStorage.removeItem('badal_admin_logged');
-            location.reload();
-        });
-
-        function activateAdminDashboard() {
-            document.getElementById('adminLoginSection').style.display = 'none';
-            document.getElementById('adminDashboardSection').classList.add('active');
-            document.getElementById('logoutAdminBtn').style.display = 'flex';
-            loadAdminData();
-            setupRealtimeSubscription();
-            setupOnlinePresenceTracking();
-        }
-
-        function setupOnlinePresenceTracking() {
-            if (!_supabase) return;
-            const channel = _supabase.channel('online-admin-room', {
-                config: { presence: { key: 'admin_panel_user' } }
-            });
-
-            channel.on('presence', { event: 'sync' }, () => {
-                const state = channel.presenceState();
-                let totalOnline = 0;
-                for (let id in state) {
-                    totalOnline += state[id].length;
-                }
-                document.getElementById('statOnlineUsers').textContent = Math.max(1, totalOnline);
-            });
-
-            channel.subscribe(async (status) => {
-                if (status === 'SUBSCRIBED') {
-                    await channel.track({ online_at: new Date().toISOString() });
-                }
-            });
-        }
-
-        function setupRealtimeSubscription() {
-            if (!_supabase) return;
-            _supabase
-                .channel('public:products')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, payload => {
-                    loadAdminData();
-                })
-                .subscribe();
-        }
-
-        function switchAdminTab(tab) {
-            document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.admin-panel-section').forEach(s => s.classList.remove('active'));
-
-            if (tab === 'ads') {
-                event.currentTarget.classList.add('active');
-                document.getElementById('adminAdsSection').classList.add('active');
-                renderAdsTable(globalCachedAds);
-            } else if (tab === 'requests') {
-                event.currentTarget.classList.add('active');
-                document.getElementById('adminRequestsSection').classList.add('active');
-                renderRequestsTable(globalCachedRawData);
-            } else if (tab === 'approvedRequests') {
-                event.currentTarget.classList.add('active');
-                document.getElementById('adminApprovedRequestsSection').classList.add('active');
-                renderApprovedRequestsTable(globalCachedRawData);
-            } else if (tab === 'rejectedRequests') {
-                event.currentTarget.classList.add('active');
-                document.getElementById('adminRejectedRequestsSection').classList.add('active');
-                renderRejectedRequestsTable(globalCachedRawData);
-            } else if (tab === 'users') {
-                event.currentTarget.classList.add('active');
-                document.getElementById('adminUsersSection').classList.add('active');
-                renderUsersTable(allLoadedUsers);
-            } else if (tab === 'messages') {
-                event.currentTarget.classList.add('active');
-                document.getElementById('adminMessagesSection').classList.add('active');
-                renderMessagesTable(globalCachedRawData);
-            } else if (tab === 'traffic') {
-                event.currentTarget.classList.add('active');
-                document.getElementById('adminTrafficSection').classList.add('active');
-                renderTrafficChart(currentTrafficMode);
-            }
-        }
-
-        async function loadAdminData() {
-            if (!_supabase) return;
-            try {
-                const { data, error } = await _supabase.from('products').select('*');
-                if (!error && data) {
-                    globalCachedRawData = data;
-                    const pureAds = data.filter(i => {
-                        const desc = i.description || '';
-                        return !desc.includes('[USER_ACCOUNT]') && !desc.includes('[EXCHANGE_REQUEST]') && !desc.includes('[CONTACT_MESSAGE]') && !desc.includes('[USER_MESSAGE]');
-                    });
-                    const users = data.filter(i => (i.description || '').includes('[USER_ACCOUNT]'));
-                    const requests = data.filter(i => (i.description || '').includes('[EXCHANGE_REQUEST]'));
-
-                    document.getElementById('statTotalAds').textContent = pureAds.length;
-                    document.getElementById('statTotalUsers').textContent = users.length;
-                    document.getElementById('statTotalRequests').textContent = requests.length;
-
-                    parseAndStoreUsers(users);
-                    parseAndStoreAds(pureAds);
-                    globalCachedAds = pureAds;
-
-                    renderAdsTable(pureAds);
-                    renderRequestsTable(data);
-                    renderApprovedRequestsTable(data);
-                    renderRejectedRequestsTable(data);
-                    renderMessagesTable(data);
-                    renderTrafficChart(currentTrafficMode);
-                    if (document.getElementById('adminUsersSection').classList.contains('active')) {
-                        renderUsersTable(allLoadedUsers);
-                    }
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        function parseAndStoreUsers(data) {
-            globalCachedUsersMap = {};
-            allLoadedUsers = data.map(userRec => {
-                const desc = userRec.description || '';
-                const nameMatch = desc.match(/\[NAME:(.*?)\]/);
-                const phoneMatch = desc.match(/\[USER_PHONE:(.*?)\]/);
-                const cityMatch = desc.match(/\[CITY:(.*?)\]/);
-                const passMatch = desc.match(/\[PASSWORD:(.*?)\]/);
-
-                const uName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
-                const uPhone = phoneMatch ? phoneMatch[1].trim() : '';
-
-                if (uPhone) {
-                    globalCachedUsersMap[uPhone] = uName;
-                }
-
-                return {
-                    id: userRec.id,
-                    name: uName,
-                    phone: uPhone,
-                    city: cityMatch ? cityMatch[1] : 'القنيطرة',
-                    password: passMatch ? passMatch[1] : '***'
-                };
-            });
-        }
-
-        function parseAndStoreAds(ads) {
-            globalCachedAdsMap = {};
-            ads.forEach(ad => {
-                globalCachedAdsMap[ad.id] = ad;
-            });
-        }
-
-        function checkIsAccepted(req) {
-            const desc = req.description || '';
-            const status = (req.status || '').toLowerCase();
-            if (status === 'approved' || status === 'accepted') return true;
-            if (desc.includes('[STATUS:APPROVED]') || desc.includes('[STATUS:ACCEPTED]') || desc.includes('[APPROVED]') || desc.includes('[ACCEPTED]') || desc.includes('[STATUS: ACCEPTED]')) return true;
-            
-            let acceptedList = [];
-            try { 
-                acceptedList = JSON.parse(localStorage.getItem('badal_accepted_exchanges') || localStorage.getItem('accepted_exchanges') || localStorage.getItem('badal_approved') || '[]'); 
-            } catch(e) { acceptedList = []; }
-
-            return acceptedList.some(item => String(item.id) === String(req.id) || String(item.product_id) === String(req.id));
-        }
-
-        function checkIsRejected(req) {
-            const desc = req.description || '';
-            const status = (req.status || '').toLowerCase();
-            if (status === 'rejected') return true;
-            if (desc.includes('[STATUS:REJECTED]') || desc.includes('[REJECTED]') || desc.includes('[STATUS: REJECTED]')) return true;
-            
-            let rejectedList = [];
-            try { 
-                rejectedList = JSON.parse(localStorage.getItem('badal_rejected_exchanges') || localStorage.getItem('rejected_exchanges') || localStorage.getItem('badal_rejected') || '[]'); 
-            } catch(e) { rejectedList = []; }
-
-            return rejectedList.some(item => String(item.id) === String(req.id) || String(item.product_id) === String(req.id));
-        }
-
-        function getUnifiedRequestsSource(allData) {
-            let reqsMap = new Map();
-            allData.forEach(item => {
-                const desc = item.description || '';
-                if (desc.includes('[EXCHANGE_REQUEST]') || desc.includes('طلب مقايضة') || desc.includes('[TARGET_PRODUCT_ID]')) {
-                    reqsMap.set(String(item.id), item);
-                }
-            });
-
-            let allLocalKeys = ['badal_accepted_exchanges', 'accepted_exchanges', 'badal_approved', 'badal_rejected_exchanges', 'rejected_exchanges', 'badal_rejected', 'badal_exchange_requests'];
-            allLocalKeys.forEach(key => {
-                try {
-                    let list = JSON.parse(localStorage.getItem(key) || '[]');
-                    list.forEach(item => {
-                        if (item && item.id && !reqsMap.has(String(item.id))) {
-                            reqsMap.set(String(item.id), item);
-                        }
-                    });
-                } catch(e) {}
-            });
-
-            return Array.from(reqsMap.values());
-        }
-
-        function renderRequestsTable(allData, filterQuery = '') {
-            const tbody = document.getElementById('adminRequestsTableBody');
-            tbody.innerHTML = '';
-            
-            let requests = getUnifiedRequestsSource(allData).filter(i => !checkIsAccepted(i) && !checkIsRejected(i));
-            requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-
-            if (filterQuery) {
-                const q = filterQuery.toLowerCase();
-                requests = requests.filter(req => {
-                    const desc = req.description || '';
-                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/) || desc.match(/المرسل:\s*([^\n]+)/);
-                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/) || desc.match(/الهاتف:\s*([^\n]+)/);
-                    
-                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
-                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
-
-                    return sName.includes(q) || sPhone.includes(q);
-                });
-            }
-
-            if (requests.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مقايضة مرسلة قيد الانتظار مطابقة.</td></tr>';
-                return;
-            }
-
-            requests.forEach(req => {
-                const desc = req.description || '';
-                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/) || desc.match(/المرسل:\s*([^\n]+)/);
-                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/) || desc.match(/الهاتف:\s*([^\n]+)/);
-                const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
-                const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
-                const descMatch = desc.match(/\[DESC:(.*?)\]/);
-
-                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
-                const senderPhone = phoneMatch ? phoneMatch[1].trim() : 'غير متوفر';
-                const targetProductId = targetIdMatch ? targetIdMatch[1].trim() : '';
-                let receiverPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim() : '';
-                const senderDesc = descMatch ? descMatch[1].trim() : (req.title || 'بدون وصف');
-                const dateStr = req.created_at ? new Date(req.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
-
-                const senderImgUrl = req.image_url || '';
-                const senderImgTag = senderImgUrl 
-                    ? `<img src="${senderImgUrl}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${senderImgUrl}')" title="انقر لتكبير صورة المنتوج المرسل">` 
-                    : '<span style="color:#aaa; font-size:0.8rem;">لا توجد صورة</span>';
-
-                let targetImgUrl = '';
-                let receiverName = 'مستخدم الموقع';
-                if (targetProductId && globalCachedAdsMap[targetProductId]) {
-                    const targetAd = globalCachedAdsMap[targetProductId];
-                    targetImgUrl = targetAd.image_url || '';
-                    if (!receiverPhone) {
-                        const pMatch = (targetAd.description || '').match(/\(الهاتف:\s*([^\s-]+)/);
-                        if (pMatch) receiverPhone = pMatch[1].trim();
-                    }
-                }
-
-                if (receiverPhone && globalCachedUsersMap[receiverPhone]) {
-                    receiverName = globalCachedUsersMap[receiverPhone];
-                }
-                receiverPhone = receiverPhone || 'غير متوفرة';
-
-                const targetImgTag = targetImgUrl 
-                    ? `<img src="${targetImgUrl}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${targetImgUrl}')" title="انقر لتكبير صورة المنتوج المطلوب">` 
-                    : '<span style="color:#aaa; font-size:0.8rem;">لا توجد صورة</span>';
-
-                const statusHTML = `<span class="badge-user" style="background:#fef5e7; color:#d35400;"><i class="fa-solid fa-clock"></i> قيد الإنتظار</span>`;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);"><i class="fa-solid fa-phone"></i> ${senderPhone}</span></td>
-                    <td><span class="badge-user"><i class="fa-solid fa-user-shield"></i> ${receiverName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);"><i class="fa-solid fa-phone"></i> ${receiverPhone}</span></td>
-                    <td>${senderImgTag}</td>
-                    <td>${targetImgTag}</td>
-                    <td style="font-weight:700;">${senderDesc}</td>
-                    <td>${statusHTML}</td>
-                    <td>${dateStr}</td>
-                    <td>
-                        <button onclick="adminApproveRequest(${req.id})" class="action-btn btn-success" style="margin-bottom:4px;"><i class="fa-solid fa-check"></i> موافقة</button><br>
-                        <button onclick="adminDeleteRequest(${req.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderApprovedRequestsTable(allData, filterQuery = '') {
-            const tbody = document.getElementById('adminApprovedRequestsTableBody');
-            tbody.innerHTML = '';
-            
-            let requests = getUnifiedRequestsSource(allData).filter(i => checkIsAccepted(i));
-            requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-
-            if (filterQuery) {
-                const q = filterQuery.toLowerCase();
-                requests = requests.filter(req => {
-                    const desc = req.description || '';
-                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/) || desc.match(/المرسل:\s*([^\n]+)/);
-                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/) || desc.match(/الهاتف:\s*([^\n]+)/);
-                    
-                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
-                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
-
-                    return sName.includes(q) || sPhone.includes(q);
-                });
-            }
-
-            if (requests.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-gray);">لا توجد طلبات موافق عليها.</td></tr>';
-                return;
-            }
-
-            requests.forEach(req => {
-                const desc = req.description || '';
-                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/) || desc.match(/المرسل:\s*([^\n]+)/);
-                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/) || desc.match(/الهاتف:\s*([^\n]+)/);
-                const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
-                const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
-                const descMatch = desc.match(/\[DESC:(.*?)\]/);
-
-                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
-                const senderPhone = phoneMatch ? phoneMatch[1].trim() : 'غير متوفر';
-                const targetProductId = targetIdMatch ? targetIdMatch[1].trim() : '';
-                let receiverPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim() : '';
-                const senderDesc = descMatch ? descMatch[1].trim() : (req.title || 'بدون وصف');
-                const dateStr = req.created_at ? new Date(req.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
-
-                const senderImgUrl = req.image_url || '';
-                const senderImgTag = senderImgUrl 
-                    ? `<img src="${senderImgUrl}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${senderImgUrl}')" title="انقر لتكبير صورة المنتوج المرسل">` 
-                    : '<span style="color:#aaa; font-size:0.8rem;">لا توجد صورة</span>';
-
-                let targetImgUrl = '';
-                let receiverName = 'مستخدم الموقع';
-                if (targetProductId && globalCachedAdsMap[targetProductId]) {
-                    const targetAd = globalCachedAdsMap[targetProductId];
-                    targetImgUrl = targetAd.image_url || '';
-                    if (!receiverPhone) {
-                        const pMatch = (targetAd.description || '').match(/\(الهاتف:\s*([^\s-]+)/);
-                        if (pMatch) receiverPhone = pMatch[1].trim();
-                    }
-                }
-
-                if (receiverPhone && globalCachedUsersMap[receiverPhone]) {
-                    receiverName = globalCachedUsersMap[receiverPhone];
-                }
-                receiverPhone = receiverPhone || 'غير متوفرة';
-
-                const targetImgTag = targetImgUrl 
-                    ? `<img src="${targetImgUrl}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${targetImgUrl}')" title="انقر لتكبير صورة المنتوج المطلوب">` 
-                    : '<span style="color:#aaa; font-size:0.8rem;">لا توجد صورة</span>';
-
-                const statusHTML = `<span class="badge-user" style="background:#e6f7f0; color:var(--primary-green);"><i class="fa-solid fa-circle-check"></i> موافقة</span>`;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);"><i class="fa-solid fa-phone"></i> ${senderPhone}</span></td>
-                    <td><span class="badge-user"><i class="fa-solid fa-user-shield"></i> ${receiverName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);"><i class="fa-solid fa-phone"></i> ${receiverPhone}</span></td>
-                    <td>${senderImgTag}</td>
-                    <td>${targetImgTag}</td>
-                    <td style="font-weight:700;">${senderDesc}</td>
-                    <td>${statusHTML}</td>
-                    <td>${dateStr}</td>
-                    <td>
-                        <button onclick="adminDeleteRequest(${req.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderRejectedRequestsTable(allData, filterQuery = '') {
-            const tbody = document.getElementById('adminRejectedRequestsTableBody');
-            tbody.innerHTML = '';
-            
-            let requests = getUnifiedRequestsSource(allData).filter(i => checkIsRejected(i));
-            requests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-
-            if (filterQuery) {
-                const q = filterQuery.toLowerCase();
-                requests = requests.filter(req => {
-                    const desc = req.description || '';
-                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/) || desc.match(/المرسل:\s*([^\n]+)/);
-                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/) || desc.match(/الهاتف:\s*([^\n]+)/);
-                    
-                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
-                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
-
-                    return sName.includes(q) || sPhone.includes(q);
-                });
-            }
-
-            if (requests.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-gray);">لا توجد طلبات مرفوضة.</td></tr>';
-                return;
-            }
-
-            requests.forEach(req => {
-                const desc = req.description || '';
-                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/) || desc.match(/المرسل:\s*([^\n]+)/);
-                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/) || desc.match(/الهاتف:\s*([^\n]+)/);
-                const targetIdMatch = desc.match(/\[TARGET_PRODUCT_ID:(.*?)\]/);
-                const ownerPhoneMatch = desc.match(/\[OWNER_PHONE:(.*?)\]/);
-                const descMatch = desc.match(/\[DESC:(.*?)\]/);
-
-                const senderName = nameMatch ? nameMatch[1].trim() : 'مستخدم';
-                const senderPhone = phoneMatch ? phoneMatch[1].trim() : 'غير متوفر';
-                const targetProductId = targetIdMatch ? targetIdMatch[1].trim() : '';
-                let receiverPhone = ownerPhoneMatch ? ownerPhoneMatch[1].trim() : '';
-                const senderDesc = descMatch ? descMatch[1].trim() : (req.title || 'بدون وصف');
-                const dateStr = req.created_at ? new Date(req.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
-
-                const senderImgUrl = req.image_url || '';
-                const senderImgTag = senderImgUrl 
-                    ? `<img src="${senderImgUrl}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${senderImgUrl}')" title="انقر لتكبير صورة المنتوج المرسل">` 
-                    : '<span style="color:#aaa; font-size:0.8rem;">لا توجد صورة</span>';
-
-                let targetImgUrl = '';
-                let receiverName = 'مستخدم الموقع';
-                if (targetProductId && globalCachedAdsMap[targetProductId]) {
-                    const targetAd = globalCachedAdsMap[targetProductId];
-                    targetImgUrl = targetAd.image_url || '';
-                    if (!receiverPhone) {
-                        const pMatch = (targetAd.description || '').match(/\(الهاتف:\s*([^\s-]+)/);
-                        if (pMatch) receiverPhone = pMatch[1].trim();
-                    }
-                }
-
-                if (receiverPhone && globalCachedUsersMap[receiverPhone]) {
-                    receiverName = globalCachedUsersMap[receiverPhone];
-                }
-                receiverPhone = receiverPhone || 'غير متوفرة';
-
-                const targetImgTag = targetImgUrl 
-                    ? `<img src="${targetImgUrl}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${targetImgUrl}')" title="انقر لتكبير صورة المنتوج المطلوب">` 
-                    : '<span style="color:#aaa; font-size:0.8rem;">لا توجد صورة</span>';
-
-                const statusHTML = `<span class="badge-user" style="background:#fadbd8; color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i> رفض</span>`;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);"><i class="fa-solid fa-phone"></i> ${senderPhone}</span></td>
-                    <td><span class="badge-user"><i class="fa-solid fa-user-shield"></i> ${receiverName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);"><i class="fa-solid fa-phone"></i> ${receiverPhone}</span></td>
-                    <td>${senderImgTag}</td>
-                    <td>${targetImgTag}</td>
-                    <td style="font-weight:700;">${senderDesc}</td>
-                    <td>${statusHTML}</td>
-                    <td>${dateStr}</td>
-                    <td>
-                        <button onclick="adminDeleteRequest(${req.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        window.adminApproveRequest = async function(id) {
-            showCustomConfirm('هل أنت متأكد من الموافقة على طلب المقايضة هذا ونقله إلى قسم المقايضة الموافقة؟', async () => {
-                const targetRec = globalCachedRawData.find(i => String(i.id) === String(id));
-                if (_supabase && targetRec) {
-                    const newDesc = (targetRec.description || '') + ' [STATUS:APPROVED]';
-                    const { error } = await _supabase.from('products').update({ status: 'approved', description: newDesc }).eq('id', Number(id));
-                    if (!error) {
-                        showCustomAlert('تمت الموافقة على الطلب بنجاح ونقله لقسم المقايضة الموافقة.', true);
-                        loadAdminData();
-                    } else {
-                        const { error: err2 } = await _supabase.from('products').update({ description: newDesc }).eq('id', Number(id));
-                        if (!err2) {
-                            showCustomAlert('تمت الموافقة على الطلب بنجاح.', true);
-                            loadAdminData();
-                        } else {
-                            showCustomAlert('فشل تحديث الطلب: ' + error.message, false);
-                        }
-                    }
-                }
-            });
-        };
-
-        function filterRequestsTable() {
-            const query = document.getElementById('requestSearchInput').value.trim();
-            renderRequestsTable(globalCachedRawData, query);
-        }
-
-        function filterApprovedRequestsTable() {
-            const query = document.getElementById('approvedSearchInput').value.trim();
-            renderApprovedRequestsTable(globalCachedRawData, query);
-        }
-
-        function filterRejectedRequestsTable() {
-            const query = document.getElementById('rejectedSearchInput').value.trim();
-            renderRejectedRequestsTable(globalCachedRawData, query);
-        }
-
-        function filterAdsTable() {
-            const query = document.getElementById('adsSearchInput').value.trim();
-            renderAdsTable(globalCachedAds, query);
-        }
-
-        window.adminDeleteRequest = function(id) {
-            showCustomConfirm('هل أنت متأكد من رغبتك في حذف طلب المقايضة هذا نهائياً من قاعدة البيانات؟', async () => {
-                if (_supabase) {
-                    const { error } = await _supabase.from('products').delete().eq('id', Number(id));
-                    if (!error) {
-                        showCustomAlert('تم حذف طلب المقايضة بنجاح.', true);
-                        loadAdminData();
-                    } else {
-                        showCustomAlert('فشل حذف الطلب: ' + error.message, false);
-                    }
-                }
-            });
-        };
-
-        function renderMessagesTable(allData, filterQuery = '') {
-            const tbody = document.getElementById('adminMessagesTableBody');
-            tbody.innerHTML = '';
-            
-            let messages = allData.filter(i => {
-                const desc = i.description || '';
-                return desc.includes('[CONTACT_MESSAGE]') || desc.includes('[USER_MESSAGE]');
-            });
-            messages.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-
-            if (filterQuery) {
-                const q = filterQuery.toLowerCase();
-                messages = messages.filter(msg => {
-                    const desc = msg.description || '';
-                    const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
-                    const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
-                    
-                    const sName = nameMatch ? nameMatch[1].trim().toLowerCase() : '';
-                    const sPhone = phoneMatch ? phoneMatch[1].trim().toLowerCase() : '';
-
-                    return sName.includes(q) || sPhone.includes(q);
-                });
-            }
-
-            if (messages.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-gray);">لا توجد رسائل واردة مطابقة.</td></tr>';
-                return;
-            }
-
-            messages.forEach(msg => {
-                const desc = msg.description || '';
-                const nameMatch = desc.match(/\[SENDER_NAME:(.*?)\]/);
-                const phoneMatch = desc.match(/\[SENDER_PHONE:(.*?)\]/);
-                const msgMatch = desc.match(/\[MESSAGE:(.*?)\]/);
-
-                const senderName = nameMatch ? nameMatch[1].trim() : (msg.title ? msg.title.replace('رسالة اتصال من: ', '') : 'مستخدم');
-                const senderPhone = phoneMatch ? phoneMatch[1].trim() : 'غير متوفر';
-                const messageText = msgMatch ? msgMatch[1].trim() : desc;
-                const dateStr = msg.created_at ? new Date(msg.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${senderName}</span></td>
-                    <td><i class="fa-solid fa-phone"></i> ${senderPhone}</td>
-                    <td style="font-weight:700;">${messageText}</td>
-                    <td>${dateStr}</td>
-                    <td>
-                        <button onclick="adminDeleteMessage(${msg.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function filterMessagesTable() {
-            const query = document.getElementById('messagesSearchInput').value.trim();
-            renderMessagesTable(globalCachedRawData, query);
-        }
-
-        window.adminDeleteMessage = function(id) {
-            showCustomConfirm('هل أنت متأكد من رغبتك في حذف هذه الرسالة نهائياً؟', async () => {
-                if (_supabase) {
-                    const { error } = await _supabase.from('products').delete().eq('id', Number(id));
-                    if (!error) {
-                        showCustomAlert('تم حذف الرسالة بنجاح.', true);
-                        loadAdminData();
-                    } else {
-                        showCustomAlert('فشل حذف الرسالة: ' + error.message, false);
-                    }
-                }
-            });
-        };
-
-        /* دالة عرض وتعديل المبيان ليكون واضحاً، مقروءاً ومبسطاً للغاية */
-        function renderTrafficChart(mode, eventObj = null) {
-            currentTrafficMode = mode;
-            if (eventObj) {
-                document.querySelectorAll('.traffic-filter-btn').forEach(b => b.classList.remove('active'));
-                eventObj.currentTarget.classList.add('active');
-            }
-
-            const chartContainer = document.getElementById('trafficChartBars');
-            const summaryText = document.getElementById('trafficSummaryText');
-            chartContainer.innerHTML = '';
-
-            const items = globalCachedRawData || [];
-            let buckets = {};
-            let maxVal = 1;
-            const now = new Date();
-
-            if (mode === 'day') {
-                summaryText.textContent = '📊 إحصائيات ونشاط المنصة خلال الأيام الـ 7 الأخيرة:';
-                const daysMap = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-                for (let i = 6; i >= 0; i--) {
-                    const d = new Date();
-                    d.setDate(now.getDate() - i);
-                    const dName = daysMap[d.getDay()];
-                    buckets[dName] = 0;
-                }
-
-                items.forEach(item => {
-                    if (!item.created_at) return;
-                    const d = new Date(item.created_at);
-                    const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
-                    if (diffDays < 7) {
-                        const dName = daysMap[d.getDay()];
-                        if (buckets[dName] !== undefined) {
-                            buckets[dName]++;
-                        }
-                    }
-                });
-            } else if (mode === 'week') {
-                summaryText.textContent = '📊 إحصائيات ونشاط المنصة خلال الأسابيع الأخيرة:';
-                for (let i = 4; i >= 0; i--) {
-                    buckets[`الأسبوع ${5 - i}`] = 0;
-                }
-                items.forEach(item => {
-                    if (!item.created_at) return;
-                    const d = new Date(item.created_at);
-                    const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
-                    if (diffDays <= 7) buckets['الأسبوع 5']++;
-                    else if (diffDays <= 14) buckets['الأسبوع 4']++;
-                    else if (diffDays <= 21) buckets['الأسبوع 3']++;
-                    else if (diffDays <= 28) buckets['الأسبوع 2']++;
-                    else buckets['الأسبوع 1']++;
-                });
-            } else if (mode === 'month') {
-                summaryText.textContent = `📊 إحصائيات ونشاط المنصة حسب أشهر العام الحالي (${now.getFullYear()}):`;
-                const currentYear = now.getFullYear();
-                const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'ماي', 'يونيو', 'يوليوز', 'غشت', 'شتنبر', 'أكتوبر', 'نونبر', 'دجنبر'];
+        // Render Admin Orders with Store info & WhatsApp Send Button to Store Owner
+        function renderAdminOrders() {
+            const tbody = document.getElementById('admin-orders-table-body');
+            if (!tbody) return;
+            let html = '';
+            let totalSum = 0;
+            salesOrdersDatabase.forEach((order, idx) => {
+                totalSum += order.price;
+                const store = getStoreByKey(order.storeKey);
                 
-                for (let m = 0; m < 12; m++) {
-                    buckets[monthNames[m]] = 0;
-                }
-
-                items.forEach(item => {
-                    if (!item.created_at) return;
-                    const d = new Date(item.created_at);
-                    if (d.getFullYear() === currentYear) {
-                        const mName = monthNames[d.getMonth()];
-                        buckets[mName]++;
-                    }
-                });
-            } else if (mode === 'year') {
-                summaryText.textContent = '📊 إحصائيات ونشاط المنصة مصنفة حسب الأعوام:';
-                items.forEach(item => {
-                    if (!item.created_at) return;
-                    const year = new Date(item.created_at).getFullYear();
-                    buckets[year] = (buckets[year] || 0) + 1;
-                });
-                if (Object.keys(buckets).length === 0) {
-                    buckets[now.getFullYear()] = 0;
-                }
-            }
-
-            const values = Object.values(buckets);
-            maxVal = Math.max(...values, 1);
-
-            const keys = Object.keys(buckets);
-            keys.forEach(key => {
-                const val = buckets[key];
-                // ضبط النسبة ليكون عموداً واضحاً وسهل القراءة
-                const heightPercent = Math.max(15, Math.round((val / maxVal) * 85));
-
-                const colDiv = document.createElement('div');
-                colDiv.className = 'chart-bar-col';
-                colDiv.innerHTML = `
-                    <div class="chart-bar-val">${val}</div>
-                    <div class="chart-bar-fill" style="height: ${heightPercent}%;" title="${key}: ${val} نشاط"></div>
-                    <div class="chart-bar-lbl">${key}</div>
+                html += `
+                    <tr>
+                        <td class="p-4 font-bold text-gray-900">${order.name}</td>
+                        <td class="p-4">${order.phone}</td>
+                        <td class="p-4">${order.address}</td>
+                        <td class="p-4 font-semibold text-indigo-600">${order.product}</td>
+                        <td class="p-4">
+                            <span class="font-bold text-gray-800 block">${store.name}</span>
+                            <span class="text-xs text-gray-400 block">${store.city} - ${store.phone}</span>
+                        </td>
+                        <td class="p-4 font-bold">${order.price.toFixed(2)} د.م</td>
+                        <td class="p-4">
+                            <select onchange="updateOrderAction(${idx}, this.value)" class="text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg p-2 focus:outline-none focus:border-indigo-600">
+                                <option value="قيد الانتظار" ${order.status === 'قيد الانتظار' ? 'selected' : ''}>⏳ قيد الاتصال</option>
+                                <option value="تم التأكيد" ${order.status === 'تم التأكيد' ? 'selected' : ''}>📞 تم التأكيد</option>
+                                <option value="تم الشحن" ${order.status === 'تم الشحن' ? 'selected' : ''}>🚚 تم الشحن</option>
+                                <option value="مكتمل" ${order.status === 'مكتمل' ? 'selected' : ''}>✅ مكتمل</option>
+                                <option value="ملغى" ${order.status === 'ملغى' ? 'selected' : ''}>❌ ملغى</option>
+                            </select>
+                        </td>
+                        <td class="p-4">
+                            <button onclick="sendOrderToStoreOwner(${idx})" class="bg-emerald-600 text-white px-3 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1.5 shadow-sm">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i> إرسال الطلب لمول المتجر
+                            </button>
+                        </td>
+                    </tr>
                 `;
-                chartContainer.appendChild(colDiv);
             });
+            tbody.innerHTML = html;
+            document.getElementById('stat-total-sales').innerText = totalSum.toFixed(2) + ' د.م';
+            document.getElementById('stat-total-orders').innerText = salesOrdersDatabase.length + ' طلبات';
+            calculateNetProfit();
+            lucide.createIcons();
         }
 
-        function renderAdsTable(ads, filterQuery = '') {
-            const tbody = document.getElementById('adminAdsTableBody');
-            tbody.innerHTML = '';
+        // Send Order to Store Owner via WhatsApp
+        function sendOrderToStoreOwner(idx) {
+            const order = salesOrdersDatabase[idx];
+            const store = getStoreByKey(order.storeKey);
             
-            let sortedAds = ads.slice().sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+            const message = `السلام عليكم صاحب متجر ${store.name} (${store.city}):\n\n` +
+                            `لديك طلب جديد مؤكد عبر منصة bedal.online:\n` +
+                            `🛍️ *المنتج:* ${order.product}\n` +
+                            `💰 *الثمن:* ${order.price.toFixed(2)} د.م\n\n` +
+                            `👤 *معلومات الزبون للتوصيل:*\n` +
+                            `- الاسم: ${order.name}\n` +
+                            `- الهاتف: ${order.phone}\n` +
+                            `- العنوان: ${order.address}`;
+            
+            const encoded = encodeURIComponent(message);
+            window.open(`https://wa.me/${store.phone}?text=${encoded}`, '_blank');
+        }
 
-            if (filterQuery) {
-                const q = filterQuery.toLowerCase();
-                sortedAds = sortedAds.filter(ad => {
-                    let ownerPhone = ad.phone || ad.user_phone || ad.whatsapp || ad.phoneNumber || ad.tel || '';
-                    if (!ownerPhone) {
-                        const phoneMatch = (ad.description || '').match(/\[USER_PHONE:(.*?)\]/) || (ad.description || '').match(/الهاتف:\s*([\d\+\-]+)/);
-                        if (phoneMatch) ownerPhone = phoneMatch[1].trim();
-                    }
+        function updateOrderAction(idx, newStatus) {
+            salesOrdersDatabase[idx].status = newStatus;
+        }
 
-                    let ownerName = 'مستخدم الموقع';
-                    if (ownerPhone !== 'غير متوفر' && globalCachedUsersMap[ownerPhone]) {
-                        ownerName = globalCachedUsersMap[ownerPhone];
-                    } else if (ad.userName || ad.owner_name || ad.user_name) {
-                        ownerName = ad.userName || ad.owner_name || ad.user_name;
-                    } else {
-                        const descMatch = (ad.description || '').match(/\[NAME:(.*?)\]/);
-                        if (descMatch) ownerName = descMatch[1].trim();
-                    }
+        function calculateNetProfit() {
+            let totalRevenue = 0;
+            salesOrdersDatabase.forEach(o => totalRevenue += o.price);
 
-                    return ownerName.toLowerCase().includes(q) || ownerPhone.toLowerCase().includes(q) || ad.title.toLowerCase().includes(q);
+            const shippingCost = parseFloat(document.getElementById('acc-shipping-cost').value) || 0;
+            const adsCost = parseFloat(document.getElementById('acc-ads-cost').value) || 0;
+            const productCost = parseFloat(document.getElementById('acc-product-cost').value) || 0;
+
+            const totalExpensesPerOrder = (shippingCost + adsCost + productCost) * salesOrdersDatabase.length;
+            const netProfit = totalRevenue - totalExpensesPerOrder;
+
+            document.getElementById('acc-total-revenue').innerText = totalRevenue.toFixed(2) + ' د.م';
+            document.getElementById('acc-total-expenses').innerText = totalExpensesPerOrder.toFixed(2) + ' د.م';
+            document.getElementById('acc-net-profit').innerText = netProfit.toFixed(2) + ' د.م';
+        }
+
+        // Render Products with Store Assignment in Admin
+        function renderAdminProducts() {
+            const tbody = document.getElementById('admin-products-table-body');
+            if (!tbody) return;
+            let html = '';
+            productsDatabase.forEach((prod, idx) => {
+                let priceDisplay = prod.discountPrice ? `
+                    <span class="text-indigo-600 font-bold">${prod.discountPrice.toFixed(2)} د.م</span>
+                    <span class="text-gray-400 line-through text-xs mr-2">${prod.price.toFixed(2)} د.م</span>
+                ` : `<span class="text-indigo-600 font-bold">${prod.price.toFixed(2)} د.م</span>`;
+
+                const mainImg = (prod.images && prod.images[0]) ? prod.images[0] : '';
+                const store = getStoreByKey(prod.storeKey);
+
+                html += `
+                    <tr>
+                        <td class="p-4">
+                            <img src="${mainImg}" class="w-12 h-12 object-cover rounded-xl border border-gray-200">
+                        </td>
+                        <td class="p-4 font-bold text-gray-900">${prod.title}</td>
+                        <td class="p-4 font-semibold text-indigo-600">${store.name}</td>
+                        <td class="p-4"><span class="bg-indigo-50 text-indigo-600 text-xs px-2.5 py-1 rounded-md font-semibold">${prod.catLabel}</span></td>
+                        <td class="p-4">${priceDisplay}</td>
+                        <td class="p-4 flex gap-2">
+                            <button onclick="openEditProductModal(${idx})" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold border border-blue-100">
+                                <i data-lucide="edit-2" class="w-4 h-4"></i> تعديل
+                            </button>
+                            <button onclick="deleteProduct(${idx})" class="text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-colors flex items-center gap-1 text-xs font-bold border border-rose-100">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i> حذف
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+            document.getElementById('stat-total-products').innerText = productsDatabase.length + ' منتج';
+            populateBlackFreeDaySelector();
+            renderBlackFreeDayAdminTable();
+            lucide.createIcons();
+        }
+
+        // Populate Black Free Day Product Selector dropdown
+        function populateBlackFreeDaySelector() {
+            const select = document.getElementById('select-product-to-bfd');
+            if(!select) return;
+            let html = '';
+            if(productsDatabase.length === 0) {
+                html = `<option value="">لا توجد منتجات عادية متاحة حالياً</option>`;
+            } else {
+                productsDatabase.forEach((p, idx) => {
+                    const priceVal = p.discountPrice ? p.discountPrice : p.price;
+                    html += `<option value="${idx}">${p.title} (${priceVal.toFixed(2)} د.م)</option>`;
                 });
             }
+            select.innerHTML = html;
+        }
 
-            if (sortedAds.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-gray);">لا توجد إعلانات مطابقة للبحث.</td></tr>';
+        // Add Selected Product to Black Free Day and remove it from regular products database
+        function addSelectedProductToBlackFreeDay() {
+            const select = document.getElementById('select-product-to-bfd');
+            if(!select || select.value === "") {
+                alert('الرجاء اختيار منتج صالح للإضافة!');
                 return;
             }
+            const prodIdx = parseInt(select.value);
+            const prod = productsDatabase[prodIdx];
 
-            sortedAds.forEach(ad => {
-                const tr = document.createElement('tr');
-                const imgTag = ad.image_url ? `<img src="${ad.image_url}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; cursor:pointer;" onclick="openImageModal('${ad.image_url}')" title="انقر لتكبير الصورة">` : '<span style="color:#aaa;">بدون صورة</span>';
-                const dateStr = ad.created_at ? new Date(ad.created_at).toLocaleDateString('ar-MA') : 'غير متوفر';
+            // Format into BFD product structure
+            const effectivePrice = prod.discountPrice ? prod.discountPrice : prod.price;
+            const bfdObj = {
+                title: prod.title,
+                price: effectivePrice,
+                oldPrice: prod.price,
+                discountBadge: 'خصم Black Free Day الخاص 🔥',
+                img: (prod.images && prod.images[0]) ? prod.images[0] : '',
+                cat: prod.catLabel || 'متنوع',
+                desc: prod.description || 'عرض خاص حصري لعطلة نهاية الأسبوع.'
+            };
 
-                let ownerPhone = ad.phone || ad.user_phone || ad.whatsapp || ad.phoneNumber || ad.tel;
-                if (!ownerPhone) {
-                    const phoneMatch = (ad.description || '').match(/\[USER_PHONE:(.*?)\]/) || (ad.description || '').match(/الهاتف:\s*([\d\+\-]+)/);
-                    if (phoneMatch) ownerPhone = phoneMatch[1].trim();
+            // Add to BFD list
+            adminBlackFreeDayProducts.push(bfdObj);
+
+            // Remove from regular products database (إلغاؤه من المنتجات العادية)
+            productsDatabase.splice(prodIdx, 1);
+
+            // Re-render admin UI
+            renderAdminProducts();
+            alert(`تم نقل المنتج "${prod.title}" بنجاح إلى صفحة Black Free Day وإلغاؤه من المنتجات العادية!`);
+        }
+
+        // Render Admin BFD Table
+        function renderBlackFreeDayAdminTable() {
+            const tbody = document.getElementById('admin-bfd-table-body');
+            if(!tbody) return;
+            let html = '';
+            if(adminBlackFreeDayProducts.length === 0) {
+                html = `<tr><td colspan="5" class="p-6 text-center text-gray-400">لا توجد منتجات مضافة لـ Black Free Day حالياً.</td></tr>`;
+            } else {
+                adminBlackFreeDayProducts.forEach((p, idx) => {
+                    html += `
+                        <tr>
+                            <td class="p-3">
+                                <img src="${p.img}" class="w-12 h-12 object-cover rounded-xl border">
+                            </td>
+                            <td class="p-3 font-bold text-gray-900">${p.title}</td>
+                            <td class="p-3 font-bold text-amber-600">${p.price.toFixed(2)} د.م</td>
+                            <td class="p-3 text-gray-400 line-through text-xs">${p.oldPrice.toFixed(2)} د.م</td>
+                            <td class="p-3">
+                                <button onclick="removeProductFromBlackFreeDay(${idx})" class="bg-rose-50 text-rose-600 hover:bg-rose-100 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors border border-rose-200 flex items-center gap-1">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i> إزالة وإعادة للعادي
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // Remove from BFD and return back to regular products database
+        function removeProductFromBlackFreeDay(idx) {
+            const p = adminBlackFreeDayProducts[idx];
+            
+            // Reconstruct regular product object
+            const regularProd = {
+                title: p.title,
+                storeKey: partnerStoresDatabase[0].key,
+                price: p.oldPrice,
+                discountPrice: p.price,
+                images: [p.img],
+                category: 'various',
+                catLabel: p.cat || 'منتجات متنوعة',
+                description: p.desc
+            };
+
+            // Push back to regular products
+            productsDatabase.push(regularProd);
+
+            // Remove from BFD
+            adminBlackFreeDayProducts.splice(idx, 1);
+
+            renderAdminProducts();
+            alert(`تمت إزالة المنتج "${p.title}" من عروض Black Free Day وإعادته للمنتجات العادية بنجاح!`);
+        }
+
+        // Render Slider Editor UI
+        function renderSliderEditor() {
+            const container = document.getElementById('admin-slider-editor-container');
+            if (!container) return;
+            let html = '';
+            sliderDatabase.forEach((slide, idx) => {
+                html += `
+                    <div class="p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
+                        <div class="flex items-center justify-between border-b pb-2">
+                            <h4 class="font-bold text-gray-900 text-sm flex items-center gap-2">
+                                <i data-lucide="image" class="w-4 h-4 text-indigo-600"></i> الشريحة رقم ${idx + 1}
+                            </h4>
+                            <img src="${slide.img}" class="w-16 h-10 object-cover rounded-lg border">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">شارة البادج (Badge)</label>
+                                <input type="text" id="slide-badge-${idx}" value="${slide.badge}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">رابط صورة الخلفية</label>
+                                <input type="url" id="slide-img-${idx}" value="${slide.img}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">العنوان الرئيسي</label>
+                                <input type="text" id="slide-title-${idx}" value="${slide.title}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">الوصف الفرعي</label>
+                                <input type="text" id="slide-desc-${idx}" value="${slide.desc}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function saveSliderChanges() {
+            sliderDatabase.forEach((slide, idx) => {
+                slide.badge = document.getElementById(`slide-badge-${idx}`).value.trim();
+                slide.img = document.getElementById(`slide-img-${idx}`).value.trim();
+                slide.title = document.getElementById(`slide-title-${idx}`).value.trim();
+                slide.desc = document.getElementById(`slide-desc-${idx}`).value.trim();
+            });
+            alert('تم حفظ وتحديث بيانات السلايدر بنجاح!');
+        }
+
+        // Render Partner Stores Editor UI with Name, Phone, and City
+        function renderVendorEditor() {
+            const container = document.getElementById('admin-vendors-editor-container');
+            if (!container) return;
+            let html = '';
+            partnerStoresDatabase.forEach((store, idx) => {
+                html += `
+                    <div class="p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
+                        <div class="flex items-center justify-between border-b pb-2">
+                            <h4 class="font-bold text-gray-900 text-sm flex items-center gap-2">
+                                <i data-lucide="store" class="w-4 h-4 text-indigo-600"></i> متجر: ${store.name}
+                            </h4>
+                            <img src="${store.logo}" class="w-10 h-10 object-cover rounded-xl border">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">اسم المتجر</label>
+                                <input type="text" id="vendor-name-${idx}" value="${store.name}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف (واتساب)</label>
+                                <input type="text" id="vendor-phone-${idx}" value="${store.phone}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white text-right" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">المدينة</label>
+                                <input type="text" id="vendor-city-${idx}" value="${store.city}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                            </div>
+                            <div class="sm:col-span-3">
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">رابط الشعار (Logo)</label>
+                                <input type="url" id="vendor-logo-${idx}" value="${store.logo}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-white">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            populateStoreSelectOptions();
+            lucide.createIcons();
+        }
+
+        function populateStoreSelectOptions() {
+            const select = document.getElementById('prod-form-store');
+            if (!select) return;
+            let html = '';
+            partnerStoresDatabase.forEach(store => {
+                html += `<option value="${store.key}">${store.name} (${store.city})</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        function saveVendorChanges() {
+            partnerStoresDatabase.forEach((store, idx) => {
+                store.name = document.getElementById(`vendor-name-${idx}`).value.trim();
+                store.phone = document.getElementById(`vendor-phone-${idx}`).value.trim();
+                store.city = document.getElementById(`vendor-city-${idx}`).value.trim();
+                store.logo = document.getElementById(`vendor-logo-${idx}`).value.trim();
+            });
+            populateStoreSelectOptions();
+            alert('تم حفظ وتحديث معلومات المتاجر الشريكة بنجاح!');
+        }
+
+        function toggleProductModal() {
+            const modal = document.getElementById('product-modal');
+            modal.classList.toggle('hidden');
+            if (modal.classList.contains('hidden')) {
+                document.getElementById('edit-prod-index').value = "-1";
+                document.getElementById('modal-form-title').innerText = "إضافة منتج جديد وتحديد المتجر المعني";
+                document.getElementById('prod-form-title').value = "";
+                document.getElementById('prod-form-price').value = "";
+                document.getElementById('prod-form-discount-price').value = "";
+                for(let i = 1; i <= 5; i++) {
+                    document.getElementById(`prod-form-img-${i}`).value = "";
                 }
-                ownerPhone = ownerPhone || 'غير متوفر';
+                document.getElementById('prod-form-desc').value = "";
+                updateImagesPreview();
+            } else {
+                populateStoreSelectOptions();
+            }
+        }
 
-                let ownerName = 'مستخدم الموقع';
-                if (ownerPhone !== 'غير متوفر' && globalCachedUsersMap[ownerPhone]) {
-                    ownerName = globalCachedUsersMap[ownerPhone];
-                } else if (ad.userName || ad.owner_name || ad.user_name) {
-                    ownerName = ad.userName || ad.owner_name || ad.user_name;
+        function openEditProductModal(idx) {
+            const prod = productsDatabase[idx];
+            document.getElementById('edit-prod-index').value = idx;
+            document.getElementById('modal-form-title').innerText = "تعديل المنتج والمتجر المرتبط";
+            document.getElementById('prod-form-title').value = prod.title;
+            document.getElementById('prod-form-store').value = prod.storeKey || partnerStoresDatabase[0].key;
+            document.getElementById('prod-form-price').value = prod.price;
+            document.getElementById('prod-form-discount-price').value = prod.discountPrice || '';
+            document.getElementById('prod-form-category').value = prod.category;
+            
+            for(let i = 1; i <= 5; i++) {
+                document.getElementById(`prod-form-img-${i}`).value = (prod.images && prod.images[i-1]) ? prod.images[i-1] : '';
+            }
+
+            document.getElementById('prod-form-desc').value = prod.description;
+            updateImagesPreview();
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function updateImagesPreview() {
+            const container = document.getElementById('modal-images-preview-grid');
+            let html = '';
+            for(let i = 1; i <= 5; i++) {
+                const url = document.getElementById(`prod-form-img-${i}`).value.trim();
+                if(url !== "") {
+                    html += `
+                        <div class="h-16 rounded-lg bg-gray-100 border overflow-hidden relative group">
+                            <img src="${url}" class="w-full h-full object-cover">
+                            <span class="absolute bottom-0 right-0 bg-black/60 text-white text-[9px] px-1 font-bold">${i}</span>
+                        </div>
+                    `;
                 } else {
-                    const descMatch = (ad.description || '').match(/\[NAME:(.*?)\]/);
-                    if (descMatch) ownerName = descMatch[1].trim();
+                    html += `
+                        <div class="h-16 rounded-lg bg-gray-50 border border-dashed flex flex-col items-center justify-center text-gray-300">
+                            <span class="text-[10px] font-bold">${i}</span>
+                        </div>
+                    `;
                 }
-
-                tr.innerHTML = `
-                    <td>${imgTag}</td>
-                    <td style="font-weight:700;">${ad.title}</td>
-                    <td><span class="badge-user"><i class="fa-solid fa-user"></i> ${ownerName}</span><br><span style="font-size:0.8rem; color:var(--text-gray);"><i class="fa-solid fa-phone"></i> ${ownerPhone}</span></td>
-                    <td>${ad.city || 'المغرب'}</td>
-                    <td>${dateStr}</td>
-                    <td>
-                        <button onclick="adminDeleteAd(${ad.id})" class="action-btn btn-danger"><i class="fa-solid fa-trash"></i> حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            }
+            container.innerHTML = html;
         }
 
-        window.adminDeleteAd = function(id) {
-            showCustomConfirm('هل أنت متأكد من رغبتك في حذف هذا الإعلان نهائياً من الموقع؟', async () => {
-                if (_supabase) {
-                    const { error } = await _supabase.from('products').delete().eq('id', Number(id));
-                    if (!error) {
-                        showCustomAlert('تم حذف الإعلان بنجاح من قاعدة البيانات.', true);
-                        loadAdminData();
-                    } else {
-                        showCustomAlert('فشل حذف الإعلان: ' + error.message, false);
-                    }
-                }
-            });
-        };
+        function saveProductForm() {
+            const idx = parseInt(document.getElementById('edit-prod-index').value);
+            const title = document.getElementById('prod-form-title').value.trim();
+            const storeKey = document.getElementById('prod-form-store').value;
+            const price = parseFloat(document.getElementById('prod-form-price').value);
+            const discountPriceInput = document.getElementById('prod-form-discount-price').value;
+            const discountPrice = discountPriceInput ? parseFloat(discountPriceInput) : null;
+            const category = document.getElementById('prod-form-category').value;
+            
+            let images = [];
+            for(let i = 1; i <= 5; i++) {
+                const imgVal = document.getElementById(`prod-form-img-${i}`).value.trim();
+                if(imgVal !== "") images.push(imgVal);
+            }
 
-        function renderUsersTable(users) {
-            const tbody = document.getElementById('adminUsersTableBody');
-            tbody.innerHTML = '';
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-gray);">لا توجد حسابات مستخدمين مطابقة للبحث.</td></tr>';
+            const description = document.getElementById('prod-form-desc').value.trim();
+
+            if (!title || isNaN(price) || images.length === 0 || !description) {
+                alert('يرجى ملء جميع الحقول المطلوبة ورابط صورة واحدة على الأقل!');
                 return;
             }
-            users.forEach(u => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight:700;">${u.name}</td>
-                    <td>${u.phone}</td>
-                    <td>${u.city}</td>
-                    <td><code>${u.password}</code></td>
-                    <td>
-                        <button onclick="adminBanUser(${u.id}, '${u.name}')" class="action-btn btn-danger"><i class="fa-solid fa-ban"></i> حظر الحساب</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
 
-        function filterUsersTable() {
-            const query = document.getElementById('userSearchInput').value.trim().toLowerCase();
-            if (!query) {
-                renderUsersTable(allLoadedUsers);
-                return;
+            const catMap = { women: 'نساء', men: 'رجال', kids: 'أطفال', various: 'منتجات متنوعة' };
+            const newProd = { title, storeKey, price, discountPrice, images, category, catLabel: catMap[category] || 'منتجات متنوعة', description };
+
+            if (idx >= 0) {
+                productsDatabase[idx] = newProd;
+            } else {
+                productsDatabase.unshift(newProd);
             }
-            const filtered = allLoadedUsers.filter(u => 
-                u.name.toLowerCase().includes(query) || u.phone.toLowerCase().includes(query)
-            );
-            renderUsersTable(filtered);
+
+            renderAdminProducts();
+            toggleProductModal();
+            alert('تم حفظ وتحديث بيانات المنتج بنجاح!');
         }
 
-        window.adminBanUser = function(recId, name) {
-            showCustomConfirm(`هل أنت متأكد من حظر وحذف حساب المستخدم (${name}) نهائياً؟`, async () => {
-                if (_supabase) {
-                    const { error }  = await _supabase.from('products').delete().eq('id', Number(recId));
-                    if (!error) {
-                        showCustomAlert(`تم حظر وحذف حساب (${name}) بنجاح من النظام.`, true);
-                        loadAdminData();
-                    } else {
-                        showCustomAlert('فشل تنفيذ عملية الحظر: ' + error.message, false);
-                    }
-                }
-            });
-        };
+        function deleteProduct(idx) {
+            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                productsDatabase.splice(idx, 1);
+                renderAdminProducts();
+            }
+        }
+
+        function switchAdminTab(tabKey) {
+            const ordersTab = document.getElementById('admin-subtab-orders');
+            const accountingTab = document.getElementById('admin-subtab-accounting');
+            const productsTab = document.getElementById('admin-subtab-products');
+            const bfdTab = document.getElementById('admin-subtab-black_free_day');
+            const sliderTab = document.getElementById('admin-subtab-slider');
+            const vendorsTab = document.getElementById('admin-subtab-vendors');
+            
+            const ordersBtn = document.getElementById('admin-tab-btn-orders');
+            const accountingBtn = document.getElementById('admin-tab-btn-accounting');
+            const productsBtn = document.getElementById('admin-tab-btn-products');
+            const bfdBtn = document.getElementById('admin-tab-btn-black_free_day');
+            const sliderBtn = document.getElementById('admin-tab-btn-slider');
+            const vendorsBtn = document.getElementById('admin-tab-btn-vendors');
+
+            ordersTab.classList.add('hidden');
+            accountingTab.classList.add('hidden');
+            productsTab.classList.add('hidden');
+            bfdTab.classList.add('hidden');
+            sliderTab.classList.add('hidden');
+            vendorsTab.classList.add('hidden');
+
+            ordersBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
+            accountingBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
+            productsBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
+            bfdBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
+            sliderBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
+            vendorsBtn.className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm hover:text-gray-700 flex items-center gap-2 whitespace-nowrap";
+
+            if (tabKey === 'products') {
+                productsTab.classList.remove('hidden');
+                productsBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
+            } else if (tabKey === 'accounting') {
+                accountingTab.classList.remove('hidden');
+                accountingBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
+            } else if (tabKey === 'black_free_day') {
+                bfdTab.classList.remove('hidden');
+                bfdBtn.className = "px-5 py-3 border-b-2 border-amber-600 text-amber-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
+                renderBlackFreeDayAdminTable();
+                populateBlackFreeDaySelector();
+            } else if (tabKey === 'slider') {
+                sliderTab.classList.remove('hidden');
+                sliderBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
+                renderSliderEditor();
+            } else if (tabKey === 'vendors') {
+                vendorsTab.classList.remove('hidden');
+                vendorsBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
+                renderVendorEditor();
+            } else {
+                ordersTab.classList.remove('hidden');
+                ordersBtn.className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm flex items-center gap-2 whitespace-nowrap";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAdminOrders();
+            renderAdminProducts();
+            calculateNetProfit();
+            renderSliderEditor();
+            renderVendorEditor();
+            renderBlackFreeDayAdminTable();
+            populateBlackFreeDaySelector();
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
