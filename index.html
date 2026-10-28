@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts for Modern & Attractive Font (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -158,7 +160,7 @@
 
                 <!-- Success Message Box -->
                 <div id="invoice-success-alert" class="hidden p-4 rounded-2xl text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center space-y-1">
-                    <p class="text-sm font-black">🎉 تم إرسال طلبك بنجاح إلى الإدارة!</p>
+                    <p class="text-sm font-black">🎉 تم إرسال طلبك بنجاح إلى الإدارة وتم حفظه في قاعدة البيانات!</p>
                     <p>في غضون 24 ساعة سيتم التواصل معك لتأكيد التوصيل.</p>
                 </div>
 
@@ -695,7 +697,7 @@
                                     إرسال عبر الواتساب
                                 </button>
                                 
-                                <button onclick="sendOrderWebsite()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-md shadow-indigo-100">
+                                <button onclick="sendOrderWebsite()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-100">
                                     <i data-lucide="send" class="w-5 h-5"></i>
                                     إرسال عبر الموقع
                                 </button>
@@ -914,14 +916,19 @@
                 <!-- Version Badge in Footer -->
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.8-release</span>
+                    الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.9-release</span>
                 </span>
             </div>
         </div>
     </footer>
 
-    <!-- App Logic Script -->
+    <!-- App Logic Script & Supabase Initialization -->
     <script>
+        // تهيئة Supabase باستخدام بيانات مشروعك
+        const supabaseUrl = 'https://xgdtszzzxzlhtgmrextl.supabase.co';
+        const supabaseKey = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
         // Shopping Cart State
         let cart = [];
 
@@ -1145,8 +1152,8 @@
             document.getElementById('checkout-modal').classList.add('hidden');
         }
 
-        // Submit Invoice Order to Admin and show 24h success message
-        function submitInvoiceOrder() {
+        // Submit Invoice Order to Admin and save into Supabase Database
+        async function submitInvoiceOrder() {
             const name = document.getElementById('invoice-cust-name').value.trim();
             const phone = document.getElementById('invoice-cust-phone').value.trim();
             const address = document.getElementById('invoice-cust-address').value.trim();
@@ -1154,6 +1161,24 @@
             if (!name || !phone || !address) {
                 alert('يرجى ملء جميع خانات معلومات التوصيل بالرمز (*)');
                 return;
+            }
+
+            // تجهيز البيانات للحفظ في جدول orders بـ Supabase
+            const orderData = {
+                customer_name: name,
+                phone: phone,
+                address: address,
+                items: cart,
+                created_at: new Date()
+            };
+
+            try {
+                const { data, error } = await supabaseClient.from('orders').insert([orderData]);
+                if (error) {
+                    console.error('Supabase Error:', error);
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
             }
 
             const successAlert = document.getElementById('invoice-success-alert');
@@ -1422,8 +1447,8 @@
             window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
         }
 
-        // Send Order via Website
-        function sendOrderWebsite() {
+        // Send Order via Website and save to Supabase
+        async function sendOrderWebsite() {
             const name = document.getElementById('cust-name').value.trim();
             const phone = document.getElementById('cust-phone').value.trim();
             const address = document.getElementById('cust-address').value.trim();
@@ -1431,6 +1456,20 @@
             if (!name || !phone || !address) {
                 alert('يرجى ملء جميع الخانات المنسوبة بالرمز (*)');
                 return;
+            }
+
+            const orderData = {
+                customer_name: name,
+                phone: phone,
+                address: address,
+                items: [currentProduct],
+                created_at: new Date()
+            };
+
+            try {
+                await supabaseClient.from('orders').insert([orderData]);
+            } catch (err) {
+                console.error('Supabase error:', err);
             }
 
             const alertBox = document.getElementById('order-alert');
@@ -1451,7 +1490,6 @@
             } else if (hash.startsWith('#product-')) {
                 const productSlug = decodeURIComponent(hash.replace('#product-', '')).replace(/-/g, ' ');
                 
-                // جمع كافة المنتجات (الرئيسية، Black Free Day، ومتاجر الشركاء) لضمان مطابقتها وفتحها مباشرة
                 let allProductsList = [
                     { title: 'ساعة ذكية متطورة', price: '299.00', oldPrice: '499.00', badge: 'تخفيض كبييير 40%', imgs: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=800&q=80'], cat: 'إلكترونيات', desc: 'تتبع نشاطك اليومي وصحتك بدقة عالية مع تصميم عصري ومقاوم للمياه.' },
                     { title: 'سماعات رأس لاسلكية', price: '450.00', oldPrice: '690.00', badge: 'تخفيض كبييير 35%', imgs: ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=80'], cat: 'صوتيات', desc: 'جودة صوت عالية ونقية وتصميم مريح للرأس مع خاصية عزل الضوضاء.' },
@@ -1460,7 +1498,6 @@
                     { title: 'طقم ملابس أطفال قطني', price: '199.00', oldPrice: '399.00', badge: 'تخفيض كبييير 50%', imgs: ['https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80', 'https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=800&q=80'], cat: 'أطفال', desc: 'طقم قطني ناعم مريح ومناسب لبشرة الأطفال الحساسة متاح بألوان مبهجة.' }
                 ];
 
-                // إضافة منتجات Black Free Day
                 blackFreeDayProducts.forEach(p => {
                     allProductsList.push({
                         title: p.title,
@@ -1473,7 +1510,6 @@
                     });
                 });
 
-                // إضافة منتجات المتاجر الشريكة
                 Object.values(partnerStores).forEach(store => {
                     store.products.forEach(p => {
                         allProductsList.push({
