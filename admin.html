@@ -436,7 +436,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.36</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.37</span>
                 </span>
             </div>
         </div>
@@ -953,11 +953,7 @@
         async function saveProductForm() {
             const id = document.getElementById('prod-form-id').value;
             const title = document.getElementById('prod-form-title').value.trim();
-            const sku = document.getElementById('prod-form-sku').value.trim();
             const price = parseFloat(document.getElementById('prod-form-price').value);
-            const discountPriceInput = document.getElementById('prod-form-discount-price').value;
-            const discountPrice = discountPriceInput ? parseFloat(discountPriceInput) : null;
-            
             const category = document.getElementById('prod-form-category').value;
             
             let images = [];
@@ -965,12 +961,6 @@
                 let imgVal = document.getElementById(`prod-form-img-${i}`).value.trim();
                 if(imgVal) images.push(imgVal);
             }
-
-            let videos = [];
-            let v1 = document.getElementById('prod-form-video-1').value.trim();
-            let v2 = document.getElementById('prod-form-video-2').value.trim();
-            if(v1) videos.push(v1);
-            if(v2) videos.push(v2);
 
             const description = document.getElementById('prod-form-desc').value.trim();
 
@@ -991,7 +981,6 @@
                 category,
                 catLabel,
                 images,
-                videos,
                 description
             };
 
