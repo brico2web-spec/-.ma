@@ -17,20 +17,56 @@
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
+    <!-- Login Overlay / Modal قبل الولوج -->
+    <div id="login-overlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 space-y-6 relative">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-white font-bold text-2xl shadow-lg">B</div>
+                <h2 class="text-2xl font-black text-gray-900">تسجيل الدخول لوحة الإدارة</h2>
+                <p class="text-xs text-gray-500">أدخل اسم المستخدم وكلمة المرور للوصول إلى لوحة التحكم</p>
+            </div>
+
+            <div id="login-form-box" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-700">اسم المستخدم</label>
+                    <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-700">كلمة المرور</label>
+                    <input type="password" id="login-password" placeholder="أدخل كلمة المرور" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                    <button onclick="showForgotPasswordModal()" class="text-indigo-600 font-semibold hover:underline">نسيت كلمة المرور؟</button>
+                </div>
+                <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm">دخول</button>
+                <p id="login-error" class="text-xs text-rose-600 text-center font-bold hidden">اسم المستخدم أو كلمة المرور غير صحيحة!</p>
+            </div>
+
+            <!-- Forgot Password Box (Hidden by default) -->
+            <div id="forgot-password-box" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-700">اسم المستخدم الاحتياطي</label>
+                    <input type="text" id="recovery-username" placeholder="أدخل اسم المستخدم الاحتياطي" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-gray-700">كلمة المرور الجديدة</label>
+                    <input type="password" id="new-password-input" placeholder="أدخل كلمة المرور الجديدة" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
+                </div>
+                <button onclick="handleResetPassword()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg transition-colors text-sm">تحديث كلمة المرور</button>
+                <div class="text-center">
+                    <button onclick="hideForgotPasswordModal()" class="text-xs text-gray-500 hover:underline">العودة لتسجيل الدخول</button>
+                </div>
+                <p id="recovery-error" class="text-xs text-rose-600 text-center font-bold hidden">اسم المستخدم الاحتياطي غير صحيح!</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Header / Navbar -->
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="window.location.href='index.html'">
                 <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">B</div>
                 <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">bedal.online - لوحة الإدارة</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <a href="index.html" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 rounded-xl border border-indigo-100 flex items-center gap-1.5">
-                    <i data-lucide="home" class="w-4 h-4"></i> العودة للموقع الرئيسي
-                </a>
-                <span class="text-xs font-semibold bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl border border-emerald-100 flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Supabase Connected
-                </span>
             </div>
         </div>
     </header>
@@ -74,6 +110,7 @@
             <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap">إدارة المنتجات</button>
             <button onclick="switchAdminTab('vendors')" id="admin-tab-btn-vendors" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة نخبة المتاجر الشريكة</button>
             <button onclick="switchAdminTab('accounting')" id="admin-tab-btn-accounting" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="calculator" class="w-4 h-4"></i> قسم الحسابات والأرباح</button>
+            <button onclick="switchAdminTab('ads')" id="admin-tab-btn-ads" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="megaphone" class="w-4 h-4 text-rose-500"></i> قسم الإعلانات</button>
             <button onclick="switchAdminTab('bfd')" id="admin-tab-btn-bfd" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> إدارة منتجات Black Free Day</button>
             <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة شرائح السلايدر</button>
         </div>
@@ -90,7 +127,7 @@
                             <th class="p-4">المنتج</th>
                             <th class="p-4">المبلغ</th>
                             <th class="p-4">حالة الطلب</th>
-                            <th class="p-4">إرسال للمتجر</th>
+                            <th class="p-4">الإجراءات (إرسال وحذف)</th>
                         </tr>
                     </thead>
                     <tbody id="admin-orders-table-body" class="divide-y divide-gray-100"></tbody>
@@ -151,7 +188,7 @@
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
                             <i data-lucide="store" class="w-5 h-5 text-indigo-600"></i> إدارة وتعديل نخبة المتاجر الشريكة
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">تعديل معلومات وأسعار وشعارات المتاجر في Supabase.</p>
+                        <p class="text-xs text-gray-500 mt-1">تعديل معلومات وأسعار وشعارات وثمن التوصيل للمتاجر في Supabase.</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <button onclick="toggleVendorModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center gap-1.5">
@@ -171,22 +208,70 @@
             <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
                 <div class="border-b pb-4">
                     <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                        <i data-lucide="calculator" class="w-5 h-5 text-indigo-600"></i> قسم الحسابات والأرباح
+                        <i data-lucide="calculator" class="w-5 h-5 text-indigo-600"></i> قسم الحسابات والأرباح وتكاليف التوصيل
                     </h3>
-                    <p class="text-xs text-gray-500 mt-1">حساب الأرباح الإجمالية، الطلبات المؤكدة، والمتوسط المالي من بيانات Supabase.</p>
+                    <p class="text-xs text-gray-500 mt-1">حساب الأرباح الإجمالية، أثمنة التوصيل على حسب كل متجر، ومصاريف الإعلانات.</p>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
                     <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
                         <span class="text-xs font-bold text-indigo-600">إجمالي المبيعات المؤكدة</span>
                         <h3 id="acc-total-sales" class="text-2xl font-black text-indigo-900 mt-2">0.00 د.م</h3>
                     </div>
                     <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
-                        <span class="text-xs font-bold text-emerald-600">عدد الطلبات المسجلة</span>
-                        <h3 id="acc-total-orders" class="text-2xl font-black text-emerald-900 mt-2">0 طلب</h3>
+                        <span class="text-xs font-bold text-emerald-600">إجمالي مصاريف التوصيل</span>
+                        <h3 id="acc-total-shipping" class="text-2xl font-black text-emerald-900 mt-2">0.00 د.م</h3>
+                    </div>
+                    <div class="bg-rose-50 p-6 rounded-2xl border border-rose-100">
+                        <span class="text-xs font-bold text-rose-600">إجمالي مصاريف الإعلانات</span>
+                        <h3 id="acc-total-ads" class="text-2xl font-black text-rose-900 mt-2">0.00 د.م</h3>
                     </div>
                     <div class="bg-amber-50 p-6 rounded-2xl border border-amber-100">
-                        <span class="text-xs font-bold text-amber-600">متوسط قيمة الطلب الواحد</span>
-                        <h3 id="acc-avg-order" class="text-2xl font-black text-amber-900 mt-2">0.00 د.م</h3>
+                        <span class="text-xs font-bold text-amber-600">صافي الأرباح</span>
+                        <h3 id="acc-net-profit" class="text-2xl font-black text-amber-900 mt-2">0.00 د.م</h3>
+                    </div>
+                </div>
+                <div class="mt-6 pt-6 border-t">
+                    <h4 class="font-bold text-sm text-gray-800 mb-3">تفاصيل أثمنة التوصيل والطلبات حسب المتاجر:</h4>
+                    <div id="acc-vendors-breakdown" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم الإعلانات (تيكتوك، فيسبوك، انستغرام) -->
+        <div id="admin-subtab-ads" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+                <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                            <i data-lucide="megaphone" class="w-5 h-5 text-rose-500"></i> إدارة مصاريف الإعلانات (التيكتوك، الفيسبوك، الأنستاغرام)
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">تحديد ومتابعة ميزانية ومصاريف الحملات الإعلانية في المنصات المختلفة.</p>
+                    </div>
+                    <button onclick="saveAdsExpenses()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
+                        حفظ مصاريف الإعلانات
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div class="p-5 bg-gray-50 rounded-2xl border space-y-3">
+                        <div class="flex items-center gap-2 font-bold text-gray-800">
+                            <i data-lucide="video" class="w-5 h-5 text-black"></i> تيكتوك (TikTok Ads)
+                        </div>
+                        <label class="block text-xs text-gray-500">المبلغ المنفق (د.م)</label>
+                        <input type="number" id="ads-tiktok-input" value="0" class="w-full px-4 py-2.5 rounded-xl border bg-white font-bold text-indigo-600">
+                    </div>
+                    <div class="p-5 bg-gray-50 rounded-2xl border space-y-3">
+                        <div class="flex items-center gap-2 font-bold text-gray-800">
+                            <i data-lucide="facebook" class="w-5 h-5 text-blue-600"></i> فيسبوك (Facebook Ads)
+                        </div>
+                        <label class="block text-xs text-gray-500">المبلغ المنفق (د.م)</label>
+                        <input type="number" id="ads-facebook-input" value="0" class="w-full px-4 py-2.5 rounded-xl border bg-white font-bold text-indigo-600">
+                    </div>
+                    <div class="p-5 bg-gray-50 rounded-2xl border space-y-3">
+                        <div class="flex items-center gap-2 font-bold text-gray-800">
+                            <i data-lucide="instagram" class="w-5 h-5 text-pink-600"></i> إنستغرام (Instagram Ads)
+                        </div>
+                        <label class="block text-xs text-gray-500">المبلغ المنفق (د.م)</label>
+                        <input type="number" id="ads-instagram-input" value="0" class="w-full px-4 py-2.5 rounded-xl border bg-white font-bold text-indigo-600">
                     </div>
                 </div>
             </div>
@@ -320,9 +405,15 @@
                     <label class="block font-semibold mb-1">وصف المتجر / التخصص *</label>
                     <textarea id="vendor-form-desc" rows="2" placeholder="وصف المتجر..." class="w-full px-4 py-2.5 rounded-xl border"></textarea>
                 </div>
-                <div>
-                    <label class="block font-semibold mb-1">رقم الهاتف *</label>
-                    <input type="text" id="vendor-form-phone" placeholder="212600000000" class="w-full px-4 py-2.5 rounded-xl border" dir="ltr">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold mb-1">رقم الهاتف *</label>
+                        <input type="text" id="vendor-form-phone" placeholder="212600000000" class="w-full px-4 py-2.5 rounded-xl border" dir="ltr">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">ثمن التوصيل (د.م) *</label>
+                        <input type="number" id="vendor-form-shipping" placeholder="30" class="w-full px-4 py-2.5 rounded-xl border">
+                    </div>
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">المدينة *</label>
@@ -401,7 +492,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.19-release</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.24-release</span>
                 </span>
             </div>
         </div>
@@ -418,6 +509,50 @@
         let partnerStoresDatabase = [];
         let sliderDatabase = [];
         let bfdDatabase = [];
+        let adsExpenses = { tiktok: 0, facebook: 0, instagram: 0 };
+
+        // بيانات الدخول الرسمية
+        let currentAdminUser = "ZAMZAM";
+        let currentAdminPass = localStorage.getItem('bedal_custom_admin_pass') || "ZAMZAM14634ALFMRNA";
+
+        function handleLogin() {
+            const uInput = document.getElementById('login-username').value.trim();
+            const pInput = document.getElementById('login-password').value.trim();
+            const errEl = document.getElementById('login-error');
+
+            if (uInput === currentAdminUser && pInput === currentAdminPass) {
+                document.getElementById('login-overlay').classList.add('hidden');
+                errEl.classList.add('hidden');
+            } else {
+                errEl.classList.remove('hidden');
+            }
+        }
+
+        function showForgotPasswordModal() {
+            document.getElementById('login-form-box').classList.add('hidden');
+            document.getElementById('forgot-password-box').classList.remove('hidden');
+        }
+
+        function hideForgotPasswordModal() {
+            document.getElementById('forgot-password-box').classList.add('hidden');
+            document.getElementById('login-form-box').classList.remove('hidden');
+        }
+
+        function handleResetPassword() {
+            const recUser = document.getElementById('recovery-username').value.trim();
+            const newPass = document.getElementById('new-password-input').value.trim();
+            const recErr = document.getElementById('recovery-error');
+
+            if (recUser === "amirzamzam" && newPass.length > 0) {
+                currentAdminPass = newPass;
+                localStorage.setItem('bedal_custom_admin_pass', newPass);
+                alert('تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول بكام كلمة المرور الجديدة.');
+                hideForgotPasswordModal();
+                document.getElementById('recovery-error').classList.add('hidden');
+            } else {
+                recErr.classList.remove('hidden');
+            }
+        }
 
         async function fetchSupabaseData() {
             try {
@@ -443,6 +578,15 @@
 
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
                 if (bfd) bfdDatabase = bfd;
+
+                // استرجاع مصاريف الإعلانات من LocalStorage أو Supabase إن وجدت
+                const savedAds = localStorage.getItem('bedal_ads_expenses');
+                if(savedAds) {
+                    adsExpenses = JSON.parse(savedAds);
+                    document.getElementById('ads-tiktok-input').value = adsExpenses.tiktok || 0;
+                    document.getElementById('ads-facebook-input').value = adsExpenses.facebook || 0;
+                    document.getElementById('ads-instagram-input').value = adsExpenses.instagram || 0;
+                }
 
                 renderAdminProducts();
                 renderAdminOrders();
@@ -524,9 +668,12 @@
                         <td class="p-4 text-indigo-600">${order.product}</td>
                         <td class="p-4 font-bold">${order.price} د.م</td>
                         <td class="p-4"><span class="${statusColor} px-2.5 py-1 rounded-md text-xs font-semibold">${order.status || 'قيد الانتظار'}</span></td>
-                        <td class="p-4">
+                        <td class="p-4 flex items-center gap-2 whitespace-nowrap">
                             <button onclick="sendOrderToVendorWhatsApp(${idx})" class="bg-emerald-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-emerald-700 shadow-sm flex items-center gap-1">
                                 <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> إرسال للمتجر
+                            </button>
+                            <button onclick="deleteOrder(${idx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1 transition-colors">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> حذف الطلبية
                             </button>
                         </td>
                     </tr>
@@ -536,6 +683,24 @@
             document.getElementById('stat-total-sales').innerText = totalSum.toFixed(2) + ' د.م';
             document.getElementById('stat-total-orders').innerText = salesOrdersDatabase.length + ' طلبات';
             lucide.createIcons();
+        }
+
+        async function deleteOrder(idx) {
+            if (confirm('هل أنت متأكد من حذف هذه الطلبية نهائياً؟')) {
+                const order = salesOrdersDatabase[idx];
+                if (order && order.id) {
+                    const { error } = await supabaseClient.from('orders').delete().eq('id', order.id);
+                    if (error) {
+                        alert('حدث خطأ أثناء الحذف من Supabase: ' + error.message);
+                        return;
+                    }
+                }
+                salesOrdersDatabase.splice(idx, 1);
+                renderAdminOrders();
+                renderTrackingTable();
+                renderAccountingSection();
+                alert('تم حذف الطلبية بنجاح!');
+            }
         }
 
         function renderTrackingTable() {
@@ -582,21 +747,61 @@
 
         function sendOrderToVendorWhatsApp(idx) {
             const order = salesOrdersDatabase[idx];
-            const msg = `📦 *طلب جديد مؤكد من المنصة:*:\n\n👤 الزبون: ${order.name}\n📞 الهاتف: ${order.phone}\n📍 العنوان: ${order.address}\n🛍️ المنتجات: ${order.product}\n💰 المبلغ: ${order.price} د.م\n📌 الحالة: ${order.status || 'قيد الانتظار'}`;
+            const msg = `📦 *طلب جديد مؤكد من المنصة www.bedal.online*:\n\n👤 الزبون: ${order.name}\n📞 الهاتف: ${order.phone}\n📍 العنوان: ${order.address}\n🛍️ المنتجات: ${order.product}\n💰 المبلغ: ${order.price} د.م\n📌 الحالة: ${order.status || 'قيد الانتظار'}`;
             window.open(`https://wa.me/212600000000?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
         function renderAccountingSection() {
             let totalSales = 0;
+            let totalShipping = 0;
+            
+            // حساب إجمالي المبيعات ومصاريف التوصيل لكل متجر بناء على الطلبات والمنتجات
+            let storeOrderCounts = {};
             salesOrdersDatabase.forEach(o => {
                 totalSales += (o.price || 0);
+                // محاولة مطابقة الطلب بالمتجر عبر المنتج
+                let prod = productsDatabase.find(p => p.title === o.product);
+                let storeKey = prod ? prod.storeKey : 'general';
+                storeOrderCounts[storeKey] = (storeOrderCounts[storeKey] || 0) + 1;
             });
-            const count = salesOrdersDatabase.length;
-            const avg = count > 0 ? (totalSales / count) : 0;
+
+            let breakdownHtml = '';
+            partnerStoresDatabase.forEach(store => {
+                let count = storeOrderCounts[store.key || store.name] || 0;
+                let shippingFee = parseFloat(store.shippingFee || store.shipping || 30);
+                let storeShippingTotal = count * shippingFee;
+                totalShipping += storeShippingTotal;
+
+                breakdownHtml += `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border text-sm">
+                        <span class="font-bold text-gray-800">${store.name}</span>
+                        <div class="flex items-center gap-4 text-xs text-gray-600">
+                            <span>الطلبات: <strong class="text-indigo-600">${count}</strong></span>
+                            <span>ثمن التوصيل للقطعة: <strong class="text-indigo-600">${shippingFee} د.م</strong></span>
+                            <span>إجمالي التوصيل: <strong class="text-emerald-600">${storeShippingTotal.toFixed(2)} د.م</strong></span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            let totalAds = (parseFloat(adsExpenses.tiktok) || 0) + (parseFloat(adsExpenses.facebook) || 0) + (parseFloat(adsExpenses.instagram) || 0);
+            let netProfit = totalSales - totalShipping - totalAds;
 
             document.getElementById('acc-total-sales').innerText = totalSales.toFixed(2) + ' د.م';
-            document.getElementById('acc-total-orders').innerText = count + ' طلب';
-            document.getElementById('acc-avg-order').innerText = avg.toFixed(2) + ' د.م';
+            document.getElementById('acc-total-shipping').innerText = totalShipping.toFixed(2) + ' د.م';
+            document.getElementById('acc-total-ads').innerText = totalAds.toFixed(2) + ' د.م';
+            document.getElementById('acc-net-profit').innerText = netProfit.toFixed(2) + ' د.م';
+            document.getElementById('acc-vendors-breakdown').innerHTML = breakdownHtml || '<p class="text-gray-400 text-xs">لا توجد طلبات مسجلة بعد.</p>';
+        }
+
+        function saveAdsExpenses() {
+            adsExpenses.tiktok = parseFloat(document.getElementById('ads-tiktok-input').value) || 0;
+            adsExpenses.facebook = parseFloat(document.getElementById('ads-facebook-input').value) || 0;
+            adsExpenses.instagram = parseFloat(document.getElementById('ads-instagram-input').value) || 0;
+
+            localStorage.setItem('bedal_ads_expenses', JSON.stringify(adsExpenses));
+            renderAccountingSection();
+            alert('تم حفظ مصاريف الإعلانات وتحديث الأرباح بنجاح!');
         }
 
         function renderBfdTable() {
@@ -670,7 +875,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-sm">
                             <div>
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">اسم المتجر</label>
                                 <input type="text" id="vendor-name-${idx}" value="${store.name || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
@@ -683,11 +888,15 @@
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">المدينة</label>
                                 <input type="text" id="vendor-city-${idx}" value="${store.city || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
                             </div>
-                            <div class="sm:col-span-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">ثمن التوصيل (د.م)</label>
+                                <input type="number" id="vendor-shipping-${idx}" value="${store.shippingFee || store.shipping || 30}" class="w-full px-3 py-2 rounded-xl border bg-white font-bold text-indigo-600">
+                            </div>
+                            <div class="sm:col-span-2">
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">رابط الشعار (Logo)</label>
                                 <input type="url" id="vendor-logo-${idx}" value="${store.logo || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
                             </div>
-                            <div class="sm:col-span-3">
+                            <div class="sm:col-span-2">
                                 <label class="block text-xs font-semibold text-gray-700 mb-1">وصف المتجر</label>
                                 <input type="text" id="vendor-desc-${idx}" value="${store.desc || ''}" class="w-full px-3 py-2 rounded-xl border bg-white">
                             </div>
@@ -704,6 +913,7 @@
                 store.name = document.getElementById(`vendor-name-${idx}`).value.trim();
                 store.phone = document.getElementById(`vendor-phone-${idx}`).value.trim();
                 store.city = document.getElementById(`vendor-city-${idx}`).value.trim();
+                store.shippingFee = parseFloat(document.getElementById(`vendor-shipping-${idx}`).value) || 30;
                 store.logo = document.getElementById(`vendor-logo-${idx}`).value.trim();
                 store.desc = document.getElementById(`vendor-desc-${idx}`).value.trim();
             });
@@ -715,7 +925,8 @@
                     await supabaseClient.from('partner_stores').insert([store]);
                 }
             }
-            alert('تم حفظ وتحديث معلومات المتاجر الشريكة في Supabase بنجاح!');
+            alert('تم حفظ وتحديث معلومات المتاجر الشريكة وأثمنة التوصيل في Supabase بنجاح!');
+            renderAccountingSection();
         }
 
         async function deleteVendor(idx) {
@@ -740,6 +951,7 @@
             const desc = document.getElementById('vendor-form-desc').value.trim();
             const phone = document.getElementById('vendor-form-phone').value.trim();
             const city = document.getElementById('vendor-form-city').value.trim();
+            const shippingFee = parseFloat(document.getElementById('vendor-form-shipping').value) || 30;
 
             if (!name || !logo || !desc || !phone || !city) {
                 alert('يرجى ملء جميع الحقول المطلوبة!');
@@ -747,7 +959,7 @@
             }
 
             const key = name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
-            const newStore = { key, name, logo, desc, phone, city };
+            const newStore = { key, name, logo, desc, phone, city, shippingFee };
 
             const { error } = await supabaseClient.from('partner_stores').insert([newStore]);
             if (error) {
@@ -957,6 +1169,7 @@
             document.getElementById('admin-subtab-products').classList.add('hidden');
             document.getElementById('admin-subtab-vendors').classList.add('hidden');
             document.getElementById('admin-subtab-accounting').classList.add('hidden');
+            document.getElementById('admin-subtab-ads').classList.add('hidden');
             document.getElementById('admin-subtab-bfd').classList.add('hidden');
             document.getElementById('admin-subtab-slider').classList.add('hidden');
 
@@ -965,6 +1178,7 @@
             document.getElementById('admin-tab-btn-products').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-vendors').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-accounting').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
+            document.getElementById('admin-tab-btn-ads').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
 
@@ -984,6 +1198,9 @@
                 document.getElementById('admin-subtab-accounting').classList.remove('hidden');
                 document.getElementById('admin-tab-btn-accounting').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderAccountingSection();
+            } else if (tabKey === 'ads') {
+                document.getElementById('admin-subtab-ads').classList.remove('hidden');
+                document.getElementById('admin-tab-btn-ads').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
             } else if (tabKey === 'bfd') {
                 document.getElementById('admin-subtab-bfd').classList.remove('hidden');
                 document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
