@@ -588,7 +588,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.55</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.59</span>
                     </span>
                 </div>
             </div>
@@ -601,8 +601,8 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // إعدادات بوت التليغرام المحدثة بدقة لتجاوز قيود CORS بشكل مضمون
-        const TELEGRAM_BOT_TOKEN = '9232763791:AAH6LAmpeOiEaqUrOEPy71Bu2HJ9SQkZrys';
+        // إعدادات بوت التليغرام الجديد والمربوط بدقة تامة
+        const TELEGRAM_BOT_TOKEN = '8650572947:AAHbCYkD-jaqF346Cxus3zLoDxSb1W4n2f8';
         const TELEGRAM_CHAT_ID = '1345748201';
 
         async function sendTelegramNotification(orderData) {
@@ -617,9 +617,14 @@
 
                 const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
                 
-                // استخدام وسيط متطور وآمن لتجاوز حظر CORS بشكل كامل وتأمين وصول الإشعار
-                const proxyUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(telegramApiUrl);
-                await fetch(proxyUrl);
+                // استخدام وسطاء آمنين لتجاوز قيود CORS وضمان وصول الإشعار فوراً
+                const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=` + encodeURIComponent(telegramApiUrl);
+                
+                let response = await fetch(proxyUrl);
+                if (!response.ok) {
+                    const fallbackProxy = `https://api.allorigins.win/raw?url=` + encodeURIComponent(telegramApiUrl);
+                    await fetch(fallbackProxy);
+                }
             } catch (err) {
                 console.error("خطأ في إرسال إشعار التليغرام:", err);
             }
