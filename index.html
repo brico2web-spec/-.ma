@@ -588,7 +588,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.59</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.61</span>
                     </span>
                 </div>
             </div>
@@ -601,32 +601,18 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // إعدادات بوت التليغرام الجديد والمربوط بدقة تامة
-        const TELEGRAM_BOT_TOKEN = '8650572947:AAHbCYkD-jaqF346Cxus3zLoDxSb1W4n2f8';
-        const TELEGRAM_CHAT_ID = '1345748201';
+        // رابط Webhook الجديد الخاص بك على Make.com
+        const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
 
         async function sendTelegramNotification(orderData) {
             try {
-                const message = `🚨 طلب جديد تم استلامه عبر موقع bedal.online!\n\n` +
-                                `👤 الاسم: ${orderData.name}\n` +
-                                `📞 الهاتف: ${orderData.phone}\n` +
-                                `📍 العنوان/المدينة: ${orderData.address}\n` +
-                                `🛍️ المنتج: ${orderData.product}\n` +
-                                `💰 المبلغ الإجمالي: ${orderData.price} د.م\n` +
-                                `📌 الحالة: ${orderData.status}`;
-
-                const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
-                
-                // استخدام وسطاء آمنين لتجاوز قيود CORS وضمان وصول الإشعار فوراً
-                const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=` + encodeURIComponent(telegramApiUrl);
-                
-                let response = await fetch(proxyUrl);
-                if (!response.ok) {
-                    const fallbackProxy = `https://api.allorigins.win/raw?url=` + encodeURIComponent(telegramApiUrl);
-                    await fetch(fallbackProxy);
-                }
+                await fetch(MAKE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
             } catch (err) {
-                console.error("خطأ في إرسال إشعار التليغرام:", err);
+                console.error("خطأ في إرسال إشعار الويب هوك:", err);
             }
         }
 
