@@ -358,7 +358,8 @@
                         <div>
                             <span id="detail-product-cat" class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">تصنيف</span>
                             <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-3">عنوان المنتج</h1>
-                            <p id="detail-product-desc" class="text-gray-600 text-sm mt-3 leading-relaxed">وصف المنتوج هنا...</p>
+                            <!-- مقياس وصف واحد ونظيف لكل بطاقة منتج -->
+                            <p id="detail-product-desc" class="text-gray-600 text-sm mt-3 leading-relaxed line-clamp-3">وصف المنتوج هنا...</p>
                             <div class="mt-5 p-4 bg-emerald-50/70 border border-emerald-100 rounded-2xl flex items-center justify-between">
                                 <div>
                                     <span class="text-xs font-bold text-emerald-600 block mb-0.5">الثمن بعد التخفيض:</span>
@@ -368,7 +369,7 @@
                                     </div>
                                 </div>
                                 <div class="text-left">
-                                    <span class="text-xs font-bold text-gray-400 block mb-0.5">الثمن الأصلي:</span>
+                                    <span class="text-xs font-bold text-gray-400 block mb-0.5">الأصلي:</span>
                                     <span id="detail-old-price" class="text-sm font-bold text-red-600 line-through">0.00 د.م</span>
                                 </div>
                             </div>
@@ -431,7 +432,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> إصدار V<span class="text-indigo-600 font-bold">3.9.21</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> إصدار V<span class="text-indigo-600 font-bold">3.9.22</span>
                 </span>
             </div>
         </div>
@@ -446,7 +447,6 @@
         let cart = [];
         let productsDatabase = [];
         let blackFreeDayProducts = [];
-        let partnerStores = {};
 
         let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '' };
 
@@ -454,12 +454,22 @@
             try {
                 const { data: prods } = await supabaseClient.from('products').select('*');
                 if (prods) {
-                    productsDatabase = prods.map(p => ({
-                        ...p,
-                        images: typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []),
-                        price: parseFloat(p.discountPrice || p.price),
-                        oldPrice: parseFloat(p.price)
-                    }));
+                    let localMeta = JSON.parse(localStorage.getItem('bedal_products_meta')) || {};
+                    productsDatabase = prods.map(p => {
+                        let meta = localMeta[p.id] || {};
+                        let parsedImages = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []);
+                        
+                        // تصحيح جلب الثمن الأصلي وثمن التخفيض بدقة تامة
+                        let originalPrice = parseFloat(p.price || 0);
+                        let discPrice = meta.discountPrice !== undefined && meta.discountPrice !== '' ? parseFloat(meta.discountPrice) : originalPrice;
+
+                        return {
+                            ...p,
+                            images: parsedImages,
+                            price: discPrice,
+                            oldPrice: originalPrice
+                        };
+                    });
                     renderStoreProducts(productsDatabase);
                     renderPartnerProductsMarquee(productsDatabase);
                 }
@@ -486,7 +496,6 @@
                 return;
             }
             
-            // تكرار المنتجات مرتين لضمان استمرارية حركة السلايدر بسلاسة بدون انقطاع
             let marqueeHtml = '';
             for(let i = 0; i < 2; i++) {
                 productsList.forEach(p => {
@@ -535,7 +544,8 @@
                             <div class="p-5 space-y-3">
                                 <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">${p.catLabel || 'متنوع'}</span>
                                 <h3 class="font-extrabold text-gray-900 text-xl leading-snug">${p.title}</h3>
-                                <p class="text-gray-500 text-xs">${p.description || ''}</p>
+                                <!-- مقياس وصف واحد ونظيف لكل بطاقة منتج -->
+                                <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                 <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-xl flex items-center justify-between">
                                     <div>
                                         <span class="text-[10px] font-bold text-emerald-600 block">الثمن بعد التخفيض:</span>
