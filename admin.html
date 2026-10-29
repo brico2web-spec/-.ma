@@ -436,7 +436,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.35</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.36</span>
                 </span>
             </div>
         </div>
@@ -958,21 +958,6 @@
             const discountPriceInput = document.getElementById('prod-form-discount-price').value;
             const discountPrice = discountPriceInput ? parseFloat(discountPriceInput) : null;
             
-            const tajirPriceInput = document.getElementById('prod-form-tajir-price').value;
-            const tajirPrice = tajirPriceInput ? parseFloat(tajirPriceInput) : null;
-            
-            const shippingCostInput = document.getElementById('prod-form-shipping-cost').value;
-            const shippingCost = shippingCostInput ? parseFloat(shippingCostInput) : null;
-
-            const adsFbInput = document.getElementById('prod-form-ads-fb').value;
-            const adsFb = adsFbInput ? parseFloat(adsFbInput) : null;
-
-            const adsTiktokInput = document.getElementById('prod-form-ads-tiktok').value;
-            const adsTiktok = adsTiktokInput ? parseFloat(adsTiktokInput) : null;
-
-            const adsInstaInput = document.getElementById('prod-form-ads-insta').value;
-            const adsInsta = adsInstaInput ? parseFloat(adsInstaInput) : null;
-
             const category = document.getElementById('prod-form-category').value;
             
             let images = [];
@@ -999,12 +984,10 @@
                 return;
             }
 
-            // إرسال الأعمدة الأساسية المتوافقة تماماً مع الجدول الحالي في Supabase لضمان عدم ظهور أي خطأ
+            // إرسال الحقول الأساسية المتوافقة تماماً مع الجدول الحالي في Supabase لضمان عدم ظهور أي خطأ
             const prodData = {
                 title,
-                sku,
                 price,
-                discountPrice,
                 category,
                 catLabel,
                 images,
