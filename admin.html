@@ -509,7 +509,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.54</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.55</span>
                 </span>
             </div>
         </div>
@@ -576,7 +576,7 @@
 
         async function fetchSupabaseData() {
             try {
-                const { data: prods } = await supabaseClient.from('products').select('*');
+                const { data: prods } = await supabaseClient.from('products').select('*').order('id', { ascending: false });
                 if (prods) {
                     productsDatabase = prods.map(p => ({
                         ...p,
