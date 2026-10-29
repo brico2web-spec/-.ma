@@ -10,15 +10,16 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts for Modern & Attractive Font (Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts for Modern & Attractive Font (Cairo & Outfit for Zenzero style) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Outfit:wght@700;900&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Cairo', sans-serif;
         }
         .brand-font {
-            font-family: 'Cairo', sans-serif;
-            letter-spacing: -0.5px;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 0.5px;
+            font-weight: 900;
         }
         @keyframes cartFlash {
             0% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4); }
@@ -42,6 +43,10 @@
         }
         .animate-marquee:hover {
             animation-play-state: paused;
+        }
+        /* انتقال سلس للصورة الرئيسية */
+        #detail-product-img {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
@@ -138,15 +143,27 @@
                     <label class="block text-xs font-semibold text-gray-700 mb-1">العنوان الكامل والمدينة *</label>
                     <input type="text" id="invoice-cust-address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white">
                 </div>
-                <div id="invoice-success-alert" class="hidden p-4 rounded-2xl text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center space-y-1">
-                    <p class="text-sm font-black">🎉 تم إرسال طلبك بنجاح إلى الإدارة وتم حفظه في قاعدة البيانات!</p>
-                    <p>في غضون 24 ساعة سيتم التواصل معك لتأكيد التوصيل.</p>
-                </div>
                 <button onclick="submitInvoiceOrder()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-100">
                     <i data-lucide="send" class="w-5 h-5"></i>
                     إرسال الطلب إلى الإدارة
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Order Success Popup Modal (New Modal) -->
+    <div id="order-success-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 text-center">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-xl font-black text-gray-900">تم إرسال طلبك بنجاح!</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.</p>
+            </div>
+            <button onclick="closeSuccessModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
+                <i data-lucide="x-circle" class="w-5 h-5"></i> إغلاق
+            </button>
         </div>
     </div>
 
@@ -190,9 +207,8 @@
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse cursor-pointer group" onclick="switchTab('store')">
-                <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-600 to-pink-500 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-200 group-hover:scale-105 transition-transform duration-300">
-                    B
-                    <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full animate-pulse"></span>
+                <div class="relative w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <img src="https://i.ibb.co/ZRHKRfFV/Meta-AI-store-icon-final-20261029-051707.png" alt="Logo" class="w-full h-full object-contain drop-shadow-sm">
                 </div>
                 <div class="flex flex-col">
                     <span class="text-2xl font-black tracking-wider bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent brand-font">
@@ -329,79 +345,72 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="vendor-products-grid"></div>
         </section>
 
-        <!-- SECTION: PRODUCT DETAIL -->
-        <section id="section-product-detail" class="hidden space-y-6">
-            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-4 py-2 rounded-xl transition-colors">
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                العودة إلى المنتجات
-            </button>
-            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-6 lg:p-10">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <div class="flex flex-col items-center gap-4 w-full lg:col-span-7">
-                        <div class="relative w-full rounded-3xl overflow-hidden bg-gray-50 border border-gray-200 h-[480px] sm:h-[640px] flex items-center justify-center shadow-inner group">
-                            <div id="detail-discount-badge" class="absolute top-4 right-4 z-20 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-sm sm:text-base font-black px-5 py-2.5 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 animate-pulse">
-                                <i data-lucide="zap" class="w-5 h-5 text-amber-200 fill-amber-200"></i>
-                                <span id="detail-badge-text">تخفيض 0%</span>
+        <!-- SECTION: PRODUCT DETAIL (Neutral Modern Style matching user requirements) -->
+        <section id="section-product-detail" class="hidden space-y-6 max-w-4xl mx-auto">
+            <!-- زر الرجوع إلى الرئيسية باللغة العربية -->
+            <div>
+                <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-6 py-2.5 rounded-2xl shadow-md transition-all">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i> الرجوع إلى الرئيسية
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-6 sm:p-8 space-y-8">
+                <!-- صورة المنتج الرئيسية مع أيقونة ونسبة التخفيض بشكل احترافي وحركة سلسة -->
+                <div class="relative w-full rounded-3xl overflow-hidden bg-gray-50 border border-gray-200 h-[380px] sm:h-[500px] flex items-center justify-center shadow-inner group">
+                    <div id="detail-discount-badge" class="absolute top-4 right-4 z-20 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs sm:text-sm font-black px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
+                        <i data-lucide="tag" class="w-4 h-4"></i>
+                        <span id="detail-badge-text">تخفيض 0%</span>
+                    </div>
+                    <img id="detail-product-img" src="" alt="Product Detail" class="w-full h-full object-cover">
+                </div>
+
+                <!-- الصور المصغرة تحت الصورة الرئيسية مع حركة سلسة وانتقال ناعم -->
+                <div id="detail-thumbnails-container" class="flex items-center justify-center gap-3 overflow-x-auto pb-2">
+                    <!-- Dynamic Thumbnails -->
+                </div>
+
+                <!-- تفاصيل المنتج باللغة العربية مع إخفاء SKU وتكبير الثمن -->
+                <div class="space-y-6">
+                    <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">عنوان المنتج</h1>
+                    
+                    <div class="space-y-4 text-sm border-t border-b py-4">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-gray-700">الثمن:</span>
+                            <div class="flex items-baseline gap-3">
+                                <span id="detail-product-price" class="text-3xl sm:text-4xl font-black text-emerald-600">0.00 د.م</span>
+                                <span id="detail-old-price" class="text-base font-bold text-red-500 line-through">0.00 د.م</span>
                             </div>
-                            <img id="detail-product-img" src="" alt="Product Detail" class="w-full h-full object-cover transition-all duration-300">
                         </div>
-                        <div class="flex items-center justify-center gap-4 w-full">
-                            <button onclick="prevProductImage()" class="flex-1 bg-white hover:bg-indigo-50 text-indigo-600 py-3.5 px-4 rounded-2xl shadow-sm border border-indigo-100 font-bold transition-all flex items-center justify-center gap-2 text-sm">
-                                <i data-lucide="chevron-right" class="w-5 h-5"></i> الصورة السابقة
-                            </button>
-                            <button onclick="nextProductImage()" class="flex-1 bg-white hover:bg-indigo-50 text-indigo-600 py-3.5 px-4 rounded-2xl shadow-sm border border-indigo-100 font-bold transition-all flex items-center justify-center gap-2 text-sm">
-                                الصورة التالية <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                            </button>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-gray-700">المتوفر في المخزون:</span>
+                            <span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-xl text-xs">متوفر الآن</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-gray-700">التصنيف:</span>
+                            <span id="detail-product-cat" class="bg-indigo-50 text-indigo-700 font-bold px-3 py-1 rounded-xl text-xs">عام</span>
                         </div>
                     </div>
-                    <div class="flex flex-col justify-between space-y-6 lg:col-span-5">
-                        <div>
-                            <span id="detail-product-cat" class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">تصنيف</span>
-                            <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-3">عنوان المنتج</h1>
-                            <!-- مقياس وصف واحد ونظيف لكل بطاقة منتج -->
-                            <p id="detail-product-desc" class="text-gray-600 text-sm mt-3 leading-relaxed line-clamp-3">وصف المنتوج هنا...</p>
-                            <div class="mt-5 p-4 bg-emerald-50/70 border border-emerald-100 rounded-2xl flex items-center justify-between">
-                                <div>
-                                    <span class="text-xs font-bold text-emerald-600 block mb-0.5">الثمن بعد التخفيض:</span>
-                                    <div class="flex items-baseline gap-2">
-                                        <span id="detail-product-price" class="text-3xl sm:text-4xl font-black text-emerald-600">0.00</span>
-                                        <span class="text-xl font-bold text-emerald-600">د.م</span>
-                                    </div>
-                                </div>
-                                <div class="text-left">
-                                    <span class="text-xs font-bold text-gray-400 block mb-0.5">الأصلي:</span>
-                                    <span id="detail-old-price" class="text-sm font-bold text-red-600 line-through">0.00 د.م</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 space-y-4">
-                            <h3 class="font-bold text-gray-900 text-base flex items-center gap-2">
-                                <i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i> أدخل معلوماتك للطلب مباشرة
-                            </h3>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-700 mb-1">الاسم الكامل *</label>
-                                <input type="text" id="cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف *</label>
-                                <input type="tel" id="cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white text-right" dir="ltr">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-700 mb-1">العنوان الكامل والمدينة *</label>
-                                <input type="text" id="cust-address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white">
-                            </div>
-                            <div id="order-alert" class="hidden p-3 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 text-center">
-                                تم إرسال طلبك بنجاح! في غضون 24 ساعة سيتم التواصل معك لتأكيد التوصيل.
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                                <button onclick="openWhatsAppModalFromDetail()" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-md">
-                                    <i data-lucide="message-circle" class="w-5 h-5"></i> طلب عبر الواتساب
-                                </button>
-                                <button onclick="sendOrderWebsite()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-lg">
-                                    <i data-lucide="send" class="w-5 h-5"></i> إرسال عبر الموقع
-                                </button>
-                            </div>
-                        </div>
+
+                    <!-- الأزرار المطلوبة مثل البطاقة (زر للسلة + زر للطلب عبر الواتساب) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        <button onclick="addToCart(currentProduct.title, currentProduct.price, currentProduct.oldPrice, currentProduct.images[0] || '');" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 px-4 rounded-2xl font-bold transition-colors shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 text-sm">
+                            <i data-lucide="shopping-cart" class="w-5 h-5"></i> للسلة
+                        </button>
+                        <button onclick="openWhatsAppModal(currentProduct.title, currentProduct.price.toFixed(2))" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3.5 px-4 rounded-2xl font-bold transition-colors shadow-lg shadow-emerald-100 flex items-center justify-center gap-2 text-sm">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i> طلب عبر الواتساب
+                        </button>
+                    </div>
+
+                    <!-- وصف المنتج -->
+                    <div class="space-y-2 pt-2">
+                        <p id="detail-product-desc" class="text-gray-600 text-sm leading-relaxed whitespace-pre-line">وصف المنتوج هنا...</p>
+                    </div>
+
+                    <!-- زر شرح منصة تاجر إن وجد فيديو -->
+                    <div id="detail-video-box" class="hidden pt-2">
+                        <a id="detail-video-link" href="#" target="_blank" class="inline-flex items-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-800 px-4 py-2 rounded-xl text-xs font-bold shadow-sm">
+                            <i data-lucide="play-circle" class="w-4 h-4 text-emerald-600 fill-emerald-600 text-white"></i> شرح منصة تاجر
+                        </a>
                     </div>
                 </div>
             </div>
@@ -432,7 +441,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> إصدار V<span class="text-indigo-600 font-bold">3.9.22</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> إصدار V<span class="text-indigo-600 font-bold">3.9.31</span>
                 </span>
             </div>
         </div>
@@ -448,24 +457,23 @@
         let productsDatabase = [];
         let blackFreeDayProducts = [];
 
-        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '' };
+        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '', sku: '' };
 
         async function fetchSupabaseStoreData() {
             try {
                 const { data: prods } = await supabaseClient.from('products').select('*');
                 if (prods) {
-                    let localMeta = JSON.parse(localStorage.getItem('bedal_products_meta')) || {};
                     productsDatabase = prods.map(p => {
-                        let meta = localMeta[p.id] || {};
                         let parsedImages = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []);
+                        let parsedVideos = typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []);
                         
-                        // تصحيح جلب الثمن الأصلي وثمن التخفيض بدقة تامة
                         let originalPrice = parseFloat(p.price || 0);
-                        let discPrice = meta.discountPrice !== undefined && meta.discountPrice !== '' ? parseFloat(meta.discountPrice) : originalPrice;
+                        let discPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
 
                         return {
                             ...p,
                             images: parsedImages,
+                            videos: parsedVideos,
                             price: discPrice,
                             oldPrice: originalPrice
                         };
@@ -501,7 +509,7 @@
                 productsList.forEach(p => {
                     const mainImg = (p.images && p.images[0]) || '';
                     marqueeHtml += `
-                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-2xl shadow-xl flex-shrink-0 w-72 cursor-pointer hover:bg-white/15 transition-all" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', 'عرض خاص', ${JSON.stringify(p.images)}, '${p.catLabel || 'متنوع'}', '${p.description || ''}')">
+                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-2xl shadow-xl flex-shrink-0 w-72 cursor-pointer hover:bg-white/15 transition-all" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                             <img src="${mainImg}" class="w-16 h-16 rounded-xl object-cover border border-white/20 flex-shrink-0 shadow-md">
                             <div class="overflow-hidden space-y-1">
                                 <h4 class="font-extrabold text-sm text-white truncate">${p.title}</h4>
@@ -533,18 +541,18 @@
                 const badgeText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : 'عرض خاص';
 
                 html += `
-                    <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer relative flex flex-col justify-between" data-category="${p.category || 'various'}" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', '${badgeText}', ${JSON.stringify(p.images)}, '${p.catLabel || 'متنوع'}', '${p.description || ''}')">
+                    <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between" data-category="${p.category || 'various'}">
                         <div>
-                            <div class="absolute top-4 right-4 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-sm sm:text-base font-black px-4 py-2 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 animate-pulse">
+                            <div class="absolute top-4 right-4 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-sm sm:text-base font-black px-4 py-2 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 animate-pulse pointer-events-none">
                                 <i data-lucide="zap" class="w-5 h-5 text-amber-200 fill-amber-200"></i> ${badgeText}
                             </div>
-                            <div class="h-48 bg-gray-100 relative overflow-hidden">
+                            <!-- عند الضغط على الصورة تفتح الصفحة الخاصة بالمنتج -->
+                            <div class="h-48 bg-gray-100 relative overflow-hidden cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                                 <img src="${(p.images && p.images[0]) || ''}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             </div>
                             <div class="p-5 space-y-3">
                                 <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">${p.catLabel || 'متنوع'}</span>
-                                <h3 class="font-extrabold text-gray-900 text-xl leading-snug">${p.title}</h3>
-                                <!-- مقياس وصف واحد ونظيف لكل بطاقة منتج -->
+                                <h3 class="font-extrabold text-gray-900 text-xl leading-snug cursor-pointer hover:text-indigo-600 transition-colors" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">${p.title}</h3>
                                 <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                 <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-xl flex items-center justify-between">
                                     <div>
@@ -562,10 +570,10 @@
                             </div>
                         </div>
                         <div class="p-5 pt-0 grid grid-cols-2 gap-2">
-                            <button onclick="event.stopPropagation(); addToCart('${p.title}', ${p.price}, ${p.oldPrice}, '${(p.images && p.images[0]) || ''}')" class="w-full bg-indigo-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-100 flex items-center justify-center gap-1.5 text-xs">
+                            <button onclick="addToCart('${p.title}', ${p.price}, ${p.oldPrice}, '${(p.images && p.images[0]) || ''}')" class="w-full bg-indigo-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-100 flex items-center justify-center gap-1.5 text-xs">
                                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> للسلة
                             </button>
-                            <button onclick="event.stopPropagation(); openWhatsAppModal('${p.title}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-100 flex items-center justify-center gap-1.5 text-xs">
+                            <button onclick="openWhatsAppModal('${p.title}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-100 flex items-center justify-center gap-1.5 text-xs">
                                 <i data-lucide="message-circle" class="w-4 h-4"></i> طلب عبر الواتساب
                             </button>
                         </div>
@@ -594,11 +602,6 @@
             document.getElementById('wa-success-alert').classList.add('hidden');
             document.getElementById('whatsapp-modal').classList.remove('hidden');
             lucide.createIcons();
-        }
-
-        function openWhatsAppModalFromDetail() {
-            if (!currentProduct.title) return;
-            openWhatsAppModal(currentProduct.title, currentProduct.price);
         }
 
         function closeWhatsAppModal() {
@@ -637,6 +640,9 @@
 
             if (totalCount > 0) {
                 floatingCartBtn.classList.add('cart-bounce-active');
+                setTimeout(() => {
+                    floatingCartBtn.classList.remove('cart-bounce-active');
+                }, 1800);
             } else {
                 floatingCartBtn.classList.remove('cart-bounce-active');
             }
@@ -703,7 +709,6 @@
             document.getElementById('invoice-old-total').innerText = oldTotal.toFixed(2) + ' د.م';
             document.getElementById('invoice-saving-total').innerText = totalSaving.toFixed(2) + ' د.م';
             document.getElementById('invoice-final-total').innerText = finalTotal.toFixed(2) + ' د.م';
-            document.getElementById('invoice-success-alert').classList.add('hidden');
             document.getElementById('checkout-modal').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -731,8 +736,15 @@
                 await supabaseClient.from('orders').insert([orderData]);
             } catch (err) { console.error('Supabase Error:', err); }
 
-            document.getElementById('invoice-success-alert').classList.remove('hidden');
-            setTimeout(() => { cart = []; updateCartUI(); closeCheckoutModal(); }, 3000);
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+            document.getElementById('order-success-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('order-success-modal').classList.add('hidden');
         }
 
         function switchTab(tabName) {
@@ -767,7 +779,7 @@
                     const badgeText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : (p.discountBadge || 'عرض خاص');
 
                     html += `
-                        <div class="bg-white rounded-2xl border-2 border-amber-200 shadow-lg overflow-hidden group cursor-pointer relative flex flex-col justify-between" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', '${badgeText}', ${JSON.stringify(p.images)}, '${p.cat || 'عرض خاص'}', '${p.desc || ''}')">
+                        <div class="bg-white rounded-2xl border-2 border-amber-200 shadow-lg overflow-hidden group cursor-pointer relative flex flex-col justify-between" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                             <div>
                                 <div class="absolute top-4 right-4 z-10 bg-amber-500 text-zinc-950 text-sm sm:text-base font-black px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
                                     ${badgeText}
@@ -790,33 +802,79 @@
             switchTab('black_free_day');
         }
 
-        function openProductDetail(title, price, oldPrice, discountBadge, images, category, description) {
-            currentProduct = { title, price, oldPrice, discountBadge, images: Array.isArray(images) ? images : [images], currentImgIndex: 0, category, description };
+        function openProductDetailObject(p) {
+            const images = Array.isArray(p.images) && p.images.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            currentProduct = {
+                title: p.title || '',
+                price: p.price || 0,
+                oldPrice: p.oldPrice || p.price || 0,
+                discountBadge: p.discountBadge || 'عرض خاص',
+                images: images,
+                currentImgIndex: 0,
+                category: p.catLabel || p.category || 'عام',
+                description: p.description || '',
+                sku: p.sku || 'SKU-GENERAL',
+                videos: p.videos || []
+            };
+
+            let discountPercent = 0;
+            if (currentProduct.oldPrice && currentProduct.oldPrice > currentProduct.price) {
+                discountPercent = Math.round(((currentProduct.oldPrice - currentProduct.price) / currentProduct.oldPrice) * 100);
+            }
+            const badgeTextEl = document.getElementById('detail-badge-text');
+            if (badgeTextEl) {
+                badgeTextEl.innerText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : 'عرض خاص';
+            }
+
             updateDetailImageViewer();
-            document.getElementById('detail-product-title').innerText = title;
-            document.getElementById('detail-product-price').innerText = price;
-            document.getElementById('detail-old-price').innerText = oldPrice + ' د.م';
-            document.getElementById('detail-badge-text').innerText = discountBadge;
-            document.getElementById('detail-product-cat').innerText = category;
-            document.getElementById('detail-product-desc').innerText = description;
+            renderDetailThumbnails();
+
+            document.getElementById('detail-product-title').innerText = currentProduct.title;
+            document.getElementById('detail-product-price').innerText = currentProduct.price.toFixed(2) + ' د.م';
+            document.getElementById('detail-old-price').innerText = currentProduct.oldPrice.toFixed(2) + ' د.م';
+            document.getElementById('detail-product-cat').innerText = currentProduct.category;
+            document.getElementById('detail-product-desc').innerText = currentProduct.description;
+
+            const videoBox = document.getElementById('detail-video-box');
+            const videoLink = document.getElementById('detail-video-link');
+            if (currentProduct.videos && currentProduct.videos.length > 0 && currentProduct.videos[0]) {
+                videoLink.href = currentProduct.videos[0];
+                videoBox.classList.remove('hidden');
+            } else {
+                videoBox.classList.add('hidden');
+            }
+
             switchTab('detail');
+            lucide.createIcons();
         }
 
-        function nextProductImage() {
-            if(!currentProduct.images.length) return;
-            currentProduct.currentImgIndex = (currentProduct.currentImgIndex + 1) % currentProduct.images.length;
-            updateDetailImageViewer();
+        function renderDetailThumbnails() {
+            const container = document.getElementById('detail-thumbnails-container');
+            if (!container) return;
+            let html = '';
+            currentProduct.images.forEach((img, idx) => {
+                const isActive = idx === currentProduct.currentImgIndex;
+                html += `
+                    <img src="${img}" onclick="setDetailImageIndex(${idx})" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-2xl border-2 cursor-pointer transition-all duration-300 ${isActive ? 'border-indigo-600 scale-105 shadow-md ring-2 ring-indigo-300' : 'border-gray-200 opacity-70 hover:opacity-100'}">
+                `;
+            });
+            container.innerHTML = html;
         }
 
-        function prevProductImage() {
-            if(!currentProduct.images.length) return;
-            currentProduct.currentImgIndex = (currentProduct.currentImgIndex - 1 + currentProduct.images.length) % currentProduct.images.length;
+        function setDetailImageIndex(idx) {
+            currentProduct.currentImgIndex = idx;
             updateDetailImageViewer();
+            renderDetailThumbnails();
         }
 
         function updateDetailImageViewer() {
             if(!currentProduct.images.length) return;
-            document.getElementById('detail-product-img').src = currentProduct.images[currentProduct.currentImgIndex];
+            const imgEl = document.getElementById('detail-product-img');
+            imgEl.style.opacity = '0';
+            setTimeout(() => {
+                imgEl.src = currentProduct.images[currentProduct.currentImgIndex];
+                imgEl.style.opacity = '1';
+            }, 150);
         }
 
         function filterCategory(catKey) {
@@ -831,18 +889,6 @@
                     item.classList.add('hidden');
                 }
             });
-        }
-
-        async function sendOrderWebsite() {
-            const name = document.getElementById('cust-name').value.trim();
-            const phone = document.getElementById('cust-phone').value.trim();
-            const address = document.getElementById('cust-address').value.trim();
-            if (!name || !phone || !address) { alert('يرجى ملء جميع الخانات'); return; }
-
-            try {
-                await supabaseClient.from('orders').insert([{ name, phone, address, product: currentProduct.title, price: parseFloat(currentProduct.price), status: 'قيد الانتظار' }]);
-                document.getElementById('order-alert').classList.remove('hidden');
-            } catch (err) { console.error(err); }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
