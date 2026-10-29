@@ -587,7 +587,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> إصدار V<span class="text-indigo-600 font-bold">3.9.49</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.50</span>
                     </span>
                 </div>
             </div>
@@ -596,9 +596,9 @@
 
     <!-- App Logic Script & Supabase Integration -->
     <script>
-        const supabaseUrl = 'https://xgdtszzzxzlhtgmrextl.supabase.co';
-        const supabaseKey = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
-        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const SUPABASE_URL = 'https://xgdtszzzxzlhtgmrextl.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let cart = [];
         let productsDatabase = [];
@@ -735,7 +735,6 @@
                     renderStoreProducts(productsDatabase);
                     renderPartnerProductsMarquee(productsDatabase);
 
-                    // Check URL parameter for direct product link
                     const urlParams = new URLSearchParams(window.location.search);
                     const productIdParam = urlParams.get('product');
                     if (productIdParam) {
@@ -976,6 +975,59 @@
             lucide.createIcons();
         }
 
+        // دالة إرسال الطلب من السلة (مُصححة وتعمل بكفاءة تامة)
+        async function submitInvoiceOrder() {
+            const name = document.getElementById('invoice-cust-name').value.trim();
+            const phone = document.getElementById('invoice-cust-phone').value.trim();
+            const address = document.getElementById('invoice-cust-address').value.trim();
+
+            if (!name || !phone || !address) {
+                alert('يرجى ملء جميع معلومات التوصيل المطلوبة (الاسم، الهاتف، والعنوان)!');
+                return;
+            }
+
+            if (cart.length === 0) {
+                alert('السلة فارغة حالياً!');
+                return;
+            }
+
+            // تجميع أسماء المنتجات مع الكميات في نص واحد متناسق
+            let productsSummary = cart.map(item => `${item.title} (${item.quantity})`).join(' ، ');
+            let finalTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const orderData = {
+                name: name,
+                phone: phone,
+                address: address,
+                product: productsSummary,
+                price: finalTotal,
+                status: 'قيد الانتظار'
+            };
+
+            try {
+                const { error } = await supabaseClient.from('orders').insert([orderData]);
+                if (error) {
+                    alert('حدث خطأ أثناء إرسال الطلب: ' + error.message);
+                    return;
+                }
+            } catch (err) {
+                console.error('Supabase Cart Order Error:', err);
+                alert('حدث خطأ في الاتصال بقاعدة البيانات.');
+                return;
+            }
+
+            // تفريغ السلة وإغلاق نافذة الفاتورة وإظهار رسالة النجاح
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+            document.getElementById('invoice-cust-name').value = '';
+            document.getElementById('invoice-cust-phone').value = '';
+            document.getElementById('invoice-cust-address').value = '';
+
+            document.getElementById('order-success-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
         function updateCartUI() {
             const countBadge = document.getElementById('cart-count-badge');
             const floatingCartBtn = document.getElementById('floating-cart-btn');
@@ -1083,7 +1135,6 @@
                 document.getElementById('section-black-free-day').classList.remove('hidden');
             } else {
                 document.getElementById('section-store').classList.remove('hidden');
-                // Clear URL parameter when going back to store
                 if (window.history.pushState) {
                     const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.pushState({path:newUrl}, '', newUrl);
@@ -1145,7 +1196,6 @@
                 videos: p.videos || []
             };
 
-            // Update browser URL to include product ID without reloading page
             if (p.id && window.history.pushState) {
                 const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
                 window.history.pushState({path:newUrl}, '', newUrl);
