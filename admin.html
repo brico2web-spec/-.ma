@@ -265,6 +265,45 @@
                         <input type="number" id="prod-form-discount-price" class="w-full px-4 py-2.5 rounded-xl border">
                     </div>
                 </div>
+
+                <!-- خانات الحسابات الخاصة بالأدمين فقط (لا تظهر في الموقع الرئيسي) -->
+                <div class="p-4 bg-indigo-50/60 border border-indigo-100 rounded-2xl space-y-3">
+                    <h4 class="font-bold text-indigo-900 text-xs flex items-center gap-1.5">
+                        <i data-lucide="calculator" class="w-4 h-4 text-indigo-600"></i> حسابات التكاليف والأرباح (خاص بلوحة الأدمين فقط)
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1 text-xs text-gray-700">الثمن الأصلي في TAJIR COD</label>
+                            <input type="number" id="prod-form-tajir-price" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن مصاريف الشحن</label>
+                            <input type="number" id="prod-form-shipping-cost" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- قسم خسائر الإعلانات لكل مسؤول على حدى -->
+                <div class="p-4 bg-rose-50/60 border border-rose-100 rounded-2xl space-y-3">
+                    <h4 class="font-bold text-rose-900 text-xs flex items-center gap-1.5">
+                        <i data-lucide="trending-down" class="w-4 h-4 text-rose-600"></i> خسائر الإعلانات حسب المنصة والمسؤول
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1 text-xs text-gray-700">خسائر فيسبوك (Facebook)</label>
+                            <input type="number" id="prod-form-ads-fb" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-xs text-gray-700">خسائر تيك توك (TikTok)</label>
+                            <input type="number" id="prod-form-ads-tiktok" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-xs text-gray-700">خسائر أستغرام (Instagram)</label>
+                            <input type="number" id="prod-form-ads-insta" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold mb-1">القسم *</label>
@@ -397,7 +436,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.32-release</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.34</span>
                 </span>
             </div>
         </div>
@@ -868,6 +907,11 @@
             document.getElementById('prod-form-sku').value = '';
             document.getElementById('prod-form-price').value = '';
             document.getElementById('prod-form-discount-price').value = '';
+            document.getElementById('prod-form-tajir-price').value = '';
+            document.getElementById('prod-form-shipping-cost').value = '';
+            document.getElementById('prod-form-ads-fb').value = '';
+            document.getElementById('prod-form-ads-tiktok').value = '';
+            document.getElementById('prod-form-ads-insta').value = '';
             for(let i = 1; i <= 5; i++) {
                 document.getElementById(`prod-form-img-${i}`).value = '';
             }
@@ -885,6 +929,11 @@
             document.getElementById('prod-form-sku').value = p.sku || '';
             document.getElementById('prod-form-price').value = p.oldPrice || p.price || '';
             document.getElementById('prod-form-discount-price').value = p.discountPrice || '';
+            document.getElementById('prod-form-tajir-price').value = p.tajirPrice || '';
+            document.getElementById('prod-form-shipping-cost').value = p.shippingCost || '';
+            document.getElementById('prod-form-ads-fb').value = p.adsFb || '';
+            document.getElementById('prod-form-ads-tiktok').value = p.adsTiktok || '';
+            document.getElementById('prod-form-ads-insta').value = p.adsInsta || '';
             document.getElementById('prod-form-category').value = p.category || 'various';
             document.getElementById('prod-form-admin').value = p.adminKey || p.storeKey || 'ZAMZAM';
             
@@ -908,8 +957,23 @@
             const price = parseFloat(document.getElementById('prod-form-price').value);
             const discountPriceInput = document.getElementById('prod-form-discount-price').value;
             const discountPrice = discountPriceInput ? parseFloat(discountPriceInput) : null;
+            
+            const tajirPriceInput = document.getElementById('prod-form-tajir-price').value;
+            const tajirPrice = tajirPriceInput ? parseFloat(tajirPriceInput) : null;
+            
+            const shippingCostInput = document.getElementById('prod-form-shipping-cost').value;
+            const shippingCost = shippingCostInput ? parseFloat(shippingCostInput) : null;
+
+            const adsFbInput = document.getElementById('prod-form-ads-fb').value;
+            const adsFb = adsFbInput ? parseFloat(adsFbInput) : null;
+
+            const adsTiktokInput = document.getElementById('prod-form-ads-tiktok').value;
+            const adsTiktok = adsTiktokInput ? parseFloat(adsTiktokInput) : null;
+
+            const adsInstaInput = document.getElementById('prod-form-ads-insta').value;
+            const adsInsta = adsInstaInput ? parseFloat(adsInstaInput) : null;
+
             const category = document.getElementById('prod-form-category').value;
-            const adminKey = document.getElementById('prod-form-admin').value;
             
             let images = [];
             for(let i = 1; i <= 5; i++) {
@@ -940,9 +1004,13 @@
                 sku,
                 price,
                 discountPrice,
+                tajirPrice,
+                shippingCost,
+                adsFb,
+                adsTiktok,
+                adsInsta,
                 category,
                 catLabel,
-                adminKey,
                 images,
                 videos,
                 description
