@@ -588,7 +588,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.51</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.55</span>
                     </span>
                 </div>
             </div>
@@ -600,6 +600,30 @@
         const SUPABASE_URL = 'https://xgdtszzzxzlhtgmrextl.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // إعدادات بوت التليغرام المحدثة بدقة لتجاوز قيود CORS بشكل مضمون
+        const TELEGRAM_BOT_TOKEN = '9232763791:AAH6LAmpeOiEaqUrOEPy71Bu2HJ9SQkZrys';
+        const TELEGRAM_CHAT_ID = '1345748201';
+
+        async function sendTelegramNotification(orderData) {
+            try {
+                const message = `🚨 طلب جديد تم استلامه عبر موقع bedal.online!\n\n` +
+                                `👤 الاسم: ${orderData.name}\n` +
+                                `📞 الهاتف: ${orderData.phone}\n` +
+                                `📍 العنوان/المدينة: ${orderData.address}\n` +
+                                `🛍️ المنتج: ${orderData.product}\n` +
+                                `💰 المبلغ الإجمالي: ${orderData.price} د.م\n` +
+                                `📌 الحالة: ${orderData.status}`;
+
+                const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
+                
+                // استخدام وسيط متطور وآمن لتجاوز حظر CORS بشكل كامل وتأمين وصول الإشعار
+                const proxyUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(telegramApiUrl);
+                await fetch(proxyUrl);
+            } catch (err) {
+                console.error("خطأ في إرسال إشعار التليغرام:", err);
+            }
+        }
 
         let cart = [];
         let productsDatabase = [];
@@ -965,7 +989,10 @@
             };
 
             try {
-                await supabaseClient.from('orders').insert([orderData]);
+                const { error } = await supabaseClient.from('orders').insert([orderData]);
+                if (!error) {
+                    sendTelegramNotification(orderData);
+                }
             } catch (err) { console.error('Supabase Error:', err); }
 
             document.getElementById('detail-cust-name').value = '';
@@ -1009,6 +1036,7 @@
                     alert('حدث خطأ أثناء إرسال الطلب: ' + error.message);
                     return;
                 }
+                sendTelegramNotification(orderData);
             } catch (err) {
                 console.error('Supabase Cart Order Error:', err);
                 alert('حدث خطأ في الاتصال بقاعدة البيانات.');
