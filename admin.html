@@ -386,7 +386,7 @@
                     <label class="block font-semibold mb-1">كلمة المرور *</label>
                     <input type="password" id="admin-form-password" placeholder="كلمة المرور" class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
-                <button onclick="saveNewAdmin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ المسؤول في Supabase</button>
+                <button onclick="saveNewAdmin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ المسؤول محلياً</button>
             </div>
         </div>
     </div>
@@ -397,7 +397,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.31-release</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.32-release</span>
                 </span>
             </div>
         </div>
@@ -413,7 +413,9 @@
         let salesOrdersDatabase = [];
         let sliderDatabase = [];
         let bfdDatabase = [];
-        let adminsDatabase = [];
+        let adminsDatabase = JSON.parse(localStorage.getItem('bedal_custom_admins')) || [
+            { username: 'ZAMZAM', role: 'مشرف رئيسي', status: 'نشط' }
+        ];
 
         // بيانات الدخول الرسمية
         let currentAdminUser = "ZAMZAM";
@@ -424,7 +426,10 @@
             const pInput = document.getElementById('login-password').value.trim();
             const errEl = document.getElementById('login-error');
 
-            if (uInput === currentAdminUser && pInput === currentAdminPass) {
+            const foundAdmin = adminsDatabase.find(a => a.username === uInput);
+            const validPass = (uInput === currentAdminUser) ? currentAdminPass : (foundAdmin ? foundAdmin.password : null);
+
+            if (uInput && pInput && validPass && pInput === validPass) {
                 document.getElementById('login-overlay').classList.add('hidden');
                 errEl.classList.add('hidden');
             } else {
@@ -472,12 +477,6 @@
                 const { data: orders } = await supabaseClient.from('orders').select('*');
                 if (orders) salesOrdersDatabase = orders;
 
-                const { data: admins } = await supabaseClient.from('admins').select('*');
-                if (admins) {
-                    adminsDatabase = admins;
-                } else {
-                    adminsDatabase = [{ username: 'ZAMZAM', role: 'مشرف رئيسي', status: 'نشط' }];
-                }
                 updateAdminSelectOptions();
                 renderAdminsTable();
 
@@ -557,7 +556,6 @@
             if (!tbody) return;
             let html = '';
             salesOrdersDatabase.forEach((order, idx) => {
-                // البحث عن المسؤول عن المنتج المرتبط بالطلب
                 let matchedProduct = productsDatabase.find(p => p.title === order.product);
                 let productAdmin = matchedProduct ? (matchedProduct.adminKey || matchedProduct.storeKey || 'ZAMZAM') : (order.adminKey || 'ZAMZAM');
 
@@ -614,7 +612,6 @@
             let matchedProduct = productsDatabase.find(p => p.title === order.product);
             let skuVal = matchedProduct ? (matchedProduct.sku || 'N/A') : (order.sku || 'N/A');
 
-            // تجهيز البيانات وفق أعمدة الصورة المطلوبة: full_name, phone, address, note, delivery_note, price, sku, qte, date_order
             const excelData = [{
                 full_name: order.name || '',
                 phone: order.phone || '',
@@ -830,7 +827,7 @@
             document.getElementById('admin-modal').classList.toggle('hidden');
         }
 
-        async function saveNewAdmin() {
+        function saveNewAdmin() {
             const username = document.getElementById('admin-form-username').value.trim();
             const password = document.getElementById('admin-form-password').value.trim();
 
@@ -839,27 +836,21 @@
                 return;
             }
 
-            const newAdminData = { username, password, role: 'مسؤول نظام', status: 'نشط' };
-            const { error } = await supabaseClient.from('admins').insert([newAdminData]);
-            if (error) {
-                alert('حدث خطأ أثناء حفظ المسؤول في Supabase: ' + error.message);
-                return;
-            }
+            adminsDatabase.push({ username, password, role: 'مسؤول نظام', status: 'نشط' });
+            localStorage.setItem('bedal_custom_admins', JSON.stringify(adminsDatabase));
 
-            alert('تمت إضافة المسؤول بنجاح في Supabase!');
+            alert('تمت إضافة المسؤول بنجاح محلياً!');
             toggleAdminModal();
             document.getElementById('admin-form-username').value = '';
             document.getElementById('admin-form-password').value = '';
-            fetchSupabaseData();
+            updateAdminSelectOptions();
+            renderAdminsTable();
         }
 
-        async function deleteAdmin(idx) {
+        function deleteAdmin(idx) {
             if(confirm('هل أنت متأكد من حذف هذا المسؤول؟')) {
-                const adm = adminsDatabase[idx];
-                if(adm && adm.id) {
-                    await supabaseClient.from('admins').delete().eq('id', adm.id);
-                }
                 adminsDatabase.splice(idx, 1);
+                localStorage.setItem('bedal_custom_admins', JSON.stringify(adminsDatabase));
                 renderAdminsTable();
                 updateAdminSelectOptions();
                 alert('تم حذف المسؤول بنجاح!');
