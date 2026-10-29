@@ -42,6 +42,22 @@
             width: max-content;
             animation: marquee 45s linear infinite;
         }
+        /* تعديل سرعة شريط المنتجات المميزة لتصبح 200 ثانية كما طلبت */
+        .animate-marquee-slow {
+            display: flex;
+            width: max-content;
+            animation: marquee 200s linear infinite;
+        }
+        /* شريط تعليقات الزبناء المغاربة المتحرك ببطء مريح */
+        @keyframes marqueeReviews {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
+        }
+        .animate-marquee-reviews {
+            display: flex;
+            width: max-content;
+            animation: marqueeReviews 90s linear infinite;
+        }
         #detail-product-img {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -141,7 +157,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">العنوان الكامل والمدينة *</label>
-                    <input type="text" id="invoice-cust-address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white">
+                    <input type="text" id="invoice-cust-address" placeholder="أدخل مدينتك وعنوان الاستلاستلام" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white">
                 </div>
                 <button onclick="submitInvoiceOrder()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-100">
                     <i data-lucide="send" class="w-5 h-5"></i>
@@ -254,25 +270,64 @@
                 </a>
             </div>
         </header>
+
+        <!-- شريط تعليقات الزبناء المغاربة المتحرك ببطء (مدموج وملتصق تحت الهيدر مباشرة) -->
+        <div class="w-full bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 text-white py-2.5 overflow-hidden shadow-inner border-t border-indigo-900/40">
+            <div class="animate-marquee-reviews flex items-center gap-8 whitespace-nowrap text-xs sm:text-sm font-bold tracking-wide">
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">يوسف (القنيطرة):</span> "السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!"</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سناء (الدار البيضاء):</span> "توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">مهدي (مراكش):</span> "أحسن موقع تعاملت معه، والثمن مناسب بزاف مع التخفيض."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">فاطمة الزهراء (طنجة):</span> "المنتج كيف ما شفته في الصور تماماً، جودة عالية ومضمونة."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">عمر (الرباط):</span> "الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">حمزة (أكادير):</span> "وصلني الطلب في غضون 24 ساعة، تبارك الله على الاحترافية."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">مريم (مكناس):</span> "خدمة ممتازة والمنتجات رائعة، أنصح الجميع بالطلب منهم."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">إبراهيم (فاس):</span> "التخفيضات حقيقية والسلعة ممتازة، الله يسر تجارتكم."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">إهاب (وجدة):</span> "توصيل لحد باب الدار وبدون تعقيدات، شكراً طاقم بدال أونلاين."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">خديجة (تطوان):</span> "المنتج وصلني مغلف مزيان وبحالة مثالية، شكراً جزيلاً."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">رشيد (سلا):</span> "معاملة طيبة وسرعة في التجاوب عبر الواتساب."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">حنان (آسفي):</span> "جودة المنتجات تفوق التوقعات والثمن مناسب جداً."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">عثمان (الجديدة):</span> "أفضل متجر إلكتروني مغربي من حيث المصداقية والسرعة."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">هدى (المحمدية):</span> "طلبت جوج قطعات ووصلوني في نفس الوقت وبجودة عالية."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">أيوب (بني ملال):</span> "شكراً على المصداقية العالية، التوصيل كان في الوقت المحدد."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">كوثر (البرشيد):</span> "منتجات متنوعة وأنيقة، تبارك الله عليكم."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">رضوان (تمارة):</span> "خدمة التوصيل المجاني زادت من إعجابي بالموقع."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">أسماء (الناظور):</span> "كلشي وصلني مزيان، شكراً على حسن التعامل."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">مروان (خريبكة):</span> "أسعار خيالية وجودة تضمنها من أول استعمال."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سهام (تارودانت):</span> "سرعة فائقة في معالجة الطلب وإرساله."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">نبيل (إنزكان):</span> "موقع موثوق يستحق خمس نجوم بكل جدارة."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">بثينة (الخميسات):</span> "عروض وخصومات حقيقية ما كايناش فبلاص أخرى."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">زكرياء (سيدي قاسم):</span> "التوصيل وصل حتى للدار والمخلص كان ظريف بزاف."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">إكرام (العرائش):</span> "أحسن تجربة تسوق إلكتروني درتها حتى دابا."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سفيان (تزنيت):</span> "شكراً لطاقم الدعم على التجاوب السريع والمحترف."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">حليمة (بركان):</span> "منتجات رائعة ومفيدة بزاف، الله يوفقكم."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سمير (سطات):</span> "ثقة ومصداقية عالية، طلبي وصل في أفضل حلة."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">صوفيا (القصر الكبير):</span> "تغليف متقن وجودة المنتجات ممتازة جداً."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">طارق (الفقيه بن صالح):</span> "خدمة في المستوى المطلوب، أنصح بالتعامل معهم بشدة."</div>
+                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">لمياء (تازة):</span> "كل شيء كان ممتازاً من الطلب حتى الاستلام، شكراً لكم."</div>
+            </div>
+        </div>
     </div>
 
     <!-- Main Content Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         <!-- SECTION 1: STORE FRONT -->
-        <section id="section-store" class="block space-y-8">
-            <div class="relative w-full h-40 sm:h-52 rounded-2xl overflow-hidden shadow-lg bg-gray-900">
-                <div class="hero-slide absolute inset-0 opacity-100 transition-opacity duration-1000 flex items-center justify-between px-6 sm:px-12 text-white">
-                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
-                    <div class="relative z-10 max-w-lg space-y-1">
-                        <span class="bg-rose-500/90 text-white text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full font-bold inline-block shadow">تخفيضات الكبرى</span>
-                        <h2 class="text-xl sm:text-2xl font-black leading-tight">عروض حصرية تصل إلى 40%</h2>
-                        <p class="text-gray-200 text-xs sm:text-sm">تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.</p>
+        <section id="section-store" class="block space-y-0">
+            <!-- حاوية السلايدر -->
+            <div class="w-full">
+                <div class="relative w-full h-40 sm:h-52 rounded-2xl overflow-hidden shadow-lg bg-gray-900">
+                    <div class="hero-slide absolute inset-0 opacity-100 transition-opacity duration-1000 flex items-center justify-between px-6 sm:px-12 text-white">
+                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                        <div class="relative z-10 max-w-lg space-y-1">
+                            <span class="bg-rose-500/90 text-white text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full font-bold inline-block shadow">تخفيضات الكبرى</span>
+                            <h2 class="text-xl sm:text-2xl font-black leading-tight">عروض حصرية تصل إلى 40%</h2>
+                            <p class="text-gray-200 text-xs sm:text-sm">تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="py-2">
+            <div class="py-6">
                 <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <i data-lucide="layout-grid" class="w-5 h-5 text-indigo-600"></i>
                     تصفح حسب الأقسام
@@ -335,8 +390,8 @@
                     <!-- Dynamic Products from Supabase -->
                 </div>
                 <!-- Pagination Controls -->
-                <div id="pagination-container" class="flex items-center justify-center gap-3 mt-8 pt-4 border-t border-gray-200">
-                    <!-- Dynamic Pagination Buttons -->
+                <div id="pagination-container" class="flex items-center justify-center gap-2 mt-8 pt-4 border-t border-gray-200 flex-wrap">
+                    <!-- Dynamic Pagination Numbers (1 2 3 4 5...) -->
                 </div>
             </div>
         </section>
@@ -508,7 +563,7 @@
                 <h3 class="text-2xl sm:text-3xl font-black tracking-tight">اكتشف أحدث منتجاتنا الحصرية المتاحة الآن</h3>
             </div>
             <div class="relative w-full overflow-hidden py-3">
-                <div id="partner-products-marquee" class="animate-marquee flex items-center gap-6"></div>
+                <div id="partner-products-marquee" class="animate-marquee-slow flex items-center gap-6"></div>
             </div>
         </div>
     </section>
@@ -550,7 +605,7 @@
                     </div>
                     <div class="space-y-1">
                         <h4 class="font-extrabold text-gray-900 text-base">الدفع عند الاستلام</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">ادفع بأمان عند استلاستلام طلبك مباشرة.</p>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">ادفع بأمان عند استلام طلبك مباشرة.</p>
                     </div>
                 </div>
             </div>
@@ -588,7 +643,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.61</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.67</span>
                     </span>
                 </div>
             </div>
@@ -878,15 +933,16 @@
 
             if (paginationContainer) {
                 if (filteredList.length > itemsPerPage) {
-                    paginationContainer.innerHTML = `
-                        <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled class="w-10 h-10 rounded-xl border border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed flex items-center justify-center"' : 'class="w-10 h-10 rounded-xl border border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 transition-colors flex items-center justify-center shadow-sm"'}>
-                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                        </button>
-                        <span class="w-10 h-10 rounded-full bg-indigo-600 text-white text-sm font-black flex items-center justify-center shadow-md">${currentPage}</span>
-                        <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled class="w-10 h-10 rounded-xl border border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed flex items-center justify-center"' : 'class="w-10 h-10 rounded-xl border border-indigo-200 text-indigo-600 bg-white hover:bg-indigo-50 transition-colors flex items-center justify-center shadow-sm"'}>
-                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                        </button>
-                    `;
+                    let paginationHtml = '';
+                    for (let i = 1; i <= totalPages; i++) {
+                        const isActive = i === currentPage;
+                        paginationHtml += `
+                            <button onclick="changePage(${i})" class="w-10 h-10 rounded-xl font-bold text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center ${isActive ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-300' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}">
+                                ${i}
+                            </button>
+                        `;
+                    }
+                    paginationContainer.innerHTML = paginationHtml;
                 } else {
                     paginationContainer.innerHTML = '';
                 }
