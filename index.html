@@ -355,10 +355,10 @@
             </div>
 
             <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-6 sm:p-8 space-y-8">
-                <!-- صورة المنتج الرئيسية مع أيقونة ونسبة التخفيض بشكل احترافي وحركة سلسة -->
+                <!-- صورة المنتج الرئيسية مع أيقونة ونسبة التخفيض بشكل مصغر بدون أيقونة البرق -->
                 <div class="relative w-full rounded-3xl overflow-hidden bg-gray-50 border border-gray-200 h-[380px] sm:h-[500px] flex items-center justify-center shadow-inner group">
-                    <div id="detail-discount-badge" class="absolute top-4 right-4 z-20 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs sm:text-sm font-black px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
-                        <i data-lucide="tag" class="w-4 h-4"></i>
+                    <div id="detail-discount-badge" class="absolute top-4 right-4 z-20 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-md flex items-center gap-1">
+                        <i data-lucide="tag" class="w-3.5 h-3.5"></i>
                         <span id="detail-badge-text">تخفيض 0%</span>
                     </div>
                     <img id="detail-product-img" src="" alt="Product Detail" class="w-full h-full object-cover">
@@ -441,7 +441,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> إصدار V<span class="text-indigo-600 font-bold">3.9.31</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> إصدار V<span class="text-indigo-600 font-bold">3.9.32</span>
                 </span>
             </div>
         </div>
@@ -543,8 +543,9 @@
                 html += `
                     <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between" data-category="${p.category || 'various'}">
                         <div>
-                            <div class="absolute top-4 right-4 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-sm sm:text-base font-black px-4 py-2 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 animate-pulse pointer-events-none">
-                                <i data-lucide="zap" class="w-5 h-5 text-amber-200 fill-amber-200"></i> ${badgeText}
+                            <!-- أيقونة التخفيض المصغرة بدون أيقونة البرق -->
+                            <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-md border border-white/80 pointer-events-none">
+                                ${badgeText}
                             </div>
                             <!-- عند الضغط على الصورة تفتح الصفحة الخاصة بالمنتج -->
                             <div class="h-48 bg-gray-100 relative overflow-hidden cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
@@ -781,7 +782,7 @@
                     html += `
                         <div class="bg-white rounded-2xl border-2 border-amber-200 shadow-lg overflow-hidden group cursor-pointer relative flex flex-col justify-between" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                             <div>
-                                <div class="absolute top-4 right-4 z-10 bg-amber-500 text-zinc-950 text-sm sm:text-base font-black px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
+                                <div class="absolute top-3 right-3 z-10 bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-full shadow-md">
                                     ${badgeText}
                                 </div>
                                 <div class="h-48 bg-gray-100"><img src="${p.images[0]}" class="w-full h-full object-cover"></div>
