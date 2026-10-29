@@ -38,7 +38,7 @@
         .animate-marquee {
             display: flex;
             width: max-content;
-            animation: marquee 25s linear infinite;
+            animation: marquee 12s linear infinite;
         }
     </style>
 </head>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="flex justify-between font-bold text-gray-700">
                     <span>إجمالي المبلغ الأصلي:</span>
-                    <span id="invoice-old-total" class="line-through text-gray-400">0.00 د.م</span>
+                    <span id="invoice-old-total" class="line-through text-red-600">0.00 د.م</span>
                 </div>
                 <div class="flex justify-between font-bold text-emerald-600">
                     <span>إجمالي ربحك من الخصم:</span>
@@ -115,7 +115,7 @@
                 </div>
                 <div class="flex justify-between font-black text-base text-gray-900 pt-2 border-t">
                     <span>المبلغ المطلوب دفعه:</span>
-                    <span id="invoice-final-total" class="text-indigo-600 text-lg">0.00 د.م</span>
+                    <span id="invoice-final-total" class="text-emerald-600 text-lg">0.00 د.م</span>
                 </div>
             </div>
             <div class="space-y-4">
@@ -147,6 +147,42 @@
         </div>
     </div>
 
+    <!-- WhatsApp Direct Order Modal -->
+    <div id="whatsapp-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center justify-between border-b pb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="message-circle" class="w-6 h-6 text-emerald-600"></i>
+                    <h2 class="text-xl font-black text-gray-900">طلب سريع عبر الواتساب</h2>
+                </div>
+                <button onclick="closeWhatsAppModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">الإسم الكامل *</label>
+                    <input type="text" id="wa-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف *</label>
+                    <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white text-right" dir="ltr">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">المدينة *</label>
+                    <input type="text" id="wa-cust-city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
+                </div>
+                <div id="wa-success-alert" class="hidden p-3 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center">
+                    ✨ سيتم التواصل معك في أقرب وقت!
+                </div>
+                <button onclick="submitWhatsAppOrder()" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-100">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                    إرسال الطلب عبر الواتساب
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Header / Navbar -->
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -161,11 +197,6 @@
                     </span>
                     <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Smart Marketplace</span>
                 </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <a href="admin.html" class="bg-indigo-50 text-indigo-600 px-3 py-2 rounded-xl text-xs font-bold hover:bg-indigo-100 transition-colors flex items-center gap-1.5 border border-indigo-100">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i> لوحة الإدارة
-                </a>
             </div>
         </div>
     </header>
@@ -305,9 +336,9 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                     <div class="flex flex-col items-center gap-4 w-full lg:col-span-7">
                         <div class="relative w-full rounded-3xl overflow-hidden bg-gray-50 border border-gray-200 h-[480px] sm:h-[640px] flex items-center justify-center shadow-inner group">
-                            <div id="detail-discount-badge" class="absolute top-4 right-4 z-20 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-full shadow-lg border-2 border-white flex items-center gap-1.5 animate-pulse">
-                                <i data-lucide="zap" class="w-4 h-4 text-amber-200 fill-amber-200"></i>
-                                <span id="detail-badge-text">تخفيض كبييير</span>
+                            <div id="detail-discount-badge" class="absolute top-4 right-4 z-20 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-sm sm:text-base font-black px-5 py-2.5 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 animate-pulse">
+                                <i data-lucide="zap" class="w-5 h-5 text-amber-200 fill-amber-200"></i>
+                                <span id="detail-badge-text">تخفيض 0%</span>
                             </div>
                             <img id="detail-product-img" src="" alt="Product Detail" class="w-full h-full object-cover transition-all duration-300">
                         </div>
@@ -325,17 +356,17 @@
                             <span id="detail-product-cat" class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">تصنيف</span>
                             <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-3">عنوان المنتج</h1>
                             <p id="detail-product-desc" class="text-gray-600 text-sm mt-3 leading-relaxed">وصف المنتوج هنا...</p>
-                            <div class="mt-5 p-4 bg-rose-50/70 border border-rose-100 rounded-2xl flex items-center justify-between">
+                            <div class="mt-5 p-4 bg-emerald-50/70 border border-emerald-100 rounded-2xl flex items-center justify-between">
                                 <div>
-                                    <span class="text-xs font-bold text-rose-600 block mb-0.5">الثمن بعد التخفيض:</span>
+                                    <span class="text-xs font-bold text-emerald-600 block mb-0.5">الثمن بعد التخفيض:</span>
                                     <div class="flex items-baseline gap-2">
-                                        <span id="detail-product-price" class="text-3xl sm:text-4xl font-black text-rose-600">0.00</span>
-                                        <span class="text-xl font-bold text-rose-600">د.م</span>
+                                        <span id="detail-product-price" class="text-3xl sm:text-4xl font-black text-emerald-600">0.00</span>
+                                        <span class="text-xl font-bold text-emerald-600">د.م</span>
                                     </div>
                                 </div>
                                 <div class="text-left">
                                     <span class="text-xs font-bold text-gray-400 block mb-0.5">الثمن الأصلي:</span>
-                                    <span id="detail-old-price" class="text-base sm:text-lg font-bold text-gray-400 line-through">0.00 د.م</span>
+                                    <span id="detail-old-price" class="text-sm font-bold text-red-600 line-through">0.00 د.م</span>
                                 </div>
                             </div>
                         </div>
@@ -359,8 +390,8 @@
                                 تم إرسال طلبك بنجاح! في غضون 24 ساعة سيتم التواصل معك لتأكيد التوصيل.
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                                <button onclick="sendOrderWhatsApp()" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-md">
-                                    <i data-lucide="message-circle" class="w-5 h-5"></i> إرسال عبر الواتساب
+                                <button onclick="openWhatsAppModalFromDetail()" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-md">
+                                    <i data-lucide="message-circle" class="w-5 h-5"></i> طلب عبر الواتساب
                                 </button>
                                 <button onclick="sendOrderWebsite()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-lg">
                                     <i data-lucide="send" class="w-5 h-5"></i> إرسال عبر الموقع
@@ -397,7 +428,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.15-release</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.20-release</span>
                 </span>
             </div>
         </div>
@@ -432,11 +463,11 @@
                                 desc: s.desc || 'متجر معتمد عبر منصة bedal.online'
                             };
                             marqueeHtml += `
-                                <div class="flex items-center gap-3 group cursor-pointer" onclick="openVendorStore('${s.key || s.name}')">
+                                <div class="flex items-center gap-3">
                                     <img src="${s.logo}" class="w-12 h-12 rounded-full object-cover border-2 border-indigo-400/40">
                                     <div>
                                         <h4 class="font-extrabold text-sm text-white">${s.name}</h4>
-                                        <span class="text-[11px] text-indigo-300/70">${s.city || 'متجر شريك'}</span>
+                                        <span class="text-[11px] text-indigo-300/70">${s.desc || s.city || 'متجر شريك'}</span>
                                     </div>
                                 </div>
                             `;
@@ -481,12 +512,17 @@
                 return;
             }
             productsList.forEach(p => {
-                const badgeText = p.discountPrice ? 'تخفيض كبييير' : 'عرض خاص';
+                let discountPercent = 0;
+                if(p.oldPrice && p.oldPrice > p.price) {
+                    discountPercent = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+                }
+                const badgeText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : 'عرض خاص';
+
                 html += `
                     <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer relative flex flex-col justify-between" data-category="${p.category || 'various'}" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', '${badgeText}', ${JSON.stringify(p.images)}, '${p.catLabel || 'متنوع'}', '${p.description || ''}')">
                         <div>
-                            <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg border-2 border-white flex items-center gap-1.5 animate-pulse">
-                                <i data-lucide="zap" class="w-4 h-4 text-amber-200 fill-amber-200"></i> ${badgeText}
+                            <div class="absolute top-4 right-4 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-sm sm:text-base font-black px-4 py-2 rounded-full shadow-2xl border-2 border-white flex items-center gap-2 animate-pulse">
+                                <i data-lucide="zap" class="w-5 h-5 text-amber-200 fill-amber-200"></i> ${badgeText}
                             </div>
                             <div class="h-48 bg-gray-100 relative overflow-hidden">
                                 <img src="${(p.images && p.images[0]) || ''}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
@@ -495,17 +531,17 @@
                                 <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">${p.catLabel || 'متنوع'}</span>
                                 <h3 class="font-extrabold text-gray-900 text-xl leading-snug">${p.title}</h3>
                                 <p class="text-gray-500 text-xs">${p.description || ''}</p>
-                                <div class="p-3 bg-rose-50/70 border border-rose-100 rounded-xl flex items-center justify-between">
+                                <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-xl flex items-center justify-between">
                                     <div>
-                                        <span class="text-[10px] font-bold text-rose-600 block">الثمن بعد التخفيض:</span>
+                                        <span class="text-[10px] font-bold text-emerald-600 block">الثمن بعد التخفيض:</span>
                                         <div class="flex items-baseline gap-1">
-                                            <span class="font-black text-rose-600 text-2xl">${p.price.toFixed(2)}</span>
-                                            <span class="text-xs font-bold text-rose-600">د.م</span>
+                                            <span class="font-black text-emerald-600 text-3xl">${p.price.toFixed(2)}</span>
+                                            <span class="text-sm font-bold text-emerald-600">د.م</span>
                                         </div>
                                     </div>
                                     <div class="text-left">
                                         <span class="text-[10px] font-bold text-gray-400 block">الأصلي:</span>
-                                        <span class="text-sm font-bold text-gray-400 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                        <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                     </div>
                                 </div>
                             </div>
@@ -514,8 +550,8 @@
                             <button onclick="event.stopPropagation(); addToCart('${p.title}', ${p.price}, ${p.oldPrice}, '${(p.images && p.images[0]) || ''}')" class="w-full bg-indigo-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-100 flex items-center justify-center gap-1.5 text-xs">
                                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> للسلة
                             </button>
-                            <button onclick="event.stopPropagation(); quickWhatsAppOrder('${p.title}', '${p.price.toFixed(2)}', '${badgeText}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-100 flex items-center justify-center gap-1.5 text-xs">
-                                <i data-lucide="message-circle" class="w-4 h-4"></i> واتساب
+                            <button onclick="event.stopPropagation(); openWhatsAppModal('${p.title}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-md shadow-emerald-100 flex items-center justify-center gap-1.5 text-xs">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i> طلب عبر الواتساب
                             </button>
                         </div>
                     </div>
@@ -535,19 +571,60 @@
             updateCartUI();
         }
 
-        function quickWhatsAppOrder(title, price, discountBadge) {
-            const message = `السلام عليكم، أريد طلب هذا المنتج مباشرة:\n\n🛍️ *المنتج:* ${title}\n💰 *السعر بعد الخصم:* ${price} د.م\n🏷️ *العرض:* ${discountBadge}`;
-            window.open(`https://wa.me/212600000000?text=${encodeURIComponent(message)}`, '_blank');
+        function openWhatsAppModal(title, price) {
+            currentProduct = { title, price };
+            document.getElementById('wa-cust-name').value = '';
+            document.getElementById('wa-cust-phone').value = '';
+            document.getElementById('wa-cust-city').value = '';
+            document.getElementById('wa-success-alert').classList.add('hidden');
+            document.getElementById('whatsapp-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function openWhatsAppModalFromDetail() {
+            if (!currentProduct.title) return;
+            openWhatsAppModal(currentProduct.title, currentProduct.price);
+        }
+
+        function closeWhatsAppModal() {
+            document.getElementById('whatsapp-modal').classList.add('hidden');
+        }
+
+        function submitWhatsAppOrder() {
+            const name = document.getElementById('wa-cust-name').value.trim();
+            const phone = document.getElementById('wa-cust-phone').value.trim();
+            const city = document.getElementById('wa-cust-city').value.trim();
+
+            if (!name || !phone || !city) {
+                alert('يرجى ملء جميع الخانات المطلوبة');
+                return;
+            }
+
+            const message = `السلام عليكم، أريد طلب هذا المنتج:\n\n🛍️ *المنتج:* ${currentProduct.title}\n💰 *الثمن:* ${currentProduct.price} د.م\n\n👤 *الإسم الكامل:* ${name}\n📞 *رقم الهاتف:* ${phone}\n📍 *المدينة:* ${city}`;
+
+            document.getElementById('wa-success-alert').classList.remove('hidden');
+
+            setTimeout(() => {
+                window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
+                closeWhatsAppModal();
+            }, 1500);
         }
 
         function updateCartUI() {
             const countBadge = document.getElementById('cart-count-badge');
+            const floatingCartBtn = document.getElementById('floating-cart-btn');
             const itemsContainer = document.getElementById('cart-items-container');
             const totalPriceElement = document.getElementById('cart-total-price');
             const totalSavingElement = document.getElementById('cart-total-saving');
 
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             countBadge.innerText = totalCount;
+
+            if (totalCount > 0) {
+                floatingCartBtn.classList.add('cart-bounce-active');
+            } else {
+                floatingCartBtn.classList.remove('cart-bounce-active');
+            }
 
             if (cart.length === 0) {
                 itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-10 text-sm">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>`;
@@ -572,8 +649,8 @@
                         <div class="flex-grow">
                             <h4 class="font-bold text-xs text-gray-800">${item.title}</h4>
                             <div class="flex items-baseline gap-2 mt-0.5">
-                                <span class="text-indigo-600 text-xs font-black">${itemTotal.toFixed(2)} د.م</span>
-                                <span class="text-[10px] text-gray-400 line-through">${(item.oldPrice * item.quantity).toFixed(2)} د.م</span>
+                                <span class="text-emerald-600 text-xs font-black">${itemTotal.toFixed(2)} د.م</span>
+                                <span class="text-[10px] text-red-600 line-through">${(item.oldPrice * item.quantity).toFixed(2)} د.م</span>
                             </div>
                         </div>
                         <div class="flex items-center gap-1.5 bg-white border border-gray-200 px-2 py-1 rounded-lg">
@@ -668,18 +745,24 @@
                 grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">لا توجد عروض Black Free Day حالياً.</p>';
             } else {
                 blackFreeDayProducts.forEach(p => {
+                    let discountPercent = 0;
+                    if(p.oldPrice && p.oldPrice > p.price) {
+                        discountPercent = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+                    }
+                    const badgeText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : (p.discountBadge || 'عرض خاص');
+
                     html += `
-                        <div class="bg-white rounded-2xl border-2 border-amber-200 shadow-lg overflow-hidden group cursor-pointer relative flex flex-col justify-between" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', '${p.discountBadge}', ${JSON.stringify(p.images)}, '${p.cat || 'عرض خاص'}', '${p.desc || ''}')">
+                        <div class="bg-white rounded-2xl border-2 border-amber-200 shadow-lg overflow-hidden group cursor-pointer relative flex flex-col justify-between" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', '${badgeText}', ${JSON.stringify(p.images)}, '${p.cat || 'عرض خاص'}', '${p.desc || ''}')">
                             <div>
-                                <div class="absolute top-3 right-3 z-10 bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1.5 rounded-full shadow-lg">
-                                    ${p.discountBadge}
+                                <div class="absolute top-4 right-4 z-10 bg-amber-500 text-zinc-950 text-sm sm:text-base font-black px-4 py-2 rounded-full shadow-2xl flex items-center gap-2">
+                                    ${badgeText}
                                 </div>
                                 <div class="h-48 bg-gray-100"><img src="${p.images[0]}" class="w-full h-full object-cover"></div>
                                 <div class="p-5 space-y-3">
                                     <h3 class="font-extrabold text-gray-900 text-xl">${p.title}</h3>
                                     <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl flex items-center justify-between">
-                                        <span class="font-black text-amber-800 text-2xl">${p.price.toFixed(2)} د.م</span>
-                                        <span class="text-sm font-bold text-gray-400 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                        <span class="font-black text-emerald-600 text-2xl">${p.price.toFixed(2)} د.م</span>
+                                        <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                     </div>
                                 </div>
                             </div>
@@ -706,7 +789,7 @@
                     <div class="bg-white rounded-2xl border shadow-sm overflow-hidden cursor-pointer p-4" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', 'عرض خاص', ${JSON.stringify(p.images)}, '${p.catLabel}', '${p.description}')">
                         <img src="${p.images[0]}" class="w-full h-40 object-cover rounded-xl mb-3">
                         <h3 class="font-bold text-lg">${p.title}</h3>
-                        <span class="text-indigo-600 font-black">${p.price.toFixed(2)} د.م</span>
+                        <span class="text-emerald-600 font-black">${p.price.toFixed(2)} د.م</span>
                     </div>
                 `;
             });
@@ -755,14 +838,6 @@
                     item.classList.add('hidden');
                 }
             });
-        }
-
-        function sendOrderWhatsApp() {
-            const name = document.getElementById('cust-name').value.trim();
-            const phone = document.getElementById('cust-phone').value.trim();
-            const address = document.getElementById('cust-address').value.trim();
-            if (!name || !phone || !address) { alert('يرجى ملء جميع الخانات'); return; }
-            window.open(`https://wa.me/212600000000?text=${encodeURIComponent(`طلب جديد:\nالمنتج: ${currentProduct.title}\nالاسم: ${name}\nالهاتف: ${phone}\nالعنوان: ${address}`)}`, '_blank');
         }
 
         async function sendOrderWebsite() {
