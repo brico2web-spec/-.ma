@@ -38,7 +38,10 @@
         .animate-marquee {
             display: flex;
             width: max-content;
-            animation: marquee 12s linear infinite;
+            animation: marquee 20s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
         }
     </style>
 </head>
@@ -405,18 +408,18 @@
 
     </main>
 
-    <!-- Partner Stores Section (Dynamic from Supabase) -->
+    <!-- Partner Products Slider Section (Dynamic Products Marquee) -->
     <section class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-12 border-t border-indigo-900/50 overflow-hidden shadow-2xl relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
             <div class="text-center space-y-2">
                 <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> شركاء النجاح
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> تشكيلة المنتجات المميزة
                 </span>
-                <h3 class="text-2xl sm:text-3xl font-black tracking-tight">نخبة المتاجر الشريكة المعتمدة لدينا</h3>
+                <h3 class="text-2xl sm:text-3xl font-black tracking-tight">اكتشف أحدث منتجاتنا الحصرية المتاحة الآن</h3>
             </div>
             <div class="relative w-full overflow-hidden py-3">
-                <div id="partner-stores-marquee" class="animate-marquee flex items-center gap-10">
-                    <!-- Dynamic Stores from Supabase -->
+                <div id="partner-products-marquee" class="animate-marquee flex items-center gap-6">
+                    <!-- Dynamic Products Marquee from Supabase -->
                 </div>
             </div>
         </div>
@@ -428,7 +431,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">v3.9.20-release</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> إصدار V<span class="text-indigo-600 font-bold">3.9.21</span>
                 </span>
             </div>
         </div>
@@ -449,35 +452,6 @@
 
         async function fetchSupabaseStoreData() {
             try {
-                const { data: stores } = await supabaseClient.from('partner_stores').select('*');
-                if (stores) {
-                    partnerStores = {};
-                    let marqueeHtml = '<div class="flex items-center gap-10">';
-                    stores.forEach(s => {
-                        if (s.name && s.name.trim() !== '') {
-                            partnerStores[s.key || s.name] = {
-                                name: s.name,
-                                logo: s.logo,
-                                city: s.city,
-                                phone: s.phone,
-                                desc: s.desc || 'متجر معتمد عبر منصة bedal.online'
-                            };
-                            marqueeHtml += `
-                                <div class="flex items-center gap-3">
-                                    <img src="${s.logo}" class="w-12 h-12 rounded-full object-cover border-2 border-indigo-400/40">
-                                    <div>
-                                        <h4 class="font-extrabold text-sm text-white">${s.name}</h4>
-                                        <span class="text-[11px] text-indigo-300/70">${s.desc || s.city || 'متجر شريك'}</span>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    });
-                    marqueeHtml += '</div>';
-                    const marqueeContainer = document.getElementById('partner-stores-marquee');
-                    if(marqueeContainer) marqueeContainer.innerHTML = marqueeHtml;
-                }
-
                 const { data: prods } = await supabaseClient.from('products').select('*');
                 if (prods) {
                     productsDatabase = prods.map(p => ({
@@ -487,6 +461,7 @@
                         oldPrice: parseFloat(p.price)
                     }));
                     renderStoreProducts(productsDatabase);
+                    renderPartnerProductsMarquee(productsDatabase);
                 }
 
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
@@ -501,6 +476,36 @@
             } catch (err) {
                 console.error("خطأ في الاتصال بقاعدة بيانات Supabase:", err);
             }
+        }
+
+        function renderPartnerProductsMarquee(productsList) {
+            const marqueeContainer = document.getElementById('partner-products-marquee');
+            if(!marqueeContainer) return;
+            if(!productsList || productsList.length === 0) {
+                marqueeContainer.innerHTML = '<p class="text-indigo-200 text-sm">لا توجد منتجات للعرض حالياً.</p>';
+                return;
+            }
+            
+            // تكرار المنتجات مرتين لضمان استمرارية حركة السلايدر بسلاسة بدون انقطاع
+            let marqueeHtml = '';
+            for(let i = 0; i < 2; i++) {
+                productsList.forEach(p => {
+                    const mainImg = (p.images && p.images[0]) || '';
+                    marqueeHtml += `
+                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-2xl shadow-xl flex-shrink-0 w-72 cursor-pointer hover:bg-white/15 transition-all" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', 'عرض خاص', ${JSON.stringify(p.images)}, '${p.catLabel || 'متنوع'}', '${p.description || ''}')">
+                            <img src="${mainImg}" class="w-16 h-16 rounded-xl object-cover border border-white/20 flex-shrink-0 shadow-md">
+                            <div class="overflow-hidden space-y-1">
+                                <h4 class="font-extrabold text-sm text-white truncate">${p.title}</h4>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-emerald-400 font-black text-sm">${p.price.toFixed(2)} د.م</span>
+                                    <span class="text-rose-400 text-xs line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            marqueeContainer.innerHTML = marqueeHtml;
         }
 
         function renderStoreProducts(productsList) {
@@ -773,28 +778,6 @@
             grid.innerHTML = html;
             lucide.createIcons();
             switchTab('black_free_day');
-        }
-
-        function openVendorStore(vendorKey) {
-            const store = partnerStores[vendorKey];
-            if (!store) return;
-            document.getElementById('vendor-name-title').innerText = store.name;
-            document.getElementById('vendor-logo-img').src = store.logo || '';
-            document.getElementById('vendor-desc-text').innerText = store.desc;
-
-            const grid = document.getElementById('vendor-products-grid');
-            let html = '';
-            productsDatabase.filter(p => p.storeKey === vendorKey).forEach(p => {
-                html += `
-                    <div class="bg-white rounded-2xl border shadow-sm overflow-hidden cursor-pointer p-4" onclick="openProductDetail('${p.title}', '${p.price.toFixed(2)}', '${p.oldPrice.toFixed(2)}', 'عرض خاص', ${JSON.stringify(p.images)}, '${p.catLabel}', '${p.description}')">
-                        <img src="${p.images[0]}" class="w-full h-40 object-cover rounded-xl mb-3">
-                        <h3 class="font-bold text-lg">${p.title}</h3>
-                        <span class="text-emerald-600 font-black">${p.price.toFixed(2)} د.م</span>
-                    </div>
-                `;
-            });
-            grid.innerHTML = html || '<p class="col-span-full text-center text-gray-400 py-10">لا توجد منتجات لهذا المتجر حالياً.</p>';
-            switchTab('vendor');
         }
 
         function openProductDetail(title, price, oldPrice, discountBadge, images, category, description) {
