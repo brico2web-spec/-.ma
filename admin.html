@@ -436,7 +436,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.38</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.39</span>
                 </span>
             </div>
         </div>
@@ -506,23 +506,19 @@
             try {
                 const { data: prods } = await supabaseClient.from('products').select('*');
                 if (prods) {
-                    let localMeta = JSON.parse(localStorage.getItem('bedal_products_meta')) || {};
-                    productsDatabase = prods.map(p => {
-                        let meta = localMeta[p.id] || {};
-                        return {
-                            ...p,
-                            images: typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []),
-                            sku: meta.sku || p.sku || '',
-                            discountPrice: meta.discountPrice !== undefined ? meta.discountPrice : (p.discountPrice || ''),
-                            tajirPrice: meta.tajirPrice !== undefined ? meta.tajirPrice : (p.tajirPrice || ''),
-                            shippingCost: meta.shippingCost !== undefined ? meta.shippingCost : (p.shippingCost || ''),
-                            adsFb: meta.adsFb !== undefined ? meta.adsFb : (p.adsFb || ''),
-                            adsTiktok: meta.adsTiktok !== undefined ? meta.adsTiktok : (p.adsTiktok || ''),
-                            adsInsta: meta.adsInsta !== undefined ? meta.adsInsta : (p.adsInsta || ''),
-                            adminKey: meta.adminKey || p.adminKey || 'ZAMZAM',
-                            videos: meta.videos || (typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []))
-                        };
-                    });
+                    productsDatabase = prods.map(p => ({
+                        ...p,
+                        images: typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []),
+                        videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
+                        sku: p.sku || '',
+                        discountPrice: p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.discount_price !== undefined ? p.discount_price : ''),
+                        tajirPrice: p.tajirPrice !== undefined && p.tajirPrice !== null ? p.tajirPrice : (p.tajir_price !== undefined ? p.tajir_price : ''),
+                        shippingCost: p.shippingCost !== undefined && p.shippingCost !== null ? p.shippingCost : (p.shipping_cost !== undefined ? p.shipping_cost : ''),
+                        adsFb: p.adsFb !== undefined && p.adsFb !== null ? p.adsFb : (p.ads_fb !== undefined ? p.ads_fb : ''),
+                        adsTiktok: p.adsTiktok !== undefined && p.adsTiktok !== null ? p.adsTiktok : (p.ads_tiktok !== undefined ? p.ads_tiktok : ''),
+                        adsInsta: p.adsInsta !== undefined && p.adsInsta !== null ? p.adsInsta : (p.ads_insta !== undefined ? p.ads_insta : ''),
+                        adminKey: p.adminKey || p.admin_key || 'ZAMZAM'
+                    }));
                 }
 
                 const { data: orders } = await supabaseClient.from('orders').select('*');
@@ -566,8 +562,8 @@
                 productsDatabase.forEach((prod, idx) => {
                     const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : '';
                     const adminName = prod.adminKey || 'ZAMZAM';
-                    const originalPrice = prod.oldPrice || prod.price || 0;
-                    const discountPrice = prod.discountPrice ? `${prod.discountPrice} د.م` : '<span class="text-gray-400 text-xs">لا يوجد</span>';
+                    const originalPrice = prod.price || 0;
+                    const discountPrice = (prod.discountPrice !== undefined && prod.discountPrice !== '' && prod.discountPrice !== null) ? `${prod.discountPrice} د.م` : '<span class="text-gray-400 text-xs">لا يوجد</span>';
                     const skuCode = prod.sku || 'N/A';
                     
                     let catLabel = prod.catLabel || 'منتجات متنوعة';
@@ -940,12 +936,12 @@
             document.getElementById('prod-form-title').value = p.title || '';
             document.getElementById('prod-form-sku').value = p.sku || '';
             document.getElementById('prod-form-price').value = p.price || '';
-            document.getElementById('prod-form-discount-price').value = p.discountPrice !== undefined ? p.discountPrice : '';
-            document.getElementById('prod-form-tajir-price').value = p.tajirPrice !== undefined ? p.tajirPrice : '';
-            document.getElementById('prod-form-shipping-cost').value = p.shippingCost !== undefined ? p.shippingCost : '';
-            document.getElementById('prod-form-ads-fb').value = p.adsFb !== undefined ? p.adsFb : '';
-            document.getElementById('prod-form-ads-tiktok').value = p.adsTiktok !== undefined ? p.adsTiktok : '';
-            document.getElementById('prod-form-ads-insta').value = p.adsInsta !== undefined ? p.adsInsta : '';
+            document.getElementById('prod-form-discount-price').value = p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : '';
+            document.getElementById('prod-form-tajir-price').value = p.tajirPrice !== undefined && p.tajirPrice !== null ? p.tajirPrice : '';
+            document.getElementById('prod-form-shipping-cost').value = p.shippingCost !== undefined && p.shippingCost !== null ? p.shippingCost : '';
+            document.getElementById('prod-form-ads-fb').value = p.adsFb !== undefined && p.adsFb !== null ? p.adsFb : '';
+            document.getElementById('prod-form-ads-tiktok').value = p.adsTiktok !== undefined && p.adsTiktok !== null ? p.adsTiktok : '';
+            document.getElementById('prod-form-ads-insta').value = p.adsInsta !== undefined && p.adsInsta !== null ? p.adsInsta : '';
             document.getElementById('prod-form-category').value = p.category || 'various';
             document.getElementById('prod-form-admin').value = p.adminKey || 'ZAMZAM';
             
@@ -967,12 +963,24 @@
             const title = document.getElementById('prod-form-title').value.trim();
             const sku = document.getElementById('prod-form-sku').value.trim();
             const price = parseFloat(document.getElementById('prod-form-price').value);
-            const discountPrice = document.getElementById('prod-form-discount-price').value.trim();
-            const tajirPrice = document.getElementById('prod-form-tajir-price').value.trim();
-            const shippingCost = document.getElementById('prod-form-shipping-cost').value.trim();
-            const adsFb = document.getElementById('prod-form-ads-fb').value.trim();
-            const adsTiktok = document.getElementById('prod-form-ads-tiktok').value.trim();
-            const adsInsta = document.getElementById('prod-form-ads-insta').value.trim();
+            const discountPriceVal = document.getElementById('prod-form-discount-price').value.trim();
+            const discountPrice = discountPriceVal !== "" ? parseFloat(discountPriceVal) : null;
+            
+            const tajirPriceVal = document.getElementById('prod-form-tajir-price').value.trim();
+            const tajirPrice = tajirPriceVal !== "" ? parseFloat(tajirPriceVal) : null;
+
+            const shippingCostVal = document.getElementById('prod-form-shipping-cost').value.trim();
+            const shippingCost = shippingCostVal !== "" ? parseFloat(shippingCostVal) : null;
+
+            const adsFbVal = document.getElementById('prod-form-ads-fb').value.trim();
+            const adsFb = adsFbVal !== "" ? parseFloat(adsFbVal) : null;
+
+            const adsTiktokVal = document.getElementById('prod-form-ads-tiktok').value.trim();
+            const adsTiktok = adsTiktokVal !== "" ? parseFloat(adsTiktokVal) : null;
+
+            const adsInstaVal = document.getElementById('prod-form-ads-insta').value.trim();
+            const adsInsta = adsInstaVal !== "" ? parseFloat(adsInstaVal) : null;
+
             const adminKey = document.getElementById('prod-form-admin').value;
             const category = document.getElementById('prod-form-category').value;
             
@@ -1000,57 +1008,49 @@
                 return;
             }
 
-            // الحقول الأساسية لـ Supabase
+            // إرسال الحقول مباشرة إلى جدول products في Supabase دون أي تخزين محلي
             const prodData = {
                 title,
                 price,
                 category,
                 catLabel,
                 images,
-                description
+                description,
+                sku,
+                discountPrice,
+                tajirPrice,
+                shippingCost,
+                adsFb,
+                adsTiktok,
+                adsInsta,
+                adminKey,
+                videos
             };
 
-            let savedId = id;
             if (id !== "" && !isNaN(id)) {
                 const targetProd = productsDatabase.find(p => p.id == id || productsDatabase.indexOf(p) == id);
                 if (targetProd && targetProd.id) {
-                    savedId = targetProd.id;
-                    await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
+                    const { error } = await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
+                    if (error) {
+                        alert('حدث خطأ أثناء التحديث في Supabase: ' + error.message);
+                        return;
+                    }
                 } else {
-                    const { data: inserted, error } = await supabaseClient.from('products').insert([prodData]).select();
+                    const { error } = await supabaseClient.from('products').insert([prodData]);
                     if (error) {
                         alert('حدث خطأ أثناء الحفظ في Supabase: ' + error.message);
                         return;
                     }
-                    if (inserted && inserted[0]) savedId = inserted[0].id;
                 }
             } else {
-                const { data: inserted, error } = await supabaseClient.from('products').insert([prodData]).select();
+                const { error } = await supabaseClient.from('products').insert([prodData]);
                 if (error) {
                     alert('حدث خطأ أثناء الحفظ في Supabase: ' + error.message);
                     return;
                 }
-                if (inserted && inserted[0]) savedId = inserted[0].id;
             }
 
-            // حفظ البيانات الإضافية (SKU، الخصم، الأرباح، الخسائر، والفيديوهات) محلياً لضمان عدم ضياعها
-            if (savedId) {
-                let localMeta = JSON.parse(localStorage.getItem('bedal_products_meta')) || {};
-                localMeta[savedId] = {
-                    sku,
-                    discountPrice,
-                    tajirPrice,
-                    shippingCost,
-                    adsFb,
-                    adsTiktok,
-                    adsInsta,
-                    adminKey,
-                    videos
-                };
-                localStorage.setItem('bedal_products_meta', JSON.stringify(localMeta));
-            }
-
-            alert('تم حفظ المنتج بنجاح في Supabase والبيانات الإضافية محلياً!');
+            alert('تم حفظ البيانات بنجاح في Supabase مباشرة!');
             toggleProductModal();
             fetchSupabaseData();
         }
@@ -1060,9 +1060,6 @@
                 const prod = productsDatabase[idx];
                 if (prod.id) {
                     await supabaseClient.from('products').delete().eq('id', prod.id);
-                    let localMeta = JSON.parse(localStorage.getItem('bedal_products_meta')) || {};
-                    delete localMeta[prod.id];
-                    localStorage.setItem('bedal_products_meta', JSON.stringify(localMeta));
                 }
                 productsDatabase.splice(idx, 1);
                 renderAdminProducts();
