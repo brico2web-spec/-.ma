@@ -79,7 +79,7 @@
             width: max-content;
             animation: marqueeReviews 90s linear infinite;
         }
-        #detail-product-img {
+        #detail-product-img, #bfd-modal-current-img {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .fade-review {
@@ -376,32 +376,26 @@
         </div>
     </div>
 
-    <!-- BFD Image Viewer Modal (نافذة عرض الصور وأسهم التصفح لـ Black Free Day) -->
+    <!-- BFD Image Viewer Modal (نافذة عرض الصور بدون أسهم مع عرض الصور المصغرة بالأسفل تماماً مثل طلبك) -->
     <div id="bfd-image-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border-2 border-amber-500/80 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white relative">
+        <div class="bg-zinc-900 border-2 border-amber-500/80 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white relative p-4 space-y-4">
             
             <!-- زر الإغلاق -->
             <button onclick="closeBfdImageModal()" class="absolute top-3 left-3 z-20 bg-zinc-800 hover:bg-red-600 text-white p-2 rounded-full transition-colors shadow-lg">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <!-- حاوية الصورة مع أسهم التنقل الواضحة -->
-            <div class="relative w-full h-80 sm:h-96 bg-black flex items-center justify-center">
-                <img id="bfd-modal-current-img" src="" alt="Product Image" class="w-full h-full object-contain transition-opacity duration-300">
-                
-                <!-- سهم السابق (يمين أو يسار حسب الاتجاه) -->
-                <button onclick="prevBfdModalImage()" id="bfd-prev-btn" class="absolute right-4 z-10 bg-zinc-800/80 hover:bg-amber-500 hover:text-zinc-950 text-white p-3 rounded-full transition-all shadow-xl border border-white/20">
-                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
-                </button>
-                <!-- سهم اللاحق -->
-                <button onclick="nextBfdModalImage()" id="bfd-next-btn" class="absolute left-4 z-10 bg-zinc-800/80 hover:bg-amber-500 hover:text-zinc-950 text-white p-3 rounded-full transition-all shadow-xl border border-white/20">
-                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
-                </button>
+            <!-- حاوية الصورة الكبيرة -->
+            <div class="relative w-full h-72 sm:h-80 bg-black rounded-xl overflow-hidden flex items-center justify-center border border-white/10">
+                <img id="bfd-modal-current-img" src="" alt="Product Image" class="w-full h-full object-contain">
             </div>
 
+            <!-- حاوية الصور المصغرة تحت الصورة الكبيرة مباشرة (Thumbnails) -->
+            <div id="bfd-modal-thumbnails" class="flex items-center justify-center gap-2 overflow-x-auto py-1"></div>
+
             <!-- عبارة سارع للشراء المتوهجة في الأسفل -->
-            <div class="p-4 bg-gradient-to-r from-zinc-950 via-stone-900 to-amber-950 border-t border-amber-500/40 text-center">
-                <span class="inline-block text-amber-300 font-black text-sm sm:text-base tracking-wider bfd-modal-glowing-text uppercase">
+            <div class="p-3 bg-gradient-to-r from-zinc-950 via-stone-900 to-amber-950 rounded-xl border border-amber-500/40 text-center">
+                <span class="inline-block text-amber-300 font-black text-xs sm:text-sm tracking-wider bfd-modal-glowing-text uppercase">
                     ⚡ سارع للشراء قبل نفاد الكمية! ⚡
                 </span>
             </div>
@@ -803,7 +797,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.87</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.92</span>
                     </span>
                 </div>
             </div>
@@ -840,7 +834,7 @@
 
         let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '', sku: '' };
         
-        // متغيرات خاصة لمعاينة صور Black Free Day في النافذة المنبثقة
+        window._bfdImagesStore = {};
         let bfdModalImages = [];
         let bfdModalCurrentIndex = 0;
 
@@ -950,18 +944,34 @@
 
         async function fetchSupabaseStoreData() {
             try {
-                // جلب عروض Black Free Day أولاً لاستبعادها من المنتجات العادية
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
                 if (bfd) {
                     blackFreeDayProducts = bfd.map(b => {
                         let parsedImagesList = [];
                         if (typeof b.images === 'string') {
-                            try { parsedImagesList = JSON.parse(b.images); } catch(e) { parsedImagesList = [b.img]; }
+                            try { 
+                                parsedImagesList = JSON.parse(b.images); 
+                            } catch(e) { 
+                                parsedImagesList = [b.images]; 
+                            }
                         } else if (Array.isArray(b.images) && b.images.length > 0) {
                             parsedImagesList = b.images;
                         } else {
-                            parsedImagesList = [b.img || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+                            let coll = [];
+                            if(b.img) coll.push(b.img);
+                            if(b.img1) coll.push(b.img1);
+                            if(b.img2) coll.push(b.img2);
+                            if(b.img3) coll.push(b.img3);
+                            if(b.img4) coll.push(b.img4);
+                            if(b.img5) coll.push(b.img5);
+                            parsedImagesList = coll.length > 0 ? coll : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
                         }
+
+                        parsedImagesList = parsedImagesList.filter(img => img && typeof img === 'string' && img.trim() !== '');
+                        if(parsedImagesList.length === 0 && b.img) parsedImagesList = [b.img];
+                        if(parsedImagesList.length === 0) parsedImagesList = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+
+                        window._bfdImagesStore[b.id] = parsedImagesList;
 
                         return {
                             ...b,
@@ -979,7 +989,6 @@
                     productsDatabase = prods
                         .filter(p => {
                             const pTitle = p.title ? p.title.trim().toLowerCase() : '';
-                            // استبعاد المنتجات الموجودة في Black Free Day من العرض في المتجر الرئيسي
                             return !bfdTitles.has(pTitle);
                         })
                         .map(p => {
@@ -1185,17 +1194,21 @@
             }, 1500);
         }
 
-        // دالة إرسال طلب Black Free Day مباشرة عبر الواتساب مع العبارة الجذابة وتفاصيل المنتج
         function orderBfdViaWhatsApp(title, price) {
             const message = `🔥 سلام عليكم، بغيت نغتنم عرض Black Free Day وسجلت طلبي لهذا المنتج:\n\n🛍️ *المنتج:* ${title}\n💰 *ثمن الصدمة:* ${price} د.م\n\nسريع قبل نفاد الكمية! يرجى تأكيد الطلب وتوصيله لي.`;
             window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        // فتح نافذة معاينة صور منتج Black Free Day عند الضغط على البطاقة أو صورتها مع دعم تصفح الصور
-        function openBfdImageModal(imagesList) {
-            bfdModalImages = Array.isArray(imagesList) && imagesList.length > 0 ? imagesList : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+        // فتح نافذة معاينة صور منتج Black Free Day وعرض الصور المصغرة بدقة للهواتف
+        function openBfdImageModal(productId) {
+            if (window._bfdImagesStore && window._bfdImagesStore[productId]) {
+                bfdModalImages = window._bfdImagesStore[productId];
+            } else {
+                bfdModalImages = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            }
             bfdModalCurrentIndex = 0;
             updateBfdModalImageViewer();
+            renderBfdModalThumbnails();
             document.getElementById('bfd-image-modal').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -1206,38 +1219,33 @@
 
         function updateBfdModalImageViewer() {
             const imgEl = document.getElementById('bfd-modal-current-img');
-            const prevBtn = document.getElementById('bfd-prev-btn');
-            const nextBtn = document.getElementById('bfd-next-btn');
-
             if (!imgEl) return;
-            imgEl.style.opacity = '0';
-            setTimeout(() => {
+            if(bfdModalImages[bfdModalCurrentIndex]) {
                 imgEl.src = bfdModalImages[bfdModalCurrentIndex];
-                imgEl.style.opacity = '1';
-            }, 100);
-
-            // إخفاء أو إظهار أزرار الأسهم حسب عدد الصور المتاحة
-            if (bfdModalImages.length <= 1) {
-                if (prevBtn) prevBtn.classList.add('hidden');
-                if (nextBtn) nextBtn.classList.add('hidden');
-            } else {
-                if (prevBtn) prevBtn.classList.remove('hidden');
-                if (nextBtn) nextBtn.classList.remove('hidden');
             }
         }
 
-        function nextBfdModalImage() {
-            if (bfdModalImages.length > 1) {
-                bfdModalCurrentIndex = (bfdModalCurrentIndex + 1) % bfdModalImages.length;
-                updateBfdModalImageViewer();
+        function renderBfdModalThumbnails() {
+            const container = document.getElementById('bfd-modal-thumbnails');
+            if (!container) return;
+            if (!bfdModalImages || bfdModalImages.length === 0) {
+                container.innerHTML = '';
+                return;
             }
+            let html = '';
+            bfdModalImages.forEach((img, idx) => {
+                const isActive = idx === bfdModalCurrentIndex;
+                html += `
+                    <img src="${img}" onclick="setBfdModalImageIndex(${idx})" class="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border-2 cursor-pointer transition-all duration-300 ${isActive ? 'border-amber-400 scale-105 shadow-md ring-2 ring-amber-400/40' : 'border-zinc-700 opacity-60 hover:opacity-100'}">
+                `;
+            });
+            container.innerHTML = html;
         }
 
-        function prevBfdModalImage() {
-            if (bfdModalImages.length > 1) {
-                bfdModalCurrentIndex = (bfdModalCurrentIndex - 1 + bfdModalImages.length) % bfdModalImages.length;
-                updateBfdModalImageViewer();
-            }
+        function setBfdModalImageIndex(idx) {
+            bfdModalCurrentIndex = idx;
+            updateBfdModalImageViewer();
+            renderBfdModalThumbnails();
         }
 
         function submitDirectWhatsAppOrder() {
@@ -1466,17 +1474,16 @@
                 grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">لا توجد عروض Black Free Day حالياً.</p>';
             } else {
                 blackFreeDayProducts.forEach(p => {
-                    // تم حذف نسبة التخفيض تماماً من البطاقة بناءً على طلبك
+                    const firstImg = (p.images && p.images[0]) || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80';
 
-                    // بطاقة Black Free Day بدون شارة التخفيض، مع تفعيل فتح نافذة عرض الصور والتصفح بالأسهم
                     html += `
                         <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300">
                             <div>
-                                <div class="h-52 bg-gray-100 overflow-hidden cursor-pointer" onclick="openBfdImageModal(${JSON.stringify(p.images).replace(/"/g, '&quot;')})">
-                                    <img src="${p.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <div class="h-52 bg-gray-100 overflow-hidden cursor-pointer" onclick="openBfdImageModal('${p.id}')">
+                                    <img src="${firstImg}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 </div>
                                 <div class="p-6 space-y-4">
-                                    <h3 class="font-black text-gray-900 text-xl leading-tight cursor-pointer hover:text-[#F97316] transition-colors" onclick="openBfdImageModal(${JSON.stringify(p.images).replace(/"/g, '&quot;')})">${p.title}</h3>
+                                    <h3 class="font-black text-gray-900 text-xl leading-tight cursor-pointer hover:text-[#F97316] transition-colors" onclick="openBfdImageModal('${p.id}')">${p.title}</h3>
                                     <div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl flex items-center justify-between shadow-inner">
                                         <div>
                                             <span class="text-[10px] font-bold text-amber-700 block">ثمن الصدمة الحصري:</span>
