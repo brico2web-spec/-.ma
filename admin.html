@@ -105,7 +105,10 @@
                     <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600"></i> لوحة التحليلات والإدارة الذكية
                 </h1>
             </div>
-            <div>
+            <div class="flex items-center gap-3 flex-wrap">
+                <button onclick="downloadMetaCatalogDataFeed()" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-lg">
+                    <i data-lucide="database" class="w-5 h-5"></i> تحميل Data Feed (Meta)
+                </button>
                 <button onclick="openProductModalForAdd()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i> إضافة منتج جديد
                 </button>
@@ -509,7 +512,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.56</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.57</span>
                 </span>
             </div>
         </div>
@@ -714,6 +717,38 @@
                 (p.category && p.category.toLowerCase().includes(query))
             );
             renderAdminProducts(filtered);
+        }
+
+        // دالة إنشاء وتنزيل ملف Data Feed متوافق مع Meta Business Manager
+        function downloadMetaCatalogDataFeed() {
+            if (productsDatabase.length === 0) {
+                alert('لا توجد منتجات في قاعدة البيانات لتصديرها!');
+                return;
+            }
+
+            const feedData = productsDatabase.map(p => {
+                const mainImage = (p.images && p.images.length > 0) ? p.images[0] : '';
+                const basePrice = `${p.price || 0} MAD`;
+                const salePrice = (p.discountPrice !== undefined && p.discountPrice !== '' && p.discountPrice !== null) ? `${p.discountPrice} MAD` : '';
+                
+                return {
+                    id: p.id || p.sku || 'ID_' + Math.random().toString(36).substr(2, 9),
+                    title: p.title || '',
+                    description: p.description || '',
+                    availability: 'in stock',
+                    condition: 'new',
+                    price: basePrice,
+                    sale_price: salePrice,
+                    link: window.location.origin + '/product.html?id=' + (p.id || ''),
+                    image_link: mainImage,
+                    brand: 'bedal.online'
+                };
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(feedData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Products_Data_Feed");
+            XLSX.writeFile(workbook, "meta_catalog_data_feed.csv");
         }
 
         function findProductSKUForOrder(order) {
