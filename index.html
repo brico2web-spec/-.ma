@@ -29,12 +29,14 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts for Brand Name Only -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Readex Pro & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Readex+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* استخدام خط النظام العادي والطبيعي لكافة محتويات الموقع */
+        /* استخدام خط Readex Pro لكافة محتويات الموقع وتنسيقات واجهات المستخدم */
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Readex Pro', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8F9FA;
+            color: #0F172A;
         }
         .brand-font {
             font-family: 'Outfit', sans-serif;
@@ -42,9 +44,9 @@
             font-weight: 900;
         }
         @keyframes cartFlash {
-            0% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4); }
-            50% { transform: scale(1.25) rotate(-8deg); box-shadow: 0 0 30px 10px rgba(99, 102, 241, 0.8); }
-            100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4); }
+            0% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4); }
+            50% { transform: scale(1.25) rotate(-8deg); box-shadow: 0 0 30px 10px rgba(249, 115, 22, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4); }
         }
         .cart-bounce-active {
             animation: cartFlash 0.6s ease-in-out infinite;
@@ -83,25 +85,34 @@
         .fade-review {
             transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
         }
+        /* تطبيق الظلال الناعمة والانحناءات الجديدة للأزرار (Rounded 6px to 8px) مع الانتقال السلس */
+        button, .custom-btn {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            transform: translateY(-1.5px);
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen relative">
+<body class="bg-[#F8F9FA] text-[#0F172A] flex flex-col min-h-screen relative">
 
     <!-- Floating Side Cart Button -->
-    <div id="floating-cart-btn" onclick="toggleCartDrawer()" class="fixed bottom-6 left-6 z-50 cursor-pointer bg-gradient-to-r from-indigo-600 to-violet-600 text-white p-4 rounded-full shadow-2xl border-2 border-white flex items-center justify-center transition-all duration-300 hover:scale-110 group">
+    <div id="floating-cart-btn" onclick="toggleCartDrawer()" class="fixed bottom-6 left-6 z-50 cursor-pointer bg-[#F97316] hover:bg-[#EA580C] text-white p-4 rounded-full shadow-2xl border-2 border-white flex items-center justify-center transition-all duration-300 hover:scale-110 group">
         <i data-lucide="shopping-cart" class="w-7 h-7"></i>
-        <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-xs font-black rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-sm">
+        <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-[#0F172A] text-white text-xs font-black rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-sm">
             0
         </span>
     </div>
 
     <!-- Floating Cart Drawer Modal -->
-    <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex justify-end transition-opacity">
+    <div id="cart-drawer" class="fixed inset-0 z-50 bg-[#0F172A]/40 backdrop-blur-sm hidden flex justify-end transition-opacity">
         <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto transform transition-transform">
             <div>
                 <div class="flex items-center justify-between border-b pb-4 mb-4">
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <i data-lucide="shopping-bag" class="w-6 h-6 text-indigo-600"></i>
+                    <h2 class="text-xl font-bold text-[#0F172A] flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-6 h-6 text-[#F97316]"></i>
                         سلة التسوق
                     </h2>
                     <button onclick="toggleCartDrawer()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
@@ -113,17 +124,17 @@
                 </div>
             </div>
             <div class="border-t pt-4 space-y-3">
-                <div class="p-3 bg-gradient-to-r from-rose-50 to-indigo-50 rounded-xl border border-rose-100 space-y-1">
+                <div class="p-3 bg-gradient-to-r from-orange-50 to-slate-50 rounded-xl border border-orange-100 space-y-1">
                     <div class="flex justify-between items-center text-xs text-gray-600 font-semibold">
                         <span>إجمالي التوفير (الربح من الخصم):</span>
                         <span id="cart-total-saving" class="text-emerald-600 font-bold">0.00 د.م</span>
                     </div>
                     <div class="flex justify-between items-center text-lg font-bold">
                         <span>المجموع الإجمالي بعد الخصم:</span>
-                        <span class="text-indigo-600 font-black text-xl"><span id="cart-total-price">0.00</span> د.م</span>
+                        <span class="text-[#0F172A] font-black text-xl"><span id="cart-total-price">0.00</span> د.م</span>
                     </div>
                 </div>
-                <button onclick="openCheckoutModal()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-100">
+                <button onclick="openCheckoutModal()" class="w-full bg-[#F97316] text-white py-3 rounded-lg font-bold hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md">
                     <i data-lucide="check-circle" class="w-5 h-5"></i>
                     تأكيد وإتمام الطلب
                 </button>
@@ -132,21 +143,21 @@
     </div>
 
     <!-- Neutral Checkout Invoice & Order Modal -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b pb-4">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="file-text" class="w-6 h-6 text-indigo-600"></i>
-                    <h2 class="text-xl font-black text-gray-900">فاتورة الطلب وإتمام المعلومات</h2>
+                    <i data-lucide="file-text" class="w-6 h-6 text-[#F97316]"></i>
+                    <h2 class="text-xl font-black text-[#0F172A]">فاتورة الطلب وإتمام المعلومات</h2>
                 </div>
                 <button onclick="closeCheckoutModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-2 text-sm">
+            <div class="bg-[#F8F9FA] p-4 rounded-xl border border-gray-100 space-y-2 text-sm">
                 <div class="flex justify-between font-bold text-gray-700 border-b pb-2">
                     <span>عدد المنتجات في السلة:</span>
-                    <span id="invoice-items-count" class="text-indigo-600">0 منتج</span>
+                    <span id="invoice-items-count" class="text-[#F97316]">0 منتج</span>
                 </div>
                 <div class="flex justify-between font-bold text-gray-700">
                     <span>إجمالي المبلغ الأصلي:</span>
@@ -156,29 +167,29 @@
                     <span>إجمالي ربحك من الخصم:</span>
                     <span id="invoice-saving-total">0.00 د.م</span>
                 </div>
-                <div class="flex justify-between font-black text-base text-gray-900 pt-2 border-t">
+                <div class="flex justify-between font-black text-base text-[#0F172A] pt-2 border-t">
                     <span>المبلغ المطلوب دفعه:</span>
                     <span id="invoice-final-total" class="text-emerald-600 text-lg">0.00 د.م</span>
                 </div>
             </div>
             <div class="space-y-4">
-                <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">
-                    <i data-lucide="user" class="w-4 h-4 text-indigo-600"></i>
+                <h3 class="font-bold text-[#0F172A] text-sm flex items-center gap-2">
+                    <i data-lucide="user" class="w-4 h-4 text-[#F97316]"></i>
                     معلومات التوصيل الخاصة بك
                 </h3>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">الاسم الكامل *</label>
-                    <input type="text" id="invoice-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white">
+                    <input type="text" id="invoice-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف *</label>
-                    <input type="tel" id="invoice-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white text-right" dir="ltr">
+                    <input type="tel" id="invoice-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white text-right" dir="ltr">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">العنوان الكامل والمدينة *</label>
-                    <input type="text" id="invoice-cust-address" placeholder="أدخل مدينتك وعنوان الاستلاستلام" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white">
+                    <input type="text" id="invoice-cust-address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
                 </div>
-                <button onclick="submitInvoiceOrder()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-indigo-100">
+                <button onclick="submitInvoiceOrder()" class="w-full bg-[#F97316] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md">
                     <i data-lucide="send" class="w-5 h-5"></i>
                     إرسال الطلب إلى الإدارة
                 </button>
@@ -187,28 +198,28 @@
     </div>
 
     <!-- Order Success Popup Modal -->
-    <div id="order-success-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6 text-center">
+    <div id="order-success-modal" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 text-center">
             <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
                 <i data-lucide="check-circle-2" class="w-10 h-10"></i>
             </div>
             <div class="space-y-2">
-                <h3 class="text-xl font-black text-gray-900">تم إرسال طلبك بنجاح!</h3>
+                <h3 class="text-xl font-black text-[#0F172A]">تم إرسال طلبك بنجاح!</h3>
                 <p class="text-gray-600 text-sm leading-relaxed">في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.</p>
             </div>
-            <button onclick="closeSuccessModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
+            <button onclick="closeSuccessModal()" class="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2">
                 <i data-lucide="x-circle" class="w-5 h-5"></i> إغلاق
             </button>
         </div>
     </div>
 
     <!-- WhatsApp Direct Order Modal -->
-    <div id="whatsapp-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6">
+    <div id="whatsapp-modal" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6">
             <div class="flex items-center justify-between border-b pb-4">
                 <div class="flex items-center gap-2">
                     <i data-lucide="message-circle" class="w-6 h-6 text-emerald-600"></i>
-                    <h2 class="text-xl font-black text-gray-900">طلب سريع عبر الواتساب</h2>
+                    <h2 class="text-xl font-black text-[#0F172A]">طلب سريع عبر الواتساب</h2>
                 </div>
                 <button onclick="closeWhatsAppModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
                     <i data-lucide="x" class="w-6 h-6"></i>
@@ -217,20 +228,20 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">الإسم الكامل *</label>
-                    <input type="text" id="wa-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
+                    <input type="text" id="wa-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف *</label>
-                    <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white text-right" dir="ltr">
+                    <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white text-right" dir="ltr">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1">المدينة *</label>
-                    <input type="text" id="wa-cust-city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
+                    <input type="text" id="wa-cust-city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
                 </div>
-                <div id="wa-success-alert" class="hidden p-3 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center">
+                <div id="wa-success-alert" class="hidden p-3 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center">
                     ✨ سيتم التواصل معك في أقرب وقت!
                 </div>
-                <button onclick="submitWhatsAppOrder()" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-100">
+                <button onclick="submitWhatsAppOrder()" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-md">
                     <i data-lucide="send" class="w-5 h-5"></i>
                     إرسال الطلب عبر الواتساب
                 </button>
@@ -240,10 +251,10 @@
 
     <!-- Sticky Header Wrapper -->
     <div class="sticky top-0 z-40 w-full shadow-sm">
-        <div class="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 text-white py-2.5 overflow-hidden shadow-inner border-b border-indigo-800/40">
+        <div class="bg-[#0F172A] text-white py-2.5 overflow-hidden shadow-inner border-b border-[#1E293B]">
             <div class="animate-marquee flex items-center gap-12 whitespace-nowrap text-xs sm:text-sm font-black tracking-wide">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="truck" class="w-4 h-4 text-indigo-300"></i>
+                    <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
                     <span>توصيل مجاني لجميع المدن في المغرب</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -255,7 +266,7 @@
                     <span>ضمان الجودة والدفع عند الاستلام</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <i data-lucide="truck" class="w-4 h-4 text-indigo-300"></i>
+                    <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
                     <span>توصيل مجاني لجميع المدن في المغرب</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -273,17 +284,17 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <div class="flex items-center space-x-3 space-x-reverse cursor-pointer group" onclick="switchTab('store')">
                     <div class="relative w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                        <img src="https://i.ibb.co/ZRHKRfFV/Meta-AI-store-icon-final-20261029-051707.png" alt="Logo" class="w-full h-full object-contain drop-shadow-sm">
+                        <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=0elvag8y&raw=1" alt="Logo" class="w-full h-full object-contain drop-shadow-sm rounded-lg">
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-2xl font-black tracking-wider bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent brand-font">
-                            bedal<span class="text-amber-500">.</span>online
+                        <span class="text-2xl font-black tracking-wider text-[#0F172A] brand-font">
+                            bedal<span class="text-[#F97316]">.</span>online
                         </span>
                         <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Smart Marketplace</span>
                     </div>
                 </div>
                 <!-- WhatsApp Header Icon Button -->
-                <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 p-2.5 rounded-xl transition-all duration-300 flex items-center gap-1.5 shadow-sm font-bold text-xs">
+                <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 p-2.5 rounded-lg transition-all duration-300 flex items-center gap-1.5 shadow-sm font-bold text-xs">
                     <i data-lucide="message-circle" class="w-5 h-5"></i>
                     <span class="hidden sm:inline">تواصل معنا</span>
                 </a>
@@ -291,7 +302,7 @@
         </header>
 
         <!-- شريط تعليقات الزبناء المغاربة المتحرك ببطء (مدموج وملتصق تحت الهيدر مباشرة) -->
-        <div class="w-full bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 text-white py-2.5 overflow-hidden shadow-inner border-t border-indigo-900/40">
+        <div class="w-full bg-[#1E293B] text-white py-2.5 overflow-hidden shadow-inner border-t border-[#0F172A]">
             <div class="animate-marquee-reviews flex items-center gap-8 whitespace-nowrap text-xs sm:text-sm font-bold tracking-wide">
                 <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">يوسف (القنيطرة):</span> "السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!"</div>
                 <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سناء (الدار البيضاء):</span> "توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online."</div>
@@ -334,11 +345,11 @@
         <section id="section-store" class="block space-y-0">
             <!-- حاوية السلايدر -->
             <div class="w-full">
-                <div class="relative w-full h-40 sm:h-52 rounded-2xl overflow-hidden shadow-lg bg-gray-900">
+                <div class="relative w-full h-40 sm:h-52 rounded-2xl overflow-hidden shadow-lg bg-[#0F172A]">
                     <div class="hero-slide absolute inset-0 opacity-100 transition-opacity duration-1000 flex items-center justify-between px-6 sm:px-12 text-white">
                         <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
                         <div class="relative z-10 max-w-lg space-y-1">
-                            <span class="bg-rose-500/90 text-white text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full font-bold inline-block shadow">تخفيضات الكبرى</span>
+                            <span class="bg-[#F97316] text-white text-[10px] sm:text-xs px-2.5 py-0.5 rounded-lg font-bold inline-block shadow">تخفيضات الكبرى</span>
                             <h2 class="text-xl sm:text-2xl font-black leading-tight">عروض حصرية تصل إلى 40%</h2>
                             <p class="text-gray-200 text-xs sm:text-sm">تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.</p>
                         </div>
@@ -347,52 +358,52 @@
             </div>
 
             <div class="py-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <i data-lucide="layout-grid" class="w-5 h-5 text-indigo-600"></i>
+                <h3 class="text-lg font-bold text-[#0F172A] mb-4 flex items-center gap-2">
+                    <i data-lucide="layout-grid" class="w-5 h-5 text-[#F97316]"></i>
                     تصفح حسب الأقسام
                 </h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                    <button onclick="filterCategory('all')" id="cat-btn-all" class="cat-btn group relative h-24 rounded-2xl overflow-hidden shadow-sm border-2 border-indigo-600 transition-all transform hover:-translate-y-1">
+                    <button onclick="filterCategory('all')" id="cat-btn-all" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-[#F97316] transition-all transform hover:-translate-y-1">
                         <img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=400&q=80" alt="الكل" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-indigo-900/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
-                            <i data-lucide="layers" class="w-6 h-6 mb-1 text-indigo-200"></i>
+                        <div class="absolute inset-0 bg-[#0F172A]/70 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
+                            <i data-lucide="layers" class="w-6 h-6 mb-1 text-orange-300"></i>
                             <span class="font-extrabold text-sm sm:text-base">الكل</span>
                         </div>
                     </button>
-                    <button onclick="filterCategory('women')" id="cat-btn-women" class="cat-btn group relative h-24 rounded-2xl overflow-hidden shadow-sm border-2 border-transparent hover:border-indigo-600 transition-all transform hover:-translate-y-1">
+                    <button onclick="filterCategory('women')" id="cat-btn-women" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-transparent hover:border-[#F97316] transition-all transform hover:-translate-y-1">
                         <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80" alt="نساء" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
+                        <div class="absolute inset-0 bg-[#0F172A]/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
                             <i data-lucide="sparkles" class="w-6 h-6 mb-1 text-pink-300"></i>
                             <span class="font-bold text-sm sm:text-base">نساء</span>
                         </div>
                     </button>
-                    <button onclick="filterCategory('men')" id="cat-btn-men" class="cat-btn group relative h-24 rounded-2xl overflow-hidden shadow-sm border-2 border-transparent hover:border-indigo-600 transition-all transform hover:-translate-y-1">
+                    <button onclick="filterCategory('men')" id="cat-btn-men" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-transparent hover:border-[#F97316] transition-all transform hover:-translate-y-1">
                         <img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=400&q=80" alt="رجال" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
+                        <div class="absolute inset-0 bg-[#0F172A]/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
                             <i data-lucide="shirt" class="w-6 h-6 mb-1 text-blue-300"></i>
                             <span class="font-bold text-sm sm:text-base">رجال</span>
                         </div>
                     </button>
-                    <button onclick="filterCategory('kids')" id="cat-btn-kids" class="cat-btn group relative h-24 rounded-2xl overflow-hidden shadow-sm border-2 border-transparent hover:border-indigo-600 transition-all transform hover:-translate-y-1">
+                    <button onclick="filterCategory('kids')" id="cat-btn-kids" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-transparent hover:border-[#F97316] transition-all transform hover:-translate-y-1">
                         <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=400&q=80" alt="أطفال" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
+                        <div class="absolute inset-0 bg-[#0F172A]/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
                             <i data-lucide="smile" class="w-6 h-6 mb-1 text-amber-300"></i>
                             <span class="font-bold text-sm sm:text-base">أطفال</span>
                         </div>
                     </button>
-                    <button onclick="filterCategory('various')" id="cat-btn-various" class="cat-btn group relative h-24 rounded-2xl overflow-hidden shadow-sm border-2 border-transparent hover:border-indigo-600 transition-all transform hover:-translate-y-1">
+                    <button onclick="filterCategory('various')" id="cat-btn-various" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-transparent hover:border-[#F97316] transition-all transform hover:-translate-y-1">
                         <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" alt="منتجات متنوعة" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
+                        <div class="absolute inset-0 bg-[#0F172A]/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
                             <i data-lucide="package" class="w-6 h-6 mb-1 text-emerald-300"></i>
                             <span class="font-bold text-xs sm:text-sm">منتجات متنوعة</span>
                         </div>
                     </button>
-                    <button onclick="openBlackFreeDayPage()" class="group relative h-24 rounded-2xl overflow-hidden shadow-lg border-2 border-amber-400 transition-all transform hover:-translate-y-1 animate-pulse">
+                    <button onclick="openBlackFreeDayPage()" class="group relative h-24 rounded-xl overflow-hidden shadow-lg border-2 border-amber-400 transition-all transform hover:-translate-y-1 animate-pulse">
                         <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=400&q=80" alt="Black Free Day" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                         <div class="absolute inset-0 bg-gradient-to-tr from-black/90 via-zinc-900/80 to-amber-600/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-1 text-white text-center">
                             <i data-lucide="flame" class="w-5 h-5 mb-0.5 text-amber-400 animate-bounce"></i>
                             <span class="font-black text-xs sm:text-sm text-amber-300 tracking-wider">Black Free Day</span>
-                            <span class="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded-full font-bold mt-0.5">السبت والأحد 🔥</span>
+                            <span class="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded-lg font-bold mt-0.5">السبت والأحد 🔥</span>
                         </div>
                     </button>
                 </div>
@@ -400,8 +411,8 @@
 
             <div>
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                        <i data-lucide="sparkles" class="w-6 h-6 text-indigo-600"></i>
+                    <h2 class="text-2xl font-bold text-[#0F172A] flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-6 h-6 text-[#F97316]"></i>
                         المنتجات المميزة بالعروض الكبرى
                     </h2>
                 </div>
@@ -417,12 +428,12 @@
 
         <!-- SECTION: BLACK FREE DAY PAGE -->
         <section id="section-black-free-day" class="hidden space-y-8">
-            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:text-amber-900 bg-amber-50 px-4 py-2 rounded-xl transition-colors border border-amber-200">
+            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:text-amber-900 bg-amber-50 px-4 py-2 rounded-lg transition-colors border border-amber-200">
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 العودة للرئيسية
             </button>
-            <div class="bg-gradient-to-r from-zinc-900 via-neutral-900 to-black rounded-3xl border-2 border-amber-500 shadow-2xl p-8 sm:p-12 text-white relative overflow-hidden text-center space-y-4">
-                <div class="inline-flex items-center gap-2 bg-amber-500 text-zinc-950 font-black px-4 py-1.5 rounded-full text-xs uppercase tracking-widest shadow-lg animate-bounce">
+            <div class="bg-gradient-to-r from-zinc-900 via-neutral-900 to-black rounded-2xl border-2 border-amber-500 shadow-2xl p-8 sm:p-12 text-white relative overflow-hidden text-center space-y-4">
+                <div class="inline-flex items-center gap-2 bg-amber-500 text-zinc-950 font-black px-4 py-1.5 rounded-lg text-xs uppercase tracking-widest shadow-lg animate-bounce">
                     <i data-lucide="flame" class="w-4 h-4"></i> عروض نهاية الأسبوع الكبرى
                 </div>
                 <h1 class="text-3xl sm:text-6xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent uppercase drop-shadow-md">
@@ -437,20 +448,20 @@
 
         <!-- SECTION: VENDOR STORE PAGE -->
         <section id="section-vendor-store" class="hidden space-y-8">
-            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-4 py-2 rounded-xl transition-colors">
+            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0F172A] hover:text-[#F97316] bg-gray-100 px-4 py-2 rounded-lg transition-colors">
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 العودة للمتجر الرئيسي
             </button>
-            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="h-36 sm:h-48 bg-gradient-to-r from-indigo-500 to-purple-600 relative">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="h-36 sm:h-48 bg-gradient-to-r from-[#0F172A] to-[#1E293B] relative">
                     <img id="vendor-cover-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover opacity-30">
                 </div>
                 <div class="p-6 sm:p-8 relative flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-16 sm:-mt-20">
-                    <img id="vendor-logo-img" src="" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl border-4 border-white shadow-xl bg-white object-cover">
+                    <img id="vendor-logo-img" src="" class="w-28 h-28 sm:w-32 sm:h-32 rounded-xl border-4 border-white shadow-xl bg-white object-cover">
                     <div class="text-center sm:text-right space-y-1">
                         <div class="flex items-center justify-center sm:justify-start gap-2">
-                            <h1 id="vendor-name-title" class="text-2xl sm:text-3xl font-black text-gray-900">اسم المتجر</h1>
-                            <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-bold border border-emerald-100">متجر موثوق</span>
+                            <h1 id="vendor-name-title" class="text-2xl sm:text-3xl font-black text-[#0F172A]">اسم المتجر</h1>
+                            <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-lg font-bold border border-emerald-100">متجر موثوق</span>
                         </div>
                         <p id="vendor-desc-text" class="text-gray-500 text-xs sm:text-sm max-w-xl">وصف عن المتجر والتخصص...</p>
                     </div>
@@ -462,22 +473,22 @@
         <!-- SECTION: PRODUCT DETAIL -->
         <section id="section-product-detail" class="hidden space-y-6 max-w-2xl mx-auto">
             <div>
-                <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-xl shadow transition-all">
+                <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-[#0F172A] hover:bg-[#1E293B] px-5 py-2 rounded-lg shadow transition-all">
                     <i data-lucide="arrow-right" class="w-4 h-4"></i> الرجوع إلى الرئيسية
                 </button>
             </div>
 
-            <div class="bg-white rounded-3xl border border-amber-200/60 shadow-lg overflow-hidden p-5 sm:p-6 space-y-6">
+            <div class="bg-white rounded-2xl border border-amber-200/60 shadow-lg overflow-hidden p-5 sm:p-6 space-y-6">
                 
                 <div class="space-y-2">
-                    <div class="flex items-center justify-between text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
+                    <div class="flex items-center justify-between text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
                         <span id="detail-badge-text" class="flex items-center gap-1">🏷️ تخفيض حصري</span>
-                        <span id="detail-product-cat" class="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">متنوع</span>
+                        <span id="detail-product-cat" class="text-[#0F172A] bg-gray-100 px-2 py-0.5 rounded">متنوع</span>
                     </div>
-                    <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-gray-900 leading-snug">عنوان المنتج</h1>
+                    <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <div class="relative w-full rounded-2xl overflow-hidden bg-gray-100 h-72 sm:h-96 flex items-center justify-center border border-gray-200 shadow-inner">
+                <div class="relative w-full rounded-xl overflow-hidden bg-gray-100 h-72 sm:h-96 flex items-center justify-center border border-gray-200 shadow-inner">
                     <img id="detail-product-img" alt="Product Detail" class="w-full h-full object-cover">
                 </div>
 
@@ -489,9 +500,9 @@
                     <span class="bg-rose-50 text-rose-600 text-xs font-black px-2.5 py-1 rounded-lg border border-rose-100">التوصيل مجاني لجميع المدن</span>
                 </div>
 
-                <div class="bg-amber-50/50 rounded-2xl border border-amber-200 p-4 sm:p-6 space-y-4 shadow-sm">
+                <div class="bg-amber-50/50 rounded-xl border border-amber-200 p-4 sm:p-6 space-y-4 shadow-sm">
                     <div class="text-center space-y-1 pb-1 border-b border-amber-100">
-                        <h3 class="font-black text-gray-900 text-base">اطلب الآن - الدفع عند الاستلام</h3>
+                        <h3 class="font-black text-[#0F172A] text-base">اطلب الآن - الدفع عند الاستلام</h3>
                         <p class="text-xs text-gray-500 font-semibold">املأ المعلومات أدناه لتأكيد طلبك بسرعة وسهولة</p>
                     </div>
 
@@ -499,27 +510,27 @@
                         <div>
                             <div class="relative flex items-center">
                                 <span class="absolute right-3 text-gray-400"><i data-lucide="user" class="w-4 h-4"></i></span>
-                                <input type="text" id="detail-cust-name" placeholder="الاسم الكامل" class="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white shadow-sm">
+                                <input type="text" id="detail-cust-name" placeholder="الاسم الكامل" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
                             </div>
                         </div>
                         <div>
                             <div class="relative flex items-center">
                                 <span class="absolute right-3 text-gray-400"><i data-lucide="phone" class="w-4 h-4"></i></span>
-                                <input type="tel" id="detail-cust-phone" placeholder="06 XX XX XX XX" class="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white shadow-sm text-right" dir="ltr">
+                                <input type="tel" id="detail-cust-phone" placeholder="06 XX XX XX XX" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm text-right" dir="ltr">
                             </div>
                         </div>
                         <div>
                             <div class="relative flex items-center">
                                 <span class="absolute right-3 text-gray-400"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
-                                <input type="text" id="detail-cust-city" placeholder="المدينة" class="w-full pr-10 pl-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-indigo-600 bg-white shadow-sm">
+                                <input type="text" id="detail-cust-city" placeholder="المدينة" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white p-3 rounded-xl border border-amber-100 space-y-1.5 text-xs font-bold text-gray-700">
+                    <div class="bg-white p-3 rounded-lg border border-amber-100 space-y-1.5 text-xs font-bold text-gray-700">
                         <div class="flex justify-between">
                             <span>المنتج:</span>
-                            <span id="summary-prod-name" class="text-indigo-600 truncate max-w-[200px]">المنتج</span>
+                            <span id="summary-prod-name" class="text-[#0F172A] truncate max-w-[200px]">المنتج</span>
                         </div>
                         <div class="flex justify-between">
                             <span>التوصيل:</span>
@@ -532,11 +543,11 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#10b981] hover:bg-[#059669] text-white py-3.5 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md shadow-emerald-100 text-sm">
+                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#10b981] hover:bg-[#059669] text-white py-3.5 px-4 rounded-lg font-black transition-colors flex items-center justify-center gap-2 shadow-md text-sm">
                             <i data-lucide="message-circle" class="w-5 h-5"></i>
                             طلب عبر الواتساب
                         </button>
-                        <button onclick="submitDirectProductOrder()" class="w-full bg-[#6366f1] hover:bg-[#4f46e5] text-white py-3.5 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md shadow-indigo-100 text-sm">
+                        <button onclick="submitDirectProductOrder()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white py-3.5 px-4 rounded-lg font-black transition-colors flex items-center justify-center gap-2 shadow-md text-sm">
                             <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                             الطلب عبر الموقع
                         </button>
@@ -547,7 +558,7 @@
                             <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i> الدفع عند الاستلام
                         </div>
                         <div class="flex items-center gap-1">
-                            <i data-lucide="truck" class="w-3.5 h-3.5 text-indigo-600"></i> توصيل سريع
+                            <i data-lucide="truck" class="w-3.5 h-3.5 text-[#F97316]"></i> توصيل سريع
                         </div>
                         <div class="flex items-center gap-1">
                             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i> جودة مضمونة
@@ -556,14 +567,14 @@
                 </div>
 
                 <div class="space-y-3 pt-4 border-t border-gray-100">
-                    <h3 class="font-extrabold text-gray-900 text-base flex items-center gap-2">
-                        <i data-lucide="file-text" class="w-5 h-5 text-indigo-600"></i> وصف المنتج
+                    <h3 class="font-extrabold text-[#0F172A] text-base flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-5 h-5 text-[#F97316]"></i> وصف المنتج
                     </h3>
-                    <p id="detail-product-desc" class="text-gray-600 text-sm leading-relaxed whitespace-pre-line bg-gray-50 p-4 rounded-2xl border border-gray-100">وصف المنتوج هنا...</p>
+                    <p id="detail-product-desc" class="text-gray-600 text-sm leading-relaxed whitespace-pre-line bg-[#F8F9FA] p-4 rounded-xl border border-gray-100">وصف المنتوج هنا...</p>
                 </div>
 
                 <div id="detail-video-box" class="hidden pt-2">
-                    <a id="detail-video-link" href="#" target="_blank" class="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 text-indigo-800 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors">
+                    <a id="detail-video-link" href="#" target="_blank" class="inline-flex items-center gap-2 bg-orange-50 border border-orange-100 hover:bg-orange-100 text-orange-900 px-4 py-2.5 rounded-lg text-xs font-bold transition-colors">
                         <i data-lucide="play-circle" class="w-4 h-4 text-emerald-600 fill-emerald-600 text-white"></i> شرح منصة تاجر
                     </a>
                 </div>
@@ -573,10 +584,10 @@
     </main>
 
     <!-- Partner Products Slider Section -->
-    <section class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-12 border-t border-indigo-900/50 overflow-hidden shadow-2xl relative">
+    <section class="bg-[#0F172A] text-white py-12 border-t border-[#1E293B] overflow-hidden shadow-2xl relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
             <div class="text-center space-y-2">
-                <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-lg text-xs font-black bg-orange-500/20 text-orange-300 border border-orange-500/30">
                     <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> تشكيلة المنتجات المميزة
                 </span>
                 <h3 class="text-2xl sm:text-3xl font-black tracking-tight">اكتشف أحدث منتجاتنا الحصرية المتاحة الآن</h3>
@@ -589,41 +600,41 @@
 
     <!-- قسم الميزات العصري -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        <div class="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-10">
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-10">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-                <div class="flex items-start gap-4 p-4 rounded-2xl bg-gray-50/60 border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-orange-50 text-[#F97316] flex items-center justify-center flex-shrink-0 shadow-sm">
                         <i data-lucide="shield-check" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
-                        <h4 class="font-extrabold text-gray-900 text-base">جودة مضمونة</h4>
+                        <h4 class="font-extrabold text-[#0F172A] text-base">جودة مضمونة</h4>
                         <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">منتجات مختارة بعناية فائقة لضمان رضاكم.</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-4 rounded-2xl bg-gray-50/60 border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 shadow-sm">
                         <i data-lucide="truck" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
-                        <h4 class="font-extrabold text-gray-900 text-base">توصيل سريع</h4>
+                        <h4 class="font-extrabold text-[#0F172A] text-base">توصيل سريع</h4>
                         <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">خدمة توصيل سريعة لجميع المدن في المغرب.</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-4 rounded-2xl bg-gray-50/60 border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-sm">
                         <i data-lucide="refresh-cw" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
-                        <h4 class="font-extrabold text-gray-900 text-base">إرجاع سهل</h4>
+                        <h4 class="font-extrabold text-[#0F172A] text-base">إرجاع سهل</h4>
                         <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">ضمان الاسترجاع في حال لم تكن راضياً.</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-4 rounded-2xl bg-gray-50/60 border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
                         <i data-lucide="wallet" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
-                        <h4 class="font-extrabold text-gray-900 text-base">الدفع عند الاستلام</h4>
+                        <h4 class="font-extrabold text-[#0F172A] text-base">الدفع عند الاستلام</h4>
                         <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">ادفع بأمان عند استلام طلبك مباشرة.</p>
                     </div>
                 </div>
@@ -640,20 +651,20 @@
             </div>
 
             <!-- Add Review Form in Footer -->
-            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200/80 max-w-xl mx-auto space-y-3">
-                <h4 class="font-black text-gray-900 text-xs sm:text-sm text-center flex items-center justify-center gap-1.5">
-                    <i data-lucide="message-square-plus" class="w-4 h-4 text-indigo-600"></i> أضف تعليقك وتقييمك للموقع
+            <div class="bg-[#F8F9FA] p-4 rounded-xl border border-gray-200/80 max-w-xl mx-auto space-y-3">
+                <h4 class="font-black text-[#0F172A] text-xs sm:text-sm text-center flex items-center justify-center gap-1.5">
+                    <i data-lucide="message-square-plus" class="w-4 h-4 text-[#F97316]"></i> أضف تعليقك وتقييمك للموقع
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <input type="text" id="user-review-name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" class="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600 bg-white">
-                    <select id="user-review-rating" class="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600 bg-white font-bold text-amber-600">
+                    <input type="text" id="user-review-name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white">
+                    <select id="user-review-rating" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white font-bold text-amber-600">
                         <option value="5">⭐⭐⭐⭐⭐ (5/5 ممتاز جداً)</option>
                         <option value="4">⭐⭐⭐⭐ (4/5 جيد جداً)</option>
                         <option value="3">⭐⭐⭐ (3/5 جيد)</option>
                     </select>
                 </div>
-                <textarea id="user-review-comment" placeholder="اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..." rows="2" class="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-600 bg-white resize-none"></textarea>
-                <button onclick="addNewUserReview()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition-colors shadow-sm flex items-center justify-center gap-1.5">
+                <textarea id="user-review-comment" placeholder="اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..." rows="2" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white resize-none"></textarea>
+                <button onclick="addNewUserReview()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-bold py-2 px-4 rounded-lg text-xs transition-colors shadow-sm flex items-center justify-center gap-1.5">
                     <i data-lucide="send" class="w-3.5 h-3.5"></i> إرسال التعليق
                 </button>
             </div>
@@ -661,8 +672,8 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500 pt-2 border-t border-gray-100">
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.69</span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.71</span>
                     </span>
                 </div>
             </div>
@@ -766,7 +777,7 @@
             container.innerHTML = `
                 <div class="flex items-center gap-2 mb-1">
                     <div class="flex items-center gap-0.5">${starsHtml}</div>
-                    <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-indigo-100">${rev.badge}</span>
+                    <span class="bg-orange-50 text-orange-800 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-orange-100">${rev.badge}</span>
                 </div>
                 <p class="text-xs sm:text-sm font-bold text-gray-700 max-w-2xl leading-relaxed">${rev.comment}</p>
                 <span class="text-[11px] text-gray-400 font-medium mt-1">— ${rev.name}</span>
@@ -853,7 +864,7 @@
             const marqueeContainer = document.getElementById('partner-products-marquee');
             if(!marqueeContainer) return;
             if(!productsList || productsList.length === 0) {
-                marqueeContainer.innerHTML = '<p class="text-indigo-200 text-sm">لا توجد منتجات للعرض حالياً.</p>';
+                marqueeContainer.innerHTML = '<p class="text-orange-200 text-sm">لا توجد منتجات للعرض حالياً.</p>';
                 return;
             }
             
@@ -862,8 +873,8 @@
                 productsList.forEach(p => {
                     const mainImg = (p.images && p.images[0]) || '';
                     marqueeHtml += `
-                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-2xl shadow-xl flex-shrink-0 w-72 cursor-pointer hover:bg-white/15 transition-all" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
-                            <img src="${mainImg}" class="w-16 h-16 rounded-xl object-cover border border-white/20 flex-shrink-0 shadow-md">
+                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-xl shadow-xl flex-shrink-0 w-72 cursor-pointer hover:bg-white/15 transition-all" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                            <img src="${mainImg}" class="w-16 h-16 rounded-lg object-cover border border-white/20 flex-shrink-0 shadow-md">
                             <div class="overflow-hidden space-y-1">
                                 <h4 class="font-extrabold text-sm text-white truncate">${p.title}</h4>
                                 <div class="flex items-baseline gap-2">
@@ -912,17 +923,17 @@
                 html += `
                     <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between" data-category="${p.category || 'various'}">
                         <div>
-                            <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-md border border-white/80 pointer-events-none">
+                            <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none">
                                 ${badgeText}
                             </div>
                             <div class="h-48 bg-gray-100 relative overflow-hidden cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                                 <img src="${(p.images && p.images[0]) || ''}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             </div>
                             <div class="p-5 space-y-3">
-                                <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">${p.catLabel || 'متنوع'}</span>
-                                <h3 class="font-extrabold text-gray-900 text-xl leading-snug cursor-pointer hover:text-indigo-600 transition-colors" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">${p.title}</h3>
+                                <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'متنوع'}</span>
+                                <h3 class="font-extrabold text-[#0F172A] text-xl leading-snug cursor-pointer hover:text-[#F97316] transition-colors" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">${p.title}</h3>
                                 <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
-                                <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-xl flex items-center justify-between">
+                                <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
                                     <div>
                                         <span class="text-[10px] font-bold text-emerald-600 block">الثمن بعد التخفيض:</span>
                                         <div class="flex items-baseline gap-1">
@@ -938,10 +949,10 @@
                             </div>
                         </div>
                         <div class="p-5 pt-0 grid grid-cols-2 gap-2">
-                            <button onclick="addToCart('${p.title}', ${p.price}, ${p.oldPrice}, '${(p.images && p.images[0]) || ''}')" class="w-full bg-indigo-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-100 flex items-center justify-center gap-1.5 text-xs">
+                            <button onclick="addToCart('${p.title}', ${p.price}, ${p.oldPrice}, '${(p.images && p.images[0]) || ''}')" class="w-full bg-[#F97316] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
                                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> للسلة
                             </button>
-                            <button onclick="openWhatsAppModal('${p.title}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-md shadow-indigo-100 flex items-center justify-center gap-1.5 text-xs">
+                            <button onclick="openWhatsAppModal('${p.title}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
                                 <i data-lucide="message-circle" class="w-4 h-4"></i> طلب عبر الواتساب
                             </button>
                         </div>
@@ -956,7 +967,7 @@
                     for (let i = 1; i <= totalPages; i++) {
                         const isActive = i === currentPage;
                         paginationHtml += `
-                            <button onclick="changePage(${i})" class="w-10 h-10 rounded-xl font-bold text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center ${isActive ? 'bg-indigo-600 text-white shadow-md ring-2 ring-indigo-300' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}">
+                            <button onclick="changePage(${i})" class="w-10 h-10 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center ${isActive ? 'bg-[#F97316] text-white shadow-md ring-2 ring-orange-200' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}">
                                 ${i}
                             </button>
                         `;
@@ -1157,7 +1168,7 @@
                 totalSaving += itemSaving;
 
                 html += `
-                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-100 gap-3">
+                    <div class="flex items-center justify-between bg-[#F8F9FA] p-3 rounded-lg border border-gray-100 gap-3">
                         <img src="${item.img}" class="w-12 h-12 object-cover rounded-lg border flex-shrink-0">
                         <div class="flex-grow">
                             <h4 class="font-bold text-xs text-gray-800">${item.title}</h4>
@@ -1167,7 +1178,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-1.5 bg-white border border-gray-200 px-2 py-1 rounded-lg">
-                            <button onclick="cart[${index}].quantity += 1; updateCartUI();" class="text-indigo-600 font-bold">+</button>
+                            <button onclick="cart[${index}].quantity += 1; updateCartUI();" class="text-[#F97316] font-bold">+</button>
                             <span class="text-xs font-extrabold text-gray-800">${item.quantity}</span>
                             <button onclick="cart[${index}].quantity -= 1; if(cart[${index}].quantity<=0) cart.splice(${index},1); updateCartUI();" class="text-rose-600 font-bold">-</button>
                         </div>
@@ -1251,13 +1262,13 @@
                     html += `
                         <div class="bg-white rounded-2xl border-2 border-amber-200 shadow-lg overflow-hidden group cursor-pointer relative flex flex-col justify-between" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                             <div>
-                                <div class="absolute top-3 right-3 z-10 bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-full shadow-md">
+                                <div class="absolute top-3 right-3 z-10 bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-lg shadow-md">
                                     ${badgeText}
                                 </div>
                                 <div class="h-48 bg-gray-100"><img src="${p.images[0]}" class="w-full h-full object-cover"></div>
                                 <div class="p-5 space-y-3">
                                     <h3 class="font-extrabold text-gray-900 text-xl">${p.title}</h3>
-                                    <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl flex items-center justify-between">
+                                    <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-lg flex items-center justify-between">
                                         <span class="font-black text-emerald-600 text-2xl">${p.price.toFixed(2)} د.م</span>
                                         <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                     </div>
@@ -1338,7 +1349,7 @@
             currentProduct.images.forEach((img, idx) => {
                 const isActive = idx === currentProduct.currentImgIndex;
                 html += `
-                    <img src="${img}" onclick="setDetailImageIndex(${idx})" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border-2 cursor-pointer transition-all duration-300 ${isActive ? 'border-indigo-600 scale-105 shadow-md ring-2 ring-indigo-300' : 'border-gray-200 opacity-70 hover:opacity-100'}">
+                    <img src="${img}" onclick="setDetailImageIndex(${idx})" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border-2 cursor-pointer transition-all duration-300 ${isActive ? 'border-[#F97316] scale-105 shadow-md ring-2 ring-orange-200' : 'border-gray-200 opacity-70 hover:opacity-100'}">
                 `;
             });
             container.innerHTML = html;
@@ -1361,9 +1372,9 @@
         }
 
         function filterCategory(catKey) {
-            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('border-indigo-600'));
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('border-[#F97316]'));
             const activeBtn = document.getElementById(`cat-btn-${catKey}`);
-            if (activeBtn) activeBtn.classList.add('border-indigo-600');
+            if (activeBtn) activeBtn.classList.add('border-[#F97316]');
 
             currentFilterCategory = catKey;
             currentPage = 1;
