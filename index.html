@@ -101,6 +101,55 @@
         .black-free-day-flash {
             animation: cyberGlow 1.8s infinite ease-in-out;
         }
+
+        /* تأثير التوهج وحركة الثمن الخاصة ببطاقات Black Free Day المطلوبة */
+        @keyframes bfdCardGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(245, 158, 11, 0.5), 0 0 40px rgba(239, 68, 68, 0.3);
+                border-color: #F59E0B;
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(245, 158, 11, 0.9), 0 0 60px rgba(245, 158, 11, 0.6);
+                border-color: #FEE140;
+            }
+        }
+        .bfd-glowing-card {
+            animation: bfdCardGlow 2s infinite ease-in-out;
+        }
+
+        @keyframes pricePulseMotion {
+            0%, 100% { transform: scale(1); color: #059669; }
+            50% { transform: scale(1.12); color: #DC2626; }
+        }
+        .bfd-moving-price {
+            display: inline-block;
+            animation: pricePulseMotion 1.2s infinite ease-in-out;
+        }
+
+        /* تأثير الحركة والنبض الخاص بزر الشراء في Black Free Day */
+        @keyframes btnPulseAttention {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); }
+            50% { transform: scale(1.04); box-shadow: 0 0 25px rgba(249, 115, 22, 0.8); }
+        }
+        .bfd-attention-btn {
+            animation: btnPulseAttention 1.5s infinite ease-in-out;
+        }
+
+        /* تأثير التوهج وحركة النص لرسالة سارع للشراء في النافذة المنبثقة */
+        @keyframes textGlowPulse {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 0 20px rgba(239, 68, 68, 0.6);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(245, 158, 11, 1), 0 0 35px rgba(249, 115, 22, 0.9);
+                transform: scale(1.03);
+            }
+        }
+        .bfd-modal-glowing-text {
+            animation: textGlowPulse 1.6s infinite ease-in-out;
+        }
+
         /* تطبيق الظلال الناعمة والانحناءات الجديدة للأزرار (Rounded 6px to 8px) مع الانتقال السلس */
         button, .custom-btn {
             border-radius: 8px;
@@ -324,6 +373,39 @@
                     إرسال الطلب عبر الواتساب
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- BFD Image Viewer Modal (نافذة عرض الصور وأسهم التصفح لـ Black Free Day) -->
+    <div id="bfd-image-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-900 border-2 border-amber-500/80 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white relative">
+            
+            <!-- زر الإغلاق -->
+            <button onclick="closeBfdImageModal()" class="absolute top-3 left-3 z-20 bg-zinc-800 hover:bg-red-600 text-white p-2 rounded-full transition-colors shadow-lg">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- حاوية الصورة مع أسهم التنقل -->
+            <div class="relative w-full h-80 sm:h-96 bg-black flex items-center justify-center">
+                <img id="bfd-modal-current-img" src="" alt="Product Image" class="w-full h-full object-contain transition-opacity duration-300">
+                
+                <!-- سهم السابق -->
+                <button onclick="prevBfdModalImage()" id="bfd-prev-btn" class="absolute right-3 bg-black/60 hover:bg-amber-500 hover:text-zinc-950 text-white p-2.5 rounded-full transition-all shadow-md">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </button>
+                <!-- سهم اللاحق -->
+                <button onclick="nextBfdModalImage()" id="bfd-next-btn" class="absolute left-3 bg-black/60 hover:bg-amber-500 hover:text-zinc-950 text-white p-2.5 rounded-full transition-all shadow-md">
+                    <i data-lucide="chevron-left" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- عبارة سارع للشراء المتوهجة في الأسفل -->
+            <div class="p-4 bg-gradient-to-r from-zinc-950 via-stone-900 to-amber-950 border-t border-amber-500/40 text-center">
+                <span class="inline-block text-amber-300 font-black text-sm sm:text-base tracking-wider bfd-modal-glowing-text uppercase">
+                    ⚡ سارع للشراء قبل نفاد الكمية! ⚡
+                </span>
+            </div>
+
         </div>
     </div>
 
@@ -721,7 +803,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.83</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.86</span>
                     </span>
                 </div>
             </div>
@@ -757,6 +839,10 @@
         let currentFilterCategory = 'all';
 
         let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '', sku: '' };
+        
+        // متغيرات خاصة لمعاينة صور Black Free Day في النافذة المنبثقة
+        let bfdModalImages = [];
+        let bfdModalCurrentIndex = 0;
 
         // Testimonials Data for Footer
         const siteReviews = [
@@ -864,23 +950,54 @@
 
         async function fetchSupabaseStoreData() {
             try {
-                const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-                if (prods) {
-                    productsDatabase = prods.map(p => {
-                        let parsedImages = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []);
-                        let parsedVideos = typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []);
-                        
-                        let originalPrice = parseFloat(p.price || 0);
-                        let discPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
+                // جلب عروض Black Free Day أولاً لاستبعادها من المنتجات العادية
+                const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
+                if (bfd) {
+                    blackFreeDayProducts = bfd.map(b => {
+                        let parsedImg = b.img;
+                        let parsedImagesList = [];
+                        if (typeof b.images === 'string') {
+                            try { parsedImagesList = JSON.parse(b.images); } catch(e) { parsedImagesList = [b.img]; }
+                        } else if (Array.isArray(b.images) && b.images.length > 0) {
+                            parsedImagesList = b.images;
+                        } else {
+                            parsedImagesList = [b.img || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+                        }
 
                         return {
-                            ...p,
-                            images: parsedImages,
-                            videos: parsedVideos,
-                            price: discPrice,
-                            oldPrice: originalPrice
+                            ...b,
+                            price: parseFloat(b.price),
+                            oldPrice: parseFloat(b.oldPrice || b.price),
+                            images: parsedImagesList
                         };
                     });
+                }
+
+                const bfdTitles = new Set(blackFreeDayProducts.map(b => b.title ? b.title.trim().toLowerCase() : ''));
+
+                const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+                if (prods) {
+                    productsDatabase = prods
+                        .filter(p => {
+                            const pTitle = p.title ? p.title.trim().toLowerCase() : '';
+                            // استبعاد المنتجات الموجودة في Black Free Day من العرض في المتجر الرئيسي
+                            return !bfdTitles.has(pTitle);
+                        })
+                        .map(p => {
+                            let parsedImages = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []);
+                            let parsedVideos = typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []);
+                            
+                            let originalPrice = parseFloat(p.price || 0);
+                            let discPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
+
+                            return {
+                                ...p,
+                                images: parsedImages,
+                                videos: parsedVideos,
+                                price: discPrice,
+                                oldPrice: originalPrice
+                            };
+                        });
                     renderStoreProducts(productsDatabase);
                     renderPartnerProductsMarquee(productsDatabase);
 
@@ -892,16 +1009,6 @@
                             openProductDetailObject(targetProd);
                         }
                     }
-                }
-
-                const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
-                if (bfd) {
-                    blackFreeDayProducts = bfd.map(b => ({
-                        ...b,
-                        price: parseFloat(b.price),
-                        oldPrice: parseFloat(b.oldPrice),
-                        images: [b.img]
-                    }));
                 }
             } catch (err) {
                 console.error("خطأ في الاتصال بقاعدة بيانات Supabase:", err);
@@ -1077,6 +1184,61 @@
                 window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
                 closeWhatsAppModal();
             }, 1500);
+        }
+
+        // دالة إرسال طلب Black Free Day مباشرة عبر الواتساب مع العبارة الجذابة وتفاصيل المنتج
+        function orderBfdViaWhatsApp(title, price) {
+            const message = `🔥 سلام عليكم، بغيت نغتنم عرض Black Free Day وسجلت طلبي لهذا المنتج:\n\n🛍️ *المنتج:* ${title}\n💰 *ثمن الصدمة:* ${price} د.م\n\nسريع قبل نفاد الكمية! يرجى تأكيد الطلب وتوصيله لي.`;
+            window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // فتح نافذة معاينة صور منتج Black Free Day عند الضغط على البطاقة أو صورتها
+        function openBfdImageModal(imagesList) {
+            bfdModalImages = Array.isArray(imagesList) && imagesList.length > 0 ? imagesList : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            bfdModalCurrentIndex = 0;
+            updateBfdModalImageViewer();
+            document.getElementById('bfd-image-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeBfdImageModal() {
+            document.getElementById('bfd-image-modal').classList.add('hidden');
+        }
+
+        function updateBfdModalImageViewer() {
+            const imgEl = document.getElementById('bfd-modal-current-img');
+            const prevBtn = document.getElementById('bfd-prev-btn');
+            const nextBtn = document.getElementById('bfd-next-btn');
+
+            if (!imgEl) return;
+            imgEl.style.opacity = '0';
+            setTimeout(() => {
+                imgEl.src = bfdModalImages[bfdModalCurrentIndex];
+                imgEl.style.opacity = '1';
+            }, 100);
+
+            // إخفاء الأسهم إذا كانت صورة واحدة فقط، وإظهارها إذا كانت متعددة
+            if (bfdModalImages.length <= 1) {
+                if (prevBtn) prevBtn.classList.add('hidden');
+                if (nextBtn) nextBtn.classList.add('hidden');
+            } else {
+                if (prevBtn) prevBtn.classList.remove('hidden');
+                if (nextBtn) nextBtn.classList.remove('hidden');
+            }
+        }
+
+        function nextBfdModalImage() {
+            if (bfdModalImages.length > 1) {
+                bfdModalCurrentIndex = (bfdModalCurrentIndex + 1) % bfdModalImages.length;
+                updateBfdModalImageViewer();
+            }
+        }
+
+        function prevBfdModalImage() {
+            if (bfdModalImages.length > 1) {
+                bfdModalCurrentIndex = (bfdModalCurrentIndex - 1 + bfdModalImages.length) % bfdModalImages.length;
+                updateBfdModalImageViewer();
+            }
         }
 
         function submitDirectWhatsAppOrder() {
@@ -1309,22 +1471,33 @@
                     if(p.oldPrice && p.oldPrice > p.price) {
                         discountPercent = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
                     }
-                    const badgeText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : (p.discountBadge || 'عرض خاص');
+                    const badgeText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : (p.discountBadge || 'عرض حصري');
 
+                    // بطاقة Black Free Day مع تفعيل فتح نافذة عرض الصور فقط عند الضغط على البطاقة أو صورتها
                     html += `
-                        <div class="bg-white rounded-2xl border-2 border-amber-200 shadow-lg overflow-hidden group cursor-pointer relative flex flex-col justify-between" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                        <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300">
                             <div>
-                                <div class="absolute top-3 right-3 z-10 bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-lg shadow-md">
+                                <div class="absolute top-3 right-3 z-10 bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-lg shadow-md animate-pulse">
                                     ${badgeText}
                                 </div>
-                                <div class="h-48 bg-gray-100"><img src="${p.images[0]}" class="w-full h-full object-cover"></div>
-                                <div class="p-5 space-y-3">
-                                    <h3 class="font-extrabold text-gray-900 text-xl">${p.title}</h3>
-                                    <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-lg flex items-center justify-between">
-                                        <span class="font-black text-emerald-600 text-2xl">${p.price.toFixed(2)} د.م</span>
+                                <div class="h-52 bg-gray-100 overflow-hidden cursor-pointer" onclick="openBfdImageModal(${JSON.stringify(p.images).replace(/"/g, '&quot;')})">
+                                    <img src="${p.images[0]}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                </div>
+                                <div class="p-6 space-y-4">
+                                    <h3 class="font-black text-gray-900 text-xl leading-tight cursor-pointer hover:text-[#F97316] transition-colors" onclick="openBfdImageModal(${JSON.stringify(p.images).replace(/"/g, '&quot;')})">${p.title}</h3>
+                                    <div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl flex items-center justify-between shadow-inner">
+                                        <div>
+                                            <span class="text-[10px] font-bold text-amber-700 block">ثمن الصدمة الحصري:</span>
+                                            <span class="font-black text-3xl bfd-moving-price">${p.price.toFixed(2)} د.م</span>
+                                        </div>
                                         <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="p-6 pt-0">
+                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3.5 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-sm bfd-attention-btn cursor-pointer">
+                                    <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب
+                                </button>
                             </div>
                         </div>
                     `;
