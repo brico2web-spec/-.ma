@@ -85,6 +85,22 @@
         .fade-review {
             transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
         }
+        /* تأثير الوميض والتوهج المثير والمطور لزر Black Free Day */
+        @keyframes cyberGlow {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(245, 158, 11, 0.6), inset 0 0 15px rgba(239, 68, 68, 0.4);
+                border-color: #F59E0B;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(245, 158, 11, 0.95), inset 0 0 25px rgba(245, 158, 11, 0.7);
+                border-color: #FEE140;
+                transform: scale(1.02);
+            }
+        }
+        .black-free-day-flash {
+            animation: cyberGlow 1.8s infinite ease-in-out;
+        }
         /* تطبيق الظلال الناعمة والانحناءات الجديدة للأزرار (Rounded 6px to 8px) مع الانتقال السلس */
         button, .custom-btn {
             border-radius: 8px;
@@ -104,6 +120,68 @@
         <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-[#0F172A] text-white text-xs font-black rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-sm">
             0
         </span>
+    </div>
+
+    <!-- Right Side Menu Drawer Modal for Categories & WhatsApp -->
+    <div id="categories-drawer" class="fixed inset-0 z-50 bg-[#0F172A]/40 backdrop-blur-sm hidden flex justify-start transition-opacity">
+        <div class="bg-white w-full max-w-xs h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto transform transition-transform">
+            <div>
+                <div class="flex items-center justify-between border-b pb-4 mb-6">
+                    <h2 class="text-lg font-black text-[#0F172A] flex items-center gap-2">
+                        <i data-lucide="layout-grid" class="w-5 h-5 text-[#F97316]"></i>
+                        أقسام المتجر
+                    </h2>
+                    <button onclick="toggleCategoriesDrawer()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                
+                <!-- إضافة زر الرئيسية وزر السلة في أعلى القائمة الجانبية للأقسام -->
+                <div class="space-y-3 mb-6 pb-6 border-b border-gray-100">
+                    <button onclick="switchTab('store'); toggleCategoriesDrawer();" class="w-full flex items-center gap-3 p-3 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-sm transition-all shadow-sm">
+                        <i data-lucide="home" class="w-5 h-5 text-[#F97316]"></i>
+                        <span>الرئيسية</span>
+                    </button>
+                    <button onclick="toggleCategoriesDrawer(); toggleCartDrawer();" class="w-full flex items-center gap-3 p-3 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-sm transition-all shadow-sm">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 text-[#F97316]"></i>
+                        <span>السلة</span>
+                    </button>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
+                        <i data-lucide="layers" class="w-5 h-5 text-[#F97316]"></i>
+                        <span>الكل</span>
+                    </button>
+                    <button onclick="filterCategory('women'); toggleCategoriesDrawer();" id="cat-drawer-btn-women" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-pink-500"></i>
+                        <span>نساء</span>
+                    </button>
+                    <button onclick="filterCategory('men'); toggleCategoriesDrawer();" id="cat-drawer-btn-men" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
+                        <i data-lucide="shirt" class="w-5 h-5 text-blue-500"></i>
+                        <span>رجال</span>
+                    </button>
+                    <button onclick="filterCategory('kids'); toggleCategoriesDrawer();" id="cat-drawer-btn-kids" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
+                        <i data-lucide="smile" class="w-5 h-5 text-amber-500"></i>
+                        <span>أطفال</span>
+                    </button>
+                    <button onclick="filterCategory('various'); toggleCategoriesDrawer();" id="cat-drawer-btn-various" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
+                        <i data-lucide="package" class="w-5 h-5 text-emerald-500"></i>
+                        <span>منتجات متنوعة</span>
+                    </button>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-gray-100">
+                    <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-sm transition-all border border-emerald-200 shadow-sm">
+                        <i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>
+                        <span>إتصل بيا عبر الواتساب</span>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t pt-4 text-center">
+                <span class="text-[11px] text-gray-400 font-bold">bedal.online Marketplace</span>
+            </div>
+        </div>
     </div>
 
     <!-- Floating Cart Drawer Modal -->
@@ -282,22 +360,27 @@
 
         <header class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <div class="flex items-center space-x-3 space-x-reverse cursor-pointer group" onclick="switchTab('store')">
+                <!-- الجانب الأيمن: زر القائمة الجانبية للأقسام -->
+                <div class="flex items-center">
+                    <button onclick="toggleCategoriesDrawer()" class="p-2 text-[#0F172A] hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                
+                <!-- الوسط: اسم الموقع والسلوغو -->
+                <div class="flex flex-col items-center cursor-pointer group" onclick="switchTab('store')">
+                    <span class="text-2xl font-black tracking-wider text-[#0F172A] brand-font">
+                        bedal<span class="text-[#F97316]">.</span>online
+                    </span>
+                    <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Smart Marketplace</span>
+                </div>
+
+                <!-- الجانب الأيسر: صورة اللوغو -->
+                <div class="flex items-center cursor-pointer group" onclick="switchTab('store')">
                     <div class="relative w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                         <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=0elvag8y&raw=1" alt="Logo" class="w-full h-full object-contain drop-shadow-sm rounded-lg">
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-2xl font-black tracking-wider text-[#0F172A] brand-font">
-                            bedal<span class="text-[#F97316]">.</span>online
-                        </span>
-                        <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Smart Marketplace</span>
-                    </div>
                 </div>
-                <!-- WhatsApp Header Icon Button -->
-                <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 p-2.5 rounded-lg transition-all duration-300 flex items-center gap-1.5 shadow-sm font-bold text-xs">
-                    <i data-lucide="message-circle" class="w-5 h-5"></i>
-                    <span class="hidden sm:inline">تواصل معنا</span>
-                </a>
             </div>
         </header>
 
@@ -358,52 +441,17 @@
             </div>
 
             <div class="py-6">
-                <h3 class="text-lg font-bold text-[#0F172A] mb-4 flex items-center gap-2">
-                    <i data-lucide="layout-grid" class="w-5 h-5 text-[#F97316]"></i>
-                    تصفح حسب الأقسام
-                </h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                    <button onclick="filterCategory('all')" id="cat-btn-all" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-[#F97316] transition-all transform hover:-translate-y-1">
-                        <img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=400&q=80" alt="الكل" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-[#0F172A]/70 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
-                            <i data-lucide="layers" class="w-6 h-6 mb-1 text-orange-300"></i>
-                            <span class="font-extrabold text-sm sm:text-base">الكل</span>
-                        </div>
-                    </button>
-                    <button onclick="filterCategory('women')" id="cat-btn-women" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-transparent hover:border-[#F97316] transition-all transform hover:-translate-y-1">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80" alt="نساء" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-[#0F172A]/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
-                            <i data-lucide="sparkles" class="w-6 h-6 mb-1 text-pink-300"></i>
-                            <span class="font-bold text-sm sm:text-base">نساء</span>
-                        </div>
-                    </button>
-                    <button onclick="filterCategory('men')" id="cat-btn-men" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-transparent hover:border-[#F97316] transition-all transform hover:-translate-y-1">
-                        <img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&w=400&q=80" alt="رجال" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-[#0F172A]/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
-                            <i data-lucide="shirt" class="w-6 h-6 mb-1 text-blue-300"></i>
-                            <span class="font-bold text-sm sm:text-base">رجال</span>
-                        </div>
-                    </button>
-                    <button onclick="filterCategory('kids')" id="cat-btn-kids" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-transparent hover:border-[#F97316] transition-all transform hover:-translate-y-1">
-                        <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?auto=format&fit=crop&w=400&q=80" alt="أطفال" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-[#0F172A]/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
-                            <i data-lucide="smile" class="w-6 h-6 mb-1 text-amber-300"></i>
-                            <span class="font-bold text-sm sm:text-base">أطفال</span>
-                        </div>
-                    </button>
-                    <button onclick="filterCategory('various')" id="cat-btn-various" class="cat-btn group relative h-24 rounded-xl overflow-hidden shadow-sm border-2 border-transparent hover:border-[#F97316] transition-all transform hover:-translate-y-1">
-                        <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80" alt="منتجات متنوعة" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-[#0F172A]/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-2 text-white">
-                            <i data-lucide="package" class="w-6 h-6 mb-1 text-emerald-300"></i>
-                            <span class="font-bold text-xs sm:text-sm">منتجات متنوعة</span>
-                        </div>
-                    </button>
-                    <button onclick="openBlackFreeDayPage()" class="group relative h-24 rounded-xl overflow-hidden shadow-lg border-2 border-amber-400 transition-all transform hover:-translate-y-1 animate-pulse">
-                        <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=400&q=80" alt="Black Free Day" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-black/90 via-zinc-900/80 to-amber-600/60 backdrop-blur-[1px] flex flex-col items-center justify-center p-1 text-white text-center">
-                            <i data-lucide="flame" class="w-5 h-5 mb-0.5 text-amber-400 animate-bounce"></i>
-                            <span class="font-black text-xs sm:text-sm text-amber-300 tracking-wider">Black Free Day</span>
-                            <span class="text-[9px] bg-red-600 text-white px-1.5 py-0.5 rounded-lg font-bold mt-0.5">السبت والأحد 🔥</span>
+                <!-- زر Black Free Day المحدث بتصميم مثير وجذاب وتأثير يومي ومضيء متقدم -->
+                <div class="max-w-xs mx-auto">
+                    <button onclick="openBlackFreeDayPage()" class="w-full group relative h-24 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-400 transition-all transform hover:-translate-y-1.5 black-free-day-flash cursor-pointer">
+                        <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=400&q=80" alt="Black Free Day" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-60">
+                        <div class="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-stone-900/90 to-amber-950/80 backdrop-blur-[2px] flex flex-col items-center justify-center p-2 text-white text-center">
+                            <div class="flex items-center gap-1.5 mb-0.5">
+                                <i data-lucide="flame" class="w-5 h-5 text-amber-400 animate-bounce"></i>
+                                <span class="font-black text-sm sm:text-base bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent tracking-wider uppercase drop-shadow">Black Free Day</span>
+                                <i data-lucide="sparkles" class="w-4 h-4 text-amber-400 animate-spin"></i>
+                            </div>
+                            <span class="text-[10px] bg-gradient-to-r from-red-600 to-rose-600 text-white px-3 py-0.5 rounded-full font-black mt-1 shadow-md border border-red-400/40 animate-pulse">🔥 عروض السبت والأحد الحصرية 🔥</span>
                         </div>
                     </button>
                 </div>
@@ -673,7 +721,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.71</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.83</span>
                     </span>
                 </div>
             </div>
@@ -1198,6 +1246,10 @@
             document.getElementById('cart-drawer').classList.toggle('hidden');
         }
 
+        function toggleCategoriesDrawer() {
+            document.getElementById('categories-drawer').classList.toggle('hidden');
+        }
+
         function openCheckoutModal() {
             if (cart.length === 0) { alert('السلة فارغة حالياً!'); return; }
             toggleCartDrawer();
@@ -1372,13 +1424,14 @@
         }
 
         function filterCategory(catKey) {
-            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('border-[#F97316]'));
-            const activeBtn = document.getElementById(`cat-btn-${catKey}`);
-            if (activeBtn) activeBtn.classList.add('border-[#F97316]');
+            document.querySelectorAll('[id^="cat-drawer-btn-"]').forEach(btn => btn.classList.remove('border-[#F97316]', 'bg-orange-50'));
+            const activeBtn = document.getElementById(`cat-drawer-btn-${catKey}`);
+            if (activeBtn) activeBtn.classList.add('border-[#F97316]', 'bg-orange-50');
 
             currentFilterCategory = catKey;
             currentPage = 1;
             renderStoreProducts(productsDatabase);
+            switchTab('store');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
