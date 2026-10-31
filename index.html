@@ -79,7 +79,7 @@
             width: max-content;
             animation: marqueeReviews 90s linear infinite;
         }
-        #detail-product-img, #bfd-modal-current-img {
+        #detail-product-img, #bfd-modal-current-img, .bfd-card-img, .store-card-img {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .fade-review {
@@ -376,24 +376,20 @@
         </div>
     </div>
 
-    <!-- BFD Image Viewer Modal (نافذة عرض الصور بدون أسهم مع عرض الصور المصغرة بالأسفل تماماً مثل طلبك) -->
-    <div id="bfd-image-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border-2 border-amber-500/80 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white relative p-4 space-y-4">
+    <!-- BFD Image Viewer Modal (احتياطية إن احتجت لتكبير الصور) -->
+    <div id="bfd-image-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6">
+        <div class="bg-zinc-900 border-2 border-amber-500/80 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white relative p-4 space-y-4">
             
-            <!-- زر الإغلاق -->
             <button onclick="closeBfdImageModal()" class="absolute top-3 left-3 z-20 bg-zinc-800 hover:bg-red-600 text-white p-2 rounded-full transition-colors shadow-lg">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <!-- حاوية الصورة الكبيرة -->
-            <div class="relative w-full h-72 sm:h-80 bg-black rounded-xl overflow-hidden flex items-center justify-center border border-white/10">
-                <img id="bfd-modal-current-img" src="" alt="Product Image" class="w-full h-full object-contain">
+            <div class="relative w-full h-[65vh] sm:h-[70vh] bg-black/95 rounded-xl overflow-hidden flex items-center justify-center border border-white/10 p-2">
+                <img id="bfd-modal-current-img" src="" alt="Product Image" class="w-full h-full object-contain rounded-lg">
             </div>
 
-            <!-- حاوية الصور المصغرة تحت الصورة الكبيرة مباشرة (Thumbnails) -->
-            <div id="bfd-modal-thumbnails" class="flex items-center justify-center gap-2 overflow-x-auto py-1"></div>
+            <div id="bfd-modal-thumbnails" class="flex items-center justify-center gap-3 overflow-x-auto py-2 px-1"></div>
 
-            <!-- عبارة سارع للشراء المتوهجة في الأسفل -->
             <div class="p-3 bg-gradient-to-r from-zinc-950 via-stone-900 to-amber-950 rounded-xl border border-amber-500/40 text-center">
                 <span class="inline-block text-amber-300 font-black text-xs sm:text-sm tracking-wider bfd-modal-glowing-text uppercase">
                     ⚡ سارع للشراء قبل نفاد الكمية! ⚡
@@ -417,7 +413,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-                    <span>ضمان الجودة والدفع عند الاستلام</span>
+                    <span>ضمان الجودة والدفع عند الاستلاستلام</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
@@ -436,14 +432,12 @@
 
         <header class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <!-- الجانب الأيمن: زر القائمة الجانبية للأقسام -->
                 <div class="flex items-center">
                     <button onclick="toggleCategoriesDrawer()" class="p-2 text-[#0F172A] hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
                 </div>
                 
-                <!-- الوسط: اسم الموقع والسلوغو -->
                 <div class="flex flex-col items-center cursor-pointer group" onclick="switchTab('store')">
                     <span class="text-2xl font-black tracking-wider text-[#0F172A] brand-font">
                         bedal<span class="text-[#F97316]">.</span>online
@@ -451,7 +445,6 @@
                     <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Smart Marketplace</span>
                 </div>
 
-                <!-- الجانب الأيسر: صورة اللوغو -->
                 <div class="flex items-center cursor-pointer group" onclick="switchTab('store')">
                     <div class="relative w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                         <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=0elvag8y&raw=1" alt="Logo" class="w-full h-full object-contain drop-shadow-sm rounded-lg">
@@ -460,7 +453,7 @@
             </div>
         </header>
 
-        <!-- شريط تعليقات الزبناء المغاربة المتحرك ببطء (مدموج وملتصق تحت الهيدر مباشرة) -->
+        <!-- شريط تعليقات الزبناء المغاربة المتحرك ببطء -->
         <div class="w-full bg-[#1E293B] text-white py-2.5 overflow-hidden shadow-inner border-t border-[#0F172A]">
             <div class="animate-marquee-reviews flex items-center gap-8 whitespace-nowrap text-xs sm:text-sm font-bold tracking-wide">
                 <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">يوسف (القنيطرة):</span> "السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!"</div>
@@ -502,7 +495,6 @@
         
         <!-- SECTION 1: STORE FRONT -->
         <section id="section-store" class="block space-y-0">
-            <!-- حاوية السلايدر -->
             <div class="w-full">
                 <div class="relative w-full h-40 sm:h-52 rounded-2xl overflow-hidden shadow-lg bg-[#0F172A]">
                     <div class="hero-slide absolute inset-0 opacity-100 transition-opacity duration-1000 flex items-center justify-between px-6 sm:px-12 text-white">
@@ -517,7 +509,6 @@
             </div>
 
             <div class="py-6">
-                <!-- زر Black Free Day المحدث بتصميم مثير وجذاب وتأثير يومي ومضيء متقدم -->
                 <div class="max-w-xs mx-auto">
                     <button onclick="openBlackFreeDayPage()" class="w-full group relative h-24 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-400 transition-all transform hover:-translate-y-1.5 black-free-day-flash cursor-pointer">
                         <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=400&q=80" alt="Black Free Day" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-60">
@@ -545,7 +536,7 @@
                 </div>
                 <!-- Pagination Controls -->
                 <div id="pagination-container" class="flex items-center justify-center gap-2 mt-8 pt-4 border-t border-gray-200 flex-wrap">
-                    <!-- Dynamic Pagination Numbers (1 2 3 4 5...) -->
+                    <!-- Dynamic Pagination Numbers -->
                 </div>
             </div>
         </section>
@@ -797,7 +788,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.92</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9910</span>
                     </span>
                 </div>
             </div>
@@ -810,7 +801,6 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // رابط Webhook الجديد الخاص بك على Make.com
         const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
 
         async function sendTelegramNotification(orderData) {
@@ -838,7 +828,6 @@
         let bfdModalImages = [];
         let bfdModalCurrentIndex = 0;
 
-        // Testimonials Data for Footer
         const siteReviews = [
             {
                 name: "يوسف من القنيطرة",
@@ -948,36 +937,62 @@
                 if (bfd) {
                     blackFreeDayProducts = bfd.map(b => {
                         let parsedImagesList = [];
-                        if (typeof b.images === 'string') {
-                            try { 
-                                parsedImagesList = JSON.parse(b.images); 
-                            } catch(e) { 
-                                parsedImagesList = [b.images]; 
-                            }
-                        } else if (Array.isArray(b.images) && b.images.length > 0) {
-                            parsedImagesList = b.images;
-                        } else {
-                            let coll = [];
-                            if(b.img) coll.push(b.img);
-                            if(b.img1) coll.push(b.img1);
-                            if(b.img2) coll.push(b.img2);
-                            if(b.img3) coll.push(b.img3);
-                            if(b.img4) coll.push(b.img4);
-                            if(b.img5) coll.push(b.img5);
-                            parsedImagesList = coll.length > 0 ? coll : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
-                        }
+                        
+                        const universalKeys = ['images', 'image', 'img', 'img1', 'image1', 'pic1', 'photo1', 'url1', 'img2', 'image2', 'img3', 'image3', 'img4', 'image4', 'img5', 'image5'];
+                        
+                        universalKeys.forEach(key => {
+                            Object.keys(b).forEach(dbKey => {
+                                if (dbKey.toLowerCase() === key.toLowerCase()) {
+                                    const val = b[dbKey];
+                                    if (val !== undefined && val !== null) {
+                                        if (typeof val === 'string') {
+                                            let trimmed = val.trim();
+                                            if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                                                try {
+                                                    const parsed = JSON.parse(trimmed);
+                                                    if (Array.isArray(parsed)) {
+                                                        parsedImagesList.push(...parsed);
+                                                    } else if (typeof parsed === 'object') {
+                                                        Object.values(parsed).forEach(v => { if(v) parsedImagesList.push(String(v)); });
+                                                    }
+                                                } catch(e) {
+                                                    parsedImagesList.push(trimmed);
+                                                }
+                                            } else if (trimmed.includes(',')) {
+                                                trimmed.split(',').forEach(part => {
+                                                    let p = part.trim().replace(/^["']|["']$/g, '');
+                                                    if (p) parsedImagesList.push(p);
+                                                });
+                                            } else if (trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined') {
+                                                parsedImagesList.push(trimmed);
+                                            }
+                                        } else if (Array.isArray(val)) {
+                                            val.forEach(item => { if(item) parsedImagesList.push(String(item)); });
+                                        }
+                                    }
+                                }
+                            });
+                        });
 
-                        parsedImagesList = parsedImagesList.filter(img => img && typeof img === 'string' && img.trim() !== '');
-                        if(parsedImagesList.length === 0 && b.img) parsedImagesList = [b.img];
-                        if(parsedImagesList.length === 0) parsedImagesList = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+                        parsedImagesList = [...new Set(parsedImagesList.filter(img => img && typeof img === 'string' && img.trim() !== ''))];
+                        
+                        if (parsedImagesList.length === 0) {
+                            parsedImagesList = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+                        }
 
                         window._bfdImagesStore[b.id] = parsedImagesList;
 
+                        let originalPrice = parseFloat(b.price || 0);
+                        let discPrice = (b.discountPrice !== undefined && b.discountPrice !== null && b.discountPrice !== '') ? parseFloat(b.discountPrice) : originalPrice;
+
+                        let parsedVideos = typeof b.videos === 'string' ? JSON.parse(b.videos) : (b.videos || []);
+
                         return {
                             ...b,
-                            price: parseFloat(b.price),
-                            oldPrice: parseFloat(b.oldPrice || b.price),
-                            images: parsedImagesList
+                            price: discPrice,
+                            oldPrice: parseFloat(b.oldPrice || originalPrice),
+                            images: parsedImagesList,
+                            videos: parsedVideos
                         };
                     });
                 }
@@ -992,7 +1007,56 @@
                             return !bfdTitles.has(pTitle);
                         })
                         .map(p => {
-                            let parsedImages = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []);
+                            let parsedImages = [];
+                            const universalKeys = ['images', 'image', 'img', 'img1', 'image1', 'pic1', 'photo1', 'url1', 'img2', 'image2', 'img3', 'image3', 'img4', 'image4', 'img5', 'image5'];
+                            
+                            universalKeys.forEach(key => {
+                                Object.keys(p).forEach(dbKey => {
+                                    if (dbKey.toLowerCase() === key.toLowerCase()) {
+                                        const val = p[dbKey];
+                                        if (val !== undefined && val !== null) {
+                                            if (typeof val === 'string') {
+                                                let trimmed = val.trim();
+                                                if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                                                    try {
+                                                        const parsed = JSON.parse(trimmed);
+                                                        if (Array.isArray(parsed)) {
+                                                            parsedImages.push(...parsed);
+                                                        } else if (typeof parsed === 'object') {
+                                                            Object.values(parsed).forEach(v => { if(v) parsedImages.push(String(v)); });
+                                                        }
+                                                    } catch(e) {
+                                                        parsedImages.push(trimmed);
+                                                    }
+                                                } else if (trimmed.includes(',')) {
+                                                    trimmed.split(',').forEach(part => {
+                                                        let prt = part.trim().replace(/^["']|["']$/g, '');
+                                                        if (prt) parsedImages.push(prt);
+                                                    });
+                                                } else if (trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined') {
+                                                    parsedImages.push(trimmed);
+                                                }
+                                            } else if (Array.isArray(val)) {
+                                                val.forEach(item => { if(item) parsedImages.push(String(item)); });
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+
+                            if (parsedImages.length === 0 && p.images) {
+                                if (typeof p.images === 'string') {
+                                    try { parsedImages = JSON.parse(p.images); } catch(e) { parsedImages = [p.images]; }
+                                } else if (Array.isArray(p.images)) {
+                                    parsedImages = p.images;
+                                }
+                            }
+
+                            parsedImages = [...new Set(parsedImages.filter(img => img && typeof img === 'string' && img.trim() !== ''))];
+                            if (parsedImages.length === 0) {
+                                parsedImages = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+                            }
+
                             let parsedVideos = typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []);
                             
                             let originalPrice = parseFloat(p.price || 0);
@@ -1012,7 +1076,7 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const productIdParam = urlParams.get('product');
                     if (productIdParam) {
-                        const targetProd = productsDatabase.find(p => String(p.id) === String(productIdParam));
+                        const targetProd = productsDatabase.find(p => String(p.id) === String(productIdParam)) || blackFreeDayProducts.find(p => String(p.id) === String(productIdParam));
                         if (targetProd) {
                             openProductDetailObject(targetProd);
                         }
@@ -1083,18 +1147,36 @@
                 }
                 const badgeText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : 'عرض خاص';
 
+                const productImages = (p.images && p.images.length > 0) ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+                const firstImg = productImages[0];
+
+                let storeThumbnailsHtml = '';
+                if (productImages.length > 1) {
+                    storeThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100">`;
+                    productImages.forEach((imgUrl, imgIdx) => {
+                        const isFirst = imgIdx === 0;
+                        storeThumbnailsHtml += `
+                            <div onclick="event.stopPropagation(); setStoreCardImage('${p.id}', '${imgUrl}', this)" class="w-10 h-10 bg-white rounded-md border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-0.5 overflow-hidden ${isFirst ? 'border-[#F97316] ring-1 ring-orange-200 scale-105' : 'border-gray-200 opacity-60 hover:opacity-100'}">
+                                <img src="${imgUrl}" class="max-w-full max-h-full object-contain rounded">
+                            </div>
+                        `;
+                    });
+                    storeThumbnailsHtml += `</div>`;
+                }
+
                 html += `
-                    <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between" data-category="${p.category || 'various'}">
+                    <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer" data-category="${p.category || 'various'}" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                         <div>
                             <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none">
                                 ${badgeText}
                             </div>
-                            <div class="h-48 bg-gray-100 relative overflow-hidden cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
-                                <img src="${(p.images && p.images[0]) || ''}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center p-1">
+                                <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover store-card-img group-hover:scale-105 transition-transform duration-300">
                             </div>
+                            ${storeThumbnailsHtml}
                             <div class="p-5 space-y-3">
                                 <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'متنوع'}</span>
-                                <h3 class="font-extrabold text-[#0F172A] text-xl leading-snug cursor-pointer hover:text-[#F97316] transition-colors" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">${p.title}</h3>
+                                <h3 class="font-extrabold text-[#0F172A] text-xl leading-snug hover:text-[#F97316] transition-colors">${p.title}</h3>
                                 <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                 <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
                                     <div>
@@ -1111,11 +1193,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="p-5 pt-0 grid grid-cols-2 gap-2">
-                            <button onclick="addToCart('${p.title}', ${p.price}, ${p.oldPrice}, '${(p.images && p.images[0]) || ''}')" class="w-full bg-[#F97316] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
+                        <div class="p-5 pt-0 grid grid-cols-2 gap-2" onclick="event.stopPropagation()">
+                            <button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
                                 <i data-lucide="shopping-cart" class="w-4 h-4"></i> للسلة
                             </button>
-                            <button onclick="openWhatsAppModal('${p.title}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
+                            <button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
                                 <i data-lucide="message-circle" class="w-4 h-4"></i> طلب عبر الواتساب
                             </button>
                         </div>
@@ -1142,6 +1224,26 @@
             }
 
             lucide.createIcons();
+        }
+
+        function setStoreCardImage(productId, imgUrl, thumbEl) {
+            const mainImg = document.getElementById(`store-main-img-${productId}`);
+            if (mainImg) {
+                mainImg.style.opacity = '0';
+                setTimeout(() => {
+                    mainImg.src = imgUrl;
+                    mainImg.style.opacity = '1';
+                }, 150);
+            }
+            const parentThumbContainer = thumbEl.parentElement;
+            if (parentThumbContainer) {
+                Array.from(parentThumbContainer.children).forEach(child => {
+                    child.classList.remove('border-[#F97316]', 'ring-1', 'ring-orange-200', 'scale-105');
+                    child.classList.add('border-gray-200', 'opacity-60');
+                });
+                thumbEl.classList.remove('border-gray-200', 'opacity-60');
+                thumbEl.classList.add('border-[#F97316]', 'ring-1', 'ring-orange-200', 'scale-105');
+            }
         }
 
         function changePage(newPage) {
@@ -1199,7 +1301,26 @@
             window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        // فتح نافذة معاينة صور منتج Black Free Day وعرض الصور المصغرة بدقة للهواتف
+        function setBfdCardImage(cardId, imgUrl, thumbEl) {
+            const mainImg = document.getElementById(`bfd-main-img-${cardId}`);
+            if (mainImg) {
+                mainImg.style.opacity = '0';
+                setTimeout(() => {
+                    mainImg.src = imgUrl;
+                    mainImg.style.opacity = '1';
+                }, 150);
+            }
+            const parentThumbContainer = thumbEl.parentElement;
+            if (parentThumbContainer) {
+                Array.from(parentThumbContainer.children).forEach(child => {
+                    child.classList.remove('border-amber-400', 'scale-105', 'ring-2', 'ring-amber-400/50');
+                    child.classList.add('border-zinc-700', 'opacity-60');
+                });
+                thumbEl.classList.remove('border-zinc-700', 'opacity-60');
+                thumbEl.classList.add('border-amber-400', 'scale-105', 'ring-2', 'ring-amber-400/50');
+            }
+        }
+
         function openBfdImageModal(productId) {
             if (window._bfdImagesStore && window._bfdImagesStore[productId]) {
                 bfdModalImages = window._bfdImagesStore[productId];
@@ -1236,7 +1357,9 @@
             bfdModalImages.forEach((img, idx) => {
                 const isActive = idx === bfdModalCurrentIndex;
                 html += `
-                    <img src="${img}" onclick="setBfdModalImageIndex(${idx})" class="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border-2 cursor-pointer transition-all duration-300 ${isActive ? 'border-amber-400 scale-105 shadow-md ring-2 ring-amber-400/40' : 'border-zinc-700 opacity-60 hover:opacity-100'}">
+                    <div onclick="setBfdModalImageIndex(${idx})" class="w-16 h-16 sm:w-20 sm:h-20 bg-black/50 rounded-xl border-2 cursor-pointer transition-all duration-300 flex-shrink-0 flex items-center justify-center p-1 overflow-hidden ${isActive ? 'border-amber-400 scale-105 shadow-lg ring-2 ring-amber-400/50' : 'border-zinc-700 opacity-60 hover:opacity-100'}">
+                        <img src="${img}" class="max-w-full max-h-full object-contain rounded-lg">
+                    </div>
                 `;
             });
             container.innerHTML = html;
@@ -1474,28 +1597,55 @@
                 grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">لا توجد عروض Black Free Day حالياً.</p>';
             } else {
                 blackFreeDayProducts.forEach(p => {
-                    const firstImg = (p.images && p.images[0]) || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80';
+                    const productImages = (p.images && p.images.length > 0) ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+                    const firstImg = productImages[0];
+
+                    let thumbnailsHtml = '';
+                    if (productImages.length > 1) {
+                        thumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100">`;
+                        productImages.forEach((imgUrl, imgIdx) => {
+                            const isFirst = imgIdx === 0;
+                            thumbnailsHtml += `
+                                <div onclick="event.stopPropagation(); setBfdCardImage('${p.id}', '${imgUrl}', this)" class="w-10 h-10 bg-white rounded-md border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-0.5 overflow-hidden ${isFirst ? 'border-amber-400 ring-1 ring-amber-200 scale-105' : 'border-zinc-700 opacity-60 hover:opacity-100'}">
+                                    <img src="${imgUrl}" class="max-w-full max-h-full object-contain rounded">
+                                </div>
+                            `;
+                        });
+                        thumbnailsHtml += `</div>`;
+                    }
 
                     html += `
                         <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300">
                             <div>
-                                <div class="h-52 bg-gray-100 overflow-hidden cursor-pointer" onclick="openBfdImageModal('${p.id}')">
-                                    <img src="${firstImg}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none">
+                                    تخفيض كبرى
                                 </div>
-                                <div class="p-6 space-y-4">
-                                    <h3 class="font-black text-gray-900 text-xl leading-tight cursor-pointer hover:text-[#F97316] transition-colors" onclick="openBfdImageModal('${p.id}')">${p.title}</h3>
-                                    <div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl flex items-center justify-between shadow-inner">
+                                <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center p-1">
+                                    <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover bfd-card-img">
+                                </div>
+                                ${thumbnailsHtml}
+                                <div class="p-5 space-y-3">
+                                    <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'Black Free Day'}</span>
+                                    <h3 class="font-extrabold text-[#0F172A] text-xl leading-snug">${p.title}</h3>
+                                    <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
+                                    <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
                                         <div>
-                                            <span class="text-[10px] font-bold text-amber-700 block">ثمن الصدمة الحصري:</span>
-                                            <span class="font-black text-3xl bfd-moving-price">${p.price.toFixed(2)} د.م</span>
+                                            <span class="text-[10px] font-bold text-emerald-600 block">ثمن الصدمة الحصري:</span>
+                                            <div class="flex items-baseline gap-1">
+                                                <span class="font-black text-emerald-600 text-3xl bfd-moving-price">${p.price.toFixed(2)}</span>
+                                                <span class="text-sm font-bold text-emerald-600">د.م</span>
+                                            </div>
                                         </div>
-                                        <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                        <div class="text-left">
+                                            <span class="text-[10px] font-bold text-gray-400 block">الأصلي:</span>
+                                            <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-6 pt-0">
-                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3.5 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-sm bfd-attention-btn cursor-pointer">
-                                    <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب
+                            <div class="p-5 pt-0">
+                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-xs bfd-attention-btn cursor-pointer">
+                                    <i data-lucide="message-circle" class="w-4 h-4 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب
                                 </button>
                             </div>
                         </div>
