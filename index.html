@@ -788,7 +788,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9910</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9915</span>
                     </span>
                 </div>
             </div>
@@ -938,40 +938,35 @@
                     blackFreeDayProducts = bfd.map(b => {
                         let parsedImagesList = [];
                         
-                        const universalKeys = ['images', 'image', 'img', 'img1', 'image1', 'pic1', 'photo1', 'url1', 'img2', 'image2', 'img3', 'image3', 'img4', 'image4', 'img5', 'image5'];
-                        
-                        universalKeys.forEach(key => {
-                            Object.keys(b).forEach(dbKey => {
-                                if (dbKey.toLowerCase() === key.toLowerCase()) {
-                                    const val = b[dbKey];
-                                    if (val !== undefined && val !== null) {
-                                        if (typeof val === 'string') {
-                                            let trimmed = val.trim();
-                                            if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
-                                                try {
-                                                    const parsed = JSON.parse(trimmed);
-                                                    if (Array.isArray(parsed)) {
-                                                        parsedImagesList.push(...parsed);
-                                                    } else if (typeof parsed === 'object') {
-                                                        Object.values(parsed).forEach(v => { if(v) parsedImagesList.push(String(v)); });
-                                                    }
-                                                } catch(e) {
-                                                    parsedImagesList.push(trimmed);
-                                                }
-                                            } else if (trimmed.includes(',')) {
-                                                trimmed.split(',').forEach(part => {
-                                                    let p = part.trim().replace(/^["']|["']$/g, '');
-                                                    if (p) parsedImagesList.push(p);
-                                                });
-                                            } else if (trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined') {
-                                                parsedImagesList.push(trimmed);
+                        // استخراج شامل ومحسن لكل الحقول المحتملة للصور في قاعدة البيانات
+                        Object.keys(b).forEach(dbKey => {
+                            const val = b[dbKey];
+                            if (val !== undefined && val !== null) {
+                                if (typeof val === 'string') {
+                                    let trimmed = val.trim();
+                                    if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                                        try {
+                                            const parsed = JSON.parse(trimmed);
+                                            if (Array.isArray(parsed)) {
+                                                parsedImagesList.push(...parsed);
+                                            } else if (typeof parsed === 'object') {
+                                                Object.values(parsed).forEach(v => { if(v) parsedImagesList.push(String(v)); });
                                             }
-                                        } else if (Array.isArray(val)) {
-                                            val.forEach(item => { if(item) parsedImagesList.push(String(item)); });
+                                        } catch(e) {
+                                            parsedImagesList.push(trimmed);
                                         }
+                                    } else if (trimmed.includes(',')) {
+                                        trimmed.split(',').forEach(part => {
+                                            let p = part.trim().replace(/^["']|["']$/g, '');
+                                            if (p && (p.startsWith('http') || p.startsWith('/') || p.includes('.'))) parsedImagesList.push(p);
+                                        });
+                                    } else if (trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined' && (trimmed.startsWith('http') || trimmed.startsWith('/') || trimmed.includes('.'))) {
+                                        parsedImagesList.push(trimmed);
                                     }
+                                } else if (Array.isArray(val)) {
+                                    val.forEach(item => { if(item) parsedImagesList.push(String(item)); });
                                 }
-                            });
+                            }
                         });
 
                         parsedImagesList = [...new Set(parsedImagesList.filter(img => img && typeof img === 'string' && img.trim() !== ''))];
@@ -979,8 +974,6 @@
                         if (parsedImagesList.length === 0) {
                             parsedImagesList = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
                         }
-
-                        window._bfdImagesStore[b.id] = parsedImagesList;
 
                         let originalPrice = parseFloat(b.price || 0);
                         let discPrice = (b.discountPrice !== undefined && b.discountPrice !== null && b.discountPrice !== '') ? parseFloat(b.discountPrice) : originalPrice;
@@ -1008,49 +1001,35 @@
                         })
                         .map(p => {
                             let parsedImages = [];
-                            const universalKeys = ['images', 'image', 'img', 'img1', 'image1', 'pic1', 'photo1', 'url1', 'img2', 'image2', 'img3', 'image3', 'img4', 'image4', 'img5', 'image5'];
-                            
-                            universalKeys.forEach(key => {
-                                Object.keys(p).forEach(dbKey => {
-                                    if (dbKey.toLowerCase() === key.toLowerCase()) {
-                                        const val = p[dbKey];
-                                        if (val !== undefined && val !== null) {
-                                            if (typeof val === 'string') {
-                                                let trimmed = val.trim();
-                                                if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
-                                                    try {
-                                                        const parsed = JSON.parse(trimmed);
-                                                        if (Array.isArray(parsed)) {
-                                                            parsedImages.push(...parsed);
-                                                        } else if (typeof parsed === 'object') {
-                                                            Object.values(parsed).forEach(v => { if(v) parsedImages.push(String(v)); });
-                                                        }
-                                                    } catch(e) {
-                                                        parsedImages.push(trimmed);
-                                                    }
-                                                } else if (trimmed.includes(',')) {
-                                                    trimmed.split(',').forEach(part => {
-                                                        let prt = part.trim().replace(/^["']|["']$/g, '');
-                                                        if (prt) parsedImages.push(prt);
-                                                    });
-                                                } else if (trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined') {
-                                                    parsedImages.push(trimmed);
+                            Object.keys(p).forEach(dbKey => {
+                                const val = p[dbKey];
+                                if (val !== undefined && val !== null) {
+                                    if (typeof val === 'string') {
+                                        let trimmed = val.trim();
+                                        if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                                            try {
+                                                const parsed = JSON.parse(trimmed);
+                                                if (Array.isArray(parsed)) {
+                                                    parsedImages.push(...parsed);
+                                                } else if (typeof parsed === 'object') {
+                                                    Object.values(parsed).forEach(v => { if(v) parsedImages.push(String(v)); });
                                                 }
-                                            } else if (Array.isArray(val)) {
-                                                val.forEach(item => { if(item) parsedImages.push(String(item)); });
+                                            } catch(e) {
+                                                parsedImages.push(trimmed);
                                             }
+                                        } else if (trimmed.includes(',')) {
+                                            trimmed.split(',').forEach(part => {
+                                                let prt = part.trim().replace(/^["']|["']$/g, '');
+                                                if (prt && (prt.startsWith('http') || prt.startsWith('/') || prt.includes('.'))) parsedImages.push(prt);
+                                            });
+                                        } else if (trimmed !== '' && trimmed !== 'null' && trimmed !== 'undefined' && (trimmed.startsWith('http') || trimmed.startsWith('/') || trimmed.includes('.'))) {
+                                            parsedImages.push(trimmed);
                                         }
+                                    } else if (Array.isArray(val)) {
+                                        val.forEach(item => { if(item) parsedImages.push(String(item)); });
                                     }
-                                });
-                            });
-
-                            if (parsedImages.length === 0 && p.images) {
-                                if (typeof p.images === 'string') {
-                                    try { parsedImages = JSON.parse(p.images); } catch(e) { parsedImages = [p.images]; }
-                                } else if (Array.isArray(p.images)) {
-                                    parsedImages = p.images;
                                 }
-                            }
+                            });
 
                             parsedImages = [...new Set(parsedImages.filter(img => img && typeof img === 'string' && img.trim() !== ''))];
                             if (parsedImages.length === 0) {
@@ -1314,61 +1293,11 @@
             if (parentThumbContainer) {
                 Array.from(parentThumbContainer.children).forEach(child => {
                     child.classList.remove('border-amber-400', 'scale-105', 'ring-2', 'ring-amber-400/50');
-                    child.classList.add('border-zinc-700', 'opacity-60');
+                    child.classList.add('border-gray-200', 'opacity-60');
                 });
-                thumbEl.classList.remove('border-zinc-700', 'opacity-60');
+                thumbEl.classList.remove('border-gray-200', 'opacity-60');
                 thumbEl.classList.add('border-amber-400', 'scale-105', 'ring-2', 'ring-amber-400/50');
             }
-        }
-
-        function openBfdImageModal(productId) {
-            if (window._bfdImagesStore && window._bfdImagesStore[productId]) {
-                bfdModalImages = window._bfdImagesStore[productId];
-            } else {
-                bfdModalImages = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
-            }
-            bfdModalCurrentIndex = 0;
-            updateBfdModalImageViewer();
-            renderBfdModalThumbnails();
-            document.getElementById('bfd-image-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeBfdImageModal() {
-            document.getElementById('bfd-image-modal').classList.add('hidden');
-        }
-
-        function updateBfdModalImageViewer() {
-            const imgEl = document.getElementById('bfd-modal-current-img');
-            if (!imgEl) return;
-            if(bfdModalImages[bfdModalCurrentIndex]) {
-                imgEl.src = bfdModalImages[bfdModalCurrentIndex];
-            }
-        }
-
-        function renderBfdModalThumbnails() {
-            const container = document.getElementById('bfd-modal-thumbnails');
-            if (!container) return;
-            if (!bfdModalImages || bfdModalImages.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-            let html = '';
-            bfdModalImages.forEach((img, idx) => {
-                const isActive = idx === bfdModalCurrentIndex;
-                html += `
-                    <div onclick="setBfdModalImageIndex(${idx})" class="w-16 h-16 sm:w-20 sm:h-20 bg-black/50 rounded-xl border-2 cursor-pointer transition-all duration-300 flex-shrink-0 flex items-center justify-center p-1 overflow-hidden ${isActive ? 'border-amber-400 scale-105 shadow-lg ring-2 ring-amber-400/50' : 'border-zinc-700 opacity-60 hover:opacity-100'}">
-                        <img src="${img}" class="max-w-full max-h-full object-contain rounded-lg">
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function setBfdModalImageIndex(idx) {
-            bfdModalCurrentIndex = idx;
-            updateBfdModalImageViewer();
-            renderBfdModalThumbnails();
         }
 
         function submitDirectWhatsAppOrder() {
@@ -1600,18 +1529,18 @@
                     const productImages = (p.images && p.images.length > 0) ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
                     const firstImg = productImages[0];
 
-                    let thumbnailsHtml = '';
+                    let bfdThumbnailsHtml = '';
                     if (productImages.length > 1) {
-                        thumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100">`;
+                        bfdThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100">`;
                         productImages.forEach((imgUrl, imgIdx) => {
                             const isFirst = imgIdx === 0;
-                            thumbnailsHtml += `
-                                <div onclick="event.stopPropagation(); setBfdCardImage('${p.id}', '${imgUrl}', this)" class="w-10 h-10 bg-white rounded-md border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-0.5 overflow-hidden ${isFirst ? 'border-amber-400 ring-1 ring-amber-200 scale-105' : 'border-zinc-700 opacity-60 hover:opacity-100'}">
+                            bfdThumbnailsHtml += `
+                                <div onclick="event.stopPropagation(); setBfdCardImage('${p.id}', '${imgUrl}', this)" class="w-10 h-10 bg-white rounded-md border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-0.5 overflow-hidden ${isFirst ? 'border-amber-500 ring-1 ring-amber-300 scale-105' : 'border-gray-200 opacity-60 hover:opacity-100'}">
                                     <img src="${imgUrl}" class="max-w-full max-h-full object-contain rounded">
                                 </div>
                             `;
                         });
-                        thumbnailsHtml += `</div>`;
+                        bfdThumbnailsHtml += `</div>`;
                     }
 
                     html += `
@@ -1623,7 +1552,7 @@
                                 <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center p-1">
                                     <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover bfd-card-img">
                                 </div>
-                                ${thumbnailsHtml}
+                                ${bfdThumbnailsHtml}
                                 <div class="p-5 space-y-3">
                                     <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'Black Free Day'}</span>
                                     <h3 class="font-extrabold text-[#0F172A] text-xl leading-snug">${p.title}</h3>
