@@ -13,10 +13,7 @@
     <!-- SheetJS (xlsx) for Excel Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* استخدام خط النظام العادي والطبيعي */
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-        
-        /* تخصيص عصا الهبوط / Scrollbar احترافية وجذابة عند تجاوز 15 عنصراً */
         .custom-scroll-container {
             max-height: 550px;
             overflow-y: auto;
@@ -503,7 +500,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.60</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.61</span>
                 </span>
             </div>
         </div>
@@ -568,13 +565,82 @@
             }
         }
 
+        function formatImageUrlAdmin(pathOrUrl) {
+            if (!pathOrUrl || typeof pathOrUrl !== 'string') return '';
+            let clean = pathOrUrl.trim();
+            if (clean === '' || clean.toLowerCase() === 'null' || clean.toLowerCase() === 'undefined' || clean === '[]' || clean === '{}') return '';
+            if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('data:image/') || clean.startsWith('/')) {
+                return clean;
+            }
+            return `${SUPABASE_URL}/storage/v1/object/public/products/${clean}`;
+        }
+
+        function extractImagesAdmin(record) {
+            let imagesList = [];
+            const indexed = ['image1', 'image2', 'image3', 'image4', 'image5', 'img1', 'img2', 'img3', 'img4', 'img5'];
+            indexed.forEach(k => {
+                if (record[k] !== undefined && record[k] !== null && typeof record[k] === 'string' && record[k].trim() !== '') {
+                    const f = formatImageUrlAdmin(record[k]);
+                    if (f) imagesList.push(f);
+                }
+            });
+
+            const keys = ['images', 'image', 'img', 'photo', 'photos', 'picture', 'pictures'];
+            keys.forEach(key => {
+                if (record[key] !== undefined && record[key] !== null) {
+                    const val = record[key];
+                    if (typeof val === 'string') {
+                        let trimmed = val.trim();
+                        if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                            try {
+                                const parsed = JSON.parse(trimmed);
+                                if (Array.isArray(parsed)) {
+                                    parsed.forEach(item => {
+                                        if (item && typeof item === 'string') {
+                                            const f = formatImageUrlAdmin(item);
+                                            if (f) imagesList.push(f);
+                                        }
+                                    });
+                                }
+                            } catch(e) {
+                                const f = formatImageUrlAdmin(trimmed);
+                                if (f) imagesList.push(f);
+                            }
+                        } else if (trimmed.includes(',')) {
+                            trimmed.split(',').forEach(part => {
+                                let p = part.trim().replace(/^["']|["']$/g, '');
+                                const f = formatImageUrlAdmin(p);
+                                if (f) imagesList.push(f);
+                            });
+                        } else {
+                            const f = formatImageUrlAdmin(trimmed);
+                            if (f) imagesList.push(f);
+                        }
+                    } else if (Array.isArray(val)) {
+                        val.forEach(item => { 
+                            if (item && typeof item === 'string') {
+                                const f = formatImageUrlAdmin(item);
+                                if (f) imagesList.push(f);
+                            }
+                        });
+                    }
+                }
+            });
+            imagesList = [...new Set(imagesList)];
+            if (imagesList.length === 0) {
+                imagesList = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            }
+            return imagesList;
+        }
+
         async function fetchSupabaseData() {
             try {
+                let fetchedProducts = [];
                 const { data: prods } = await supabaseClient.from('products').select('*').order('id', { ascending: false });
                 if (prods) {
-                    productsDatabase = prods.map(p => ({
+                    fetchedProducts = prods.map(p => ({
                         ...p,
-                        images: typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []),
+                        images: extractImagesAdmin(p),
                         videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
                         sku: p.sku || '',
                         discountPrice: p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.discount_price !== undefined ? p.discount_price : ''),
@@ -586,6 +652,7 @@
                         adminKey: p.adminKey || p.admin_key || 'ZAMZAM'
                     }));
                 }
+                productsDatabase = fetchedProducts;
 
                 const { data: orders } = await supabaseClient.from('orders').select('*');
                 if (orders) salesOrdersDatabase = orders;
@@ -597,7 +664,23 @@
                 if (slider) sliderDatabase = slider;
 
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
-                if (bfd) bfdDatabase = bfd;
+                if (bfd) {
+                    bfdDatabase = bfd.map(b => {
+                        let parsedImgList = extractImagesAdmin(b);
+                        // إذا كان عرض BFD يحتوي على صورة واحدة فقط، نبحث في جدول المنتجات العادية لنفس العنوان لجلب كافة الصور
+                        if (parsedImgList.length <= 1 && b.title) {
+                            const matchedNormal = productsDatabase.find(p => p.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
+                            if (matchedNormal && matchedNormal.images && matchedNormal.images.length > 1) {
+                                parsedImgList = matchedNormal.images;
+                            }
+                        }
+                        return {
+                            ...b,
+                            images: parsedImgList,
+                            img: parsedImgList[0] || b.img
+                        };
+                    });
+                }
 
                 renderAdminProducts();
                 renderAdminOrders();
@@ -670,7 +753,6 @@
                     else if(prod.category === 'kids') catLabel = 'أطفال';
                     else if(prod.category === 'various') catLabel = 'منتجات متنوعة';
 
-                    // التحقق مما إذا كان المنتج موجوداً في جدول BFD لتلوين خانته باللون البرتقالي المميز
                     const isInBfd = bfdDatabase.some(b => b.title && prod.title && b.title.trim().toLowerCase() === prod.title.trim().toLowerCase());
                     const rowBgClass = isInBfd ? 'bg-orange-50/70 border-r-4 border-r-orange-500' : '';
 
@@ -717,7 +799,6 @@
             renderAdminProducts(filtered);
         }
 
-        // دالة إنشاء وتنزيل ملف Data Feed متوافق مع Meta Business Manager
         function downloadMetaCatalogDataFeed() {
             if (productsDatabase.length === 0) {
                 alert('لا توجد منتجات في قاعدة البيانات لتصديرها!');
@@ -958,9 +1039,10 @@
             let html = '';
             listToRender.forEach((item, idx) => {
                 const originalIdx = bfdDatabase.indexOf(item);
+                const mainBfdImg = (item.images && item.images[0]) || item.img || '';
                 html += `
                     <tr class="bg-orange-50/40">
-                        <td class="p-4"><img src="${item.img}" class="w-12 h-12 object-cover rounded-xl border"></td>
+                        <td class="p-4"><img src="${mainBfdImg}" class="w-12 h-12 object-cover rounded-xl border"></td>
                         <td class="p-4 font-bold text-gray-900">${item.title}</td>
                         <td class="p-4 text-amber-600 font-bold">${item.price} د.م</td>
                         <td class="p-4"><span class="bg-amber-50 text-amber-700 px-2.5 py-1 rounded-md text-xs font-semibold">${item.discountBadge}</span></td>
@@ -996,7 +1078,6 @@
             const bfdItem = bfdDatabase[idx];
             if (!bfdItem) return;
             
-            // البحث عن المنتج الأصلي المطابق في جدول المنتجات لجلب كافة معلوماته (الصور، الأسعار، الخانات الأخرى)
             const matchedProd = productsDatabase.find(p => p.title && bfdItem.title && p.title.trim().toLowerCase() === bfdItem.title.trim().toLowerCase());
 
             document.getElementById('prod-modal-title').innerText = 'تعديل عرض Black Free Day';
@@ -1017,7 +1098,7 @@
             document.getElementById('prod-form-category').value = matchedProd && matchedProd.category ? matchedProd.category : 'various';
             document.getElementById('prod-form-admin').value = matchedProd && matchedProd.adminKey ? matchedProd.adminKey : 'ZAMZAM';
 
-            const imgs = matchedProd && Array.isArray(matchedProd.images) && matchedProd.images.length > 0 ? matchedProd.images : [bfdItem.img];
+            const imgs = (bfdItem.images && bfdItem.images.length > 0) ? bfdItem.images : (matchedProd && matchedProd.images ? matchedProd.images : [bfdItem.img]);
             for(let i = 1; i <= 5; i++) {
                 document.getElementById(`prod-form-img-${i}`).value = imgs[i-1] || '';
             }
@@ -1339,14 +1420,15 @@
                 return;
             }
 
-            // إذا تم تعديل عرض BFD موجود مسبقاً
+            // تعديل عرض BFD
             if (bfdEditId !== "") {
                 const bfdData = {
                     title: title,
                     price: discountPrice !== null && !isNaN(discountPrice) ? discountPrice : price,
                     oldPrice: price,
                     discountBadge: discountPrice !== null && !isNaN(discountPrice) ? `تخفيض ${Math.round(((price - discountPrice) / price) * 100)}%` : 'عرض حصري',
-                    img: images[0]
+                    img: images[0],
+                    images: images
                 };
 
                 const { error: updateBfdErr } = await supabaseClient.from('black_free_day').update(bfdData).eq('id', bfdEditId);
@@ -1355,7 +1437,6 @@
                     return;
                 }
 
-                // تحديث المنتج الأصلي أيضاً إن وجد في جدول المنتجات لتحديث معلوماته بالكامل
                 if (id !== "") {
                     const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, tajirPrice, shippingCost, adsFb, adsTiktok, adsInsta, adminKey, videos };
                     const targetProd = productsDatabase.find(p => p.id == id);
@@ -1364,20 +1445,21 @@
                     }
                 }
 
-                alert('تم تحديث عرض Black Free Day وكافة معلومات المنتج بنجاح!');
+                alert('تم تحديث عرض Black Free Day وكافة صور المنتج بنجاح!');
                 toggleProductModal();
                 fetchSupabaseData();
                 return;
             }
 
-            // إذا تم تفعيل خانة BFD لإضافة منتج جديد مباشر إلى قسم BFD
+            // إضافة منتج جديد لـ BFD مع كافة الصور
             if (isBfdChecked) {
                 const bfdData = {
                     title: title,
                     price: discountPrice !== null && !isNaN(discountPrice) ? discountPrice : price,
                     oldPrice: price,
                     discountBadge: discountPrice !== null && !isNaN(discountPrice) ? `تخفيض ${Math.round(((price - discountPrice) / price) * 100)}%` : 'عرض حصري',
-                    img: images[0]
+                    img: images[0],
+                    images: images
                 };
 
                 const { error: bfdError } = await supabaseClient.from('black_free_day').insert([bfdData]);
@@ -1386,7 +1468,7 @@
                     return;
                 }
 
-                alert('تمت إضافة المنتج بنجاح إلى قسم Black Free Day وإخفائه من المنتجات العادية!');
+                alert('تمت إضافة المنتج بنجاح إلى قسم Black Free Day بكافة صوره!');
                 toggleProductModal();
                 fetchSupabaseData();
                 return;
@@ -1485,7 +1567,6 @@
             }
         }
 
-        // دالة تفعيل العد التنازولي لعروض نهاية الأسبوع (السبت والأحد) وتنبيه الإضافة
         function initBfdCountdown() {
             const clockEl = document.getElementById('bfd-countdown-clock');
             const msgEl = document.getElementById('bfd-timer-msg');
@@ -1493,16 +1574,13 @@
 
             function updateTimer() {
                 const now = new Date();
-                const day = now.getDay(); // 0: الأحد, 6: السبت, إلخ.
-                
-                // حساب موعد نهاية الأحد القادم أو الحالي
+                const day = now.getDay();
                 let targetDate = new Date(now);
-                if (day === 6) { // السبت
+                if (day === 6) {
                     targetDate.setHours(23, 59, 59, 999);
-                } else if (day === 0) { // الأحد
+                } else if (day === 0) {
                     targetDate.setHours(23, 59, 59, 999);
                 } else {
-                    // إذا كان يوم آخر، نحسب موعد حلول القادم السبت
                     let daysUntilSaturday = (6 - day + 7) % 7;
                     if (daysUntilSaturday === 0) daysUntilSaturday = 7;
                     targetDate.setDate(now.getDate() + daysUntilSaturday);
