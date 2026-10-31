@@ -32,7 +32,6 @@
     <!-- Google Fonts: Readex Pro & Outfit -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Readex+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* استخدام خط Readex Pro لكافة محتويات الموقع وتنسيقات واجهات المستخدم */
         body {
             font-family: 'Readex Pro', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #F8F9FA;
@@ -63,13 +62,11 @@
             width: max-content;
             animation: marquee 45s linear infinite;
         }
-        /* تعديل سرعة شريط المنتجات المميزة لتصبح 200 ثانية كما طلبت */
         .animate-marquee-slow {
             display: flex;
             width: max-content;
             animation: marquee 200s linear infinite;
         }
-        /* شريط تعليقات الزبناء المغاربة المتحرك ببطء مريح */
         @keyframes marqueeReviews {
             0% { transform: translateX(0); }
             100% { transform: translateX(50%); }
@@ -85,7 +82,6 @@
         .fade-review {
             transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
         }
-        /* تأثير الوميض والتوهج المثير والمطور لزر Black Free Day */
         @keyframes cyberGlow {
             0%, 100% {
                 box-shadow: 0 0 15px rgba(245, 158, 11, 0.6), inset 0 0 15px rgba(239, 68, 68, 0.4);
@@ -101,8 +97,6 @@
         .black-free-day-flash {
             animation: cyberGlow 1.8s infinite ease-in-out;
         }
-
-        /* تأثير التوهج وحركة الثمن الخاصة ببطاقات Black Free Day المطلوبة */
         @keyframes bfdCardGlow {
             0%, 100% {
                 box-shadow: 0 0 20px rgba(245, 158, 11, 0.5), 0 0 40px rgba(239, 68, 68, 0.3);
@@ -116,7 +110,6 @@
         .bfd-glowing-card {
             animation: bfdCardGlow 2s infinite ease-in-out;
         }
-
         @keyframes pricePulseMotion {
             0%, 100% { transform: scale(1); color: #059669; }
             50% { transform: scale(1.12); color: #DC2626; }
@@ -125,8 +118,6 @@
             display: inline-block;
             animation: pricePulseMotion 1.2s infinite ease-in-out;
         }
-
-        /* تأثير الحركة والنبض الخاص بزر الشراء في Black Free Day */
         @keyframes btnPulseAttention {
             0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4); }
             50% { transform: scale(1.04); box-shadow: 0 0 25px rgba(249, 115, 22, 0.8); }
@@ -134,8 +125,6 @@
         .bfd-attention-btn {
             animation: btnPulseAttention 1.5s infinite ease-in-out;
         }
-
-        /* تطبيق الظلال الناعمة والانحناءات الجديدة للأزرار (Rounded 6px to 8px) مع الانتقال السلس */
         button, .custom-btn {
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
@@ -778,7 +767,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9932</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9940</span>
                     </span>
                 </div>
             </div>
@@ -934,10 +923,10 @@
 
         function extractImagesFromRecord(record) {
             let imagesList = [];
-            // فحص الأعمدة الفردية المرقمة في قاعدة البيانات (image1, image2, image3, image4, image5) لضمان التقاط كل الصور المدخلة
+            
             const indexedImageKeys = ['image1', 'image2', 'image3', 'image4', 'image5', 'img1', 'img2', 'img3', 'img4', 'img5'];
             indexedImageKeys.forEach(k => {
-                if (record[k] && typeof record[k] === 'string' && record[k].trim() !== '') {
+                if (record[k] !== undefined && record[k] !== null && typeof record[k] === 'string' && record[k].trim() !== '') {
                     const formatted = formatImageUrl(record[k]);
                     if (formatted) imagesList.push(formatted);
                 }
@@ -1003,10 +992,32 @@
 
         async function fetchSupabaseStoreData() {
             try {
+                // جلب جدول المنتجات العادية أولاً لربط صورها بمنتجات BFD إن لم تكن مخزنة بالكامل
+                let fetchedProducts = [];
+                const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+                if (prods) {
+                    fetchedProducts = prods.map(p => ({
+                        ...p,
+                        images: extractImagesFromRecord(p),
+                        videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
+                        price: (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : parseFloat(p.price || 0),
+                        oldPrice: parseFloat(p.price || 0)
+                    }));
+                }
+
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
                 if (bfd) {
                     blackFreeDayProducts = bfd.map(b => {
-                        const parsedImagesList = extractImagesFromRecord(b);
+                        // استخراج الصور الخاصة بعرض BFD
+                        let parsedImagesList = extractImagesFromRecord(b);
+
+                        // إذا كانت صور BFD تحتوى على صورة واحدة فقط، نبحث في جدول المنتجات العادية عن منتج بنفس العنوان لجلب كافة صوره الـ 5!
+                        if (parsedImagesList.length <= 1 && b.title) {
+                            const matchedNormalProd = fetchedProducts.find(p => p.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
+                            if (matchedNormalProd && matchedNormalProd.images && matchedNormalProd.images.length > 1) {
+                                parsedImagesList = matchedNormalProd.images;
+                            }
+                        }
 
                         let originalPrice = parseFloat(b.price || 0);
                         let discPrice = (b.discountPrice !== undefined && b.discountPrice !== null && b.discountPrice !== '') ? parseFloat(b.discountPrice) : originalPrice;
@@ -1025,39 +1036,20 @@
 
                 const bfdTitles = new Set(blackFreeDayProducts.map(b => b.title ? b.title.trim().toLowerCase() : ''));
 
-                const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
-                if (prods) {
-                    productsDatabase = prods
-                        .filter(p => {
-                            const pTitle = p.title ? p.title.trim().toLowerCase() : '';
-                            return !bfdTitles.has(pTitle);
-                        })
-                        .map(p => {
-                            const parsedImages = extractImagesFromRecord(p);
+                productsDatabase = fetchedProducts.filter(p => {
+                    const pTitle = p.title ? p.title.trim().toLowerCase() : '';
+                    return !bfdTitles.has(pTitle);
+                });
 
-                            let parsedVideos = typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []);
-                            
-                            let originalPrice = parseFloat(p.price || 0);
-                            let discPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
+                renderStoreProducts(productsDatabase);
+                renderPartnerProductsMarquee(productsDatabase);
 
-                            return {
-                                ...p,
-                                images: parsedImages,
-                                videos: parsedVideos,
-                                price: discPrice,
-                                oldPrice: originalPrice
-                            };
-                        });
-                    renderStoreProducts(productsDatabase);
-                    renderPartnerProductsMarquee(productsDatabase);
-
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const productIdParam = urlParams.get('product');
-                    if (productIdParam) {
-                        const targetProd = productsDatabase.find(p => String(p.id) === String(productIdParam)) || blackFreeDayProducts.find(p => String(p.id) === String(productIdParam));
-                        if (targetProd) {
-                            openProductDetailObject(targetProd);
-                        }
+                const urlParams = new URLSearchParams(window.location.search);
+                const productIdParam = urlParams.get('product');
+                if (productIdParam) {
+                    const targetProd = productsDatabase.find(p => String(p.id) === String(productIdParam)) || blackFreeDayProducts.find(p => String(p.id) === String(productIdParam));
+                    if (targetProd) {
+                        openProductDetailObject(targetProd);
                     }
                 }
             } catch (err) {
@@ -1299,12 +1291,12 @@
             }
         }
 
-        /* تعديل فتح صفحة محايدة مستقلة لعرض ألبوم الصور كاملة في Black Free Day */
+        // دالة عرض ألبوم صور منتج Black Free Day بالصور الكاملة وبدون قص
         function openBfdProductModal(productId) {
             const product = blackFreeDayProducts.find(p => String(p.id) === String(productId));
             if (!product) return;
 
-            const images = product.images || ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            const images = product.images && product.images.length > 0 ? product.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
             
             const titleEl = document.getElementById('bfd-album-title');
             if (titleEl) titleEl.innerText = product.title || 'ألبوم المنتج';
