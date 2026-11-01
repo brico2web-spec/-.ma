@@ -500,7 +500,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.67</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.68</span>
                 </span>
             </div>
         </div>
@@ -520,20 +520,10 @@
             { username: 'ZAMZAM', password: 'AMIRMOUNA303026', role: 'مشرف رئيسي', status: 'نشط' }
         ];
 
-        // المزامنة التلقائية للمسؤولين بين الذاكرة والتخزين المشترك لضمان عمل الحساب في أي جهاز
-        try {
-            const localAdmins = localStorage.getItem('bedal_admins_db');
-            if (localAdmins) {
-                const parsed = JSON.parse(localAdmins);
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    adminsDatabase = parsed;
-                }
-            }
-        } catch(e) {}
-
         let currentAdminUser = "ZAMZAM";
         let currentAdminPass = "AMIRMOUNA303026";
 
+        // التحقق من تسجيل الدخول مباشرة من جدول admins في Supabase ليعمل في أي جهاز
         async function handleLogin() {
             const uInput = document.getElementById('login-username').value.trim();
             const pInput = document.getElementById('login-password').value.trim();
@@ -544,7 +534,6 @@
                 return;
             }
 
-            let foundAdmin = null;
             try {
                 const { data: directAdmins, error } = await supabaseClient
                     .from('admins')
@@ -552,14 +541,12 @@
 
                 if (!error && directAdmins && directAdmins.length > 0) {
                     adminsDatabase = directAdmins;
-                    localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
                 }
             } catch (e) {
-                console.log("الاعتماد على قائمة المسؤولين النشطة");
+                console.log("خطأ في جلب المسؤولين من Supabase");
             }
 
-            // مطابقة آمنة للمسؤول بغض النظر عن حالة الأحرف الصغيرة/الكبيرة
-            foundAdmin = adminsDatabase.find(a => 
+            const foundAdmin = adminsDatabase.find(a => 
                 a.username && a.username.trim().toLowerCase() === uInput.toLowerCase() && String(a.password).trim() === pInput
             );
 
@@ -595,7 +582,6 @@
                         await supabaseClient.from('admins').update({ password: newPass }).eq('id', targetAdmin.id);
                     }
                 } catch(e) {}
-                localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
                 alert('تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول بكلمة المرور الجديدة.');
                 hideForgotPasswordModal();
                 document.getElementById('recovery-error').classList.add('hidden');
@@ -678,10 +664,9 @@
                     const { data: adminsData, error: adminErr } = await supabaseClient.from('admins').select('*');
                     if (adminsData && adminsData.length > 0) {
                         adminsDatabase = adminsData;
-                        localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
                     }
                 } catch(e) {
-                    console.log("استخدام الجدول المحلي للمسؤولين");
+                    console.log("خطأ في جلب المسؤولين من Supabase");
                 }
 
                 let fetchedProducts = [];
@@ -1339,47 +1324,29 @@
 
             const newAdminObj = { username, password, role: 'مسؤول نظام', status: 'نشط' };
 
-            // محاولة الحفظ في Supabase أولاً، مع تخزين محلي تلقائي يتيح عمل الحساب على أي جهاز
-            try {
-                const { error } = await supabaseClient.from('admins').insert([newAdminObj]);
-                if (error) {
-                    console.log("تخزين محلي للمسؤول");
-                }
-            } catch (e) {
-                console.log("تخزين محلي للمسؤول");
+            // الحفظ المباشر والنهائي في جدول admins في Supabase ليعمل من أي جهاز
+            const { error } = await supabaseClient.from('admins').insert([newAdminObj]);
+            if (error) {
+                alert('حدث خطأ أثناء حفظ المسؤول في قاعدة البيانات: ' + error.message);
+                return;
             }
 
-            const existsIdx = adminsDatabase.findIndex(a => a.username.toLowerCase() === username.toLowerCase());
-            if (existsIdx !== -1) {
-                adminsDatabase[existsIdx] = newAdminObj;
-            } else {
-                adminsDatabase.push(newAdminObj);
-            }
-
-            localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
-
-            alert('تمت إضافة المسؤول بنجاح!');
+            alert('تمت إضافة المسؤول بنجاح في Supabase!');
             toggleAdminModal();
             document.getElementById('admin-form-username').value = '';
             document.getElementById('admin-form-password').value = '';
-            renderAdminsTable();
-            updateAdminSelectOptions();
+            fetchSupabaseData();
         }
 
         async function deleteAdmin(idx) {
             if(confirm('هل أنت متأكد من حذف هذا المسؤول؟')) {
                 const adm = adminsDatabase[idx];
-                try {
-                    if (adm && adm.id) {
-                        await supabaseClient.from('admins').delete().eq('id', adm.id);
-                    } else if (adm && adm.username) {
-                        await supabaseClient.from('admins').delete().eq('username', adm.username);
-                    }
-                } catch(e) {}
-                adminsDatabase.splice(idx, 1);
-                localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
-                renderAdminsTable();
-                updateAdminSelectOptions();
+                if (adm && adm.id) {
+                    await supabaseClient.from('admins').delete().eq('id', adm.id);
+                } else if (adm && adm.username) {
+                    await supabaseClient.from('admins').delete().eq('username', adm.username);
+                }
+                fetchSupabaseData();
                 alert('تم حذف المسؤول بنجاح!');
             }
         }
