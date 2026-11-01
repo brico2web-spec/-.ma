@@ -459,7 +459,11 @@
             </div>
 
             <div class="py-6">
-                <div class="max-w-xs mx-auto">
+                <div class="max-w-xs mx-auto space-y-2 text-center">
+                    <!-- العبارة الجدابة المضافة فوق زر Black Free Day -->
+                    <div class="inline-block bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white text-[11px] sm:text-xs font-black px-4 py-1.5 rounded-full shadow-lg animate-pulse tracking-wide border border-amber-200/50">
+                        ⚡ اضغط هنا لاغتنام تخفيضات الصدمة قبل نفاد الكمية! ⚡
+                    </div>
                     <button onclick="openBlackFreeDayPage()" class="w-full group relative h-24 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-400 transition-all transform hover:-translate-y-1.5 black-free-day-flash cursor-pointer">
                         <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=400&q=80" alt="Black Free Day" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-60">
                         <div class="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-stone-900/90 to-amber-950/80 backdrop-blur-[2px] flex flex-col items-center justify-center p-2 text-white text-center">
@@ -514,8 +518,9 @@
         <!-- SECTION: BFD NEUTRAL PRODUCT ALBUM PAGE (صفحة محايدة مستقلة لعرض ألبوم صور منتج Black Free Day) -->
         <section id="section-bfd-album" class="hidden space-y-6 max-w-3xl mx-auto">
             <div>
+                <!-- تم التعديل هنا إلى زر (العودة لقائمة العروض) -->
                 <button onclick="switchTab('black_free_day')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-zinc-900 hover:bg-black px-5 py-2.5 rounded-xl shadow border border-amber-500/50 transition-all">
-                    <i data-lucide="arrow-right" class="w-4 h-4 text-amber-400"></i> العودة لعروض Black Free Day
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-amber-400"></i> العودة لقائمة العروض
                 </button>
             </div>
 
@@ -532,7 +537,16 @@
                     <!-- الصور يتم حقنها ديناميكياً هنا -->
                 </div>
 
+                <!-- وصف المنتج المضاف في الأسفل داخل صفحة الألبوم -->
+                <div class="pt-6 border-t border-zinc-800 space-y-3">
+                    <h3 class="font-extrabold text-amber-400 text-base flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> وصف المنتج
+                    </h3>
+                    <p id="bfd-album-description" class="text-zinc-300 text-sm sm:text-base leading-relaxed whitespace-pre-line bg-zinc-900 p-5 rounded-xl border border-zinc-800">وصف المنتج هنا...</p>
+                </div>
+
                 <div class="pt-6 border-t border-zinc-800 flex justify-center">
+                    <!-- تم التعديل هنا أيضاً إلى زر (العودة لقائمة العروض) -->
                     <button onclick="switchTab('black_free_day')" class="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-black py-3 px-8 rounded-xl transition-colors shadow-lg">
                         العودة لقائمة العروض
                     </button>
@@ -767,7 +781,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9940</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9943</span>
                     </span>
                 </div>
             </div>
@@ -992,7 +1006,6 @@
 
         async function fetchSupabaseStoreData() {
             try {
-                // جلب جدول المنتجات العادية أولاً لربط صورها بمنتجات BFD إن لم تكن مخزنة بالكامل
                 let fetchedProducts = [];
                 const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
                 if (prods) {
@@ -1008,14 +1021,24 @@
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
                 if (bfd) {
                     blackFreeDayProducts = bfd.map(b => {
-                        // استخراج الصور الخاصة بعرض BFD
                         let parsedImagesList = extractImagesFromRecord(b);
 
-                        // إذا كانت صور BFD تحتوى على صورة واحدة فقط، نبحث في جدول المنتجات العادية عن منتج بنفس العنوان لجلب كافة صوره الـ 5!
-                        if (parsedImagesList.length <= 1 && b.title) {
-                            const matchedNormalProd = fetchedProducts.find(p => p.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
-                            if (matchedNormalProd && matchedNormalProd.images && matchedNormalProd.images.length > 1) {
-                                parsedImagesList = matchedNormalProd.images;
+                        // جلب وصف المنتج وصوره من جدول المنتجات العادية إذا كان عنوان المنتج متطابقاً
+                        let matchedNormalProd = null;
+                        if (b.title) {
+                            matchedNormalProd = fetchedProducts.find(p => p.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
+                        }
+
+                        if (parsedImagesList.length <= 1 && matchedNormalProd && matchedNormalProd.images && matchedNormalProd.images.length > 1) {
+                            parsedImagesList = matchedNormalProd.images;
+                        }
+
+                        let productDescription = b.description;
+                        if (!productDescription || productDescription.trim() === '') {
+                            if (matchedNormalProd && matchedNormalProd.description) {
+                                productDescription = matchedNormalProd.description;
+                            } else {
+                                productDescription = 'لا يوجد وصف متاح لهذا المنتج حالياً.';
                             }
                         }
 
@@ -1026,6 +1049,7 @@
 
                         return {
                             ...b,
+                            description: productDescription,
                             price: discPrice,
                             oldPrice: parseFloat(b.oldPrice || originalPrice),
                             images: parsedImagesList,
@@ -1291,7 +1315,7 @@
             }
         }
 
-        // دالة عرض ألبوم صور منتج Black Free Day بالصور الكاملة وبدون قص
+        // دالة عرض ألبوم صور منتج Black Free Day بالصور الكاملة وبدون قص مع إدراج وصف المنتج في الأسفل
         function openBfdProductModal(productId) {
             const product = blackFreeDayProducts.find(p => String(p.id) === String(productId));
             if (!product) return;
@@ -1300,6 +1324,9 @@
             
             const titleEl = document.getElementById('bfd-album-title');
             if (titleEl) titleEl.innerText = product.title || 'ألبوم المنتج';
+
+            const descEl = document.getElementById('bfd-album-description');
+            if (descEl) descEl.innerText = product.description || 'لا يوجد وصف متاح لهذا المنتج حالياً.';
 
             const container = document.getElementById('bfd-album-images-container');
             if (container) {
@@ -1594,6 +1621,7 @@
                                 </div>
                             </div>
                             <div class="p-5 pt-0" onclick="event.stopPropagation()">
+                                <!-- تم التعديل هنا إلى زر (سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب) -->
                                 <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-xs bfd-attention-btn cursor-pointer">
                                     <i data-lucide="message-circle" class="w-4 h-4 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب
                                 </button>
