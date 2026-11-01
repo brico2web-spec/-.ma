@@ -518,7 +518,6 @@
         <!-- SECTION: BFD NEUTRAL PRODUCT ALBUM PAGE (صفحة محايدة مستقلة لعرض ألبوم صور منتج Black Free Day) -->
         <section id="section-bfd-album" class="hidden space-y-6 max-w-3xl mx-auto">
             <div>
-                <!-- تم التعديل هنا إلى زر (العودة لقائمة العروض) -->
                 <button onclick="switchTab('black_free_day')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-zinc-900 hover:bg-black px-5 py-2.5 rounded-xl shadow border border-amber-500/50 transition-all">
                     <i data-lucide="arrow-right" class="w-4 h-4 text-amber-400"></i> العودة لقائمة العروض
                 </button>
@@ -537,18 +536,22 @@
                     <!-- الصور يتم حقنها ديناميكياً هنا -->
                 </div>
 
-                <!-- وصف المنتج المضاف في الأسفل داخل صفحة الألبوم -->
+                <!-- وصف المنتج المضاف في الأسفل داخل صفحة الألبوم مع زر (المزيد...) -->
                 <div class="pt-6 border-t border-zinc-800 space-y-3">
                     <h3 class="font-extrabold text-amber-400 text-base flex items-center gap-2">
                         <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> وصف المنتج
                     </h3>
-                    <p id="bfd-album-description" class="text-zinc-300 text-sm sm:text-base leading-relaxed whitespace-pre-line bg-zinc-900 p-5 rounded-xl border border-zinc-800">وصف المنتج هنا...</p>
+                    <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 space-y-3">
+                        <p id="bfd-album-description" class="text-zinc-300 text-sm sm:text-base leading-relaxed whitespace-pre-line">وصف المنتج هنا...</p>
+                        <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-xs sm:text-sm underline focus:outline-none">
+                            المزيد...
+                        </button>
+                    </div>
                 </div>
 
                 <div class="pt-6 border-t border-zinc-800 flex justify-center">
-                    <!-- تم التعديل هنا أيضاً إلى زر (العودة لقائمة العروض) -->
-                    <button onclick="switchTab('black_free_day')" class="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-black py-3 px-8 rounded-xl transition-colors shadow-lg">
-                        العودة لقائمة العروض
+                    <button id="bfd-album-whatsapp-btn" onclick="" class="bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-8 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base bfd-attention-btn cursor-pointer">
+                        <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب
                     </button>
                 </div>
             </div>
@@ -781,7 +784,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9943</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9945</span>
                     </span>
                 </div>
             </div>
@@ -819,6 +822,10 @@
         
         window._bfdImagesStore = {};
         let bfdModalImages = [];
+
+        // متغيرات للتحكم في عرض الوصف الكامل أو المختصر في ألبوم BFD
+        let fullBfdDescriptionText = '';
+        let isBfdDescExpanded = false;
 
         const siteReviews = [
             {
@@ -1023,7 +1030,6 @@
                     blackFreeDayProducts = bfd.map(b => {
                         let parsedImagesList = extractImagesFromRecord(b);
 
-                        // جلب وصف المنتج وصوره من جدول المنتجات العادية إذا كان عنوان المنتج متطابقاً
                         let matchedNormalProd = null;
                         if (b.title) {
                             matchedNormalProd = fetchedProducts.find(p => p.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
@@ -1315,7 +1321,7 @@
             }
         }
 
-        // دالة عرض ألبوم صور منتج Black Free Day بالصور الكاملة وبدون قص مع إدراج وصف المنتج في الأسفل
+        // دالة عرض ألبوم صور منتج Black Free Day وتجهيز الوصف المختصر مع زر (المزيد...)
         function openBfdProductModal(productId) {
             const product = blackFreeDayProducts.find(p => String(p.id) === String(productId));
             if (!product) return;
@@ -1325,8 +1331,33 @@
             const titleEl = document.getElementById('bfd-album-title');
             if (titleEl) titleEl.innerText = product.title || 'ألبوم المنتج';
 
+            fullBfdDescriptionText = product.description || 'لا يوجد وصف متاح لهذا المنتج حالياً.';
+            isBfdDescExpanded = false;
+
             const descEl = document.getElementById('bfd-album-description');
-            if (descEl) descEl.innerText = product.description || 'لا يوجد وصف متاح لهذا المنتج حالياً.';
+            const toggleBtn = document.getElementById('bfd-desc-toggle-btn');
+
+            if (descEl) {
+                if (fullBfdDescriptionText.length > 180) {
+                    descEl.innerText = fullBfdDescriptionText.substring(0, 180) + '...';
+                    if (toggleBtn) {
+                        toggleBtn.innerText = 'المزيد...';
+                        toggleBtn.classList.remove('hidden');
+                    }
+                } else {
+                    descEl.innerText = fullBfdDescriptionText;
+                    if (toggleBtn) {
+                        toggleBtn.classList.add('hidden');
+                    }
+                }
+            }
+
+            const waBtn = document.getElementById('bfd-album-whatsapp-btn');
+            if (waBtn) {
+                const prodTitle = product.title ? product.title.replace(/'/g, "\\'") : '';
+                const prodPrice = product.price ? product.price.toFixed(2) : '0.00';
+                waBtn.setAttribute('onclick', `orderBfdViaWhatsApp('${prodTitle}', '${prodPrice}')`);
+            }
 
             const container = document.getElementById('bfd-album-images-container');
             if (container) {
@@ -1343,6 +1374,22 @@
 
             switchTab('bfd-album');
             lucide.createIcons();
+        }
+
+        // دالة تبديل حالة عرض الوصف بين المختصر والكامل عند الضغط على (المزيد...) / (إخفاء)
+        function toggleBfdAlbumDescription() {
+            const descEl = document.getElementById('bfd-album-description');
+            const toggleBtn = document.getElementById('bfd-desc-toggle-btn');
+            if (!descEl || !toggleBtn) return;
+
+            isBfdDescExpanded = !isBfdDescExpanded;
+            if (isBfdDescExpanded) {
+                descEl.innerText = fullBfdDescriptionText;
+                toggleBtn.innerText = 'إخفاء';
+            } else {
+                descEl.innerText = fullBfdDescriptionText.substring(0, 180) + '...';
+                toggleBtn.innerText = 'المزيد...';
+            }
         }
 
         function submitDirectWhatsAppOrder() {
@@ -1621,7 +1668,6 @@
                                 </div>
                             </div>
                             <div class="p-5 pt-0" onclick="event.stopPropagation()">
-                                <!-- تم التعديل هنا إلى زر (سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب) -->
                                 <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-xs bfd-attention-btn cursor-pointer">
                                     <i data-lucide="message-circle" class="w-4 h-4 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب
                                 </button>
