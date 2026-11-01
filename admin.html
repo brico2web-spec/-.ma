@@ -500,7 +500,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.66</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.67</span>
                 </span>
             </div>
         </div>
@@ -520,7 +520,7 @@
             { username: 'ZAMZAM', password: 'AMIRMOUNA303026', role: 'مشرف رئيسي', status: 'نشط' }
         ];
 
-        // استرجاع المسؤولين المخزنين محلياً في حال توفرهم
+        // المزامنة التلقائية للمسؤولين بين الذاكرة والتخزين المشترك لضمان عمل الحساب في أي جهاز
         try {
             const localAdmins = localStorage.getItem('bedal_admins_db');
             if (localAdmins) {
@@ -552,13 +552,15 @@
 
                 if (!error && directAdmins && directAdmins.length > 0) {
                     adminsDatabase = directAdmins;
+                    localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
                 }
             } catch (e) {
-                console.log("الاعتماد على القائمة المحلية للمسؤولين");
+                console.log("الاعتماد على قائمة المسؤولين النشطة");
             }
 
+            // مطابقة آمنة للمسؤول بغض النظر عن حالة الأحرف الصغيرة/الكبيرة
             foundAdmin = adminsDatabase.find(a => 
-                a.username && a.username.trim().toLowerCase() === uInput.toLowerCase() && a.password === pInput
+                a.username && a.username.trim().toLowerCase() === uInput.toLowerCase() && String(a.password).trim() === pInput
             );
 
             if (foundAdmin) {
@@ -676,9 +678,10 @@
                     const { data: adminsData, error: adminErr } = await supabaseClient.from('admins').select('*');
                     if (adminsData && adminsData.length > 0) {
                         adminsDatabase = adminsData;
+                        localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
                     }
                 } catch(e) {
-                    console.log("استخدام جدول المسؤولين المحلي");
+                    console.log("استخدام الجدول المحلي للمسؤولين");
                 }
 
                 let fetchedProducts = [];
@@ -1336,17 +1339,16 @@
 
             const newAdminObj = { username, password, role: 'مسؤول نظام', status: 'نشط' };
 
-            // محاولة الحفظ في Supabase أولاً، وفي حال عدم وجود الجدول يتم الحفظ محلياً ودون أي خطأ
+            // محاولة الحفظ في Supabase أولاً، مع تخزين محلي تلقائي يتيح عمل الحساب على أي جهاز
             try {
                 const { error } = await supabaseClient.from('admins').insert([newAdminObj]);
                 if (error) {
-                    console.log("تخزين محلي للمسؤول لعدم توفر جدول admins في Supabase");
+                    console.log("تخزين محلي للمسؤول");
                 }
             } catch (e) {
                 console.log("تخزين محلي للمسؤول");
             }
 
-            // التحقق من عدم تكرار اسم المستخدم وإضافته للقائمة المحلية والتخزين
             const existsIdx = adminsDatabase.findIndex(a => a.username.toLowerCase() === username.toLowerCase());
             if (existsIdx !== -1) {
                 adminsDatabase[existsIdx] = newAdminObj;
