@@ -483,13 +483,13 @@
             <div class="space-y-4 text-sm">
                 <div>
                     <label class="block font-semibold mb-1">اسم المستخدم *</label>
-                    <input type="text" id="admin-form-username" placeholder="اسم المستخدم" class="w-full px-4 py-2.5 rounded-xl border">
+                    <input type="text" id="admin-form-username" placeholder="اسم المستخدم (مثال: oubari)" class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
                 <div>
                     <label class="block font-semibold mb-1">كلمة المرور *</label>
                     <input type="password" id="admin-form-password" placeholder="كلمة المرور" class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
-                <button onclick="saveNewAdmin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ المسؤول محلياً</button>
+                <button onclick="saveNewAdmin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ المسؤول</button>
             </div>
         </div>
     </div>
@@ -500,7 +500,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.62</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.66</span>
                 </span>
             </div>
         </div>
@@ -516,24 +516,52 @@
         let salesOrdersDatabase = [];
         let sliderDatabase = [];
         let bfdDatabase = [];
-        let adminsDatabase = JSON.parse(localStorage.getItem('bedal_custom_admins')) || [
+        let adminsDatabase = [
             { username: 'ZAMZAM', password: 'AMIRMOUNA303026', role: 'مشرف رئيسي', status: 'نشط' }
         ];
+
+        // استرجاع المسؤولين المخزنين محلياً في حال توفرهم
+        try {
+            const localAdmins = localStorage.getItem('bedal_admins_db');
+            if (localAdmins) {
+                const parsed = JSON.parse(localAdmins);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    adminsDatabase = parsed;
+                }
+            }
+        } catch(e) {}
 
         let currentAdminUser = "ZAMZAM";
         let currentAdminPass = "AMIRMOUNA303026";
 
-        function handleLogin() {
+        async function handleLogin() {
             const uInput = document.getElementById('login-username').value.trim();
             const pInput = document.getElementById('login-password').value.trim();
             const errEl = document.getElementById('login-error');
 
-            const foundAdmin = adminsDatabase.find(a => a.username === uInput);
+            if (!uInput || !pInput) {
+                errEl.classList.remove('hidden');
+                return;
+            }
 
-            if (foundAdmin && foundAdmin.password && pInput === foundAdmin.password) {
-                document.getElementById('login-overlay').classList.add('hidden');
-                errEl.classList.add('hidden');
-            } else if (uInput === currentAdminUser && pInput === currentAdminPass) {
+            let foundAdmin = null;
+            try {
+                const { data: directAdmins, error } = await supabaseClient
+                    .from('admins')
+                    .select('*');
+
+                if (!error && directAdmins && directAdmins.length > 0) {
+                    adminsDatabase = directAdmins;
+                }
+            } catch (e) {
+                console.log("الاعتماد على القائمة المحلية للمسؤولين");
+            }
+
+            foundAdmin = adminsDatabase.find(a => 
+                a.username && a.username.trim().toLowerCase() === uInput.toLowerCase() && a.password === pInput
+            );
+
+            if (foundAdmin) {
                 document.getElementById('login-overlay').classList.add('hidden');
                 errEl.classList.add('hidden');
             } else {
@@ -551,14 +579,21 @@
             document.getElementById('login-form-box').classList.remove('hidden');
         }
 
-        function handleResetPassword() {
+        async function handleResetPassword() {
             const recUser = document.getElementById('recovery-username').value.trim();
             const newPass = document.getElementById('new-password-input').value.trim();
             const recErr = document.getElementById('recovery-error');
 
-            if (recUser === "amirzamzam" && newPass.length > 0) {
-                currentAdminPass = newPass;
-                localStorage.setItem('bedal_custom_admin_pass', newPass);
+            const targetAdmin = adminsDatabase.find(a => a.username && a.username.trim().toLowerCase() === recUser.toLowerCase());
+
+            if (targetAdmin && newPass.length > 0) {
+                targetAdmin.password = newPass;
+                try {
+                    if (targetAdmin.id) {
+                        await supabaseClient.from('admins').update({ password: newPass }).eq('id', targetAdmin.id);
+                    }
+                } catch(e) {}
+                localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
                 alert('تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول بكلمة المرور الجديدة.');
                 hideForgotPasswordModal();
                 document.getElementById('recovery-error').classList.add('hidden');
@@ -637,6 +672,15 @@
 
         async function fetchSupabaseData() {
             try {
+                try {
+                    const { data: adminsData, error: adminErr } = await supabaseClient.from('admins').select('*');
+                    if (adminsData && adminsData.length > 0) {
+                        adminsDatabase = adminsData;
+                    }
+                } catch(e) {
+                    console.log("استخدام جدول المسؤولين المحلي");
+                }
+
                 let fetchedProducts = [];
                 const { data: prods } = await supabaseClient.from('products').select('*').order('id', { ascending: false });
                 if (prods) {
@@ -1281,7 +1325,7 @@
             document.getElementById('admin-modal').classList.toggle('hidden');
         }
 
-        function saveNewAdmin() {
+        async function saveNewAdmin() {
             const username = document.getElementById('admin-form-username').value.trim();
             const password = document.getElementById('admin-form-password').value.trim();
 
@@ -1290,21 +1334,48 @@
                 return;
             }
 
-            adminsDatabase.push({ username, password, role: 'مسؤول نظام', status: 'نشط' });
-            localStorage.setItem('bedal_custom_admins', JSON.stringify(adminsDatabase));
+            const newAdminObj = { username, password, role: 'مسؤول نظام', status: 'نشط' };
 
-            alert('تمت إضافة المسؤول بنجاح محلياً!');
+            // محاولة الحفظ في Supabase أولاً، وفي حال عدم وجود الجدول يتم الحفظ محلياً ودون أي خطأ
+            try {
+                const { error } = await supabaseClient.from('admins').insert([newAdminObj]);
+                if (error) {
+                    console.log("تخزين محلي للمسؤول لعدم توفر جدول admins في Supabase");
+                }
+            } catch (e) {
+                console.log("تخزين محلي للمسؤول");
+            }
+
+            // التحقق من عدم تكرار اسم المستخدم وإضافته للقائمة المحلية والتخزين
+            const existsIdx = adminsDatabase.findIndex(a => a.username.toLowerCase() === username.toLowerCase());
+            if (existsIdx !== -1) {
+                adminsDatabase[existsIdx] = newAdminObj;
+            } else {
+                adminsDatabase.push(newAdminObj);
+            }
+
+            localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
+
+            alert('تمت إضافة المسؤول بنجاح!');
             toggleAdminModal();
             document.getElementById('admin-form-username').value = '';
             document.getElementById('admin-form-password').value = '';
-            updateAdminSelectOptions();
             renderAdminsTable();
+            updateAdminSelectOptions();
         }
 
-        function deleteAdmin(idx) {
+        async function deleteAdmin(idx) {
             if(confirm('هل أنت متأكد من حذف هذا المسؤول؟')) {
+                const adm = adminsDatabase[idx];
+                try {
+                    if (adm && adm.id) {
+                        await supabaseClient.from('admins').delete().eq('id', adm.id);
+                    } else if (adm && adm.username) {
+                        await supabaseClient.from('admins').delete().eq('username', adm.username);
+                    }
+                } catch(e) {}
                 adminsDatabase.splice(idx, 1);
-                localStorage.setItem('bedal_custom_admins', JSON.stringify(adminsDatabase));
+                localStorage.setItem('bedal_admins_db', JSON.stringify(adminsDatabase));
                 renderAdminsTable();
                 updateAdminSelectOptions();
                 alert('تم حذف المسؤول بنجاح!');
@@ -1421,6 +1492,7 @@
                 return;
             }
 
+            // تعديل عرض BFD
             if (bfdEditId !== "") {
                 const bfdData = {
                     title: title,
@@ -1451,6 +1523,7 @@
                 return;
             }
 
+            // إضافة منتج جديد لـ BFD مع كافة الصور
             if (isBfdChecked) {
                 const bfdData = {
                     title: title,
