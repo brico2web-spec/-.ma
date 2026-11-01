@@ -500,7 +500,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.61</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.62</span>
                 </span>
             </div>
         </div>
@@ -517,7 +517,7 @@
         let sliderDatabase = [];
         let bfdDatabase = [];
         let adminsDatabase = JSON.parse(localStorage.getItem('bedal_custom_admins')) || [
-            { username: 'ZAMZAM', role: 'مشرف رئيسي', status: 'نشط' }
+            { username: 'ZAMZAM', password: 'AMIRMOUNA303026', role: 'مشرف رئيسي', status: 'نشط' }
         ];
 
         let currentAdminUser = "ZAMZAM";
@@ -529,9 +529,11 @@
             const errEl = document.getElementById('login-error');
 
             const foundAdmin = adminsDatabase.find(a => a.username === uInput);
-            const validPass = (uInput === currentAdminUser) ? currentAdminPass : (foundAdmin ? foundAdmin.password : null);
 
-            if (uInput && pInput && validPass && pInput === validPass) {
+            if (foundAdmin && foundAdmin.password && pInput === foundAdmin.password) {
+                document.getElementById('login-overlay').classList.add('hidden');
+                errEl.classList.add('hidden');
+            } else if (uInput === currentAdminUser && pInput === currentAdminPass) {
                 document.getElementById('login-overlay').classList.add('hidden');
                 errEl.classList.add('hidden');
             } else {
@@ -667,7 +669,6 @@
                 if (bfd) {
                     bfdDatabase = bfd.map(b => {
                         let parsedImgList = extractImagesAdmin(b);
-                        // إذا كان عرض BFD يحتوي على صورة واحدة فقط، نبحث في جدول المنتجات العادية لنفس العنوان لجلب كافة الصور
                         if (parsedImgList.length <= 1 && b.title) {
                             const matchedNormal = productsDatabase.find(p => p.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
                             if (matchedNormal && matchedNormal.images && matchedNormal.images.length > 1) {
@@ -1420,7 +1421,6 @@
                 return;
             }
 
-            // تعديل عرض BFD
             if (bfdEditId !== "") {
                 const bfdData = {
                     title: title,
@@ -1451,7 +1451,6 @@
                 return;
             }
 
-            // إضافة منتج جديد لـ BFD مع كافة الصور
             if (isBfdChecked) {
                 const bfdData = {
                     title: title,
