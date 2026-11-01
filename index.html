@@ -543,8 +543,16 @@
                     </h3>
                     <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 space-y-3">
                         <p id="bfd-album-description" class="text-zinc-300 text-sm sm:text-base leading-relaxed whitespace-pre-line">وصف المنتج هنا...</p>
-                        <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-xs sm:text-sm underline focus:outline-none">
-                            المزيد...
+                        <div class="flex items-center justify-between pt-2">
+                            <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-xs sm:text-sm underline focus:outline-none">
+                                المزيد...
+                            </button>
+                        </div>
+                    </div>
+                    <!-- زر إضافي في وسط الشاشة يظهر خصيصاً عند الضغط على (إخفاء) لتقريب الزبون من الشراء -->
+                    <div id="bfd-mid-action-box" class="hidden pt-2 flex justify-center">
+                        <button id="bfd-album-mid-whatsapp-btn" onclick="" class="bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-8 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base bfd-attention-btn cursor-pointer">
+                            <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! اطلب الآن عبر الواتساب
                         </button>
                     </div>
                 </div>
@@ -784,7 +792,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-[#F97316] font-bold">إصدار V3.9.9945</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.2.8</span>
                     </span>
                 </div>
             </div>
@@ -1336,6 +1344,7 @@
 
             const descEl = document.getElementById('bfd-album-description');
             const toggleBtn = document.getElementById('bfd-desc-toggle-btn');
+            const midActionBox = document.getElementById('bfd-mid-action-box');
 
             if (descEl) {
                 if (fullBfdDescriptionText.length > 180) {
@@ -1352,11 +1361,18 @@
                 }
             }
 
+            if (midActionBox) {
+                midActionBox.classList.add('hidden');
+            }
+
             const waBtn = document.getElementById('bfd-album-whatsapp-btn');
-            if (waBtn) {
+            const midWaBtn = document.getElementById('bfd-album-mid-whatsapp-btn');
+            if (waBtn && midWaBtn) {
                 const prodTitle = product.title ? product.title.replace(/'/g, "\\'") : '';
                 const prodPrice = product.price ? product.price.toFixed(2) : '0.00';
-                waBtn.setAttribute('onclick', `orderBfdViaWhatsApp('${prodTitle}', '${prodPrice}')`);
+                const actionCall = `orderBfdViaWhatsApp('${prodTitle}', '${prodPrice}')`;
+                waBtn.setAttribute('onclick', actionCall);
+                midWaBtn.setAttribute('onclick', actionCall);
             }
 
             const container = document.getElementById('bfd-album-images-container');
@@ -1376,19 +1392,22 @@
             lucide.createIcons();
         }
 
-        // دالة تبديل حالة عرض الوصف بين المختصر والكامل عند الضغط على (المزيد...) / (إخفاء)
+        // دالة تبديل حالة عرض الوصف بين المختصر والكامل عند الضغط على (المزيد...) / (إخفاء) وإظهار زر وسط الشاشة عند الإخفاء
         function toggleBfdAlbumDescription() {
             const descEl = document.getElementById('bfd-album-description');
             const toggleBtn = document.getElementById('bfd-desc-toggle-btn');
+            const midActionBox = document.getElementById('bfd-mid-action-box');
             if (!descEl || !toggleBtn) return;
 
             isBfdDescExpanded = !isBfdDescExpanded;
             if (isBfdDescExpanded) {
                 descEl.innerText = fullBfdDescriptionText;
                 toggleBtn.innerText = 'إخفاء';
+                if (midActionBox) midActionBox.classList.remove('hidden');
             } else {
                 descEl.innerText = fullBfdDescriptionText.substring(0, 180) + '...';
                 toggleBtn.innerText = 'المزيد...';
+                if (midActionBox) midActionBox.classList.add('hidden');
             }
         }
 
