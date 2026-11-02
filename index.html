@@ -125,6 +125,20 @@
         .bfd-attention-btn {
             animation: btnPulseAttention 1.5s infinite ease-in-out;
         }
+        /* تأثير الإضاءة البيضاء الخفيفة لزر إغلاق الإعلان */
+        @keyframes whiteSoftGlow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.8);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 35px rgba(255, 255, 255, 0.5);
+                border-color: #ffffff;
+            }
+        }
+        .white-glow-btn {
+            animation: whiteSoftGlow 2s infinite ease-in-out;
+        }
         button, .custom-btn {
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
@@ -136,6 +150,32 @@
     </style>
 </head>
 <body class="bg-[#F8F9FA] text-[#0F172A] flex flex-col min-h-screen relative">
+
+    <!-- نافذة إعلان الموقع الأولى (9:16) عند مدخل الموقع -->
+    <div id="welcome-ad-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 transition-opacity duration-300">
+        <div class="relative w-full max-w-sm aspect-[9/16] bg-zinc-950 rounded-2xl shadow-2xl border-2 border-amber-400 overflow-hidden flex flex-col justify-between p-3">
+            <!-- صورة الإعلان (بنسبة 9:16) -->
+            <div class="absolute inset-0 w-full h-full">
+                <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80" alt="إعلان الموقع" class="w-full h-full object-cover opacity-90">
+                <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40"></div>
+            </div>
+
+            <!-- محتوى علوي اختياري داخل الإعلان -->
+            <div class="relative z-10 text-center pt-2">
+                <span class="bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">
+                    ✨ إعلان حصري لزوارنا ✨
+                </span>
+            </div>
+
+            <!-- زر الإغلاق الواضح في الأسفل مع إضاءة بيضاء خفيفة -->
+            <div class="relative z-10 pb-2 flex justify-center">
+                <button onclick="closeWelcomeAdModal()" class="w-11/12 bg-white/20 hover:bg-white/30 text-white font-black py-3 px-6 rounded-xl border-2 border-white/80 white-glow-btn backdrop-blur-md transition-all flex items-center justify-center gap-2 text-sm shadow-xl cursor-pointer">
+                    <i data-lucide="x-circle" class="w-5 h-5 text-white"></i>
+                    <span>إغلاق الإعلان ومتابعة التصفح</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Floating Side Cart Button -->
     <div id="floating-cart-btn" onclick="toggleCartDrawer()" class="fixed bottom-6 left-6 z-50 cursor-pointer bg-[#F97316] hover:bg-[#EA580C] text-white p-4 rounded-full shadow-2xl border-2 border-white flex items-center justify-center transition-all duration-300 hover:scale-110 group">
@@ -786,7 +826,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.2.9</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.3.1</span>
                     </span>
                 </div>
             </div>
@@ -863,6 +903,26 @@
         ];
 
         let currentReviewIndex = 0;
+
+        // دالة إظهار نافذة الترحيب / الإعلان عند أول مدخل للموقع
+        function checkAndShowWelcomeAd() {
+            const hasSeenAd = sessionStorage.getItem('bedal_welcome_ad_seen');
+            if (!hasSeenAd) {
+                const modal = document.getElementById('welcome-ad-modal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    lucide.createIcons();
+                }
+            }
+        }
+
+        function closeWelcomeAdModal() {
+            const modal = document.getElementById('welcome-ad-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                sessionStorage.setItem('bedal_welcome_ad_seen', 'true');
+            }
+        }
 
         function initFooterReviewsSlider() {
             renderCurrentReview();
@@ -1786,6 +1846,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchSupabaseStoreData();
             initFooterReviewsSlider();
+            checkAndShowWelcomeAd();
             lucide.createIcons();
         });
     </script>

@@ -39,6 +39,33 @@
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
+    <!-- نافذة مخصصة واحترافية للتنبيهات (Custom Alert Modal) -->
+    <div id="custom-alert-modal" class="fixed inset-0 z-[999999] bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 text-center space-y-4 animate-in fade-in zoom-in duration-200">
+            <div id="custom-alert-icon" class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl mx-auto flex items-center justify-center">
+                <i data-lucide="info" class="w-6 h-6"></i>
+            </div>
+            <h4 id="custom-alert-title" class="font-bold text-gray-900 text-base">تنبيه</h4>
+            <p id="custom-alert-message" class="text-xs text-gray-600 leading-relaxed"></p>
+            <button onclick="closeCustomAlert()" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-xl hover:bg-indigo-700 transition-colors text-xs shadow-md">حسناً</button>
+        </div>
+    </div>
+
+    <!-- نافذة مخصصة واحترافية للحذف (Custom Confirm Modal) -->
+    <div id="custom-confirm-modal" class="fixed inset-0 z-[999999] bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 text-center space-y-4 animate-in fade-in zoom-in duration-200">
+            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl mx-auto flex items-center justify-center">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <h4 class="font-bold text-gray-900 text-base">تأكيد عملية الحذف</h4>
+            <p id="custom-confirm-message" class="text-xs text-gray-600 leading-relaxed">هل أنت متأكد من رغبتك في إتمام عملية الحذف نهائياً؟</p>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button id="custom-confirm-cancel-btn" class="bg-gray-100 text-gray-700 font-bold py-2.5 rounded-xl hover:bg-gray-200 transition-colors text-xs">إلغاء</button>
+                <button id="custom-confirm-yes-btn" class="bg-rose-600 text-white font-bold py-2.5 rounded-xl hover:bg-rose-700 transition-colors text-xs shadow-md">حذف</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Login Overlay / Modal قبل الولوج -->
     <div id="login-overlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 space-y-6 relative">
@@ -150,6 +177,7 @@
             <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة المنتجات</button>
             <button onclick="switchAdminTab('bfd')" id="admin-tab-btn-bfd" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> إدارة منتجات Black Free Day</button>
             <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة شرائح السلايدر</button>
+            <button onclick="switchAdminTab('popupad')" id="admin-tab-btn-popupad" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-indigo-600"></i> إدارة إعلان الدخول (Popup)</button>
             <button onclick="switchAdminTab('admins')" id="admin-tab-btn-admins" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4 text-indigo-600"></i> المسؤولين</button>
         </div>
 
@@ -220,7 +248,7 @@
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
                             <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i> إدارة منتجات Black Free Day
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">تعديل وإدارة عروض نهاية الأسبوع الكبرى المرتبطة بـ Supabase.</p>
+                        <p class="text-xs text-gray-500 mt-1">تعديل وإدارة عروض نهاية الأسبوع الكبرى.</p>
                     </div>
                     <div class="flex items-center gap-3 w-full sm:w-auto">
                         <input type="text" id="search-bfd-input" onkeyup="filterBfdTable()" placeholder="بحث في عروض BFD..." class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-amber-600">
@@ -267,6 +295,31 @@
                     </div>
                 </div>
                 <div id="admin-slider-editor-container" class="space-y-6 custom-scroll-container p-2"></div>
+            </div>
+        </div>
+
+        <!-- قسم إدارة إعلان الدخول (Popup Ad) المحدث -->
+        <div id="admin-subtab-popupad" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-w-2xl mx-auto">
+                <div class="border-b pb-4">
+                    <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                        <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> إدارة صورة إعلان الدخول (Popup 9:16)
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">قم بتغيير وتحديث رابط الصورة (أو رابط Dropbox) التي تظهر للزوار كنافذة منبثقة عند أول مدخل للموقع.</p>
+                </div>
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700">رابط صورة الإعلان (Dropbox / متوافق مع الصور) *</label>
+                        <input type="url" id="popup-ad-img-input" placeholder="https://www.dropbox.com/s/... أو رابط مباشر" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm" oninput="previewPopupAdInput()">
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-2xl border flex flex-col items-center justify-center space-y-2">
+                        <span class="text-xs font-bold text-gray-500">معاينة الصورة الحالية:</span>
+                        <img id="popup-ad-preview-img" src="" alt="معاينة الإعلان" class="w-32 aspect-[9/16] object-cover rounded-xl border shadow-md bg-white" onerror="this.src='https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80'">
+                    </div>
+                    <button onclick="savePopupAdImage()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i> حفظ وتحديث صورة الإعلان
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -446,7 +499,7 @@
                     <label class="block font-semibold mb-1">وصف المنتج *</label>
                     <textarea id="prod-form-desc" rows="2" class="w-full px-4 py-2.5 rounded-xl border"></textarea>
                 </div>
-                <button onclick="saveProductForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ في Supabase</button>
+                <button onclick="saveProductForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ البيانات</button>
             </div>
         </div>
     </div>
@@ -474,7 +527,7 @@
                     <label class="block font-semibold mb-1">العبارة / الوصف الفرعي *</label>
                     <textarea id="slider-form-desc" rows="2" placeholder="العبارة أو الوصف..." class="w-full px-4 py-2.5 rounded-xl border"></textarea>
                 </div>
-                <button onclick="saveNewSlider()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg">حفظ السلايدر في Supabase</button>
+                <button onclick="saveNewSlider()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg">حفظ السلايدر</button>
             </div>
         </div>
     </div>
@@ -505,7 +558,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.69</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.73</span>
                 </span>
             </div>
         </div>
@@ -528,7 +581,44 @@
         let currentAdminUser = "ZAMZAM";
         let currentAdminPass = "AMIRMOUNA303026";
 
-        // التحقق من تسجيل الدخول مباشرة من جدول admins في Supabase ليعمل في أي جهاز
+        // دوال النوافذ المخصصة الاحترافية بدلاً من alert و confirm التقليدية
+        function showCustomAlert(message, title = "تنبيه") {
+            document.getElementById('custom-alert-title').innerText = title;
+            document.getElementById('custom-alert-message').innerText = message;
+            document.getElementById('custom-alert-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('custom-alert-modal').classList.add('hidden');
+        }
+
+        function showCustomConfirm(message, onConfirmCallback) {
+            document.getElementById('custom-confirm-message').innerText = message;
+            const modal = document.getElementById('custom-confirm-modal');
+            modal.classList.remove('hidden');
+
+            const yesBtn = document.getElementById('custom-confirm-yes-btn');
+            const cancelBtn = document.getElementById('custom-confirm-cancel-btn');
+
+            // إزالة الأحداث القديمة لتجنب تكرارها
+            const newYesBtn = yesBtn.cloneNode(true);
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+            newYesBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                if (typeof onConfirmCallback === 'function') onConfirmCallback();
+            });
+
+            newCancelBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+            lucide.createIcons();
+        }
+
+        // التحقق من تسجيل الدخول مباشرة من جدول admins
         async function handleLogin() {
             const uInput = document.getElementById('login-username').value.trim();
             const pInput = document.getElementById('login-password').value.trim();
@@ -548,7 +638,7 @@
                     adminsDatabase = directAdmins;
                 }
             } catch (e) {
-                console.log("خطأ في جلب المسؤولين من Supabase");
+                console.log("خطأ في جلب المسؤولين");
             }
 
             const foundAdmin = adminsDatabase.find(a => 
@@ -592,7 +682,7 @@
                         await supabaseClient.from('admins').update({ password: newPass }).eq('id', targetAdmin.id);
                     }
                 } catch(e) {}
-                alert('تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول بكلمة المرور الجديدة.');
+                showCustomAlert('تم تحديث كلمة المرور بنجاح! يرجى تسجيل الدخول بكلمة المرور الجديدة.', 'نجاح التحديث');
                 hideForgotPasswordModal();
                 document.getElementById('recovery-error').classList.add('hidden');
             } else {
@@ -604,6 +694,17 @@
             if (!pathOrUrl || typeof pathOrUrl !== 'string') return '';
             let clean = pathOrUrl.trim();
             if (clean === '' || clean.toLowerCase() === 'null' || clean.toLowerCase() === 'undefined' || clean === '[]' || clean === '{}') return '';
+            
+            // دعم روابط Dropbox وتحويلها لعرض مباشر
+            if (clean.includes('dropbox.com')) {
+                clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+                clean = clean.replace('?dl=0', '');
+                clean = clean.replace('&dl=0', '');
+                if (!clean.includes('dl=1') && !clean.includes('raw=1')) {
+                    clean += (clean.includes('?') ? '&' : '?') + 'raw=1';
+                }
+            }
+
             if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('data:image/') || clean.startsWith('/')) {
                 return clean;
             }
@@ -676,7 +777,7 @@
                         adminsDatabase = adminsData;
                     }
                 } catch(e) {
-                    console.log("خطأ في جلب المسؤولين من Supabase");
+                    console.log("خطأ في جلب المسؤولين");
                 }
 
                 let fetchedProducts = [];
@@ -725,12 +826,79 @@
                     });
                 }
 
+                await loadPopupAdSettings();
+
                 renderAdminProducts();
                 renderAdminOrders();
                 renderSliderEditor();
                 renderBfdTable();
             } catch (err) {
-                console.error("خطأ في جلب بيانات Supabase:", err);
+                console.error("خطأ في جلب البيانات:", err);
+            }
+        }
+
+        async function loadPopupAdSettings() {
+            let savedImg = '';
+            try {
+                const { data, error } = await supabaseClient
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'popup_ad_img')
+                    .single();
+                if (!error && data && data.value) {
+                    savedImg = data.value;
+                }
+            } catch(e) {
+                console.log("جاري استخدام القيم المحلية أو الافتراضية للإعلان");
+            }
+
+            if (!savedImg) {
+                savedImg = localStorage.getItem('bedal_popup_ad_img_raw') || 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80';
+            }
+
+            const inputEl = document.getElementById('popup-ad-img-input');
+            const previewEl = document.getElementById('popup-ad-preview-img');
+            if (inputEl) inputEl.value = savedImg;
+            if (previewEl) previewEl.src = formatImageUrlAdmin(savedImg);
+        }
+
+        function previewPopupAdInput() {
+            const inputEl = document.getElementById('popup-ad-img-input');
+            const previewEl = document.getElementById('popup-ad-preview-img');
+            if (!inputEl || !previewEl) return;
+            const val = inputEl.value.trim();
+            if (val) {
+                previewEl.src = formatImageUrlAdmin(val);
+            }
+        }
+
+        async function savePopupAdImage() {
+            const inputEl = document.getElementById('popup-ad-img-input');
+            const previewEl = document.getElementById('popup-ad-preview-img');
+            if (!inputEl) return;
+            let rawVal = inputEl.value.trim();
+            if (!rawVal) {
+                showCustomAlert('يرجى إدخال رابط أو مسار الصورة أولاً!', 'تنبيه');
+                return;
+            }
+
+            const formattedUrl = formatImageUrlAdmin(rawVal);
+            localStorage.setItem('bedal_popup_ad_img_raw', rawVal);
+            localStorage.setItem('bedal_popup_ad_img', formattedUrl);
+            if (previewEl) previewEl.src = formattedUrl;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('settings')
+                    .upsert([{ key: 'popup_ad_img', value: rawVal }], { onConflict: 'key' });
+                
+                if (error) {
+                    showCustomAlert('تم حفظ وتحديث صورة إعلان الدخول (Popup) محلياً بنجاح!', 'تم الحفظ');
+                } else {
+                    showCustomAlert('تم حفظ وتحديث صورة إعلان الدخول (Popup) بنجاح!', 'تم الحفظ بنجاح');
+                }
+            } catch(e) {
+                showCustomAlert('تم الحفظ بنجاح!', 'تم الحفظ');
             }
         }
 
@@ -844,7 +1012,7 @@
 
         function downloadMetaCatalogDataFeed() {
             if (productsDatabase.length === 0) {
-                alert('لا توجد منتجات في قاعدة البيانات لتصديرها!');
+                showCustomAlert('لا توجد منتجات في قاعدة البيانات لتصديرها!', 'تنبيه');
                 return;
             }
 
@@ -1019,13 +1187,13 @@
             if (order.id) {
                 const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('id', order.id);
                 if (error) {
-                    alert('خطأ أثناء تحديث الحالة في Supabase: ' + error.message);
+                    showCustomAlert('خطأ أثناء تحديث الحالة: ' + error.message, 'خطأ');
                     return;
                 }
             } else {
                 const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('phone', order.phone).eq('name', order.name);
                 if (error) {
-                    console.error('Supabase update warning:', error.message);
+                    console.error('Update warning:', error.message);
                 }
             }
             renderAdminOrders();
@@ -1034,7 +1202,7 @@
         function downloadAllSentToTajirExcel() {
             const sentOrders = salesOrdersDatabase.filter(o => o.status === 'تم إرسال إلى تاجر');
             if (sentOrders.length === 0) {
-                alert('لا توجد أي طلبات حالتها "تم إرسال إلى تاجر" لتحميلها!');
+                showCustomAlert('لا توجد أي طلبات حالتها "تم إرسال إلى تاجر" لتحميلها!', 'تنبيه');
                 return;
             }
 
@@ -1059,20 +1227,20 @@
             XLSX.writeFile(workbook, `All_Orders_Sent_To_Tajir.xlsx`);
         }
 
-        async function deleteOrder(idx) {
-            if (confirm('هل أنت متأكد من حذف هذه الطلبية نهائياً؟')) {
+        function deleteOrder(idx) {
+            showCustomConfirm('هل أنت متأكد من حذف هذه الطلبية نهائياً؟', async () => {
                 const order = salesOrdersDatabase[idx];
                 if (order && order.id) {
                     const { error } = await supabaseClient.from('orders').delete().eq('id', order.id);
                     if (error) {
-                        alert('حدث خطأ أثناء الحذف من Supabase: ' + error.message);
+                        showCustomAlert('حدث خطأ أثناء الحذف: ' + error.message, 'خطأ');
                         return;
                     }
                 }
                 salesOrdersDatabase.splice(idx, 1);
                 renderAdminOrders();
-                alert('تم حذف الطلبية بنجاح!');
-            }
+                showCustomAlert('تم حذف الطلبية بنجاح!', 'تم الحذف');
+            });
         }
 
         function renderBfdTable(filteredList = null) {
@@ -1154,8 +1322,8 @@
             toggleProductModal();
         }
 
-        async function deleteBfd(idx) {
-            if(confirm('هل أنت متأكد من حذف هذا العرض؟')) {
+        function deleteBfd(idx) {
+            showCustomConfirm('هل أنت متأكد من حذف هذا العرض؟', async () => {
                 const item = bfdDatabase[idx];
                 if(item && item.id) {
                     await supabaseClient.from('black_free_day').delete().eq('id', item.id);
@@ -1163,7 +1331,8 @@
                 bfdDatabase.splice(idx, 1);
                 renderBfdTable();
                 renderAdminProducts();
-            }
+                showCustomAlert('تم حذف العرض بنجاح!', 'تم الحذف');
+            });
         }
 
         function renderSliderEditor(filteredList = null) {
@@ -1238,19 +1407,19 @@
                     await supabaseClient.from('slider').insert([slide]);
                 }
             }
-            alert('تم حفظ وتحديث بيانات السلايدر في Supabase بنجاح!');
+            showCustomAlert('تم حفظ وتحديث بيانات السلايدر بنجاح!', 'تم الحفظ');
         }
 
-        async function deleteSlider(idx) {
-            if (confirm('هل أنت متأكد من حذف هذه الشريحة؟')) {
+        function deleteSlider(idx) {
+            showCustomConfirm('هل أنت متأكد من حذف هذه الشريحة؟', async () => {
                 const slide = sliderDatabase[idx];
                 if (slide && slide.id) {
                     await supabaseClient.from('slider').delete().eq('id', slide.id);
                 }
                 sliderDatabase.splice(idx, 1);
                 renderSliderEditor();
-                alert('تم حذف الشريحة بنجاح!');
-            }
+                showCustomAlert('تم حذف الشريحة بنجاح!', 'تم الحذف');
+            });
         }
 
         function toggleSliderModal() {
@@ -1264,7 +1433,7 @@
             const desc = document.getElementById('slider-form-desc').value.trim();
 
             if (!img || !title || !desc) {
-                alert('يرجى ملء الحقول المطلوبة (الصورة، العنوان، والعبارة)!');
+                showCustomAlert('يرجى ملء الحقول المطلوبة (الصورة، العنوان، والعبارة)!', 'تنبيه');
                 return;
             }
 
@@ -1272,11 +1441,11 @@
 
             const { error } = await supabaseClient.from('slider').insert([newSlide]);
             if (error) {
-                alert('حدث خطأ أثناء حفظ السلايدر: ' + error.message);
+                showCustomAlert('حدث خطأ أثناء حفظ السلايدر: ' + error.message, 'خطأ');
                 return;
             }
 
-            alert('تم إضافة السلايدر بنجاح!');
+            showCustomAlert('تم إضافة السلايدر بنجاح!', 'نجاح');
             toggleSliderModal();
             fetchSupabaseData();
         }
@@ -1328,28 +1497,27 @@
             const password = document.getElementById('admin-form-password').value.trim();
 
             if(!username || !password) {
-                alert('يرجى إدخال اسم المستخدم وكلمة المرور!');
+                showCustomAlert('يرجى إدخال اسم المستخدم وكلمة المرور!', 'تنبيه');
                 return;
             }
 
             const newAdminObj = { username, password, role: 'مسؤول نظام', status: 'نشط' };
 
-            // الحفظ المباشر والنهائي في جدول admins في Supabase ليعمل من أي جهاز
             const { error } = await supabaseClient.from('admins').insert([newAdminObj]);
             if (error) {
-                alert('حدث خطأ أثناء حفظ المسؤول في قاعدة البيانات: ' + error.message);
+                showCustomAlert('حدث خطأ أثناء حفظ المسؤول: ' + error.message, 'خطأ');
                 return;
             }
 
-            alert('تمت إضافة المسؤول بنجاح في Supabase!');
+            showCustomAlert('تمت إضافة المسؤول بنجاح!', 'نجاح');
             toggleAdminModal();
             document.getElementById('admin-form-username').value = '';
             document.getElementById('admin-form-password').value = '';
             fetchSupabaseData();
         }
 
-        async function deleteAdmin(idx) {
-            if(confirm('هل أنت متأكد من حذف هذا المسؤول؟')) {
+        function deleteAdmin(idx) {
+            showCustomConfirm('هل أنت متأكد من حذف هذا المسؤول؟', async () => {
                 const adm = adminsDatabase[idx];
                 if (adm && adm.id) {
                     await supabaseClient.from('admins').delete().eq('id', adm.id);
@@ -1357,8 +1525,8 @@
                     await supabaseClient.from('admins').delete().eq('username', adm.username);
                 }
                 fetchSupabaseData();
-                alert('تم حذف المسؤول بنجاح!');
-            }
+                showCustomAlert('تم حذف المسؤول بنجاح!', 'تم الحذف');
+            });
         }
 
         function toggleProductModal() {
@@ -1467,7 +1635,7 @@
             else if(category === 'kids') catLabel = 'أطفال';
 
             if (!title || isNaN(price) || images.length === 0 || !description) {
-                alert('يرجى ملء الحقول المطلوبة (اسم المنتج، السعر، صورة رئيسية واحدة على الأقل، والوصف)!');
+                showCustomAlert('يرجى ملء الحقول المطلوبة (اسم المنتج، السعر، صورة رئيسية واحدة على الأقل، والوصف)!', 'تنبيه');
                 return;
             }
 
@@ -1484,7 +1652,7 @@
 
                 const { error: updateBfdErr } = await supabaseClient.from('black_free_day').update(bfdData).eq('id', bfdEditId);
                 if (updateBfdErr) {
-                    alert('خطأ أثناء تحديث عرض Black Free Day: ' + updateBfdErr.message);
+                    showCustomAlert('خطأ أثناء تحديث العرض: ' + updateBfdErr.message, 'خطأ');
                     return;
                 }
 
@@ -1496,7 +1664,7 @@
                     }
                 }
 
-                alert('تم تحديث عرض Black Free Day وكافة صور المنتج بنجاح!');
+                showCustomAlert('تم تحديث عرض Black Free Day وكافة صور المنتج بنجاح!', 'نجاح التحديث');
                 toggleProductModal();
                 fetchSupabaseData();
                 return;
@@ -1515,11 +1683,11 @@
 
                 const { error: bfdError } = await supabaseClient.from('black_free_day').insert([bfdData]);
                 if (bfdError) {
-                    alert('حدث خطأ أثناء نقل المنتج إلى Black Free Day: ' + bfdError.message);
+                    showCustomAlert('حدث خطأ أثناء نقل المنتج: ' + bfdError.message, 'خطأ');
                     return;
                 }
 
-                alert('تمت إضافة المنتج بنجاح إلى قسم Black Free Day بكافة صوره!');
+                showCustomAlert('تمت إضافة المنتج بنجاح إلى قسم Black Free Day بكافة صوره!', 'نجاح الإضافة');
                 toggleProductModal();
                 fetchSupabaseData();
                 return;
@@ -1548,38 +1716,39 @@
                 if (targetProd && targetProd.id) {
                     const { error } = await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
                     if (error) {
-                        alert('حدث خطأ أثناء التحديث في Supabase: ' + error.message);
+                        showCustomAlert('حدث خطأ أثناء التحديث: ' + error.message, 'خطأ');
                         return;
                     }
                 } else {
                     const { error } = await supabaseClient.from('products').insert([prodData]);
                     if (error) {
-                        alert('حدث خطأ أثناء الحفظ في Supabase: ' + error.message);
+                        showCustomAlert('حدث خطأ أثناء الحفظ: ' + error.message, 'خطأ');
                         return;
                     }
                 }
             } else {
                 const { error } = await supabaseClient.from('products').insert([prodData]);
                 if (error) {
-                    alert('حدث خطأ أثناء الحفظ في Supabase: ' + error.message);
+                    showCustomAlert('حدث خطأ أثناء الحفظ: ' + error.message, 'خطأ');
                     return;
                 }
             }
 
-            alert('تم حفظ البيانات بنجاح في Supabase مباشرة!');
+            showCustomAlert('تم حفظ البيانات بنجاح!', 'نجاح الحفظ');
             toggleProductModal();
             fetchSupabaseData();
         }
 
-        async function deleteProduct(idx) {
-            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+        function deleteProduct(idx) {
+            showCustomConfirm('هل أنت متأكد من حذف هذا المنتج؟', async () => {
                 const prod = productsDatabase[idx];
                 if (prod.id) {
                     await supabaseClient.from('products').delete().eq('id', prod.id);
                 }
                 productsDatabase.splice(idx, 1);
                 renderAdminProducts();
-            }
+                showCustomAlert('تم حذف المنتج بنجاح!', 'تم الحذف');
+            });
         }
 
         function switchAdminTab(tabKey) {
@@ -1587,12 +1756,14 @@
             document.getElementById('admin-subtab-products').classList.add('hidden');
             document.getElementById('admin-subtab-bfd').classList.add('hidden');
             document.getElementById('admin-subtab-slider').classList.add('hidden');
+            document.getElementById('admin-subtab-popupad').classList.add('hidden');
             document.getElementById('admin-subtab-admins').classList.add('hidden');
 
             document.getElementById('admin-tab-btn-orders').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-products').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
+            document.getElementById('admin-tab-btn-popupad').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-admins').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
 
             if (tabKey === 'products') {
@@ -1607,6 +1778,10 @@
                 document.getElementById('admin-subtab-slider').classList.remove('hidden');
                 document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderSliderEditor();
+            } else if (tabKey === 'popupad') {
+                document.getElementById('admin-subtab-popupad').classList.remove('hidden');
+                document.getElementById('admin-tab-btn-popupad').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
+                loadPopupAdSettings();
             } else if (tabKey === 'admins') {
                 document.getElementById('admin-subtab-admins').classList.remove('hidden');
                 document.getElementById('admin-tab-btn-admins').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
