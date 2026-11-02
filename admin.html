@@ -670,7 +670,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.82</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.83</span>
                 </span>
             </div>
         </div>
@@ -730,13 +730,13 @@
             lucide.createIcons();
         }
 
-        // دالة الحساب التلقائي للثمن الأصلي في المتجر والربح الصافي النهائي
+        // دالة الحساب الصحيحة للربح الصافي والثمن المقترح في المتجر
         function calculateStorePriceAuto() {
             const tajirVal = parseFloat(document.getElementById('calc-tajir-price').value) || 0;
             const prepVal = parseFloat(document.getElementById('calc-prep-cost').value) || 0;
             const sellingVal = parseFloat(document.getElementById('calc-selling-price').value) || 0;
 
-            // حساب الربح الصافي النهائي = ثمن البيع - (ثمن Tajir + ثمن التجهيز)
+            // حساب الربح الصافي الصحيح = ثمن البيع (المستهدف) - (ثمن Tajir + ثمن التجهيز)
             let netProfit = sellingVal > 0 ? (sellingVal - (tajirVal + prepVal)) : 0;
             const netProfitEl = document.getElementById('calc-net-profit');
             if (netProfitEl) {
@@ -748,17 +748,19 @@
                 }
             }
 
-            let storePrice = sellingVal > 0 ? (sellingVal + tajirVal + prepVal) : 0;
+            // الثمن المقترح في المتجر يساوي ثمن البيع المستهدف
+            let storePrice = sellingVal > 0 ? sellingVal : 0;
             document.getElementById('calc-result-store-price').innerText = storePrice.toFixed(2) + ' د.م';
         }
 
         function applyCalculatedPriceToForm() {
             const storePriceText = document.getElementById('calc-result-store-price').innerText;
             const numericValue = parseFloat(storePriceText);
+            const sellingVal = parseFloat(document.getElementById('calc-selling-price').value) || 0;
+
             if (!isNaN(numericValue) && numericValue > 0) {
                 document.getElementById('prod-form-price').value = numericValue;
-                const sellingVal = document.getElementById('calc-selling-price').value;
-                if (sellingVal) {
+                if (sellingVal > 0) {
                     document.getElementById('prod-form-discount-price').value = sellingVal;
                 }
                 showCustomAlert('تم تطبيق الثمن المحسوب بنجاح في خانة الثمن الأصلي للمنتج!', 'تم التطبيق');
@@ -1657,6 +1659,12 @@
             document.getElementById('prod-form-category').value = matchedProd && matchedProd.category ? matchedProd.category : 'various';
             document.getElementById('prod-form-admin').value = matchedProd && matchedProd.adminKey ? matchedProd.adminKey : 'ZAMZAM';
 
+            // تعبئة خانات الحاسبة بالقيم المحفوظة لتجنب تفريغها
+            document.getElementById('calc-tajir-price').value = matchedProd && matchedProd.tajirPrice ? matchedProd.tajirPrice : '';
+            document.getElementById('calc-prep-cost').value = matchedProd && matchedProd.prepCost ? matchedProd.prepCost : '';
+            document.getElementById('calc-selling-price').value = bfdItem.price || (matchedProd ? matchedProd.discountPrice : '') || '';
+            calculateStorePriceAuto();
+
             const imgs = (bfdItem.images && bfdItem.images.length > 0) ? bfdItem.images : (matchedProd && matchedProd.images ? matchedProd.images : [bfdItem.img]);
             for(let i = 1; i <= 5; i++) {
                 document.getElementById(`prod-form-img-${i}`).value = imgs[i-1] || '';
@@ -1920,9 +1928,10 @@
             document.getElementById('prod-form-category').value = p.category || 'various';
             document.getElementById('prod-form-admin').value = p.adminKey || 'ZAMZAM';
             
-            document.getElementById('calc-tajir-price').value = '';
-            document.getElementById('calc-prep-cost').value = '';
-            document.getElementById('calc-selling-price').value = p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.price || '');
+            // تعبئة خانات الحاسبة بالقيم المحفوظة لتجنب تفريغها
+            document.getElementById('calc-tajir-price').value = p.tajirPrice !== undefined && p.tajirPrice !== null ? p.tajirPrice : '';
+            document.getElementById('calc-prep-cost').value = p.prepCost !== undefined && p.prepCost !== null ? p.prepCost : '';
+            document.getElementById('calc-selling-price').value = p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '' ? p.discountPrice : (p.price || '');
             calculateStorePriceAuto();
 
             const imgs = Array.isArray(p.images) ? p.images : [];
@@ -1951,6 +1960,10 @@
 
             const adminKey = document.getElementById('prod-form-admin').value;
             const category = document.getElementById('prod-form-category').value;
+
+            // حفظ قيم الحاسبة في قاعدة البيانات لتظل محفوظة عند التعديل مستقبلاً
+            const tajirPrice = parseFloat(document.getElementById('calc-tajir-price').value) || null;
+            const prepCost = parseFloat(document.getElementById('calc-prep-cost').value) || null;
             
             let images = [];
             for(let i = 1; i <= 5; i++) {
@@ -1994,7 +2007,7 @@
                 }
 
                 if (id !== "") {
-                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds };
+                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds, tajirPrice, prepCost };
                     const targetProd = productsDatabase.find(p => p.id == id);
                     if (targetProd && targetProd.id) {
                         await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
@@ -2041,7 +2054,9 @@
                 discountPrice,
                 adminKey,
                 videos,
-                hasAds
+                hasAds,
+                tajirPrice,
+                prepCost
             };
 
             if (id !== "" && !isNaN(id)) {
