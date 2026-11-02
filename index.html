@@ -826,7 +826,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.3.2</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.3.3</span>
                     </span>
                 </div>
             </div>
@@ -904,7 +904,7 @@
 
         let currentReviewIndex = 0;
 
-        // دالة جلب إعلان الدخول (Popup) مباشرة من قاعدة البيانات وتحديث الصورة فوراً
+        // دالة جلب إعلان الدخول (Popup) مباشرة من قاعدة البيانات وتحديث الصورة وإظهارها عند كل تحديث للصفحة
         async function checkAndShowWelcomeAd() {
             let adImgUrl = 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80';
             try {
@@ -934,13 +934,11 @@
                 imgEl.src = adImgUrl;
             }
 
-            const hasSeenAd = sessionStorage.getItem('bedal_welcome_ad_seen');
-            if (!hasSeenAd) {
-                const modal = document.getElementById('welcome-ad-modal');
-                if (modal) {
-                    modal.classList.remove('hidden');
-                    lucide.createIcons();
-                }
+            // إظهار نافذة الإعلان دائماً عند تحديث الصفحة (بدون الاعتماد على sessionStorage)
+            const modal = document.getElementById('welcome-ad-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                lucide.createIcons();
             }
         }
 
@@ -948,7 +946,6 @@
             const modal = document.getElementById('welcome-ad-modal');
             if (modal) {
                 modal.classList.add('hidden');
-                sessionStorage.setItem('bedal_welcome_ad_seen', 'true');
             }
         }
 
