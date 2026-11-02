@@ -156,7 +156,7 @@
         <div class="relative w-full max-w-sm aspect-[9/16] bg-zinc-950 rounded-2xl shadow-2xl border-2 border-amber-400 overflow-hidden flex flex-col justify-between p-3">
             <!-- صورة الإعلان (بنسبة 9:16) -->
             <div class="absolute inset-0 w-full h-full">
-                <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80" alt="إعلان الموقع" class="w-full h-full object-cover opacity-90">
+                <img id="welcome-ad-img" src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80" alt="إعلان الموقع" class="w-full h-full object-cover opacity-90">
                 <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40"></div>
             </div>
 
@@ -826,7 +826,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.3.1</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.3.2</span>
                     </span>
                 </div>
             </div>
@@ -904,8 +904,36 @@
 
         let currentReviewIndex = 0;
 
-        // دالة إظهار نافذة الترحيب / الإعلان عند أول مدخل للموقع
-        function checkAndShowWelcomeAd() {
+        // دالة جلب إعلان الدخول (Popup) مباشرة من قاعدة البيانات وتحديث الصورة فوراً
+        async function checkAndShowWelcomeAd() {
+            let adImgUrl = 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80';
+            try {
+                const { data, error } = await supabaseClient
+                    .from('settings')
+                    .select('value')
+                    .eq('key', 'popup_ad_img')
+                    .single();
+                if (!error && data && data.value) {
+                    let clean = data.value.trim();
+                    if (clean.includes('dropbox.com')) {
+                        clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+                        clean = clean.replace('?dl=0', '');
+                        clean = clean.replace('&dl=0', '');
+                        if (!clean.includes('dl=1') && !clean.includes('raw=1')) {
+                            clean += (clean.includes('?') ? '&' : '?') + 'raw=1';
+                        }
+                    }
+                    adImgUrl = clean;
+                }
+            } catch(e) {
+                console.log("استخدام الصورة الافتراضية للإعلان");
+            }
+
+            const imgEl = document.getElementById('welcome-ad-img');
+            if (imgEl) {
+                imgEl.src = adImgUrl;
+            }
+
             const hasSeenAd = sessionStorage.getItem('bedal_welcome_ad_seen');
             if (!hasSeenAd) {
                 const modal = document.getElementById('welcome-ad-modal');
