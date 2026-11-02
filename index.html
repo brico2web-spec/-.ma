@@ -843,7 +843,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.5.2</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.5.3</span>
                     </span>
                 </div>
             </div>
@@ -1029,13 +1029,17 @@
                 let fetchedProducts = [];
                 const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
                 if (prods) {
-                    fetchedProducts = prods.map(p => ({
-                        ...p,
-                        images: extractImagesFromRecord(p),
-                        videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
-                        price: (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : parseFloat(p.price || 0),
-                        oldPrice: parseFloat(p.price || 0)
-                    }));
+                    fetchedProducts = prods.map(p => {
+                        let originalPrice = parseFloat(p.price || 0);
+                        let finalDiscPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
+                        return {
+                            ...p,
+                            images: extractImagesFromRecord(p),
+                            videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
+                            price: finalDiscPrice,
+                            oldPrice: originalPrice > finalDiscPrice ? originalPrice : (p.oldPrice ? parseFloat(p.oldPrice) : originalPrice)
+                        };
+                    });
                 }
 
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
