@@ -176,6 +176,7 @@
             <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap">سجل الطلبات</button>
             <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة المنتجات</button>
             <button onclick="switchAdminTab('bfd')" id="admin-tab-btn-bfd" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> إدارة منتجات Black Free Day</button>
+            <button onclick="switchAdminTab('contests')" id="admin-tab-btn-contests" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="gift" class="w-4 h-4 text-purple-600"></i> مسابقات للخصم</button>
             <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة شرائح السلايدر</button>
             <button onclick="switchAdminTab('popupad')" id="admin-tab-btn-popupad" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-indigo-600"></i> إدارة إعلان الدخول (Popup)</button>
             <button onclick="switchAdminTab('admins')" id="admin-tab-btn-admins" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4 text-indigo-600"></i> المسؤولين</button>
@@ -270,6 +271,34 @@
                         </thead>
                         <tbody id="admin-bfd-table-body" class="divide-y divide-gray-100"></tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم مسابقات للخصم الجديد -->
+        <div id="admin-subtab-contests" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-w-3xl mx-auto">
+                <div class="border-b pb-4">
+                    <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                        <i data-lucide="gift" class="w-5 h-5 text-purple-600"></i> إعدادات مسابقات وخصومات الموقع (-50%)
+                    </h3>
+                    <p class="text-xs text-gray-500 mt-1">أدخل كلمة أو رقم الكود الخاص بالمسابقة لتفعيل نمط الخصم 50% وتغيير لون الموقع تلقائياً.</p>
+                </div>
+                <div class="space-y-4 text-sm">
+                    <div>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700">كود الخصم (كلمة أو رقم) *</label>
+                        <input type="text" id="contest-code-input" placeholder="مثال: BEDAL50 أو 2026" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-purple-600 text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700">لون واجهة الموقع المميز (عند تفعيل الكود) *</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="contest-theme-color" value="#8b5cf6" class="w-12 h-10 rounded-xl border cursor-pointer p-1">
+                            <span class="text-xs text-gray-500">اختر اللون الذي سيظهر في أزرار وثيم الموقع عند تفعيل الكود.</span>
+                        </div>
+                    </div>
+                    <button onclick="saveContestSettings()" class="w-full bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-purple-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i> حفظ كود المسابقة وتفعيل الخصم العام
+                    </button>
                 </div>
             </div>
         </div>
@@ -391,6 +420,41 @@
             <h3 id="prod-modal-title" class="text-xl font-bold text-gray-900">إضافة منتج جديد</h3>
             <input type="hidden" id="prod-form-id">
             <input type="hidden" id="prod-form-is-bfd-edit-id">
+
+            <!-- آلة حاسبة الأرباح والتسعير التلقائي (مضافة تحت خانة إضافة منتج جديد مباشرة) -->
+            <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-3">
+                <h4 class="font-bold text-emerald-900 text-xs sm:text-sm flex items-center gap-2">
+                    <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i> آلة حاسبة التسعير التلقائي للأرباح
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن المنتوج في Tajir *</label>
+                        <input type="number" id="calc-tajir-price" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs" oninput="calculateStorePriceAuto()">
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن تجهيز المنتوج *</label>
+                        <input type="number" id="calc-prep-cost" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs" oninput="calculateStorePriceAuto()">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن البيع (الثمن المستهدف للبيع) *</label>
+                    <input type="number" id="calc-selling-price" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs font-bold text-emerald-700" oninput="calculateStorePriceAuto()">
+                </div>
+                <!-- خانة الربح الصافي النهائي المضافة تحت ثمن البيع -->
+                <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-center justify-between shadow-sm">
+                    <span class="text-xs font-bold text-emerald-900 flex items-center gap-1">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i> الربح الصافي النهائي:
+                    </span>
+                    <span id="calc-net-profit" class="text-emerald-600 font-black text-base">0.00 د.م</span>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-emerald-100 flex items-center justify-between">
+                    <span class="text-xs font-bold text-gray-700">الثمن المقترح في المتجر (الثمن الأصلي):</span>
+                    <span id="calc-result-store-price" class="text-emerald-600 font-black text-base">0.00 د.م</span>
+                </div>
+                <button onclick="applyCalculatedPriceToForm()" class="w-full bg-emerald-600 text-white font-bold py-2 rounded-xl hover:bg-emerald-700 transition-colors text-xs shadow-sm flex items-center justify-center gap-1.5">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> تطبيق هذا الثمن أوتوماتيكياً في خانة الثمن الأصلي للمنتج
+                </button>
+            </div>
             
             <div class="space-y-4 text-sm">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -420,44 +484,6 @@
                     <label for="prod-form-is-bfd" class="font-bold text-amber-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
                         <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> نقل هذا المنتج إلى إدارة منتجات Black Free Day وإخفائه من المنتجات العادية
                     </label>
-                </div>
-
-                <!-- خانات الحسابات الخاصة بالأدمين فقط -->
-                <div class="p-4 bg-indigo-50/60 border border-indigo-100 rounded-2xl space-y-3">
-                    <h4 class="font-bold text-indigo-900 text-xs flex items-center gap-1.5">
-                        <i data-lucide="calculator" class="w-4 h-4 text-indigo-600"></i> حسابات التكاليف والأرباح (خاص بلوحة الأدمين فقط)
-                    </h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block font-semibold mb-1 text-xs text-gray-700">الثمن الأصلي في TAJIR COD</label>
-                            <input type="number" id="prod-form-tajir-price" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن مصاريف الشحن</label>
-                            <input type="number" id="prod-form-shipping-cost" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- قسم خسائر الإعلانات لكل مسؤول على حدى -->
-                <div class="p-4 bg-rose-50/60 border border-rose-100 rounded-2xl space-y-3">
-                    <h4 class="font-bold text-rose-900 text-xs flex items-center gap-1.5">
-                        <i data-lucide="trending-down" class="w-4 h-4 text-rose-600"></i> خسائر الإعلانات حسب المنصة والمسؤول
-                    </h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block font-semibold mb-1 text-xs text-gray-700">خسائر فيسبوك (Facebook)</label>
-                            <input type="number" id="prod-form-ads-fb" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-xs text-gray-700">خسائر تيك توك (TikTok)</label>
-                            <input type="number" id="prod-form-ads-tiktok" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
-                        </div>
-                        <div>
-                            <label class="block font-semibold mb-1 text-xs text-gray-700">خسائر أستغرام (Instagram)</label>
-                            <input type="number" id="prod-form-ads-insta" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs">
-                        </div>
-                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -558,7 +584,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.73</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.77</span>
                 </span>
             </div>
         </div>
@@ -601,7 +627,6 @@
             const yesBtn = document.getElementById('custom-confirm-yes-btn');
             const cancelBtn = document.getElementById('custom-confirm-cancel-btn');
 
-            // إزالة الأحداث القديمة لتجنب تكرارها
             const newYesBtn = yesBtn.cloneNode(true);
             const newCancelBtn = cancelBtn.cloneNode(true);
             yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
@@ -616,6 +641,43 @@
                 modal.classList.add('hidden');
             });
             lucide.createIcons();
+        }
+
+        // دالة الحساب التلقائي للثمن الأصلي في المتجر والربح الصافي النهائي
+        function calculateStorePriceAuto() {
+            const tajirVal = parseFloat(document.getElementById('calc-tajir-price').value) || 0;
+            const prepVal = parseFloat(document.getElementById('calc-prep-cost').value) || 0;
+            const sellingVal = parseFloat(document.getElementById('calc-selling-price').value) || 0;
+
+            // حساب الربح الصافي النهائي = ثمن البيع - (ثمن Tajir + ثمن التجهيز)
+            let netProfit = sellingVal > 0 ? (sellingVal - (tajirVal + prepVal)) : 0;
+            const netProfitEl = document.getElementById('calc-net-profit');
+            if (netProfitEl) {
+                netProfitEl.innerText = netProfit.toFixed(2) + ' د.م';
+                if (netProfit < 0) {
+                    netProfitEl.className = "text-rose-600 font-black text-base";
+                } else {
+                    netProfitEl.className = "text-emerald-600 font-black text-base";
+                }
+            }
+
+            let storePrice = sellingVal > 0 ? (sellingVal + tajirVal + prepVal) : 0;
+            document.getElementById('calc-result-store-price').innerText = storePrice.toFixed(2) + ' د.م';
+        }
+
+        function applyCalculatedPriceToForm() {
+            const storePriceText = document.getElementById('calc-result-store-price').innerText;
+            const numericValue = parseFloat(storePriceText);
+            if (!isNaN(numericValue) && numericValue > 0) {
+                document.getElementById('prod-form-price').value = numericValue;
+                const sellingVal = document.getElementById('calc-selling-price').value;
+                if (sellingVal) {
+                    document.getElementById('prod-form-discount-price').value = sellingVal;
+                }
+                showCustomAlert('تم تطبيق الثمن المحسوب بنجاح في خانة الثمن الأصلي للمنتج!', 'تم التطبيق');
+            } else {
+                showCustomAlert('يرجى إدخال القيم في الحاسبة أولاً!', 'تنبيه');
+            }
         }
 
         // التحقق من تسجيل الدخول مباشرة من جدول admins
@@ -695,7 +757,6 @@
             let clean = pathOrUrl.trim();
             if (clean === '' || clean.toLowerCase() === 'null' || clean.toLowerCase() === 'undefined' || clean === '[]' || clean === '{}') return '';
             
-            // دعم روابط Dropbox وتحويلها لعرض مباشر
             if (clean.includes('dropbox.com')) {
                 clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
                 clean = clean.replace('?dl=0', '');
@@ -789,11 +850,6 @@
                         videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
                         sku: p.sku || '',
                         discountPrice: p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.discount_price !== undefined ? p.discount_price : ''),
-                        tajirPrice: p.tajirPrice !== undefined && p.tajirPrice !== null ? p.tajirPrice : (p.tajir_price !== undefined ? p.tajir_price : ''),
-                        shippingCost: p.shippingCost !== undefined && p.shippingCost !== null ? p.shippingCost : (p.shipping_cost !== undefined ? p.shipping_cost : ''),
-                        adsFb: p.adsFb !== undefined && p.adsFb !== null ? p.adsFb : (p.ads_fb !== undefined ? p.ads_fb : ''),
-                        adsTiktok: p.adsTiktok !== undefined && p.adsTiktok !== null ? p.adsTiktok : (p.ads_tiktok !== undefined ? p.ads_tiktok : ''),
-                        adsInsta: p.adsInsta !== undefined && p.adsInsta !== null ? p.adsInsta : (p.ads_insta !== undefined ? p.ads_insta : ''),
                         adminKey: p.adminKey || p.admin_key || 'ZAMZAM'
                     }));
                 }
@@ -827,6 +883,7 @@
                 }
 
                 await loadPopupAdSettings();
+                await loadContestSettings();
 
                 renderAdminProducts();
                 renderAdminOrders();
@@ -860,6 +917,56 @@
             const previewEl = document.getElementById('popup-ad-preview-img');
             if (inputEl) inputEl.value = savedImg;
             if (previewEl) previewEl.src = formatImageUrlAdmin(savedImg);
+        }
+
+        async function loadContestSettings() {
+            let savedCode = 'BEDAL50';
+            let savedColor = '#8b5cf6';
+            try {
+                const { data, error } = await supabaseClient
+                    .from('settings')
+                    .select('key, value')
+                    .in('key', ['contest_code', 'contest_color']);
+                if (!error && data) {
+                    data.forEach(item => {
+                        if (item.key === 'contest_code') savedCode = item.value;
+                        if (item.key === 'contest_color') savedColor = item.value;
+                    });
+                }
+            } catch(e) {
+                savedCode = localStorage.getItem('bedal_contest_code') || 'BEDAL50';
+                savedColor = localStorage.getItem('bedal_contest_color') || '#8b5cf6';
+            }
+
+            const codeInput = document.getElementById('contest-code-input');
+            const colorInput = document.getElementById('contest-theme-color');
+            if (codeInput) codeInput.value = savedCode;
+            if (colorInput) colorInput.value = savedColor;
+        }
+
+        async function saveContestSettings() {
+            const codeInput = document.getElementById('contest-code-input');
+            const colorInput = document.getElementById('contest-theme-color');
+            if (!codeInput || !colorInput) return;
+
+            const codeVal = codeInput.value.trim();
+            const colorVal = colorInput.value.trim();
+
+            if (!codeVal) {
+                showCustomAlert('يرجى إدخال كود المسابقة أولاً!', 'تنبيه');
+                return;
+            }
+
+            localStorage.setItem('bedal_contest_code', codeVal);
+            localStorage.setItem('bedal_contest_color', colorVal);
+
+            try {
+                await supabaseClient.from('settings').upsert([{ key: 'contest_code', value: codeVal }], { onConflict: 'key' });
+                await supabaseClient.from('settings').upsert([{ key: 'contest_color', value: colorVal }], { onConflict: 'key' });
+                showCustomAlert('تم حفظ إعدادات مسابقات الخصم وتفعيل -50% بنجاح!', 'تم الحفظ بنجاح');
+            } catch(e) {
+                showCustomAlert('تم الحفظ محلياً بنجاح!', 'تم الحفظ');
+            }
         }
 
         function previewPopupAdInput() {
@@ -1300,12 +1407,6 @@
             document.getElementById('prod-form-discount-price').value = bfdItem.price || '';
             document.getElementById('prod-form-is-bfd').checked = true;
             
-            document.getElementById('prod-form-tajir-price').value = matchedProd && matchedProd.tajirPrice !== undefined ? matchedProd.tajirPrice : '';
-            document.getElementById('prod-form-shipping-cost').value = matchedProd && matchedProd.shippingCost !== undefined ? matchedProd.shippingCost : '';
-            document.getElementById('prod-form-ads-fb').value = matchedProd && matchedProd.adsFb !== undefined ? matchedProd.adsFb : '';
-            document.getElementById('prod-form-ads-tiktok').value = matchedProd && matchedProd.adsTiktok !== undefined ? matchedProd.adsTiktok : '';
-            document.getElementById('prod-form-ads-insta').value = matchedProd && matchedProd.adsInsta !== undefined ? matchedProd.adsInsta : '';
-            
             document.getElementById('prod-form-category').value = matchedProd && matchedProd.category ? matchedProd.category : 'various';
             document.getElementById('prod-form-admin').value = matchedProd && matchedProd.adminKey ? matchedProd.adminKey : 'ZAMZAM';
 
@@ -1542,11 +1643,11 @@
             document.getElementById('prod-form-price').value = '';
             document.getElementById('prod-form-discount-price').value = '';
             document.getElementById('prod-form-is-bfd').checked = false;
-            document.getElementById('prod-form-tajir-price').value = '';
-            document.getElementById('prod-form-shipping-cost').value = '';
-            document.getElementById('prod-form-ads-fb').value = '';
-            document.getElementById('prod-form-ads-tiktok').value = '';
-            document.getElementById('prod-form-ads-insta').value = '';
+            document.getElementById('calc-tajir-price').value = '';
+            document.getElementById('calc-prep-cost').value = '';
+            document.getElementById('calc-selling-price').value = '';
+            document.getElementById('calc-net-profit').innerText = '0.00 د.م';
+            document.getElementById('calc-result-store-price').innerText = '0.00 د.م';
             for(let i = 1; i <= 5; i++) {
                 document.getElementById(`prod-form-img-${i}`).value = '';
             }
@@ -1566,14 +1667,14 @@
             document.getElementById('prod-form-price').value = p.price || '';
             document.getElementById('prod-form-discount-price').value = p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : '';
             document.getElementById('prod-form-is-bfd').checked = false;
-            document.getElementById('prod-form-tajir-price').value = p.tajirPrice !== undefined && p.tajirPrice !== null ? p.tajirPrice : '';
-            document.getElementById('prod-form-shipping-cost').value = p.shippingCost !== undefined && p.shippingCost !== null ? p.shippingCost : '';
-            document.getElementById('prod-form-ads-fb').value = p.adsFb !== undefined && p.adsFb !== null ? p.adsFb : '';
-            document.getElementById('prod-form-ads-tiktok').value = p.adsTiktok !== undefined && p.adsTiktok !== null ? p.adsTiktok : '';
-            document.getElementById('prod-form-ads-insta').value = p.adsInsta !== undefined && p.adsInsta !== null ? p.adsInsta : '';
             document.getElementById('prod-form-category').value = p.category || 'various';
             document.getElementById('prod-form-admin').value = p.adminKey || 'ZAMZAM';
             
+            document.getElementById('calc-tajir-price').value = '';
+            document.getElementById('calc-prep-cost').value = '';
+            document.getElementById('calc-selling-price').value = p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.price || '');
+            calculateStorePriceAuto();
+
             const imgs = Array.isArray(p.images) ? p.images : [];
             for(let i = 1; i <= 5; i++) {
                 document.getElementById(`prod-form-img-${i}`).value = imgs[i-1] || '';
@@ -1596,21 +1697,6 @@
             const discountPriceVal = document.getElementById('prod-form-discount-price').value.trim();
             const discountPrice = discountPriceVal !== "" ? parseFloat(discountPriceVal) : null;
             const isBfdChecked = document.getElementById('prod-form-is-bfd').checked;
-            
-            const tajirPriceVal = document.getElementById('prod-form-tajir-price').value.trim();
-            const tajirPrice = tajirPriceVal !== "" ? parseFloat(tajirPriceVal) : null;
-
-            const shippingCostVal = document.getElementById('prod-form-shipping-cost').value.trim();
-            const shippingCost = shippingCostVal !== "" ? parseFloat(shippingCostVal) : null;
-
-            const adsFbVal = document.getElementById('prod-form-ads-fb').value.trim();
-            const adsFb = adsFbVal !== "" ? parseFloat(adsFbVal) : null;
-
-            const adsTiktokVal = document.getElementById('prod-form-ads-tiktok').value.trim();
-            const adsTiktok = adsTiktokVal !== "" ? parseFloat(adsTiktokVal) : null;
-
-            const adsInstaVal = document.getElementById('prod-form-ads-insta').value.trim();
-            const adsInsta = adsInstaVal !== "" ? parseFloat(adsInstaVal) : null;
 
             const adminKey = document.getElementById('prod-form-admin').value;
             const category = document.getElementById('prod-form-category').value;
@@ -1657,7 +1743,7 @@
                 }
 
                 if (id !== "") {
-                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, tajirPrice, shippingCost, adsFb, adsTiktok, adsInsta, adminKey, videos };
+                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos };
                     const targetProd = productsDatabase.find(p => p.id == id);
                     if (targetProd && targetProd.id) {
                         await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
@@ -1702,11 +1788,6 @@
                 description,
                 sku,
                 discountPrice,
-                tajirPrice,
-                shippingCost,
-                adsFb,
-                adsTiktok,
-                adsInsta,
                 adminKey,
                 videos
             };
@@ -1755,6 +1836,7 @@
             document.getElementById('admin-subtab-orders').classList.add('hidden');
             document.getElementById('admin-subtab-products').classList.add('hidden');
             document.getElementById('admin-subtab-bfd').classList.add('hidden');
+            document.getElementById('admin-subtab-contests').classList.add('hidden');
             document.getElementById('admin-subtab-slider').classList.add('hidden');
             document.getElementById('admin-subtab-popupad').classList.add('hidden');
             document.getElementById('admin-subtab-admins').classList.add('hidden');
@@ -1762,6 +1844,7 @@
             document.getElementById('admin-tab-btn-orders').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-products').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
+            document.getElementById('admin-tab-btn-contests').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-popupad').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-admins').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
@@ -1774,6 +1857,10 @@
                 document.getElementById('admin-subtab-bfd').classList.remove('hidden');
                 document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderBfdTable();
+            } else if (tabKey === 'contests') {
+                document.getElementById('admin-subtab-contests').classList.remove('hidden');
+                document.getElementById('admin-tab-btn-contests').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
+                loadContestSettings();
             } else if (tabKey === 'slider') {
                 document.getElementById('admin-subtab-slider').classList.remove('hidden');
                 document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
