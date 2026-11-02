@@ -515,18 +515,14 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن البيع (الثمن المستهدف للبيع) *</label>
-                    <input type="number" id="calc-selling-price" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs font-bold text-emerald-700" oninput="calculateStorePriceAuto()">
+                    <label class="block font-semibold mb-1 text-xs text-gray-700">الربح الصافي النهائي *</label>
+                    <input type="number" id="calc-net-profit-input" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs font-bold text-emerald-700" oninput="calculateStorePriceAuto()">
                 </div>
-                <!-- خانة الربح الصافي النهائي المضافة تحت ثمن البيع المستهدف مباشرة -->
+                <!-- خانة الثمن المقترح في المتجر محسوبة أوتوماتيكياً كمجموع الثمنين والتجهيز والربح -->
                 <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-center justify-between shadow-sm">
                     <span class="text-xs font-bold text-emerald-900 flex items-center gap-1">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i> الربح الصافي النهائي:
+                        <i data-lucide="tag" class="w-4 h-4 text-emerald-600"></i> الثمن المقترح في المتجر:
                     </span>
-                    <span id="calc-net-profit" class="text-emerald-600 font-black text-base">0.00 د.م</span>
-                </div>
-                <div class="p-3 bg-white rounded-xl border border-emerald-100 flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-700">الثمن المقترح في المتجر (الثمن الأصلي):</span>
                     <span id="calc-result-store-price" class="text-emerald-600 font-black text-base">0.00 د.م</span>
                 </div>
                 <button onclick="applyCalculatedPriceToForm()" class="w-full bg-emerald-600 text-white font-bold py-2 rounded-xl hover:bg-emerald-700 transition-colors text-xs shadow-sm flex items-center justify-center gap-1.5">
@@ -670,7 +666,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.84</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.85</span>
                 </span>
             </div>
         </div>
@@ -730,38 +726,30 @@
             lucide.createIcons();
         }
 
-        // دالة الحساب الصحيحة للربح الصافي والثمن المقترح في المتجر
+        // دالة الحساب الصحيحة للثمن المقترح في المتجر = (ثمن Tajir + ثمن التجهيز + الربح الصافي النهائي)
         function calculateStorePriceAuto() {
             const tajirVal = parseFloat(document.getElementById('calc-tajir-price').value) || 0;
             const prepVal = parseFloat(document.getElementById('calc-prep-cost').value) || 0;
-            const sellingVal = parseFloat(document.getElementById('calc-selling-price').value) || 0;
+            const netProfitVal = parseFloat(document.getElementById('calc-net-profit-input').value) || 0;
 
-            // حساب الربح الصافي الصحيح = ثمن البيع (المستهدف) - (ثمن Tajir + ثمن التجهيز)
-            let netProfit = sellingVal > 0 ? (sellingVal - (tajirVal + prepVal)) : 0;
-            const netProfitEl = document.getElementById('calc-net-profit');
-            if (netProfitEl) {
-                netProfitEl.innerText = netProfit.toFixed(2) + ' د.م';
-                if (netProfit < 0) {
-                    netProfitEl.className = "text-rose-600 font-black text-base";
-                } else {
-                    netProfitEl.className = "text-emerald-600 font-black text-base";
-                }
+            // الثمن المقترح في المتجر = ثمن Tajir + ثمن التجهيز + الربح الصافي النهائي
+            let storePrice = (tajirVal + prepVal + netProfitVal) > 0 ? (tajirVal + prepVal + netProfitVal) : 0;
+            
+            const storePriceEl = document.getElementById('calc-result-store-price');
+            if (storePriceEl) {
+                storePriceEl.innerText = storePrice.toFixed(2) + ' د.م';
             }
-
-            // الثمن المقترح في المتجر يساوي ثمن البيع المستهدف
-            let storePrice = sellingVal > 0 ? sellingVal : 0;
-            document.getElementById('calc-result-store-price').innerText = storePrice.toFixed(2) + ' د.م';
         }
 
         function applyCalculatedPriceToForm() {
             const storePriceText = document.getElementById('calc-result-store-price').innerText;
             const numericValue = parseFloat(storePriceText);
-            const sellingVal = parseFloat(document.getElementById('calc-selling-price').value) || 0;
+            const netProfitVal = parseFloat(document.getElementById('calc-net-profit-input').value) || 0;
 
             if (!isNaN(numericValue) && numericValue > 0) {
                 document.getElementById('prod-form-price').value = numericValue;
-                if (sellingVal > 0) {
-                    document.getElementById('prod-form-discount-price').value = sellingVal;
+                if (netProfitVal > 0) {
+                    document.getElementById('prod-form-discount-price').value = numericValue;
                 }
                 showCustomAlert('تم تطبيق الثمن المحسوب بنجاح في خانة الثمن الأصلي للمنتج!', 'تم التطبيق');
             } else {
@@ -1662,7 +1650,7 @@
             // تعبئة خانات الحاسبة بالقيم المحفوظة لتجنب تفريغها
             document.getElementById('calc-tajir-price').value = matchedProd && matchedProd.tajirPrice ? matchedProd.tajirPrice : '';
             document.getElementById('calc-prep-cost').value = matchedProd && matchedProd.prepCost ? matchedProd.prepCost : '';
-            document.getElementById('calc-selling-price').value = bfdItem.price || (matchedProd ? matchedProd.discountPrice : '') || '';
+            document.getElementById('calc-net-profit-input').value = matchedProd && matchedProd.netProfit ? matchedProd.netProfit : '';
             calculateStorePriceAuto();
 
             const imgs = (bfdItem.images && bfdItem.images.length > 0) ? bfdItem.images : (matchedProd && matchedProd.images ? matchedProd.images : [bfdItem.img]);
@@ -1902,8 +1890,7 @@
             document.getElementById('prod-form-has-ads').checked = false;
             document.getElementById('calc-tajir-price').value = '';
             document.getElementById('calc-prep-cost').value = '';
-            document.getElementById('calc-selling-price').value = '';
-            document.getElementById('calc-net-profit').innerText = '0.00 د.م';
+            document.getElementById('calc-net-profit-input').value = '';
             document.getElementById('calc-result-store-price').innerText = '0.00 د.م';
             for(let i = 1; i <= 5; i++) {
                 document.getElementById(`prod-form-img-${i}`).value = '';
@@ -1931,7 +1918,7 @@
             // تعبئة خانات الحاسبة بالقيم المحفوظة لتجنب تفريغها
             document.getElementById('calc-tajir-price').value = p.tajirPrice !== undefined && p.tajirPrice !== null ? p.tajirPrice : '';
             document.getElementById('calc-prep-cost').value = p.prepCost !== undefined && p.prepCost !== null ? p.prepCost : '';
-            document.getElementById('calc-selling-price').value = p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '' ? p.discountPrice : (p.price || '');
+            document.getElementById('calc-net-profit-input').value = p.netProfit !== undefined && p.netProfit !== null ? p.netProfit : '';
             calculateStorePriceAuto();
 
             const imgs = Array.isArray(p.images) ? p.images : [];
@@ -1964,6 +1951,7 @@
             // حفظ قيم الحاسبة في قاعدة البيانات لتظل محفوظة عند التعديل مستقبلاً
             const tajirPrice = parseFloat(document.getElementById('calc-tajir-price').value) || null;
             const prepCost = parseFloat(document.getElementById('calc-prep-cost').value) || null;
+            const netProfit = parseFloat(document.getElementById('calc-net-profit-input').value) || null;
             
             let images = [];
             for(let i = 1; i <= 5; i++) {
@@ -2007,7 +1995,7 @@
                 }
 
                 if (id !== "") {
-                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds, tajirPrice, prepCost };
+                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds, tajirPrice, prepCost, netProfit };
                     const targetProd = productsDatabase.find(p => p.id == id);
                     if (targetProd && targetProd.id) {
                         await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
@@ -2056,7 +2044,8 @@
                 videos,
                 hasAds,
                 tajirPrice,
-                prepCost
+                prepCost,
+                netProfit
             };
 
             if (id !== "" && !isNaN(id)) {
