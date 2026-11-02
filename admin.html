@@ -176,6 +176,7 @@
             <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap">سجل الطلبات</button>
             <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة المنتجات</button>
             <button onclick="switchAdminTab('bfd')" id="admin-tab-btn-bfd" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> إدارة منتجات Black Free Day</button>
+            <button onclick="switchAdminTab('ads')" id="admin-tab-btn-ads" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> مصاريف الإعلانات (ADS)</button>
             <button onclick="switchAdminTab('contests')" id="admin-tab-btn-contests" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="gift" class="w-4 h-4 text-purple-600"></i> مسابقات للخصم</button>
             <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة شرائح السلايدر</button>
             <button onclick="switchAdminTab('popupad')" id="admin-tab-btn-popupad" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-indigo-600"></i> إدارة إعلان الدخول (Popup)</button>
@@ -270,6 +271,43 @@
                             </tr>
                         </thead>
                         <tbody id="admin-bfd-table-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم مصاريف الإعلانات (ADS) الجديد -->
+        <div id="admin-subtab-ads" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+                <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                            <i data-lucide="badge-dollar-sign" class="w-5 h-5 text-rose-600"></i> حساب وإدارة مصاريف الإعلانات (ADS)
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">تسجيل ميزانية مصاريف الإعلانات مع اختيار المنصة والتاريخ ومدة الإغلاق والعداد التنازلي.</p>
+                    </div>
+                    <button onclick="openAdsModalForAdd()" class="bg-rose-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-rose-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة مصروف إعلاني جديد
+                    </button>
+                </div>
+                <!-- إجمالي المصاريف -->
+                <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between">
+                    <span class="text-xs font-bold text-rose-900">إجمالي مصاريف الإعلانات المسجلة:</span>
+                    <span id="stat-total-ads-expense" class="text-rose-600 font-black text-lg">0.00 د.م</span>
+                </div>
+                <div class="overflow-x-auto custom-scroll-container">
+                    <table class="w-full text-right text-sm text-gray-600">
+                        <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
+                            <tr>
+                                <th class="p-4">المنصة</th>
+                                <th class="p-4">المبلغ (د.م)</th>
+                                <th class="p-4">تاريخ البداية</th>
+                                <th class="p-4">مدة الإعلان</th>
+                                <th class="p-4">العداد التنازلي وحالة الإعلان</th>
+                                <th class="p-4">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-ads-table-body" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -386,6 +424,46 @@
         </div>
     </main>
 
+    <!-- Modal Form: Add Ads Expense -->
+    <div id="ads-expense-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="toggleAdsModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
+            <h3 class="text-xl font-bold text-gray-900">تسجيل مصروف إعلاني جديد</h3>
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block font-semibold mb-1">المنصة *</label>
+                    <select id="ads-form-platform" class="w-full px-4 py-2.5 rounded-xl border bg-white">
+                        <option value="Facebook">Facebook</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="TikTok">TikTok</option>
+                        <option value="Autre">Autre</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">المبلغ (د.م) *</label>
+                    <input type="number" id="ads-form-amount" placeholder="0.00" class="w-full px-4 py-2.5 rounded-xl border">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">تاريخ البداية *</label>
+                    <input type="date" id="ads-form-date" class="w-full px-4 py-2.5 rounded-xl border">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">توقيت / مدة إغلاق الإعلان في المنصة *</label>
+                    <select id="ads-form-duration" class="w-full px-4 py-2.5 rounded-xl border bg-white font-bold">
+                        <option value="1">يوم واحد (24 ساعة)</option>
+                        <option value="2">يومان (48 ساعة)</option>
+                        <option value="3">3 أيام</option>
+                        <option value="5">5 أيام</option>
+                        <option value="7">أسبوع واحد (7 أيام)</option>
+                        <option value="14">أسبوعان (14 يوماً)</option>
+                        <option value="30">شهر واحد (30 يوماً)</option>
+                    </select>
+                </div>
+                <button onclick="saveAdsExpense()" class="w-full bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-700 shadow-lg">حفظ المصروف الإعلاني والعداد</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Form: Customer Order Full Details -->
     <div id="customer-order-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4" style="z-index: 99999;">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto custom-scroll-container">
@@ -483,6 +561,14 @@
                     <input type="checkbox" id="prod-form-is-bfd" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
                     <label for="prod-form-is-bfd" class="font-bold text-amber-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
                         <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> نقل هذا المنتج إلى إدارة منتجات Black Free Day وإخفائه من المنتجات العادية
+                    </label>
+                </div>
+
+                <!-- خانة حالة الإعلان (Ads Status) الجديدة المطلوبة -->
+                <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3">
+                    <input type="checkbox" id="prod-form-has-ads" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
+                    <label for="prod-form-has-ads" class="font-bold text-rose-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
+                        <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> هل تم إطلاق إعلانات (Ads) على هذا المنتج؟ (تحديد حالة الإعلان)
                     </label>
                 </div>
 
@@ -584,7 +670,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.77</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار V3.9.80</span>
                 </span>
             </div>
         </div>
@@ -600,6 +686,7 @@
         let salesOrdersDatabase = [];
         let sliderDatabase = [];
         let bfdDatabase = [];
+        let adsExpensesDatabase = [];
         let adminsDatabase = [
             { username: 'ZAMZAM', password: 'AMIRMOUNA303026', role: 'مشرف رئيسي', status: 'نشط' }
         ];
@@ -850,13 +937,21 @@
                         videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
                         sku: p.sku || '',
                         discountPrice: p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.discount_price !== undefined ? p.discount_price : ''),
-                        adminKey: p.adminKey || p.admin_key || 'ZAMZAM'
+                        adminKey: p.adminKey || p.admin_key || 'ZAMZAM',
+                        hasAds: p.hasAds !== undefined ? p.hasAds : (p.has_ads !== undefined ? p.has_ads : false)
                     }));
                 }
                 productsDatabase = fetchedProducts;
 
                 const { data: orders } = await supabaseClient.from('orders').select('*');
                 if (orders) salesOrdersDatabase = orders;
+
+                try {
+                    const { data: adsData } = await supabaseClient.from('ads_expenses').select('*').order('id', { ascending: false });
+                    if (adsData) adsExpensesDatabase = adsData;
+                } catch(e) {
+                    adsExpensesDatabase = JSON.parse(localStorage.getItem('bedal_ads_expenses_local') || '[]');
+                }
 
                 updateAdminSelectOptions();
                 renderAdminsTable();
@@ -887,8 +982,10 @@
 
                 renderAdminProducts();
                 renderAdminOrders();
+                renderAdsExpensesTable();
                 renderSliderEditor();
                 renderBfdTable();
+                initAdsCountdowns();
             } catch (err) {
                 console.error("خطأ في جلب البيانات:", err);
             }
@@ -1074,12 +1171,15 @@
                     const isInBfd = bfdDatabase.some(b => b.title && prod.title && b.title.trim().toLowerCase() === prod.title.trim().toLowerCase());
                     const rowBgClass = isInBfd ? 'bg-orange-50/70 border-r-4 border-r-orange-500' : '';
 
+                    const hasAdsBadge = prod.hasAds ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700"><i data-lucide="badge-dollar-sign" class="w-3 h-3"></i> ADS مفعل</span>' : '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-500">بدون ADS</span>';
+
                     html += `
                         <tr class="${rowBgClass}">
                             <td class="p-4"><img src="${mainImg}" class="w-12 h-12 object-cover rounded-xl border"></td>
                             <td class="p-4 font-bold text-gray-900">
                                 ${prod.title}
                                 ${isInBfd ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700"><i data-lucide="flame" class="w-3 h-3"></i> Black Free Day</span>' : ''}
+                                ${hasAdsBadge}
                             </td>
                             <td class="p-4 text-gray-500 font-mono text-xs">${skuCode}</td>
                             <td class="p-4 text-indigo-600 font-bold">${originalPrice} د.م</td>
@@ -1115,6 +1215,152 @@
                 (p.category && p.category.toLowerCase().includes(query))
             );
             renderAdminProducts(filtered);
+        }
+
+        // دوال مصاريف الإعلانات (ADS Expenses) مع العداد التنازلي وتوقيت الإغلاق
+        function toggleAdsModal() {
+            document.getElementById('ads-expense-modal').classList.toggle('hidden');
+        }
+
+        function openAdsModalForAdd() {
+            document.getElementById('ads-form-amount').value = '';
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('ads-form-date').value = todayStr;
+            document.getElementById('ads-form-duration').value = "1";
+            toggleAdsModal();
+        }
+
+        async function saveAdsExpense() {
+            const platform = document.getElementById('ads-form-platform').value;
+            const amount = parseFloat(document.getElementById('ads-form-amount').value);
+            const date = document.getElementById('ads-form-date').value;
+            const durationDays = parseInt(document.getElementById('ads-form-duration').value) || 1;
+
+            if (isNaN(amount) || amount <= 0 || !date) {
+                showCustomAlert('يرجى إدخال مبلغ صحيح وتحديد تاريخ البداية!', 'تنبيه');
+                return;
+            }
+
+            const newExpense = { platform, amount, date, durationDays };
+
+            try {
+                const { data, error } = await supabaseClient.from('ads_expenses').insert([newExpense]).select();
+                if (error) {
+                    adsExpensesDatabase.unshift(newExpense);
+                    localStorage.setItem('bedal_ads_expenses_local', JSON.stringify(adsExpensesDatabase));
+                } else if (data && data.length > 0) {
+                    adsExpensesDatabase.unshift(data[0]);
+                } else {
+                    adsExpensesDatabase.unshift(newExpense);
+                }
+            } catch (e) {
+                adsExpensesDatabase.unshift(newExpense);
+                localStorage.setItem('bedal_ads_expenses_local', JSON.stringify(adsExpensesDatabase));
+            }
+
+            showCustomAlert('تم حفظ المصروف الإعلاني والعداد بنجاح!', 'نجاح');
+            toggleAdsModal();
+            renderAdsExpensesTable();
+            initAdsCountdowns();
+        }
+
+        function renderAdsExpensesTable() {
+            const tbody = document.getElementById('admin-ads-table-body');
+            const totalEl = document.getElementById('stat-total-ads-expense');
+            if (!tbody) return;
+
+            let html = '';
+            let totalSum = 0;
+
+            if (adsExpensesDatabase.length === 0) {
+                html = `<tr><td colspan="6" class="p-6 text-center text-gray-400">لا توجد مصاريف إعلانية مسجلة حالياً.</td></tr>`;
+            } else {
+                adsExpensesDatabase.forEach((exp, idx) => {
+                    totalSum += (parseFloat(exp.amount) || 0);
+                    let badgeColor = 'bg-indigo-50 text-indigo-700';
+                    if (exp.platform === 'Facebook') badgeColor = 'bg-blue-50 text-blue-700';
+                    else if (exp.platform === 'Instagram') badgeColor = 'bg-pink-50 text-pink-700';
+                    else if (exp.platform === 'TikTok') badgeColor = 'bg-purple-50 text-purple-700';
+                    else if (exp.platform === 'Autre') badgeColor = 'bg-gray-100 text-gray-700';
+
+                    let durationLabel = `${exp.durationDays || 1} يوم`;
+
+                    html += `
+                        <tr>
+                            <td class="p-4"><span class="${badgeColor} px-2.5 py-1 rounded-md text-xs font-bold">${exp.platform}</span></td>
+                            <td class="p-4 font-black text-rose-600">${parseFloat(exp.amount).toFixed(2)} د.م</td>
+                            <td class="p-4 text-gray-500 font-semibold">${exp.date || 'غير محدد'}</td>
+                            <td class="p-4 text-xs font-bold text-gray-700">${durationLabel}</td>
+                            <td class="p-4">
+                                <div id="ads-countdown-${idx}" class="font-mono font-bold text-xs px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 bg-gray-100 text-gray-800">
+                                    جاري الحساب...
+                                </div>
+                            </td>
+                            <td class="p-4">
+                                <button onclick="deleteAdsExpense(${idx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm flex items-center gap-1 transition-colors">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> حذف
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            tbody.innerHTML = html;
+            if (totalEl) totalEl.innerText = totalSum.toFixed(2) + ' د.م';
+            lucide.createIcons();
+            initAdsCountdowns();
+        }
+
+        function initAdsCountdowns() {
+            if (!adsExpensesDatabase || adsExpensesDatabase.length === 0) return;
+
+            adsExpensesDatabase.forEach((exp, idx) => {
+                const clockEl = document.getElementById(`ads-countdown-${idx}`);
+                if (!clockEl) return;
+
+                const startDate = new Date(exp.date + 'T00:00:00');
+                const durationDays = parseInt(exp.durationDays) || 1;
+                const endDate = new Date(startDate.getTime() + (durationDays * 24 * 60 * 60 * 1000));
+
+                const now = new Date();
+                const diff = endDate - now;
+
+                if (diff <= 0) {
+                    clockEl.innerHTML = `<span class="inline-flex items-center gap-1 text-rose-600 font-black"><i data-lucide="alert-circle" class="w-4 h-4"></i> انتهى الإعلان في ${exp.platform}</span>`;
+                    clockEl.className = "font-mono font-bold text-xs px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 bg-rose-50 border border-rose-200 text-rose-700";
+                } else {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    clockEl.innerHTML = `<span class="inline-flex items-center gap-1 text-amber-700 font-bold"><i data-lucide="clock" class="w-3.5 h-3.5"></i> متبقي: ${days} يوم : ${String(hours).padStart(2, '0')}س : ${String(minutes).padStart(2, '0')}د : ${String(seconds).padStart(2, '0')}ث</span>`;
+                    clockEl.className = "font-mono font-bold text-xs px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-800";
+                }
+            });
+            lucide.createIcons();
+        }
+
+        setInterval(() => {
+            if (document.getElementById('admin-subtab-ads') && !document.getElementById('admin-subtab-ads').classList.contains('hidden')) {
+                initAdsCountdowns();
+            }
+        }, 1000);
+
+        async function deleteAdsExpense(idx) {
+            showCustomConfirm('هل أنت متأكد من حذف هذا المصروف الإعلاني؟', async () => {
+                const exp = adsExpensesDatabase[idx];
+                if (exp && exp.id) {
+                    try {
+                        await supabaseClient.from('ads_expenses').delete().eq('id', exp.id);
+                    } catch(e) {}
+                }
+                adsExpensesDatabase.splice(idx, 1);
+                localStorage.setItem('bedal_ads_expenses_local', JSON.stringify(adsExpensesDatabase));
+                renderAdsExpensesTable();
+                showCustomAlert('تم حذف المصروف بنجاح!', 'تم الحذف');
+            });
         }
 
         function downloadMetaCatalogDataFeed() {
@@ -1406,6 +1652,7 @@
             document.getElementById('prod-form-price').value = bfdItem.oldPrice || (matchedProd ? matchedProd.price : bfdItem.price) || '';
             document.getElementById('prod-form-discount-price').value = bfdItem.price || '';
             document.getElementById('prod-form-is-bfd').checked = true;
+            document.getElementById('prod-form-has-ads').checked = matchedProd ? !!matchedProd.hasAds : false;
             
             document.getElementById('prod-form-category').value = matchedProd && matchedProd.category ? matchedProd.category : 'various';
             document.getElementById('prod-form-admin').value = matchedProd && matchedProd.adminKey ? matchedProd.adminKey : 'ZAMZAM';
@@ -1643,6 +1890,7 @@
             document.getElementById('prod-form-price').value = '';
             document.getElementById('prod-form-discount-price').value = '';
             document.getElementById('prod-form-is-bfd').checked = false;
+            document.getElementById('prod-form-has-ads').checked = false;
             document.getElementById('calc-tajir-price').value = '';
             document.getElementById('calc-prep-cost').value = '';
             document.getElementById('calc-selling-price').value = '';
@@ -1667,6 +1915,7 @@
             document.getElementById('prod-form-price').value = p.price || '';
             document.getElementById('prod-form-discount-price').value = p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : '';
             document.getElementById('prod-form-is-bfd').checked = false;
+            document.getElementById('prod-form-has-ads').checked = !!p.hasAds;
             document.getElementById('prod-form-category').value = p.category || 'various';
             document.getElementById('prod-form-admin').value = p.adminKey || 'ZAMZAM';
             
@@ -1697,6 +1946,7 @@
             const discountPriceVal = document.getElementById('prod-form-discount-price').value.trim();
             const discountPrice = discountPriceVal !== "" ? parseFloat(discountPriceVal) : null;
             const isBfdChecked = document.getElementById('prod-form-is-bfd').checked;
+            const hasAds = document.getElementById('prod-form-has-ads').checked;
 
             const adminKey = document.getElementById('prod-form-admin').value;
             const category = document.getElementById('prod-form-category').value;
@@ -1743,7 +1993,7 @@
                 }
 
                 if (id !== "") {
-                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos };
+                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds };
                     const targetProd = productsDatabase.find(p => p.id == id);
                     if (targetProd && targetProd.id) {
                         await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
@@ -1789,7 +2039,8 @@
                 sku,
                 discountPrice,
                 adminKey,
-                videos
+                videos,
+                hasAds
             };
 
             if (id !== "" && !isNaN(id)) {
@@ -1836,6 +2087,7 @@
             document.getElementById('admin-subtab-orders').classList.add('hidden');
             document.getElementById('admin-subtab-products').classList.add('hidden');
             document.getElementById('admin-subtab-bfd').classList.add('hidden');
+            document.getElementById('admin-subtab-ads').classList.add('hidden');
             document.getElementById('admin-subtab-contests').classList.add('hidden');
             document.getElementById('admin-subtab-slider').classList.add('hidden');
             document.getElementById('admin-subtab-popupad').classList.add('hidden');
@@ -1844,6 +2096,7 @@
             document.getElementById('admin-tab-btn-orders').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-products').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
+            document.getElementById('admin-tab-btn-ads').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-contests').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
             document.getElementById('admin-tab-btn-popupad').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
@@ -1857,6 +2110,10 @@
                 document.getElementById('admin-subtab-bfd').classList.remove('hidden');
                 document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderBfdTable();
+            } else if (tabKey === 'ads') {
+                document.getElementById('admin-subtab-ads').classList.remove('hidden');
+                document.getElementById('admin-tab-btn-ads').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
+                renderAdsExpensesTable();
             } else if (tabKey === 'contests') {
                 document.getElementById('admin-subtab-contests').classList.remove('hidden');
                 document.getElementById('admin-tab-btn-contests').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
