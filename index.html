@@ -207,7 +207,7 @@
         </div>
     </div>
 
-    <!-- Floating Side Cart Button (تم تعديل الـ z-index ليكون خلف النافذة z-30) -->
+    <!-- Floating Side Cart Button -->
     <div id="floating-cart-btn" onclick="toggleCartDrawer()" class="fixed bottom-6 left-6 z-30 cursor-pointer bg-[#F97316] hover:bg-[#EA580C] text-white p-4 rounded-full shadow-2xl border-2 border-white flex items-center justify-center transition-all duration-300 hover:scale-110 group">
         <i data-lucide="shopping-cart" class="w-7 h-7"></i>
         <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-[#0F172A] text-white text-xs font-black rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-sm">
@@ -843,7 +843,7 @@
                 <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.5.1</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.5.2</span>
                     </span>
                 </div>
             </div>
@@ -1092,9 +1092,8 @@
                     const mainImg = (p.images && p.images[0]) || '';
                     marqueeHtml += `
                         <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-xl shadow-xl flex-shrink-0 w-72 cursor-pointer hover:bg-white/15 transition-all" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
-                            <div class="w-16 h-16 rounded-lg overflow-hidden border border-white/25 flex-shrink-0 relative watermarked-container">
+                            <div class="w-16 h-16 rounded-lg overflow-hidden border border-white/25 flex-shrink-0 relative">
                                 <img src="${mainImg}" class="w-full h-full object-cover">
-                                <img src="${WATERMARK_LOGO_URL}" class="watermark-overlay" style="width: 28px; height: 28px; bottom: 6px; left: 6px;">
                             </div>
                             <div class="overflow-hidden space-y-1">
                                 <h4 class="font-extrabold text-sm text-white truncate">${p.title}</h4>
@@ -1156,10 +1155,9 @@
                             <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none">
                                 ${badgeText}
                             </div>
-                            <!-- حاوية الصورة مع اللوغو الديناميكي المحمي (بحجم متناسق وشفاف) -->
-                            <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center watermarked-container">
+                            <!-- حاوية الصورة بدون لوغو في البطاقات الصغيرة -->
+                            <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
                                 <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover store-card-img group-hover:scale-105 transition-transform duration-300">
-                                <img src="${WATERMARK_LOGO_URL}" alt="Watermark" class="watermark-overlay">
                             </div>
                             ${storeThumbnailsHtml}
                             <div class="p-5 space-y-3">
@@ -1427,9 +1425,8 @@
                 totalSaving += (item.oldPrice - item.price) * item.quantity;
                 html += `
                     <div class="flex items-center justify-between bg-[#F8F9FA] p-3 rounded-lg border border-gray-100 gap-3">
-                        <div class="w-12 h-12 rounded-lg overflow-hidden border flex-shrink-0 relative watermarked-container">
+                        <div class="w-12 h-12 rounded-lg overflow-hidden border flex-shrink-0 relative">
                             <img src="${item.img}" class="w-full h-full object-cover">
-                            <img src="${WATERMARK_LOGO_URL}" class="watermark-overlay" style="width: 20px; height: 20px; bottom: 3px; left: 3px;">
                         </div>
                         <div class="flex-grow">
                             <h4 class="font-bold text-xs text-gray-800">${item.title}</h4>
@@ -1528,10 +1525,9 @@
                                 <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none">
                                     تخفيض كبرى
                                 </div>
-                                <!-- حاوية الصورة مع اللوغو الديناميكي المحمي -->
-                                <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center watermarked-container">
+                                <!-- حاوية الصورة بدون لوغو في البطاقات الصغيرة -->
+                                <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
                                     <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover bfd-card-img">
-                                    <img src="${WATERMARK_LOGO_URL}" alt="Watermark" class="watermark-overlay">
                                 </div>
                                 ${bfdThumbnailsHtml}
                                 <div class="p-5 space-y-3">
