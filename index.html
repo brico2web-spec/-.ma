@@ -825,7 +825,7 @@
                     </div>
                     <div class="space-y-1">
                         <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_4_title">الدفع عند الاستلام</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_4_desc">ادفع بأمان عند استلام طلبك مباشرة.</p>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_4_desc">ادفع بأمان عند استلاستلام طلبك مباشرة.</p>
                     </div>
                 </div>
             </div>
@@ -859,7 +859,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.2</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.3</span>
                     </span>
                 </div>
             </div>
@@ -1380,8 +1380,12 @@
                     fetchedProducts = prods.map(p => {
                         let originalPrice = parseFloat(p.price || 0);
                         let finalDiscPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
+                        let isAvailable = (p.is_available !== undefined && p.is_available !== null) ? p.is_available : true;
+                        if (p.status && (p.status.includes('غير متاح') || p.status.includes('نفد') || p.status.toLowerCase() === 'unavailable')) isAvailable = false;
+
                         return {
                             ...p,
+                            is_available: isAvailable,
                             images: extractImagesFromRecord(p),
                             videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
                             price: finalDiscPrice,
@@ -1401,9 +1405,11 @@
                         let productDescription = b.description || (matchedNormalProd ? matchedNormalProd.description : 'لا يوجد وصف متاح.');
                         let originalPrice = parseFloat(b.price || 0);
                         let discPrice = (b.discountPrice !== undefined && b.discountPrice !== null && b.discountPrice !== '') ? parseFloat(b.discountPrice) : originalPrice;
+                        let isAvailable = (b.is_available !== undefined && b.is_available !== null) ? b.is_available : true;
 
                         return {
                             ...b,
+                            is_available: isAvailable,
                             description: productDescription,
                             price: discPrice,
                             oldPrice: parseFloat(b.oldPrice || originalPrice),
@@ -1512,6 +1518,7 @@
             paginatedItems.forEach(p => {
                 const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
                 const firstImg = productImages[0];
+                const isAvailable = (p.is_available !== false);
 
                 let storeThumbnailsHtml = '';
                 if (productImages.length > 1) {
@@ -1527,16 +1534,42 @@
                     storeThumbnailsHtml += `</div>`;
                 }
 
+                // تطبيق الأسلوب الرمادي في حال كان المنتج غير متاح
+                const cardBgClass = isAvailable ? 'bg-white' : 'bg-gray-200 opacity-80';
+                const imgFilterClass = isAvailable ? '' : 'grayscale';
+                const titleColorClass = isAvailable ? 'text-[#0F172A] hover:text-[#F97316]' : 'text-gray-600';
+                const unavailableBadge = !isAvailable ? `<span class="absolute top-3 right-3 z-20 bg-gray-700 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">غير متاح</span>` : '';
+
+                let cartBtnHtml = '';
+                let waBtnHtml = '';
+
+                if (isAvailable) {
+                    cartBtnHtml = `<button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
+                    </button>`;
+                    waBtnHtml = `<button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
+                    </button>`;
+                } else {
+                    cartBtnHtml = `<button disabled class="w-full bg-gray-400 text-gray-200 py-2.5 px-2 rounded-lg font-bold cursor-not-allowed shadow-none flex items-center justify-center gap-1.5 text-xs">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
+                    </button>`;
+                    waBtnHtml = `<button disabled class="w-full bg-gray-400 text-gray-200 py-2.5 px-2 rounded-lg font-bold cursor-not-allowed shadow-none flex items-center justify-center gap-1.5 text-xs">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
+                    </button>`;
+                }
+
                 html += `
-                    <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                    <div class="product-item ${cardBgClass} rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                        ${unavailableBadge}
                         <div>
                             <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
-                                <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover store-card-img group-hover:scale-105 transition-transform duration-300">
+                                <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
                             </div>
                             ${storeThumbnailsHtml}
                             <div class="p-5 space-y-3">
                                 <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'متنوع'}</span>
-                                <h3 class="font-extrabold text-[#0F172A] text-xl leading-snug hover:text-[#F97316] transition-colors">${p.title}</h3>
+                                <h3 class="font-extrabold ${titleColorClass} text-xl leading-snug transition-colors">${p.title}</h3>
                                 <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                 <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
                                     <div>
@@ -1554,12 +1587,8 @@
                             </div>
                         </div>
                         <div class="p-5 pt-0 grid grid-cols-2 gap-2" onclick="event.stopPropagation()">
-                            <button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
-                                <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
-                            </button>
-                            <button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
-                                <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
-                            </button>
+                            ${cartBtnHtml}
+                            ${waBtnHtml}
                         </div>
                     </div>
                 `;
