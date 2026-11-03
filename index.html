@@ -858,7 +858,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.7.7</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.7.8</span>
                     </span>
                 </div>
             </div>
@@ -1437,7 +1437,8 @@
             const prodDesc = p.description ? p.description.substring(0, 150) : 'اكتشف هذا المنتج الحصري بأفضل الأسعار مع الدفع عند الاستلام.';
             const images = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
             const prodImg = images[0] || '';
-            const exactProductUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
+            const baseCleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            const exactProductUrl = baseCleanUrl + '?product=' + p.id;
 
             const titleEl = document.getElementById('page-main-title');
             const metaTitleEl = document.getElementById('meta-og-title');
@@ -1964,7 +1965,8 @@
 
             updateMetaTagsForProduct(p);
 
-            const productPageUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
+            const baseCleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            const productPageUrl = baseCleanUrl + '?product=' + p.id;
             if (p.id && window.history.pushState) {
                 window.history.pushState({path: productPageUrl}, '', productPageUrl);
             }
