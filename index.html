@@ -11,7 +11,6 @@
     <meta property="og:image" id="meta-og-image" content="https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=13y6gkvb&raw=1">
     <meta property="og:url" id="meta-og-url" content="https://bedal.online/">
     <meta property="og:type" content="website">
-    <meta property="fb:app_id" id="meta-og-appid" content="123456789012345">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDPGZ9SXD3"></script>
@@ -859,7 +858,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.7.5</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.7.6</span>
                     </span>
                 </div>
             </div>
@@ -1831,6 +1830,7 @@
             document.getElementById('section-bfd-album').classList.add('hidden');
 
             const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            const metaUrlEl = document.getElementById('meta-og-url');
 
             if (tabName === 'detail') {
                 document.getElementById('section-product-detail').classList.remove('hidden');
@@ -1843,7 +1843,7 @@
                 }
                 document.getElementById('meta-og-title').setAttribute('content', 'عروض نهاية الأسبوع الكبرى - bedal.online');
                 document.getElementById('meta-og-desc').setAttribute('content', 'اكتشف تخفيضات نهاية الأسبوع الجنونية حتى -70% مع الدفع عند الاستلام.');
-                document.getElementById('meta-og-url').setAttribute('content', baseUrl);
+                if (metaUrlEl) metaUrlEl.setAttribute('content', baseUrl);
             } else if (tabName === 'bfd-album') {
                 document.getElementById('section-bfd-album').classList.remove('hidden');
             } else {
@@ -1854,7 +1854,7 @@
                 document.getElementById('meta-og-title').setAttribute('content', 'bedal.online - منتوجات بي تخفيض خيالي');
                 document.getElementById('meta-og-desc').setAttribute('content', 'تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلام.');
                 document.getElementById('meta-og-image').setAttribute('content', 'https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=13y6gkvb&raw=1');
-                document.getElementById('meta-og-url').setAttribute('content', baseUrl);
+                if (metaUrlEl) metaUrlEl.setAttribute('content', baseUrl);
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1952,7 +1952,7 @@
             if (metaDescEl) metaDescEl.setAttribute('content', prodDesc);
             if (metaImgEl && prodImg) metaImgEl.setAttribute('content', prodImg);
 
-            // إصلاح شامل لجذر الرابط الموجه لفيسبوك لتفادي أخطاء الأصول وتثبيت الـ og:url
+            // إصلاح شامل لجذر الرابط الموجه لفيسبوك لتفادي تحذير إعادة التوجيه وتثبيت الـ og:url الخاص بالمنتج الحالي بدقة
             const productPageUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
             if (metaUrlEl) metaUrlEl.setAttribute('content', productPageUrl);
 
