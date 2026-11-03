@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -90,7 +90,6 @@
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* CSS الخاص بحماية الصور عبر تراكب اللوغو ديناميكياً (بحجم متناسق وأكثر شفافية) */
         .watermarked-container {
             position: relative;
             overflow: hidden;
@@ -104,7 +103,7 @@
             width: 54px;
             height: 54px;
             opacity: 0.55;
-            pointer-events: none; /* لضمان عدم تأثيره على النقر */
+            pointer-events: none;
             z-index: 20;
             filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
             transition: opacity 0.3s ease;
@@ -193,7 +192,7 @@
             </div>
 
             <div class="relative z-10 text-center pt-2">
-                <span class="bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">
+                <span class="bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider" data-i18n="exclusive_ad">
                     ✨ إعلان حصري لزوارنا ✨
                 </span>
             </div>
@@ -201,7 +200,7 @@
             <div class="relative z-10 pb-2 flex justify-center">
                 <button onclick="closeWelcomeAdModal()" class="w-11/12 bg-white/20 hover:bg-white/30 text-white font-black py-3 px-6 rounded-xl border-2 border-white/80 white-glow-btn backdrop-blur-md transition-all flex items-center justify-center gap-2 text-sm shadow-xl cursor-pointer">
                     <i data-lucide="x-circle" class="w-5 h-5 text-white"></i>
-                    <span>إغلاق الإعلان ومتابعة التصفح</span>
+                    <span data-i18n="close_ad">إغلاق الإعلان ومتابعة التصفح</span>
                 </button>
             </div>
         </div>
@@ -222,7 +221,7 @@
                 <div class="flex items-center justify-between border-b pb-4 mb-6">
                     <h2 class="text-lg font-black text-[#0F172A] flex items-center gap-2">
                         <i data-lucide="layout-grid" class="w-5 h-5 text-[#F97316]"></i>
-                        أقسام المتجر
+                        <span data-i18n="store_categories">أقسام المتجر</span>
                     </h2>
                     <button onclick="toggleCategoriesDrawer()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
                         <i data-lucide="x" class="w-5 h-5"></i>
@@ -232,41 +231,41 @@
                 <div class="space-y-3 mb-6 pb-6 border-b border-gray-100">
                     <button onclick="switchTab('store'); toggleCategoriesDrawer();" class="w-full flex items-center gap-3 p-3 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-sm transition-all shadow-sm">
                         <i data-lucide="home" class="w-5 h-5 text-[#F97316]"></i>
-                        <span>الرئيسية</span>
+                        <span data-i18n="home">الرئيسية</span>
                     </button>
                     <button onclick="toggleCategoriesDrawer(); toggleCartDrawer();" class="w-full flex items-center gap-3 p-3 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-sm transition-all shadow-sm">
                         <i data-lucide="shopping-bag" class="w-5 h-5 text-[#F97316]"></i>
-                        <span>السلة</span>
+                        <span data-i18n="cart">السلة</span>
                     </button>
                 </div>
 
                 <div class="space-y-3">
                     <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
                         <i data-lucide="layers" class="w-5 h-5 text-[#F97316]"></i>
-                        <span>الكل</span>
+                        <span data-i18n="all">الكل</span>
                     </button>
                     <button onclick="filterCategory('women'); toggleCategoriesDrawer();" id="cat-drawer-btn-women" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
                         <i data-lucide="sparkles" class="w-5 h-5 text-pink-500"></i>
-                        <span>نساء</span>
+                        <span data-i18n="women">نساء</span>
                     </button>
                     <button onclick="filterCategory('men'); toggleCategoriesDrawer();" id="cat-drawer-btn-men" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
                         <i data-lucide="shirt" class="w-5 h-5 text-blue-500"></i>
-                        <span>رجال</span>
+                        <span data-i18n="men">رجال</span>
                     </button>
                     <button onclick="filterCategory('kids'); toggleCategoriesDrawer();" id="cat-drawer-btn-kids" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
                         <i data-lucide="smile" class="w-5 h-5 text-amber-500"></i>
-                        <span>أطفال</span>
+                        <span data-i18n="kids">أطفال</span>
                     </button>
                     <button onclick="filterCategory('various'); toggleCategoriesDrawer();" id="cat-drawer-btn-various" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
                         <i data-lucide="package" class="w-5 h-5 text-emerald-500"></i>
-                        <span>منتجات متنوعة</span>
+                        <span data-i18n="various">منتجات متنوعة</span>
                     </button>
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-gray-100">
                     <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-sm transition-all border border-emerald-200 shadow-sm">
                         <i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>
-                        <span>إتصل بيا عبر الواتساب</span>
+                        <span data-i18n="whatsapp_contact">إتصل بيا عبر الواتساب</span>
                     </a>
                 </div>
             </div>
@@ -283,30 +282,30 @@
                 <div class="flex items-center justify-between border-b pb-4 mb-4">
                     <h2 class="text-xl font-bold text-[#0F172A] flex items-center gap-2">
                         <i data-lucide="shopping-bag" class="w-6 h-6 text-[#F97316]"></i>
-                        سلة التسوق
+                        <span data-i18n="shopping_cart">سلة التسوق</span>
                     </h2>
                     <button onclick="toggleCartDrawer()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                 </div>
                 <div id="cart-items-container" class="space-y-4">
-                    <p id="empty-cart-msg" class="text-center text-gray-400 py-10 text-sm">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>
+                    <p id="empty-cart-msg" class="text-center text-gray-400 py-10 text-sm" data-i18n="empty_cart">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>
                 </div>
             </div>
             <div class="border-t pt-4 space-y-3">
                 <div class="p-3 bg-gradient-to-r from-orange-50 to-slate-50 rounded-xl border border-orange-100 space-y-1">
                     <div class="flex justify-between items-center text-xs text-gray-600 font-semibold">
-                        <span>إجمالي التوفير (الربح من الخصم):</span>
+                        <span data-i18n="total_saving">إجمالي التوفير (الربح من الخصم):</span>
                         <span id="cart-total-saving" class="text-emerald-600 font-bold">0.00 د.م</span>
                     </div>
                     <div class="flex justify-between items-center text-lg font-bold">
-                        <span>المجموع الإجمالي بعد الخصم:</span>
+                        <span data-i18n="total_after_disc">المجموع الإجمالي بعد الخصم:</span>
                         <span class="text-[#0F172A] font-black text-xl"><span id="cart-total-price">0.00</span> د.م</span>
                     </div>
                 </div>
                 <button onclick="openCheckoutModal()" class="w-full bg-[#F97316] text-white py-3 rounded-lg font-bold hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md">
                     <i data-lucide="check-circle" class="w-5 h-5"></i>
-                    تأكيد وإتمام الطلب
+                    <span data-i18n="confirm_order_btn">تأكيد وإتمام الطلب</span>
                 </button>
             </div>
         </div>
@@ -318,7 +317,7 @@
             <div class="flex items-center justify-between border-b pb-4">
                 <div class="flex items-center gap-2">
                     <i data-lucide="file-text" class="w-6 h-6 text-[#F97316]"></i>
-                    <h2 class="text-xl font-black text-[#0F172A]">فاتورة الطلب وإتمام المعلومات</h2>
+                    <h2 class="text-xl font-black text-[#0F172A]" data-i18n="invoice_title">فاتورة الطلب وإتمام المعلومات</h2>
                 </div>
                 <button onclick="closeCheckoutModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
                     <i data-lucide="x" class="w-6 h-6"></i>
@@ -326,42 +325,42 @@
             </div>
             <div class="bg-[#F8F9FA] p-4 rounded-xl border border-gray-100 space-y-2 text-sm">
                 <div class="flex justify-between font-bold text-gray-700 border-b pb-2">
-                    <span>عدد المنتجات في السلة:</span>
+                    <span data-i18n="items_count">عدد المنتجات في السلة:</span>
                     <span id="invoice-items-count" class="text-[#F97316]">0 منتج</span>
                 </div>
                 <div class="flex justify-between font-bold text-gray-700">
-                    <span>إجمالي المبلغ الأصلي:</span>
+                    <span data-i18n="original_total">إجمالي المبلغ الأصلي:</span>
                     <span id="invoice-old-total" class="line-through text-red-600">0.00 د.م</span>
                 </div>
                 <div class="flex justify-between font-bold text-emerald-600">
-                    <span>إجمالي ربحك من الخصم:</span>
+                    <span data-i18n="saving_total">إجمالي ربحك من الخصم:</span>
                     <span id="invoice-saving-total">0.00 د.م</span>
                 </div>
                 <div class="flex justify-between font-black text-base text-[#0F172A] pt-2 border-t">
-                    <span>المبلغ المطلوب دفعه:</span>
+                    <span data-i18n="final_to_pay">المبلغ المطلوب دفعه:</span>
                     <span id="invoice-final-total" class="text-emerald-600 text-lg">0.00 د.م</span>
                 </div>
             </div>
             <div class="space-y-4">
                 <h3 class="font-bold text-[#0F172A] text-sm flex items-center gap-2">
                     <i data-lucide="user" class="w-4 h-4 text-[#F97316]"></i>
-                    معلومات التوصيل الخاصة بك
+                    <span data-i18n="delivery_info">معلومات التوصيل الخاصة بك</span>
                 </h3>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">الاسم الكامل *</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="full_name">الاسم الكامل *</label>
                     <input type="text" id="invoice-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف *</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="phone_number">رقم الهاتف *</label>
                     <input type="tel" id="invoice-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white text-right" dir="ltr">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">العنوان الكامل والمدينة *</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="address_city">العنوان الكامل والمدينة *</label>
                     <input type="text" id="invoice-cust-address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
                 </div>
                 <button onclick="submitInvoiceOrder()" class="w-full bg-[#F97316] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md">
                     <i data-lucide="send" class="w-5 h-5"></i>
-                    إرسال الطلب إلى الإدارة
+                    <span data-i18n="send_order_admin">إرسال الطلب إلى الإدارة</span>
                 </button>
             </div>
         </div>
@@ -374,11 +373,11 @@
                 <i data-lucide="check-circle-2" class="w-10 h-10"></i>
             </div>
             <div class="space-y-2">
-                <h3 class="text-xl font-black text-[#0F172A]">تم إرسال طلبك بنجاح!</h3>
-                <p class="text-gray-600 text-sm leading-relaxed">في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.</p>
+                <h3 class="text-xl font-black text-[#0F172A]" data-i18n="order_success_title">تم إرسال طلبك بنجاح!</h3>
+                <p class="text-gray-600 text-sm leading-relaxed" data-i18n="order_success_desc">في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.</p>
             </div>
             <button onclick="closeSuccessModal()" class="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2">
-                <i data-lucide="x-circle" class="w-5 h-5"></i> إغلاق
+                <i data-lucide="x-circle" class="w-5 h-5"></i> <span data-i18n="close">إغلاق</span>
             </button>
         </div>
     </div>
@@ -389,7 +388,7 @@
             <div class="flex items-center justify-between border-b pb-4">
                 <div class="flex items-center gap-2">
                     <i data-lucide="message-circle" class="w-6 h-6 text-emerald-600"></i>
-                    <h2 class="text-xl font-black text-[#0F172A]">طلب سريع عبر الواتساب</h2>
+                    <h2 class="text-xl font-black text-[#0F172A]" data-i18n="wa_order_title">طلب سريع عبر الواتساب</h2>
                 </div>
                 <button onclick="closeWhatsAppModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
                     <i data-lucide="x" class="w-6 h-6"></i>
@@ -397,23 +396,23 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">الإسم الكامل *</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="full_name">الإسم الكامل *</label>
                     <input type="text" id="wa-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">رقم الهاتف *</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="phone_number">رقم الهاتف *</label>
                     <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white text-right" dir="ltr">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">المدينة *</label>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="city">المدينة *</label>
                     <input type="text" id="wa-cust-city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
                 </div>
-                <div id="wa-success-alert" class="hidden p-3 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center">
+                <div id="wa-success-alert" class="hidden p-3 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center" data-i18n="wa_success_alert">
                     ✨ سيتم التواصل معك في أقرب وقت!
                 </div>
                 <button onclick="submitWhatsAppOrder()" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-md">
                     <i data-lucide="send" class="w-5 h-5"></i>
-                    إرسال الطلب عبر الواتساب
+                    <span data-i18n="send_wa_btn">إرسال الطلب عبر الواتساب</span>
                 </button>
             </div>
         </div>
@@ -425,37 +424,51 @@
             <div class="animate-marquee flex items-center gap-12 whitespace-nowrap text-xs sm:text-sm font-black tracking-wide">
                 <div class="flex items-center gap-2">
                     <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
-                    <span>توصيل مجاني لجميع المدن في المغرب</span>
+                    <span data-i18n="marquee_1">توصيل مجاني لجميع المدن في المغرب</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
-                    <span>عروض حصرية وتخفيضات كبرى يومياً</span>
+                    <span data-i18n="marquee_2">عروض حصرية وتخفيضات كبرى يومياً</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-                    <span>ضمان الجودة والدفع عند الاستلام</span>
+                    <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
-                    <span>توصيل مجاني لجميع المدن في المغرب</span>
+                    <span data-i18n="marquee_1">توصيل مجاني لجميع المدن في المغرب</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
-                    <span>عروض حصرية وتخفيضات كبرى يومياً</span>
+                    <span data-i18n="marquee_2">عروض حصرية وتخفيضات كبرى يومياً</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-                    <span>ضمان الجودة والدفع عند الاستلام</span>
+                    <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
                 </div>
             </div>
         </div>
 
         <header class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <div class="flex items-center">
+                <div class="flex items-center gap-3">
                     <button onclick="toggleCategoriesDrawer()" class="p-2 text-[#0F172A] hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
+                    
+                    <!-- Language Selector Dropdown Button -->
+                    <div class="relative">
+                        <button onclick="toggleLangDropdown()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-xs font-bold text-gray-700 transition-colors shadow-sm cursor-pointer">
+                            <i data-lucide="globe" class="w-4 h-4 text-[#F97316]"></i>
+                            <span id="current-lang-label">AR</span>
+                            <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>
+                        </button>
+                        <div id="lang-dropdown-menu" class="absolute top-full mt-1 left-0 bg-white border border-gray-200 rounded-xl shadow-xl hidden z-50 overflow-hidden min-w-[90px]">
+                            <button onclick="changeLanguage('ar')" class="w-full text-right px-4 py-2 text-xs font-bold hover:bg-orange-50 hover:text-[#F97316] transition-colors flex items-center justify-between"><span>العربية</span> <span class="text-[10px] text-gray-400">AR</span></button>
+                            <button onclick="changeLanguage('fr')" class="w-full text-right px-4 py-2 text-xs font-bold hover:bg-orange-50 hover:text-[#F97316] transition-colors flex items-center justify-between"><span>Français</span> <span class="text-[10px] text-gray-400">FR</span></button>
+                            <button onclick="changeLanguage('en')" class="w-full text-right px-4 py-2 text-xs font-bold hover:bg-orange-50 hover:text-[#F97316] transition-colors flex items-center justify-between"><span>English</span> <span class="text-[10px] text-gray-400">EN</span></button>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="flex flex-col items-center cursor-pointer group" onclick="switchTab('store')">
@@ -520,9 +533,9 @@
                     <div class="hero-slide absolute inset-0 opacity-100 transition-opacity duration-1000 flex items-center justify-between px-6 sm:px-12 text-white">
                         <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
                         <div class="relative z-10 max-w-lg space-y-1">
-                            <span class="bg-[#F97316] text-white text-[10px] sm:text-xs px-2.5 py-0.5 rounded-lg font-bold inline-block shadow">تخفيضات الكبرى</span>
-                            <h2 class="text-xl sm:text-2xl font-black leading-tight">عروض حصرية تصل إلى 40%</h2>
-                            <p class="text-gray-200 text-xs sm:text-sm">تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.</p>
+                            <span class="bg-[#F97316] text-white text-[10px] sm:text-xs px-2.5 py-0.5 rounded-lg font-bold inline-block shadow" data-i18n="major_discounts">تخفيضات الكبرى</span>
+                            <h2 class="text-xl sm:text-2xl font-black leading-tight" data-i18n="hero_title">عروض حصرية تصل إلى 40%</h2>
+                            <p class="text-gray-200 text-xs sm:text-sm" data-i18n="hero_subtitle">تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.</p>
                         </div>
                     </div>
                 </div>
@@ -530,7 +543,7 @@
 
             <div class="py-6">
                 <div class="max-w-xs mx-auto space-y-2 text-center">
-                    <div class="inline-block bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white text-[11px] sm:text-xs font-black px-4 py-1.5 rounded-full shadow-lg animate-pulse tracking-wide border border-amber-200/50">
+                    <div class="inline-block bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white text-[11px] sm:text-xs font-black px-4 py-1.5 rounded-full shadow-lg animate-pulse tracking-wide border border-amber-200/50" data-i18n="shock_offer_banner">
                         ⚡ اضغط هنا لاغتنام تخفيضات الصدمة قبل نفاد الكمية! ⚡
                     </div>
                     <button onclick="openBlackFreeDayPage()" class="w-full group relative h-24 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-400 transition-all transform hover:-translate-y-1.5 black-free-day-flash cursor-pointer">
@@ -541,7 +554,7 @@
                                 <span class="font-black text-sm sm:text-base bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent tracking-wider uppercase drop-shadow">Black Free Day</span>
                                 <i data-lucide="sparkles" class="w-4 h-4 text-amber-400 animate-spin"></i>
                             </div>
-                            <span class="text-[10px] bg-gradient-to-r from-red-600 to-rose-600 text-white px-3 py-0.5 rounded-full font-black mt-1 shadow-md border border-red-400/40 animate-pulse">🔥 عروض السبت والأحد الحصرية 🔥</span>
+                            <span class="text-[10px] bg-gradient-to-r from-red-600 to-rose-600 text-white px-3 py-0.5 rounded-full font-black mt-1 shadow-md border border-red-400/40 animate-pulse" data-i18n="weekend_exclusive">🔥 عروض السبت والأحد الحصرية 🔥</span>
                         </div>
                     </button>
                 </div>
@@ -551,7 +564,7 @@
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-2xl font-bold text-[#0F172A] flex items-center gap-2">
                         <i data-lucide="sparkles" class="w-6 h-6 text-[#F97316]"></i>
-                        المنتجات المميزة بالعروض الكبرى
+                        <span data-i18n="featured_products">المنتجات المميزة بالعروض الكبرى</span>
                     </h2>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="store-products-grid">
@@ -568,16 +581,16 @@
         <section id="section-black-free-day" class="hidden space-y-8">
             <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:text-amber-900 bg-amber-50 px-4 py-2 rounded-lg transition-colors border border-amber-200">
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                العودة للرئيسية
+                <span data-i18n="back_to_home">العودة للرئيسية</span>
             </button>
             <div class="bg-gradient-to-r from-zinc-900 via-neutral-900 to-black rounded-2xl border-2 border-amber-500 shadow-2xl p-8 sm:p-12 text-white relative overflow-hidden text-center space-y-4">
                 <div class="inline-flex items-center gap-2 bg-amber-500 text-zinc-950 font-black px-4 py-1.5 rounded-lg text-xs uppercase tracking-widest shadow-lg animate-bounce">
-                    <i data-lucide="flame" class="w-4 h-4"></i> عروض نهاية الأسبوع الكبرى
+                    <i data-lucide="flame" class="w-4 h-4"></i> <span data-i18n="weekend_offers">عروض نهاية الأسبوع الكبرى</span>
                 </div>
                 <h1 class="text-3xl sm:text-6xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent uppercase drop-shadow-md">
                     Black Free Day
                 </h1>
-                <p class="text-amber-100/90 text-base sm:text-lg font-bold max-w-2xl mx-auto">
+                <p class="text-amber-100/90 text-base sm:text-lg font-bold max-w-2xl mx-auto" data-i18n="bfd_desc_header">
                     المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!
                 </p>
             </div>
@@ -588,32 +601,30 @@
         <section id="section-bfd-album" class="hidden space-y-6 max-w-3xl mx-auto">
             <div>
                 <button onclick="switchTab('black_free_day')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-zinc-900 hover:bg-black px-5 py-2.5 rounded-xl shadow border border-amber-500/50 transition-all">
-                    <i data-lucide="arrow-right" class="w-4 h-4 text-amber-400"></i> العودة لقائمة العروض
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-amber-400"></i> <span data-i18n="back_to_offers">العودة لقائمة العروض</span>
                 </button>
             </div>
 
             <div class="bg-zinc-950 border-2 border-amber-500/80 rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 text-white">
                 <div class="border-b border-zinc-800 pb-4 space-y-2">
-                    <div class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 text-xs font-bold px-3 py-1 rounded-lg border border-amber-500/30">
+                    <div class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 text-xs font-bold px-3 py-1 rounded-lg border border-amber-500/30" data-i18n="exclusive_album">
                         🔥 ألبوم صور المنتج الحصري
                     </div>
                     <h1 id="bfd-album-title" class="text-2xl sm:text-3xl font-black text-amber-400">عنوان المنتج</h1>
                 </div>
 
-                <!-- حاوية ألبوم الصور مع شعار الحماية المتناسق -->
                 <div id="bfd-album-images-container" class="space-y-6 flex flex-col items-center">
                     <!-- الصور يتم حقنها ديناميكياً مع اللوغو -->
                 </div>
 
-                <!-- وصف المنتج -->
                 <div class="pt-6 border-t border-zinc-800 space-y-3">
                     <h3 class="font-extrabold text-amber-400 text-base flex items-center gap-2">
-                        <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> وصف المنتج
+                        <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> <span data-i18n="product_desc">وصف المنتج</span>
                     </h3>
                     <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 space-y-3">
                         <p id="bfd-album-description" class="text-zinc-300 text-sm sm:text-base leading-relaxed whitespace-pre-line">وصف المنتج هنا...</p>
                         <div class="flex items-center justify-between pt-2">
-                            <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-xs sm:text-sm underline focus:outline-none">
+                            <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-xs sm:text-sm underline focus:outline-none" data-i18n="more">
                                 المزيد...
                             </button>
                         </div>
@@ -622,7 +633,7 @@
 
                 <div class="pt-6 border-t border-zinc-800 flex justify-center">
                     <button id="bfd-album-whatsapp-btn" onclick="" class="bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-8 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base bfd-attention-btn cursor-pointer">
-                        <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب
+                        <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
                     </button>
                 </div>
             </div>
@@ -632,7 +643,7 @@
         <section id="section-vendor-store" class="hidden space-y-8">
             <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0F172A] hover:text-[#F97316] bg-gray-100 px-4 py-2 rounded-lg transition-colors">
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                العودة للمتجر الرئيسي
+                <span data-i18n="back_main_store">العودة للمتجر الرئيسي</span>
             </button>
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="h-36 sm:h-48 bg-gradient-to-r from-[#0F172A] to-[#1E293B] relative watermarked-container">
@@ -646,7 +657,7 @@
         <section id="section-product-detail" class="hidden space-y-6 max-w-2xl mx-auto">
             <div>
                 <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-[#0F172A] hover:bg-[#1E293B] px-5 py-2 rounded-lg shadow transition-all">
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i> الرجوع إلى الرئيسية
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i> <span data-i18n="back_to_home">الرجوع إلى الرئيسية</span>
                 </button>
             </div>
 
@@ -660,7 +671,6 @@
                     <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <!-- حاوية تفاصيل المنتج مع اللوغو المحمي المتناسق -->
                 <div class="relative w-full rounded-xl overflow-hidden bg-gray-100 h-72 sm:h-96 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container">
                     <img id="detail-product-img" alt="Product Detail" class="w-full h-full object-cover">
                     <img src="https://www.dropbox.com/scl/fi/5u6ayo65stzn496lnmk4a/Meta_AI_bedal_full_transparent_20261030_083427.png?rlkey=bqhtv3qsyw25bjmickxdmtmvf&st=9vylbawa&raw=1" alt="Watermark" class="watermark-overlay" style="width: 65px; height: 65px;">
@@ -671,20 +681,21 @@
                 <div class="flex items-baseline gap-4 py-2 border-b border-gray-100">
                     <span id="detail-product-price" class="text-3xl font-black text-emerald-600">0.00 د.م</span>
                     <span id="detail-old-price" class="text-lg font-bold text-gray-400 line-through">0.00 د.م</span>
-                    <span class="bg-rose-50 text-rose-600 text-xs font-black px-2.5 py-1 rounded-lg border border-rose-100">التوصيل مجاني لجميع المدن</span>
+                    <span class="bg-rose-50 text-rose-600 text-xs font-black px-2.5 py-1 rounded-lg border border-rose-100" data-i18n="free_shipping_all">التوصيل مجاني لجميع المدن</span>
                 </div>
 
-                <div class="bg-amber-50/50 rounded-xl border border-amber-200 p-4 sm:p-6 space-y-4 shadow-sm">
+                <!-- خانات ملء الطلب في مكانها الأصلي دون تغيير -->
+                <div id="order-form-container" class="bg-amber-50/50 rounded-xl border border-amber-200 p-4 sm:p-6 space-y-4 shadow-sm">
                     <div class="text-center space-y-1 pb-1 border-b border-amber-100">
-                        <h3 class="font-black text-[#0F172A] text-base">اطلب الآن - الدفع عند الاستلام</h3>
-                        <p class="text-xs text-gray-500 font-semibold">املأ المعلومات أدناه لتأكيد طلبك بسرعة وسهولة</p>
+                        <h3 class="font-black text-[#0F172A] text-base" data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</h3>
+                        <p class="text-xs text-gray-500 font-semibold" data-i18n="fill_info_fast">املأ المعلومات أدناه لتأكيد طلبك بسرعة وسهولة</p>
                     </div>
 
                     <div class="space-y-3 text-sm">
                         <div>
                             <div class="relative flex items-center">
                                 <span class="absolute right-3 text-gray-400"><i data-lucide="user" class="w-4 h-4"></i></span>
-                                <input type="text" id="detail-cust-name" placeholder="الاسم الكامل" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
+                                <input type="text" id="detail-cust-name" placeholder="الاسم الكامل" data-i18n-placeholder="placeholder_name" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
                             </div>
                         </div>
                         <div>
@@ -696,22 +707,22 @@
                         <div>
                             <div class="relative flex items-center">
                                 <span class="absolute right-3 text-gray-400"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
-                                <input type="text" id="detail-cust-city" placeholder="المدينة" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
+                                <input type="text" id="detail-cust-city" placeholder="المدينة" data-i18n-placeholder="placeholder_city" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-white p-3 rounded-lg border border-amber-100 space-y-1.5 text-xs font-bold text-gray-700">
                         <div class="flex justify-between">
-                            <span>المنتج:</span>
+                            <span data-i18n="product_label">المنتج:</span>
                             <span id="summary-prod-name" class="text-[#0F172A] truncate max-w-[200px]">المنتج</span>
                         </div>
                         <div class="flex justify-between">
-                            <span>التوصيل:</span>
-                            <span class="text-emerald-600">مجاني</span>
+                            <span data-i18n="shipping_label">التوصيل:</span>
+                            <span class="text-emerald-600" data-i18n="free">مجاني</span>
                         </div>
                         <div class="flex justify-between text-sm pt-1 border-t border-gray-100 font-black">
-                            <span>المجموع:</span>
+                            <span data-i18n="total_label">المجموع:</span>
                             <span id="summary-prod-total" class="text-emerald-600">0.00 د.م</span>
                         </div>
                     </div>
@@ -719,37 +730,46 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                         <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#10b981] hover:bg-[#059669] text-white py-3.5 px-4 rounded-lg font-black transition-colors flex items-center justify-center gap-2 shadow-md text-sm">
                             <i data-lucide="message-circle" class="w-5 h-5"></i>
-                            طلب عبر الواتساب
+                            <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                         </button>
                         <button onclick="submitDirectProductOrder()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white py-3.5 px-4 rounded-lg font-black transition-colors flex items-center justify-center gap-2 shadow-md text-sm">
                             <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                            الطلب عبر الموقع
+                            <span data-i18n="site_order_btn">الطلب عبر الموقع</span>
                         </button>
                     </div>
 
                     <div class="flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500 font-semibold pt-1">
                         <div class="flex items-center gap-1">
-                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i> الدفع عند الاستلام
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="cod_badge">الدفع عند الاستلام</span>
                         </div>
                         <div class="flex items-center gap-1">
-                            <i data-lucide="truck" class="w-3.5 h-3.5 text-[#F97316]"></i> توصيل سريع
+                            <i data-lucide="truck" class="w-3.5 h-3.5 text-[#F97316]"></i> <span data-i18n="fast_delivery">توصيل سريع</span>
                         </div>
                         <div class="flex items-center gap-1">
-                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i> جودة مضمونة
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i> <span data-i18n="guaranteed_quality">جودة مضمونة</span>
                         </div>
                     </div>
                 </div>
 
+                <!-- وصف المنتج -->
                 <div class="space-y-3 pt-4 border-t border-gray-100">
                     <h3 class="font-extrabold text-[#0F172A] text-base flex items-center gap-2">
-                        <i data-lucide="file-text" class="w-5 h-5 text-[#F97316]"></i> وصف المنتج
+                        <i data-lucide="file-text" class="w-5 h-5 text-[#F97316]"></i> <span data-i18n="product_desc">وصف المنتج</span>
                     </h3>
                     <p id="detail-product-desc" class="text-gray-600 text-sm leading-relaxed whitespace-pre-line bg-[#F8F9FA] p-4 rounded-xl border border-gray-100">وصف المنتوج هنا...</p>
                 </div>
 
+                <!-- زر "اطلب الآن - الدفع عند الاستلام" الجديد أسفل وصف المنتج مع خاصية التمرير للأعلى -->
+                <div class="pt-4">
+                    <button onclick="scrollToOrderForm()" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-4 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-base bfd-attention-btn cursor-pointer">
+                        <i data-lucide="shopping-bag" class="w-6 h-6 animate-bounce"></i>
+                        <span data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</span>
+                    </button>
+                </div>
+
                 <div id="detail-video-box" class="hidden pt-2">
                     <a id="detail-video-link" href="#" target="_blank" class="inline-flex items-center gap-2 bg-orange-50 border border-orange-100 hover:bg-orange-100 text-orange-900 px-4 py-2.5 rounded-lg text-xs font-bold transition-colors">
-                        <i data-lucide="play-circle" class="w-4 h-4 text-emerald-600 fill-emerald-600 text-white"></i> شرح منصة تاجر
+                        <i data-lucide="play-circle" class="w-4 h-4 text-emerald-600 fill-emerald-600 text-white"></i> <span data-i18n="tajer_guide">شرح منصة تاجر</span>
                     </a>
                 </div>
             </div>
@@ -762,9 +782,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
             <div class="text-center space-y-2">
                 <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-lg text-xs font-black bg-orange-500/20 text-orange-300 border border-orange-500/30">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> تشكيلة المنتجات المميزة
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> <span data-i18n="exclusive_selection">تشكيلة المنتجات المميزة</span>
                 </span>
-                <h3 class="text-2xl sm:text-3xl font-black tracking-tight">اكتشف أحدث منتجاتنا الحصرية المتاحة الآن</h3>
+                <h3 class="text-2xl sm:text-3xl font-black tracking-tight" data-i18n="discover_latest">اكتشف أحدث منتجاتنا الحصرية المتاحة الآن</h3>
             </div>
             <div class="relative w-full overflow-hidden py-3">
                 <div id="partner-products-marquee" class="animate-marquee-slow flex items-center gap-6"></div>
@@ -781,8 +801,8 @@
                         <i data-lucide="shield-check" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
-                        <h4 class="font-extrabold text-[#0F172A] text-base">جودة مضمونة</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">منتجات مختارة بعناية فائقة لضمان رضاكم.</p>
+                        <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_1_title">جودة مضمونة</h4>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_1_desc">منتجات مختارة بعناية فائقة لضمان رضاكم.</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
@@ -790,8 +810,8 @@
                         <i data-lucide="truck" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
-                        <h4 class="font-extrabold text-[#0F172A] text-base">توصيل سريع</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">خدمة توصيل سريعة لجميع المدن في المغرب.</p>
+                        <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_2_title">توصيل سريع</h4>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_2_desc">خدمة توصيل سريعة لجميع المدن في المغرب.</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
@@ -799,8 +819,8 @@
                         <i data-lucide="refresh-cw" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
-                        <h4 class="font-extrabold text-[#0F172A] text-base">إرجاع سهل</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">ضمان الاسترجاع في حال لم تكن راضياً.</p>
+                        <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_3_title">إرجاع سهل</h4>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_3_desc">ضمان الاسترجاع في حال لم تكن راضياً.</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
@@ -808,8 +828,8 @@
                         <i data-lucide="wallet" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
-                        <h4 class="font-extrabold text-[#0F172A] text-base">الدفع عند الاستلام</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">ادفع بأمان عند استلام طلبك مباشرة.</p>
+                        <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_4_title">الدفع عند الاستلام</h4>
+                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_4_desc">ادفع بأمان عند استلام طلبك مباشرة.</p>
                     </div>
                 </div>
             </div>
@@ -823,27 +843,27 @@
 
             <div class="bg-[#F8F9FA] p-4 rounded-xl border border-gray-200/80 max-w-xl mx-auto space-y-3">
                 <h4 class="font-black text-[#0F172A] text-xs sm:text-sm text-center flex items-center justify-center gap-1.5">
-                    <i data-lucide="message-square-plus" class="w-4 h-4 text-[#F97316]"></i> أضف تعليقك وتقييمك للموقع
+                    <i data-lucide="message-square-plus" class="w-4 h-4 text-[#F97316]"></i> <span data-i18n="add_review_title">أضف تعليقك وتقييمك للموقع</span>
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <input type="text" id="user-review-name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white">
+                    <input type="text" id="user-review-name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" data-i18n-placeholder="placeholder_review_name" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white">
                     <select id="user-review-rating" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white font-bold text-amber-600">
-                        <option value="5">⭐⭐⭐⭐⭐ (5/5 ممتاز جداً)</option>
-                        <option value="4">⭐⭐⭐⭐ (4/5 جيد جداً)</option>
-                        <option value="3">⭐⭐⭐ (3/5 جيد)</option>
+                        <option value="5" data-i18n="star_5">⭐⭐⭐⭐⭐ (5/5 ممتاز جداً)</option>
+                        <option value="4" data-i18n="star_4">⭐⭐⭐⭐ (4/5 جيد جداً)</option>
+                        <option value="3" data-i18n="star_3">⭐⭐⭐ (3/5 جيد)</option>
                     </select>
                 </div>
-                <textarea id="user-review-comment" placeholder="اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..." rows="2" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white resize-none"></textarea>
+                <textarea id="user-review-comment" placeholder="اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..." data-i18n-placeholder="placeholder_review_comment" rows="2" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white resize-none"></textarea>
                 <button onclick="addNewUserReview()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-bold py-2 px-4 rounded-lg text-xs transition-colors shadow-sm flex items-center justify-center gap-1.5">
-                    <i data-lucide="send" class="w-3.5 h-3.5"></i> إرسال التعليق
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i> <span data-i18n="send_comment">إرسال التعليق</span>
                 </button>
             </div>
 
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500 pt-2 border-t border-gray-100">
-                <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
+                <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار: <span class="text-[#F97316] font-bold">v 0.5.3</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.5.5</span>
                     </span>
                 </div>
             </div>
@@ -857,8 +877,328 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
 
-        // رابط اللوغو الشفاف لحماية الصور
         const WATERMARK_LOGO_URL = 'https://www.dropbox.com/scl/fi/5u6ayo65stzn496lnmk4a/Meta_AI_bedal_full_transparent_20261030_083427.png?rlkey=bqhtv3qsyw25bjmickxdmtmvf&st=9vylbawa&raw=1';
+
+        // نظام اللغات المتكامل (AR, FR, EN)
+        let currentLang = 'ar';
+        const translations = {
+            ar: {
+                exclusive_ad: "✨ إعلان حصري لزوارنا ✨",
+                close_ad: "إغلاق الإعلان ومتابعة التصفح",
+                store_categories: "أقسام المتجر",
+                home: "الرئيسية",
+                cart: "السلة",
+                all: "الكل",
+                women: "نساء",
+                men: "رجال",
+                kids: "أطفال",
+                various: "منتجات متنوعة",
+                whatsapp_contact: "إتصل بيا عبر الواتساب",
+                shopping_cart: "سلة التسوق",
+                empty_cart: "السلة فارغة حالياً. اضغط على إضافة منتجات!",
+                total_saving: "إجمالي التوفير (الربح من الخصم):",
+                total_after_disc: "المجموع الإجمالي بعد الخصم:",
+                confirm_order_btn: "تأكيد وإتمام الطلب",
+                invoice_title: "فاتورة الطلب وإتمام المعلومات",
+                items_count: "عدد المنتجات في السلة:",
+                original_total: "إجمالي المبلغ الأصلي:",
+                saving_total: "إجمالي ربحك من الخصم:",
+                final_to_pay: "المبلغ المطلوب دفعه:",
+                delivery_info: "معلومات التوصيل الخاصة بك",
+                full_name: "الاسم الكامل *",
+                phone_number: "رقم الهاتف *",
+                address_city: "العنوان الكامل والمدينة *",
+                send_order_admin: "إرسال الطلب إلى الإدارة",
+                order_success_title: "تم إرسال طلبك بنجاح!",
+                order_success_desc: "في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.",
+                close: "إغلاق",
+                wa_order_title: "طلب سريع عبر الواتساب",
+                city: "المدينة *",
+                wa_success_alert: "✨ سيتم التواصل معك في أقرب وقت!",
+                send_wa_btn: "إرسال الطلب عبر الواتساب",
+                marquee_1: "توصيل مجاني لجميع المدن في المغرب",
+                marquee_2: "عروض حصرية وتخفيضات كبرى يومياً",
+                marquee_3: "ضمان الجودة والدفع عند الاستلام",
+                major_discounts: "تخفيضات الكبرى",
+                hero_title: "عروض حصرية تصل إلى 40%",
+                hero_subtitle: "تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.",
+                shock_offer_banner: "⚡ اضغط هنا لاغتنام تخفيضات الصدمة قبل نفاد الكمية! ⚡",
+                weekend_exclusive: "🔥 عروض السبت والأحد الحصرية 🔥",
+                featured_products: "المنتجات المميزة بالعروض الكبرى",
+                back_to_home: "العودة للرئيسية",
+                weekend_offers: "عروض نهاية الأسبوع الكبرى",
+                bfd_desc_header: "المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!",
+                back_to_offers: "العودة لقائمة العروض",
+                exclusive_album: "🔥 ألبوم صور المنتج الحصري",
+                product_desc: "وصف المنتج",
+                more: "المزيد...",
+                hurry_whatsapp: "سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب",
+                back_main_store: "العودة للمتجر الرئيسي",
+                free_shipping_all: "التوصيل مجاني لجميع المدن",
+                order_now_cod: "اطلب الآن - الدفع عند الاستلام",
+                fill_info_fast: "املأ المعلومات أدناه لتأكيد طلبك بسرعة وسهولة",
+                product_label: "المنتج:",
+                shipping_label: "التوصيل:",
+                free: "مجاني",
+                total_label: "المجموع:",
+                whatsapp_order_btn: "طلب عبر الواتساب",
+                site_order_btn: "الطلب عبر الموقع",
+                cod_badge: "الدفع عند الاستلام",
+                fast_delivery: "توصيل سريع",
+                guaranteed_quality: "جودة مضمونة",
+                tajer_guide: "شرح منصة تاجر",
+                exclusive_selection: "تشكيلة المنتجات المميزة",
+                discover_latest: "اكتشف أحدث منتجاتنا الحصرية المتاحة الآن",
+                feat_1_title: "جودة مضمونة",
+                feat_1_desc: "منتجات مختارة بعناية فائقة لضمان رضاكم.",
+                feat_2_title: "توصيل سريع",
+                feat_2_desc: "خدمة توصيل سريعة لجميع المدن في المغرب.",
+                feat_3_title: "إرجاع سهل",
+                feat_3_desc: "ضمان الاسترجاع في حال لم تكن راضياً.",
+                feat_4_title: "الدفع عند الاستلام",
+                feat_4_desc: "ادفع بأمان عند استلام طلبك مباشرة.",
+                add_review_title: "أضف تعليقك وتقييمك للموقع",
+                star_5: "⭐⭐⭐⭐⭐ (5/5 ممتاز جداً)",
+                star_4: "⭐⭐⭐⭐ (4/5 جيد جداً)",
+                star_3: "⭐⭐⭐ (3/5 جيد)",
+                send_comment: "إرسال التعليق",
+                rights_reserved: "جميع الحقوق محفوظة لـ",
+                version: "الإصدار:",
+                placeholder_name: "أدخل اسمك الكامل",
+                placeholder_city: "أدخل مدينتك",
+                placeholder_review_name: "اسمك الكريم والمدينة (مثال: كريم من القنيطرة)",
+                placeholder_review_comment: "اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..."
+            },
+            fr: {
+                exclusive_ad: "✨ Offre Exclusive pour Nos Visiteurs ✨",
+                close_ad: "Fermer et Continuer la Navigation",
+                store_categories: "Catégories",
+                home: "Accueil",
+                cart: "Panier",
+                all: "Tous",
+                women: "Femmes",
+                men: "Hommes",
+                kids: "Enfants",
+                various: "Produits Divers",
+                whatsapp_contact: "Contactez-nous via WhatsApp",
+                shopping_cart: "Panier d'Achats",
+                empty_cart: "Votre panier est vide. Ajoutez des produits !",
+                total_saving: "Économie totale (Gain de remise):",
+                total_after_disc: "Montant total après remise:",
+                confirm_order_btn: "Confirmer et Finaliser la Commande",
+                invoice_title: "Facture et Informations de Commande",
+                items_count: "Nombre d'articles:",
+                original_total: "Montant d'origine:",
+                saving_total: "Votre économie totale:",
+                final_to_pay: "Montant à payer:",
+                delivery_info: "Vos Informations de Livraison",
+                full_name: "Nom complet *",
+                phone_number: "Numéro de téléphone *",
+                address_city: "Adresse complète et Ville *",
+                send_order_admin: "Envoyer la commande à l'administration",
+                order_success_title: "Commande envoyée avec succès !",
+                order_success_desc: "Dans les 24 heures, nous vous contacterons pour confirmer la commande.",
+                close: "Fermer",
+                wa_order_title: "Commande rapide via WhatsApp",
+                city: "Ville *",
+                wa_success_alert: "✨ Nous vous contacterons très bientôt !",
+                send_wa_btn: "Envoyer la commande via WhatsApp",
+                marquee_1: "Livraison gratuite dans toutes les villes du Maroc",
+                marquee_2: "Offres exclusives et super soldes quotidiens",
+                marquee_3: "Qualité garantie et Paiement à la livraison",
+                major_discounts: "Méga Soldes",
+                hero_title: "Offres exclusives jusqu'à -40%",
+                hero_subtitle: "Découvrez notre nouvelle collection aux meilleurs prix.",
+                shock_offer_banner: "⚡ Cliquez ici pour profiter des soldes choc avant rupture ! ⚡",
+                weekend_exclusive: "🔥 Offres Exclusives Samedi & Dimanche 🔥",
+                featured_products: "Produits Vedettes en Méga Soldes",
+                back_to_home: "Retour à l'accueil",
+                weekend_offers: "Super Soldes du Weekend",
+                bfd_desc_header: "Produits exclusifs du weekend .. Des réductions folles vous attendent !",
+                back_to_offers: "Retour aux offres",
+                exclusive_album: "🔥 Album photo exclusif du produit",
+                product_desc: "Description du produit",
+                more: "Plus...",
+                hurry_whatsapp: "Dépêchez-vous ! Cliquez pour commander via WhatsApp",
+                back_main_store: "Retour au magasin principal",
+                free_shipping_all: "Livraison gratuite partout",
+                order_now_cod: "Commander - Paiement à la livraison",
+                fill_info_fast: "Remplissez vos informations pour confirmer facilement",
+                product_label: "Produit:",
+                shipping_label: "Livraison:",
+                free: "Gratuite",
+                total_label: "Total:",
+                whatsapp_order_btn: "Commander via WhatsApp",
+                site_order_btn: "Commander sur le Site",
+                cod_badge: "Paiement à la livraison",
+                fast_delivery: "Livraison rapide",
+                guaranteed_quality: "Qualité garantie",
+                tajer_guide: "Guide de la plateforme",
+                exclusive_selection: "Sélection de Produits Exclusifs",
+                discover_latest: "Découvrez nos derniers produits exclusifs disponibles",
+                feat_1_title: "Qualité Garantie",
+                feat_1_desc: "Des produits sélectionnés avec soin pour votre satisfaction.",
+                feat_2_title: "Livraison Rapide",
+                feat_2_desc: "Service de livraison rapide dans toutes les villes.",
+                feat_3_title: "Retour Facile",
+                feat_3_desc: "Garantie de remboursement en cas d'insatisfaction.",
+                feat_4_title: "Paiement à la Livraison",
+                feat_4_desc: "Payez en toute sécurité à la réception.",
+                add_review_title: "Ajoutez votre avis et évaluation",
+                star_5: "⭐⭐⭐⭐⭐ (5/5 Excellent)",
+                star_4: "⭐⭐⭐⭐ (4/5 Très bien)",
+                star_3: "⭐⭐⭐ (3/5 Bien)",
+                send_comment: "Envoyer l'avis",
+                rights_reserved: "Tous droits réservés à",
+                version: "Version :",
+                placeholder_name: "Entrez votre nom complet",
+                placeholder_city: "Entrez votre ville",
+                placeholder_review_name: "Votre nom et ville (ex: Karim de Kénitra)",
+                placeholder_review_comment: "Écrivez votre avis sur nos services..."
+            },
+            en: {
+                exclusive_ad: "✨ Exclusive Offer for Visitors ✨",
+                close_ad: "Close Ad & Browse",
+                store_categories: "Categories",
+                home: "Home",
+                cart: "Cart",
+                all: "All",
+                women: "Women",
+                men: "Men",
+                kids: "Kids",
+                various: "Various Products",
+                whatsapp_contact: "Contact us via WhatsApp",
+                shopping_cart: "Shopping Cart",
+                empty_cart: "Your cart is empty. Click to add products!",
+                total_saving: "Total Savings (Discount Profit):",
+                total_after_disc: "Total Price After Discount:",
+                confirm_order_btn: "Confirm & Complete Order",
+                invoice_title: "Order Invoice & Details",
+                items_count: "Items in cart:",
+                original_total: "Original Total:",
+                saving_total: "Total Discount Savings:",
+                final_to_pay: "Amount to Pay:",
+                delivery_info: "Your Delivery Information",
+                full_name: "Full Name *",
+                phone_number: "Phone Number *",
+                address_city: "Full Address & City *",
+                send_order_admin: "Submit Order to Administration",
+                order_success_title: "Order Sent Successfully!",
+                order_success_desc: "Within 24 hours we will contact you to confirm the order.",
+                close: "Close",
+                wa_order_title: "Quick Order via WhatsApp",
+                city: "City *",
+                wa_success_alert: "✨ We will contact you very soon!",
+                send_wa_btn: "Send Order via WhatsApp",
+                marquee_1: "Free delivery to all cities in Morocco",
+                marquee_2: "Exclusive offers and major daily discounts",
+                marquee_3: "Quality guarantee & Cash on Delivery",
+                major_discounts: "Mega Discounts",
+                hero_title: "Exclusive offers up to 40% OFF",
+                hero_subtitle: "Browse the new collection at the best available prices.",
+                shock_offer_banner: "⚡ Click here to grab shock discounts before stock runs out! ⚡",
+                weekend_exclusive: "🔥 Saturday & Sunday Exclusive Deals 🔥",
+                featured_products: "Featured Products with Mega Discounts",
+                back_to_home: "Back to Home",
+                weekend_offers: "Weekend Mega Deals",
+                bfd_desc_header: "Exclusive Saturday & Sunday products .. Unprecedented crazy discounts await you!",
+                back_to_offers: "Back to Offers",
+                exclusive_album: "🔥 Exclusive Product Photo Album",
+                product_desc: "Product Description",
+                more: "More...",
+                hurry_whatsapp: "Hurry before stock runs out! Click to send via WhatsApp",
+                back_main_store: "Back to Main Store",
+                free_shipping_all: "Free shipping to all cities",
+                order_now_cod: "Order Now - Cash on Delivery",
+                fill_info_fast: "Fill in the info below to confirm your order quickly and easily",
+                product_label: "Product:",
+                shipping_label: "Shipping:",
+                free: "Free",
+                total_label: "Total:",
+                whatsapp_order_btn: "Order via WhatsApp",
+                site_order_btn: "Order on Website",
+                cod_badge: "Cash on Delivery",
+                fast_delivery: "Fast Delivery",
+                guaranteed_quality: "Guaranteed Quality",
+                tajer_guide: "Platform Guide",
+                exclusive_selection: "Exclusive Product Selection",
+                discover_latest: "Discover our latest exclusive products available now",
+                feat_1_title: "Guaranteed Quality",
+                feat_1_desc: "Carefully selected products to ensure your satisfaction.",
+                feat_2_title: "Fast Delivery",
+                feat_2_desc: "Fast delivery service to all cities in Morocco.",
+                feat_3_title: "Easy Return",
+                feat_3_desc: "Refund guarantee if you are not satisfied.",
+                feat_4_title: "Cash on Delivery",
+                feat_4_desc: "Pay securely upon receiving your order directly.",
+                add_review_title: "Add your review and rating",
+                star_5: "⭐⭐⭐⭐⭐ (5/5 Excellent)",
+                star_4: "⭐⭐⭐⭐ (4/5 Very Good)",
+                star_3: "⭐⭐⭐ (3/5 Good)",
+                send_comment: "Send Review",
+                rights_reserved: "All rights reserved to",
+                version: "Version:",
+                placeholder_name: "Enter your full name",
+                placeholder_city: "Enter your city",
+                placeholder_review_name: "Your name and city (e.g. Karim from Kenitra)",
+                placeholder_review_comment: "Write your review about our services..."
+            }
+        };
+
+        function toggleLangDropdown() {
+            const menu = document.getElementById('lang-dropdown-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const htmlRoot = document.getElementById('html-root');
+            const langLabel = document.getElementById('current-lang-label');
+            
+            if (lang === 'ar') {
+                htmlRoot.setAttribute('lang', 'ar');
+                htmlRoot.setAttribute('dir', 'rtl');
+                if (langLabel) langLabel.innerText = 'AR';
+            } else if (lang === 'fr') {
+                htmlRoot.setAttribute('lang', 'fr');
+                htmlRoot.setAttribute('dir', 'ltr');
+                if (langLabel) langLabel.innerText = 'FR';
+            } else if (lang === 'en') {
+                htmlRoot.setAttribute('lang', 'en');
+                htmlRoot.setAttribute('dir', 'ltr');
+                if (langLabel) langLabel.innerText = 'EN';
+            }
+
+            const menu = document.getElementById('lang-dropdown-menu');
+            if (menu) menu.classList.add('hidden');
+
+            applyTranslations();
+        }
+
+        function applyTranslations() {
+            const t = translations[currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerText = t[key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (t[key]) el.setAttribute('placeholder', t[key]);
+            });
+        }
+
+        // دالة التمرير السلس إلى خانات ملء الطلب عند الضغط على الزر الجديد أسفل الوصف
+        function scrollToOrderForm() {
+            const orderForm = document.getElementById('order-form-container');
+            if (orderForm) {
+                orderForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // إضافة ومضة خفيفة للفت الانتباه
+                orderForm.classList.add('ring-4', 'ring-[#F97316]');
+                setTimeout(() => {
+                    orderForm.classList.remove('ring-4', 'ring-[#F97316]');
+                }, 1500);
+            }
+        }
 
         async function sendTelegramNotification(orderData) {
             try {
@@ -1135,7 +1475,8 @@
             let html = '';
             paginatedItems.forEach(p => {
                 let discountPercent = p.oldPrice > p.price ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
-                const badgeText = discountPercent > 0 ? `تخفيض ${discountPercent}%` : 'عرض خاص';
+                const badgeText = discountPercent > 0 ? `-%${discountPercent}` : 'عرض خاص';
+                
                 const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
                 const firstImg = productImages[0];
 
@@ -1159,7 +1500,6 @@
                             <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none">
                                 ${badgeText}
                             </div>
-                            <!-- حاوية الصورة بدون لوغو في البطاقات الصغيرة -->
                             <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
                                 <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover store-card-img group-hover:scale-105 transition-transform duration-300">
                             </div>
@@ -1170,14 +1510,14 @@
                                 <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                 <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
                                     <div>
-                                        <span class="text-[10px] font-bold text-emerald-600 block">الثمن بعد التخفيض:</span>
+                                        <span class="text-[10px] font-bold text-emerald-600 block" data-i18n="total_after_disc">الثمن بعد التخفيض:</span>
                                         <div class="flex items-baseline gap-1">
                                             <span class="font-black text-emerald-600 text-3xl">${p.price.toFixed(2)}</span>
                                             <span class="text-sm font-bold text-emerald-600">د.م</span>
                                         </div>
                                     </div>
                                     <div class="text-left">
-                                        <span class="text-[10px] font-bold text-gray-400 block">الأصلي:</span>
+                                        <span class="text-[10px] font-bold text-gray-400 block" data-i18n="original_total">الأصلي:</span>
                                         <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                     </div>
                                 </div>
@@ -1185,10 +1525,10 @@
                         </div>
                         <div class="p-5 pt-0 grid grid-cols-2 gap-2" onclick="event.stopPropagation()">
                             <button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
-                                <i data-lucide="shopping-cart" class="w-4 h-4"></i> للسلة
+                                <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
                             </button>
                             <button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
-                                <i data-lucide="message-circle" class="w-4 h-4"></i> طلب عبر الواتساب
+                                <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                             </button>
                         </div>
                     </div>
@@ -1210,6 +1550,7 @@
                 paginationContainer.innerHTML = '';
             }
             lucide.createIcons();
+            applyTranslations();
         }
 
         function setStoreCardImage(productId, imgUrl, thumbEl) {
@@ -1310,7 +1651,7 @@
             if (descEl) {
                 if (fullBfdDescriptionText.length > 180) {
                     descEl.innerText = fullBfdDescriptionText.substring(0, 180) + '...';
-                    if (toggleBtn) { toggleBtn.innerText = 'المزيد...'; toggleBtn.classList.remove('hidden'); }
+                    if (toggleBtn) { toggleBtn.innerText = translations[currentLang].more || 'المزيد...'; toggleBtn.classList.remove('hidden'); }
                 } else {
                     descEl.innerText = fullBfdDescriptionText;
                     if (toggleBtn) toggleBtn.classList.add('hidden');
@@ -1347,7 +1688,7 @@
 
             isBfdDescExpanded = !isBfdDescExpanded;
             descEl.innerText = isBfdDescExpanded ? fullBfdDescriptionText : (fullBfdDescriptionText.substring(0, 180) + '...');
-            toggleBtn.innerText = isBfdDescExpanded ? 'إخفاء' : 'المزيد...';
+            toggleBtn.innerText = isBfdDescExpanded ? (currentLang === 'ar' ? 'إخفاء' : (currentLang === 'fr' ? 'Masquer' : 'Hide')) : (translations[currentLang].more || 'المزيد...');
         }
 
         function submitDirectWhatsAppOrder() {
@@ -1417,9 +1758,10 @@
             }
 
             if (cart.length === 0) {
-                itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-10 text-sm">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>`;
+                itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-10 text-sm" data-i18n="empty_cart">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>`;
                 totalPriceElement.innerText = "0.00";
                 totalSavingElement.innerText = "0.00 د.م";
+                applyTranslations();
                 return;
             }
 
@@ -1452,6 +1794,7 @@
             totalPriceElement.innerText = total.toFixed(2);
             totalSavingElement.innerText = totalSaving.toFixed(2) + " د.م";
             lucide.createIcons();
+            applyTranslations();
         }
 
         function toggleCartDrawer() { document.getElementById('cart-drawer').classList.toggle('hidden'); }
@@ -1526,10 +1869,9 @@
                     html += `
                         <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300 cursor-pointer" onclick="openBfdProductModal('${p.id}')">
                             <div>
-                                <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none">
+                                <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none" data-i18n="major_discounts">
                                     تخفيض كبرى
                                 </div>
-                                <!-- حاوية الصورة بدون لوغو في البطاقات الصغيرة -->
                                 <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
                                     <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover bfd-card-img">
                                 </div>
@@ -1540,14 +1882,14 @@
                                     <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                     <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
                                         <div>
-                                            <span class="text-[10px] font-bold text-emerald-600 block">ثمن الصدمة الحصري:</span>
+                                            <span class="text-[10px] font-bold text-emerald-600 block" data-i18n="total_after_disc">ثمن الصدمة الحصري:</span>
                                             <div class="flex items-baseline gap-1">
                                                 <span class="font-black text-emerald-600 text-3xl bfd-moving-price">${p.price.toFixed(2)}</span>
                                                 <span class="text-sm font-bold text-emerald-600">د.م</span>
                                             </div>
                                         </div>
                                         <div class="text-left">
-                                            <span class="text-[10px] font-bold text-gray-400 block">الأصلي:</span>
+                                            <span class="text-[10px] font-bold text-gray-400 block" data-i18n="original_total">الأصلي:</span>
                                             <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                         </div>
                                     </div>
@@ -1555,7 +1897,7 @@
                             </div>
                             <div class="p-5 pt-0" onclick="event.stopPropagation()">
                                 <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-xs bfd-attention-btn cursor-pointer">
-                                    <i data-lucide="message-circle" class="w-4 h-4 text-white fill-white animate-bounce"></i> سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب
+                                    <i data-lucide="message-circle" class="w-4 h-4 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
                                 </button>
                             </div>
                         </div>
@@ -1565,6 +1907,7 @@
             grid.innerHTML = html;
             lucide.createIcons();
             switchTab('black_free_day');
+            applyTranslations();
         }
 
         function openProductDetailObject(p) {
@@ -1589,7 +1932,7 @@
 
             let discountPercent = currentProduct.oldPrice > currentProduct.price ? Math.round(((currentProduct.oldPrice - currentProduct.price) / currentProduct.oldPrice) * 100) : 0;
             const badgeTextEl = document.getElementById('detail-badge-text');
-            if (badgeTextEl) badgeTextEl.innerText = discountPercent > 0 ? `🏷️ تخفيض ${discountPercent}%` : '🏷️ عرض حصري';
+            if (badgeTextEl) badgeTextEl.innerText = discountPercent > 0 ? `🏷️ -%${discountPercent}` : '🏷️ عرض حصري';
 
             updateDetailImageViewer();
             renderDetailThumbnails();
@@ -1617,6 +1960,7 @@
 
             switchTab('detail');
             lucide.createIcons();
+            applyTranslations();
         }
 
         function renderDetailThumbnails() {
@@ -1664,6 +2008,7 @@
             initFooterReviewsSlider();
             checkAndShowWelcomeAd();
             lucide.createIcons();
+            applyTranslations();
         });
     </script>
 </body>
