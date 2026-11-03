@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🛒 BEDAL.ONLINE |
-✨ وجهتك الأولى للتسوق الذكي في المغرب 🇲🇦 </title>
+    <title>bedal.online - منتوجات بي تخفيض خيالي</title>
     
     <!-- Open Graph Meta Tags for Social & WhatsApp Link Preview -->
     <meta property="og:title" content="bedal.online - منتوجات بي تخفيض خيالي">
@@ -540,14 +539,15 @@
         <!-- SECTION 1: STORE FRONT -->
         <section id="section-store" class="block space-y-0">
             <div class="py-6">
-                <div class="max-w-xs mx-auto space-y-1.5 text-center cursor-pointer group" onclick="openBlackFreeDayPage()">
-                    <div class="inline-flex items-center gap-2">
-                        <i data-lucide="flame" class="w-5 h-5 text-amber-500 animate-bounce"></i>
-                        <span class="font-black text-xl sm:text-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 bg-clip-text text-transparent tracking-wider uppercase black-free-day-flash group-hover:scale-105 transition-transform">Black Free Day</span>
-                        <i data-lucide="flame" class="w-5 h-5 text-amber-500 animate-bounce"></i>
+                <div class="max-w-md mx-auto space-y-2 text-center cursor-pointer group bg-gradient-to-r from-zinc-900 via-neutral-900 to-black p-4 rounded-2xl border-2 border-amber-500 shadow-xl" onclick="openBlackFreeDayPage()">
+                    <div class="font-black text-lg sm:text-xl text-amber-400 tracking-wide uppercase group-hover:scale-105 transition-transform">
+                        🎁 هدية الويكاند من BEDAL 🎁
                     </div>
-                    <div>
-                        <span class="text-xs sm:text-sm font-black text-[#0F172A] tracking-wide block animate-pulse" data-i18n="weekend_exclusive">عروض السبت والأحد الحصرية</span>
+                    <div class="text-sm sm:text-base font-bold text-white">
+                        💥 -70% على منتجاتك المفضلة
+                    </div>
+                    <div class="text-xs font-semibold text-amber-300/90 tracking-wider">
+                        📅 السبت والاحد فقط.
                     </div>
                 </div>
             </div>
@@ -584,8 +584,8 @@
                 <div class="inline-flex items-center gap-2 bg-amber-500 text-zinc-950 font-black px-4 py-1.5 rounded-lg text-xs uppercase tracking-widest shadow-lg animate-bounce">
                     <i data-lucide="flame" class="w-4 h-4"></i> <span data-i18n="weekend_offers">عروض نهاية الأسبوع الكبرى</span>
                 </div>
-                <h1 class="text-3xl sm:text-6xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent uppercase drop-shadow-md">
-                    Black Free Day
+                <h1 class="text-3xl sm:text-5xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent uppercase drop-shadow-md">
+                    عروض نهاية الأسبوع الكبرى -70%
                 </h1>
                 <p class="text-amber-100/90 text-base sm:text-lg font-bold max-w-2xl mx-auto" data-i18n="bfd_desc_header">
                     المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!
@@ -859,7 +859,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.6.6</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.6.8</span>
                     </span>
                 </div>
             </div>
@@ -1619,7 +1619,7 @@
         }
 
         function orderBfdViaWhatsApp(title, price) {
-            const message = `🔥 سلام عليكم، بغيت نغتنم عرض Black Free Day وسجلت طلبي لهذا المنتج:\n\n🛍️ *المنتج:* ${title}\n💰 *ثمن الصدمة:* ${price} د.م\n\nسريع قبل نفاد الكمية! يرجى تأكيد الطلب وتوصيله لي.`;
+            const message = `🔥 سلام عليكم، بغيت نغتنم عرض نهاية الأسبوع الكبرى وسجلت طلبي لهذا المنتج:\n\n🛍️ *المنتج:* ${title}\n💰 *ثمن الصدمة:* ${price} د.م\n\nسريع قبل نفاد الكمية! يرجى تأكيد الطلب وتوصيله لي.`;
             window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
         }
 
@@ -1850,7 +1850,7 @@
             const grid = document.getElementById('black-free-day-products-grid');
             let html = '';
             if(blackFreeDayProducts.length === 0) {
-                grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">لا توجد عروض Black Free Day حالياً.</p>';
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">لا توجد عروض نهاية الأسبوع حالياً.</p>';
             } else {
                 blackFreeDayProducts.forEach(p => {
                     const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
@@ -1878,7 +1878,7 @@
                                 </div>
                                 ${bfdThumbnailsHtml}
                                 <div class="p-5 space-y-3">
-                                    <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'Black Free Day'}</span>
+                                    <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'عروض نهاية الأسبوع'}</span>
                                     <h3 class="font-extrabold text-[#0F172A] text-xl leading-snug">${p.title}</h3>
                                     <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                     <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
