@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bedal.online - منتوجات بي تخفيض خيالي</title>
+    <title id="page-main-title">bedal.online - منتوجات بي تخفيض خيالي</title>
     
     <!-- Open Graph Meta Tags for Social & WhatsApp Link Preview -->
     <meta property="og:title" id="meta-og-title" content="bedal.online - منتوجات بي تخفيض خيالي">
@@ -1422,11 +1422,35 @@
                 const productIdParam = urlParams.get('product');
                 if (productIdParam) {
                     const targetProd = productsDatabase.find(p => String(p.id) === String(productIdParam)) || blackFreeDayProducts.find(p => String(p.id) === String(productIdParam));
-                    if (targetProd) openProductDetailObject(targetProd);
+                    if (targetProd) {
+                        // تحديث مباشر للوسوم الخاصة بفيسبوك قبل فتح المنتج لتطابق الرابط تماماً وتجنب تحذير إعادة التوجيه
+                        updateMetaTagsForProduct(targetProd);
+                        openProductDetailObject(targetProd);
+                    }
                 }
             } catch (err) {
                 console.error("خطأ:", err);
             }
+        }
+
+        function updateMetaTagsForProduct(p) {
+            const prodTitle = p.title ? `${p.title} - ${Number(p.price || 0).toFixed(2)} د.م` : 'bedal.online';
+            const prodDesc = p.description ? p.description.substring(0, 150) : 'اكتشف هذا المنتج الحصري بأفضل الأسعار مع الدفع عند الاستلام.';
+            const images = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            const prodImg = images[0] || '';
+            const exactProductUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
+
+            const titleEl = document.getElementById('page-main-title');
+            const metaTitleEl = document.getElementById('meta-og-title');
+            const metaDescEl = document.getElementById('meta-og-desc');
+            const metaImgEl = document.getElementById('meta-og-image');
+            const metaUrlEl = document.getElementById('meta-og-url');
+
+            if (titleEl) titleEl.innerText = prodTitle;
+            if (metaTitleEl) metaTitleEl.setAttribute('content', prodTitle);
+            if (metaDescEl) metaDescEl.setAttribute('content', prodDesc);
+            if (metaImgEl && prodImg) metaImgEl.setAttribute('content', prodImg);
+            if (metaUrlEl) metaUrlEl.setAttribute('content', exactProductUrl);
         }
 
         function renderPartnerProductsMarquee(productsList) {
@@ -1939,23 +1963,9 @@
                 videos: p.videos || []
             };
 
-            const prodTitle = currentProduct.title ? `${currentProduct.title} - ${currentProduct.price.toFixed(2)} د.م` : 'bedal.online';
-            const prodDesc = currentProduct.description ? currentProduct.description.substring(0, 150) : 'اكتشف هذا المنتج الحصري بأفضل الأسعار مع الدفع عند الاستلام.';
-            const prodImg = images[0] || '';
+            updateMetaTagsForProduct(p);
 
-            const metaTitleEl = document.getElementById('meta-og-title');
-            const metaDescEl = document.getElementById('meta-og-desc');
-            const metaImgEl = document.getElementById('meta-og-image');
-            const metaUrlEl = document.getElementById('meta-og-url');
-
-            if (metaTitleEl) metaTitleEl.setAttribute('content', prodTitle);
-            if (metaDescEl) metaDescEl.setAttribute('content', prodDesc);
-            if (metaImgEl && prodImg) metaImgEl.setAttribute('content', prodImg);
-
-            // إصلاح شامل لجذر الرابط الموجه لفيسبوك لتفادي تحذير إعادة التوجيه وتثبيت الـ og:url الخاص بالمنتج الحالي بدقة
             const productPageUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
-            if (metaUrlEl) metaUrlEl.setAttribute('content', productPageUrl);
-
             if (p.id && window.history.pushState) {
                 window.history.pushState({path: productPageUrl}, '', productPageUrl);
             }
