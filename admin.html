@@ -520,8 +520,8 @@
                         <input type="number" id="calc-target-sale-price" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs" oninput="calculateNetProfitAuto()">
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700">الربح الصافي النهائي (أوتوماتيكي) *</label>
-                        <input type="number" id="calc-net-profit-input" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs font-bold text-emerald-700" readonly>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700">الربح الصافي النهائي (أوتوماتيكي مقفل) *</label>
+                        <input type="number" id="calc-net-profit-input" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-gray-100 text-xs font-bold text-emerald-700 cursor-not-allowed" readonly>
                     </div>
                 </div>
                 <!-- الثمن المقترح في المتجر -->
@@ -530,6 +530,13 @@
                         <i data-lucide="tag" class="w-4 h-4 text-emerald-600"></i> الثمن المقترح في المتجر:
                     </span>
                     <span id="calc-result-store-price" class="text-emerald-600 font-black text-base">0.00 د.م</span>
+                </div>
+                <!-- خانة الثمن الأصلي في السوق الجديدة (تزيد تلقائياً 70% على الثمن المقترح في المتجر) -->
+                <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-center justify-between shadow-sm">
+                    <span class="text-xs font-bold text-emerald-900 flex items-center gap-1">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i> الثمن الأصلي في السوق (+70% تلقائي):
+                    </span>
+                    <span id="calc-result-market-price" class="text-emerald-700 font-black text-base">0.00 د.م</span>
                 </div>
                 <button onclick="applyCalculatedPriceToForm()" class="w-full bg-emerald-600 text-white font-bold py-2 rounded-xl hover:bg-emerald-700 transition-colors text-xs shadow-sm flex items-center justify-center gap-1.5">
                     <i data-lucide="check-circle" class="w-4 h-4"></i> تطبيق الثمن المقترح في المتجر والثمن المستهدف أوتوماتيكياً
@@ -566,7 +573,7 @@
                     </label>
                 </div>
 
-                <!-- خانة حالة الإعلان (Ads Status) الجديدة المطلوبة -->
+                <!-- خانة حالة الإعلان (Ads Status) الجديدة -->
                 <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3">
                     <input type="checkbox" id="prod-form-has-ads" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
                     <label for="prod-form-has-ads" class="font-bold text-rose-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
@@ -672,7 +679,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.88</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.90</span>
                 </span>
             </div>
         </div>
@@ -696,7 +703,6 @@
         let currentAdminUser = "ZAMZAM";
         let currentAdminPass = "AMIRMOUNA303026";
 
-        // دوال النوافذ المخصصة الاحترافية بدلاً من alert و confirm التقليدية
         function showCustomAlert(message, title = "تنبيه") {
             document.getElementById('custom-alert-title').innerText = title;
             document.getElementById('custom-alert-message').innerText = message;
@@ -732,14 +738,13 @@
             lucide.createIcons();
         }
 
-        // المعادلة المطلوبة بدقة وحسابها أوتوماتيكياً:
-        // الربح الصافي النهائي = الثمن المستهدف للبيع - (ثمن المنتوج في tajir + ثمن تجهيز المنتوج)
+        // المعادلة المطلوبة وحساب الربح الصافي والثمن الأصلي في السوق تلقائياً بزيادة 70%
         function calculateNetProfitAuto() {
             const tajirVal = parseFloat(document.getElementById('calc-tajir-price').value) || 0;
             const prepVal = parseFloat(document.getElementById('calc-prep-cost').value) || 0;
             const targetSaleVal = parseFloat(document.getElementById('calc-target-sale-price').value) || 0;
 
-            // حساب الربح الصافي تلقائياً
+            // الربح الصافي النهائي = الثمن المستهدف للبيع - (ثمن المنتوج في tajir + ثمن تجهيز المنتوج)
             let netProfitVal = targetSaleVal - (tajirVal + prepVal);
             
             const netProfitInputEl = document.getElementById('calc-net-profit-input');
@@ -751,20 +756,26 @@
             if (storePriceEl) {
                 storePriceEl.innerText = targetSaleVal > 0 ? targetSaleVal.toFixed(2) + ' د.م' : '0.00 د.م';
             }
+
+            // الثمن الأصلي في السوق يرتفع تلقائياً بنسبة 70% على الثمن المقترح في المتجر (المستهدف للبيع)
+            const marketPriceEl = document.getElementById('calc-result-market-price');
+            if (marketPriceEl) {
+                let marketPriceVal = targetSaleVal * 1.70;
+                marketPriceEl.innerText = targetSaleVal > 0 ? marketPriceVal.toFixed(2) + ' د.م' : '0.00 د.م';
+            }
         }
 
         function applyCalculatedPriceToForm() {
             const targetSaleVal = parseFloat(document.getElementById('calc-target-sale-price').value) || 0;
             if (targetSaleVal > 0) {
-                document.getElementById('prod-form-price').value = targetSaleVal;
+                document.getElementById('prod-form-price').value = (targetSaleVal * 1.70).toFixed(2);
                 document.getElementById('prod-form-discount-price').value = targetSaleVal;
-                showCustomAlert('تم تطبيق الثمن المستهدف للبيع وثمن الخصم في النموذج بنجاح!', 'تم التطبيق');
+                showCustomAlert('تم تطبيق الثمن المقترح وتطبيق الثمن الأصلي في السوق (+70%) وثمن الخصم في النموذج بنجاح!', 'تم التطبيق');
             } else {
                 showCustomAlert('يرجى إدخال ثمن المستهدف للبيع في الحاسبة أولاً!', 'تنبيه');
             }
         }
 
-        // التحقق من تسجيل الدخول مباشرة من جدول admins
         async function handleLogin() {
             const uInput = document.getElementById('login-username').value.trim();
             const pInput = document.getElementById('login-password').value.trim();
@@ -1214,7 +1225,6 @@
             renderAdminProducts(filtered);
         }
 
-        // دوال مصاريف الإعلانات (ADS Expenses) مع العداد التنازلي وتوقيت الإغلاق
         function toggleAdsModal() {
             document.getElementById('ads-expense-modal').classList.toggle('hidden');
         }
@@ -1899,6 +1909,7 @@
             document.getElementById('calc-target-sale-price').value = '';
             document.getElementById('calc-net-profit-input').value = '';
             document.getElementById('calc-result-store-price').innerText = '0.00 د.م';
+            document.getElementById('calc-result-market-price').innerText = '0.00 د.م';
             for(let i = 1; i <= 5; i++) {
                 document.getElementById(`prod-form-img-${i}`).value = '';
             }
@@ -1983,7 +1994,6 @@
                 return;
             }
 
-            // تعديل عرض BFD
             if (bfdEditId !== "") {
                 const bfdData = {
                     title: title,
@@ -2014,7 +2024,6 @@
                 return;
             }
 
-            // إضافة منتج جديد لـ BFD مع كافة الصور
             if (isBfdChecked) {
                 const bfdData = {
                     title: title,
