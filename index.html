@@ -858,7 +858,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.7.8</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.7.9</span>
                     </span>
                 </div>
             </div>
@@ -1437,8 +1437,13 @@
             const prodDesc = p.description ? p.description.substring(0, 150) : 'اكتشف هذا المنتج الحصري بأفضل الأسعار مع الدفع عند الاستلام.';
             const images = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
             const prodImg = images[0] || '';
-            const baseCleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            const exactProductUrl = baseCleanUrl + '?product=' + p.id;
+            
+            // تصحيح الرابط المطلق تماماً بدون أي شرطة مائلة مسبوقة تسبب مشاكل في فيسبوك
+            let cleanOrigin = window.location.origin;
+            if (!cleanOrigin || cleanOrigin === 'null') {
+                cleanOrigin = 'https://bedal.online';
+            }
+            const exactProductUrl = `${cleanOrigin}${window.location.pathname}?product=${p.id}`;
 
             const titleEl = document.getElementById('page-main-title');
             const metaTitleEl = document.getElementById('meta-og-title');
@@ -1764,6 +1769,7 @@
             cart = [];
             updateCartUI();
             closeCheckoutModal();
+            document.getElementById('order-success-modal').classList.add('hidden');
             document.getElementById('order-success-modal').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -1853,7 +1859,9 @@
             document.getElementById('section-black-free-day').classList.add('hidden');
             document.getElementById('section-bfd-album').classList.add('hidden');
 
-            const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            let cleanOrigin = window.location.origin;
+            if (!cleanOrigin || cleanOrigin === 'null') { cleanOrigin = 'https://bedal.online'; }
+            const baseUrl = cleanOrigin + window.location.pathname;
             const metaUrlEl = document.getElementById('meta-og-url');
 
             if (tabName === 'detail') {
@@ -1965,8 +1973,9 @@
 
             updateMetaTagsForProduct(p);
 
-            const baseCleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            const productPageUrl = baseCleanUrl + '?product=' + p.id;
+            let cleanOrigin = window.location.origin;
+            if (!cleanOrigin || cleanOrigin === 'null') { cleanOrigin = 'https://bedal.online'; }
+            const productPageUrl = `${cleanOrigin}${window.location.pathname}?product=${p.id}`;
             if (p.id && window.history.pushState) {
                 window.history.pushState({path: productPageUrl}, '', productPageUrl);
             }
