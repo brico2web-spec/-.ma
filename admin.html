@@ -37,6 +37,13 @@
         .custom-scroll-container::-webkit-scrollbar-thumb:hover {
             background: #4f46e5;
         }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.02); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 1.5s infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
@@ -312,6 +319,7 @@
                                 <th class="p-4" data-i18n="th_disc_price">ثمن الخصم</th>
                                 <th class="p-4" data-i18n="th_admin">المسؤول</th>
                                 <th class="p-4" data-i18n="th_category">القسم</th>
+                                <th class="p-4">الحالة (متاح / غير متاح)</th>
                                 <th class="p-4" data-i18n="th_prod_actions">الإجراءات (تعديل / حذف)</th>
                             </tr>
                         </thead>
@@ -768,7 +776,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.98</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.99</span>
                 </span>
             </div>
         </div>
@@ -1594,7 +1602,8 @@
                         sku: p.sku || '',
                         discountPrice: p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.discount_price !== undefined ? p.discount_price : ''),
                         adminKey: p.adminKey || p.admin_key || 'ZAMZAM',
-                        hasAds: p.hasAds !== undefined ? p.hasAds : (p.has_ads !== undefined ? p.has_ads : (p.hasads !== undefined ? p.hasads : false))
+                        hasAds: p.hasAds !== undefined ? p.hasAds : (p.has_ads !== undefined ? p.has_ads : (p.hasads !== undefined ? p.hasads : false)),
+                        isActive: p.isActive !== undefined ? p.isActive : (p.is_active !== undefined ? p.is_active : true)
                     }));
                 }
                 productsDatabase = fetchedProducts;
@@ -1893,13 +1902,29 @@
             select.innerHTML = html;
         }
 
+        // دالة تبديل وتحديث حالة المنتج (متاح / غير متاح) مع الحفظ في قاعدة البيانات
+        async function toggleProductAvailability(idx, isActiveValue) {
+            const prod = productsDatabase[idx];
+            if (!prod) return;
+            prod.isActive = isActiveValue;
+
+            if (prod.id) {
+                try {
+                    await supabaseClient.from('products').update({ is_active: isActiveValue }).eq('id', prod.id);
+                } catch(e) {
+                    console.error("خطأ في تحديث الحالة بقاعدة البيانات:", e);
+                }
+            }
+            renderAdminProducts();
+        }
+
         function renderAdminProducts(filteredList = null) {
             const tbody = document.getElementById('admin-products-table-body');
             if (!tbody) return;
             const listToRender = filteredList || productsDatabase;
             let html = '';
             if (listToRender.length === 0) {
-                html = `<tr><td colspan="8" class="p-6 text-center text-gray-400">لا توجد منتجات مسجلة حالياً.</td></tr>`;
+                html = `<tr><td colspan="9" class="p-6 text-center text-gray-400">لا توجد منتجات مسجلة حالياً.</td></tr>`;
             } else {
                 listToRender.forEach((prod, idx) => {
                     const originalIdx = productsDatabase.indexOf(prod);
@@ -1916,23 +1941,32 @@
                     else if(prod.category === 'various') catLabel = 'منتجات متنوعة';
 
                     const isInBfd = bfdDatabase.some(b => b.title && prod.title && b.title.trim().toLowerCase() === prod.title.trim().toLowerCase());
-                    const rowBgClass = isInBfd ? 'bg-orange-50/70 border-r-4 border-r-orange-500' : '';
+                    
+                    // تطبيق اللون الرمادي على أسطر المنتجات في القائمة إذا كانت غير متاحة (isActive === false)
+                    const isAvailable = prod.isActive !== false;
+                    const rowBgClass = !isAvailable ? 'bg-gray-200 text-gray-500 opacity-80' : (isInBfd ? 'bg-orange-50/70 border-r-4 border-r-orange-500' : '');
 
                     const hasAdsBadge = prod.hasAds ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700"><i data-lucide="badge-dollar-sign" class="w-3 h-3"></i> ADS مفعل</span>' : '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-500">بدون ADS</span>';
 
                     html += `
                         <tr class="${rowBgClass}">
-                            <td class="p-4"><img src="${mainImg}" class="w-12 h-12 object-cover rounded-xl border"></td>
+                            <td class="p-4"><img src="${mainImg}" class="w-12 h-12 object-cover rounded-xl border ${!isAvailable ? 'grayscale' : ''}"></td>
                             <td class="p-4 font-bold text-gray-900">
                                 ${prod.title}
                                 ${isInBfd ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-700"><i data-lucide="flame" class="w-3 h-3"></i> Black Free Day</span>' : ''}
                                 ${hasAdsBadge}
                             </td>
-                            <td class="p-4 text-gray-500 font-mono text-xs">${skuCode}</td>
-                            <td class="p-4 text-indigo-600 font-bold">${originalPrice} د.م</td>
-                            <td class="p-4 text-emerald-600 font-bold">${discountPrice}</td>
-                            <td class="p-4 text-gray-700 font-semibold">${adminName}</td>
-                            <td class="p-4"><span class="bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-md text-xs font-bold">${catLabel}</span></td>
+                            <td class="p-4 font-mono text-xs">${skuCode}</td>
+                            <td class="p-4 font-bold">${originalPrice} د.م</td>
+                            <td class="p-4 font-bold">${discountPrice}</td>
+                            <td class="p-4 font-semibold">${adminName}</td>
+                            <td class="p-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${!isAvailable ? 'bg-gray-300 text-gray-600' : 'bg-indigo-50 text-indigo-600'}">${catLabel}</span></td>
+                            <td class="p-4">
+                                <select onchange="toggleProductAvailability(${originalIdx}, this.value === 'true')" class="px-3 py-1.5 rounded-xl text-xs font-bold border ${isAvailable ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-gray-300 text-gray-700 border-gray-400'}">
+                                    <option value="true" ${isAvailable ? 'selected' : ''}>🟢 متاح</option>
+                                    <option value="false" ${!isAvailable ? 'selected' : ''}>🔴 غير متاح</option>
+                                </select>
+                            </td>
                             <td class="p-4 flex items-center gap-2 whitespace-nowrap">
                                 <button onclick="openProductModalForEdit(${originalIdx})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 transition-colors">
                                     <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> تعديل
@@ -2135,7 +2169,7 @@
                     id: p.id || p.sku || 'ID_' + Math.random().toString(36).substr(2, 9),
                     title: p.title || '',
                     description: p.description || '',
-                    availability: 'in stock',
+                    availability: p.isActive !== false ? 'in stock' : 'out of stock',
                     condition: 'new',
                     price: basePrice,
                     sale_price: salePrice,
