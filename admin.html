@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- SheetJS (xlsx) for Excel Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Chart.js CDN for Analytics & Financial Visualizer -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
         .custom-scroll-container {
@@ -119,11 +121,18 @@
             </div>
             
             <div class="flex items-center gap-3">
-                <!-- زر تغيير اللغة المطلوب (AR, FR, EN) في الأعلى -->
-                <div class="flex items-center bg-gray-100 p-1 rounded-xl border border-gray-200">
-                    <button onclick="changeLanguage('ar')" id="lang-btn-ar" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm transition-all">AR</button>
-                    <button onclick="changeLanguage('fr')" id="lang-btn-fr" class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-600 hover:text-indigo-600 transition-all">FR</button>
-                    <button onclick="changeLanguage('en')" id="lang-btn-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-600 hover:text-indigo-600 transition-all">EN</button>
+                <!-- زر تغيير اللغة على شكل أيقونة منسدلة -->
+                <div class="relative">
+                    <button onclick="toggleLangDropdown()" id="lang-dropdown-btn" class="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-xl text-xs font-bold transition-all border border-gray-200 shadow-sm">
+                        <i data-lucide="globe" class="w-4 h-4 text-indigo-600"></i>
+                        <span id="current-lang-label">AR</span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-gray-500"></i>
+                    </button>
+                    <div id="lang-dropdown-menu" class="absolute left-0 mt-2 w-28 bg-white rounded-2xl shadow-xl border border-gray-100 hidden z-50 overflow-hidden py-1">
+                        <button onclick="changeLanguage('ar'); toggleLangDropdown();" class="w-full text-right px-4 py-2 text-xs font-bold text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-between">العربية <span>AR</span></button>
+                        <button onclick="changeLanguage('fr'); toggleLangDropdown();" class="w-full text-right px-4 py-2 text-xs font-bold text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-between">Français <span>FR</span></button>
+                        <button onclick="changeLanguage('en'); toggleLangDropdown();" class="w-full text-right px-4 py-2 text-xs font-bold text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 flex items-center justify-between">English <span>EN</span></button>
+                    </div>
                 </div>
 
                 <!-- إضافة اسم المستخدم النشط في الهيدر -->
@@ -135,304 +144,374 @@
         </div>
     </header>
 
-    <!-- Main Admin Container -->
+    <!-- Main Admin Container with Dropdown/Sidebar Menu & Chart Visualizer -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600"></i> <span data-i18n="main_title">لوحة التحليلات والإدارة الذكية</span>
-                </h1>
-            </div>
-            <div class="flex items-center gap-3 flex-wrap">
-                <button onclick="downloadMetaCatalogDataFeed()" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-lg">
-                    <i data-lucide="database" class="w-5 h-5"></i> <span data-i18n="btn_meta_feed">تحميل Data Feed (Meta)</span>
-                </button>
-                <button onclick="openProductModalForAdd()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i> <span data-i18n="btn_add_product">إضافة منتج جديد</span>
-                </button>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
-                <div><p class="text-xs text-gray-500" data-i18n="stat_orders_count">عدد الطلبات</p><h4 id="stat-total-orders" class="text-xl font-extrabold">0 طلبات</h4></div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
-                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i data-lucide="package" class="w-6 h-6"></i></div>
-                <div><p class="text-xs text-gray-500" data-i18n="stat_products_count">إجمالي المنتجات</p><h4 id="stat-total-products" class="text-xl font-extrabold">0 منتج</h4></div>
-            </div>
-        </div>
-
-        <!-- خانة العد التنازولي لعروض Black Free Day (أيام السبت والأحد) المطلوبة -->
-        <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="flame" class="w-6 h-6 text-white"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold text-base" data-i18n="bfd_timer_title">العد التنازولي لعروض Black Free Day (نهاية الأسبوع)</h4>
-                    <p id="bfd-timer-msg" class="text-xs text-amber-100 mt-0.5" data-i18n="bfd_timer_sub">الوقت المتبقي لانتهاء عروض السبت والأحد:</p>
+        <!-- قائمة القائمة المنسدلة الذكية (Dropdown Menu Bar) للأقسام مزينة بأيقونات تعبيرية -->
+        <div class="bg-white p-4 rounded-2xl border shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <div class="w-full sm:w-80">
+                    <label class="block text-[11px] font-bold text-gray-500 mb-1" data-i18n="dropdown_menu_label">اختر القسم للانتقال المباشر:</label>
+                    <select id="admin-sections-dropdown" onchange="handleDropdownSectionChange(this.value)" class="w-full px-4 py-2.5 rounded-xl border font-bold text-xs bg-indigo-50/50 text-indigo-900 focus:outline-none focus:border-indigo-600">
+                        <option value="dashboard" data-i18n="tab_dashboard">📊 المبيان والإحصائيات الشاملة</option>
+                        <option value="orders" data-i18n="tab_orders">📦 سجل الطلبات</option>
+                        <option value="products" data-i18n="tab_products">🛍️ إدارة المنتجات</option>
+                        <option value="bfd" data-i18n="tab_bfd">🔥 إدارة منتجات Black Free Day</option>
+                        <option value="ads" data-i18n="tab_ads">💰 مصاريف الإعلانات (ADS)</option>
+                        <option value="contests" data-i18n="tab_contests">🎁 مسابقات للخصم</option>
+                        <option value="slider" data-i18n="tab_slider">🖼️ إدارة شرائح السلايدر</option>
+                        <option value="popupad" data-i18n="tab_popup">📢 إدارة إعلان الدخول (Popup)</option>
+                        <option value="admins" data-i18n="tab_admins">👥 المسؤولين</option>
+                        <option value="meta_feed" data-i18n="tab_meta_feed">💾 تحميل Data Feed (Meta)</option>
+                    </select>
                 </div>
             </div>
-            <div id="bfd-countdown-clock" class="flex items-center gap-2 text-center font-mono font-black text-lg bg-black/20 px-4 py-2 rounded-xl backdrop-blur-sm">
-                <span>00</span>:<span>00</span>:<span>00</span>:<span>00</span>
-            </div>
         </div>
 
-        <!-- أزرار تبديل الأقسام -->
-        <div class="flex items-center gap-3 border-b border-gray-200 overflow-x-auto pb-1">
-            <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap" data-i18n="tab_orders">سجل الطلبات</button>
-            <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap" data-i18n="tab_products">إدارة المنتجات</button>
-            <button onclick="switchAdminTab('bfd')" id="admin-tab-btn-bfd" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> <span data-i18n="tab_bfd">إدارة منتجات Black Free Day</span></button>
-            <button onclick="switchAdminTab('ads')" id="admin-tab-btn-ads" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> <span data-i18n="tab_ads">مصاريف الإعلانات (ADS)</span></button>
-            <button onclick="switchAdminTab('contests')" id="admin-tab-btn-contests" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="gift" class="w-4 h-4 text-purple-600"></i> <span data-i18n="tab_contests">مسابقات للخصم</span></button>
-            <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap" data-i18n="tab_slider">إدارة شرائح السلايدر</button>
-            <button onclick="switchAdminTab('popupad')" id="admin-tab-btn-popupad" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-indigo-600"></i> <span data-i18n="tab_popup">إدارة إعلان الدخول (Popup)</span></button>
-            <button onclick="switchAdminTab('admins')" id="admin-tab-btn-admins" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4 text-indigo-600"></i> <span data-i18n="tab_admins">المسؤولين</span></button>
-        </div>
-
-        <!-- قسم سجل الطلبات -->
-        <div id="admin-subtab-orders" class="block space-y-4">
-            <div class="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-2xl border shadow-sm gap-4">
-                <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2 whitespace-nowrap">
-                    <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="orders_header_title">إدارة الطلبات وإرسالها للتاجر</span>
-                </h3>
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <input type="text" id="search-orders-input" onkeyup="filterOrdersTable()" placeholder="بحث في الطلبات..." data-i18n-placeholder="search_orders_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
-                    <button onclick="downloadAllSentToTajirExcel()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> <span data-i18n="btn_excel_group">Excel جماعي</span>
-                    </button>
-                </div>
-            </div>
-            <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto custom-scroll-container">
-                <table class="w-full text-right text-sm text-gray-600 min-w-[800px]">
-                    <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
-                        <tr>
-                            <th class="p-4" data-i18n="th_cust_name">اسم الزبون</th>
-                            <th class="p-4" data-i18n="th_phone">الهاتف</th>
-                            <th class="p-4" data-i18n="th_address">العنوان</th>
-                            <th class="p-4" data-i18n="th_product">المنتج</th>
-                            <th class="p-4" data-i18n="th_product_admin">المسؤول عن المنتج</th>
-                            <th class="p-4" data-i18n="th_amount">المبلغ</th>
-                            <th class="p-4" data-i18n="th_order_status">حالة الطلب (إرسال إلى تاجر)</th>
-                            <th class="p-4" data-i18n="th_actions">الإجراءات (حذف)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-orders-table-body" class="divide-y divide-gray-100"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- قسم إدارة المنتجات -->
-        <div id="admin-subtab-products" class="hidden space-y-4">
-            <div class="flex items-center justify-between bg-white p-4 rounded-2xl border shadow-sm">
-                <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">
-                    <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="products_list_title">قائمة المنتجات</span>
-                </h3>
-                <input type="text" id="search-products-input" onkeyup="filterProductsTable()" placeholder="بحث في المنتجات..." data-i18n-placeholder="search_products_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
-            </div>
-            <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto custom-scroll-container">
-                <table class="w-full text-right text-sm text-gray-600 min-w-[700px]">
-                    <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
-                        <tr>
-                            <th class="p-4" data-i18n="th_image">الصورة</th>
-                            <th class="p-4" data-i18n="th_prod_name">اسم المنتج</th>
-                            <th class="p-4">SKU</th>
-                            <th class="p-4" data-i18n="th_orig_price">الثمن الأصلي</th>
-                            <th class="p-4" data-i18n="th_disc_price">ثمن الخصم</th>
-                            <th class="p-4" data-i18n="th_admin">المسؤول</th>
-                            <th class="p-4" data-i18n="th_category">القسم</th>
-                            <th class="p-4" data-i18n="th_prod_actions">الإجراءات (تعديل / حذف)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-products-table-body" class="divide-y divide-gray-100"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- إدارة منتجات Black Free Day -->
-        <div id="admin-subtab-bfd" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
-                <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <!-- المحتوى الرئيسي للوحة التحكم والأقسام -->
+        <div class="space-y-8">
+                
+            <!-- قسم المبيان والإحصائيات الشاملة (الواجهة الرئيسية الجديدة) -->
+            <div id="admin-subtab-dashboard" class="space-y-6 block">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
                     <div>
-                        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i> <span data-i18n="bfd_mgmt_title">إدارة منتجات Black Free Day</span>
-                        </h3>
-                        <p class="text-xs text-gray-500 mt-1" data-i18n="bfd_mgmt_sub">تعديل وإدارة عروض نهاية الأسبوع الكبرى.</p>
+                        <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" class="w-7 h-7 text-indigo-600"></i> <span data-i18n="main_title">لوحة التحليلات والإدارة الذكية والمبيان الإحصائي</span>
+                        </h1>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="dashboard_subtitle_desc">عرض مرئي شامل للمنتجات، مصاريف الإعلانات، والأرباح النهائية مع التفاصيل الدقيقة.</p>
                     </div>
+                </div>
+
+                <!-- بطاقات إحصائية سريعة -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
+                        <div><p class="text-xs text-gray-500" data-i18n="stat_orders_count">عدد الطلبات</p><h4 id="stat-total-orders" class="text-xl font-extrabold">0 طلبات</h4></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i data-lucide="package" class="w-6 h-6"></i></div>
+                        <div><p class="text-xs text-gray-500" data-i18n="stat_products_count">إجمالي المنتجات</p><h4 id="stat-total-products" class="text-xl font-extrabold">0 منتج</h4></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center"><i data-lucide="badge-dollar-sign" class="w-6 h-6"></i></div>
+                        <div><p class="text-xs text-gray-500" data-i18n="stat_ads_total">إجمالي الإعلانات</p><h4 id="stat-chart-ads-total" class="text-xl font-extrabold text-rose-600">0.00 د.م</h4></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
+                        <div><p class="text-xs text-gray-500" data-i18n="stat_net_profit_total">صافي الأرباح النهائية</p><h4 id="stat-chart-profit-total" class="text-xl font-extrabold text-indigo-600">0.00 د.م</h4></div>
+                    </div>
+                </div>
+
+                <!-- خانة العد التنازولي لعروض Black Free Day (أيام السبت والأحد) المطلوبة -->
+                <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="flame" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base" data-i18n="bfd_timer_title">العد التنازولي لعروض Black Free Day (نهاية الأسبوع)</h4>
+                            <p id="bfd-timer-msg" class="text-xs text-amber-100 mt-0.5" data-i18n="bfd_timer_sub">الوقت المتبقي لانتهاء عروض السبت والأحد:</p>
+                        </div>
+                    </div>
+                    <div id="bfd-countdown-clock" class="flex items-center gap-2 text-center font-mono font-black text-lg bg-black/20 px-4 py-2 rounded-xl backdrop-blur-sm">
+                        <span>00</span>:<span>00</span>:<span>00</span>:<span>00</span>
+                    </div>
+                </div>
+
+                <!-- المبيان الإحصائي الشامل والتقرير المالي المفصل -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- رسم بياني (Chart.js Canvas) -->
+                    <div class="bg-white p-6 rounded-2xl border shadow-sm lg:col-span-2 space-y-4 flex flex-col justify-center items-center">
+                        <div class="w-full flex items-center justify-between border-b pb-3">
+                            <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">
+                                <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="chart_title">مبيان إحصائيات الإدارة المالي والمنتجات</span>
+                            </h3>
+                            <span class="text-xs text-gray-400 font-semibold" data-i18n="chart_subtitle">تحديث حي مباشر</span>
+                        </div>
+                        <div class="w-full h-72 sm:h-80 flex items-center justify-center relative">
+                            <canvas id="adminStatsCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- تفاصيل الحسابات المالية الواضحة والسلسة -->
+                    <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
+                        <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2 border-b pb-3">
+                            <i data-lucide="calculator" class="w-5 h-5 text-emerald-600"></i> <span data-i18n="financial_details_title">التفاصيل المالية والحسابات</span>
+                        </h3>
+                        <div class="space-y-3 text-xs">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                                <span class="text-gray-600 font-semibold" data-i18n="fin_total_sales">إجمالي المبيعات المحققة:</span>
+                                <span id="fin-total-sales-val" class="font-black text-gray-900 text-sm">0.00 د.م</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-rose-50 rounded-xl">
+                                <span class="text-rose-900 font-semibold" data-i18n="fin_total_ads">إجمالي مصاريف الإعلانات:</span>
+                                <span id="fin-total-ads-val" class="font-black text-rose-600 text-sm">0.00 د.م</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl">
+                                <span class="text-amber-900 font-semibold" data-i18n="fin_total_prep">إجمالي تكاليف التجهيز:</span>
+                                <span id="fin-total-prep-val" class="font-black text-amber-600 text-sm">0.00 د.م</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+                                <span class="text-emerald-900 font-bold text-sm" data-i18n="fin_net_profit">صافي الربح الصافي النهائي:</span>
+                                <span id="fin-net-profit-val" class="font-black text-emerald-600 text-base">0.00 د.م</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-400 leading-relaxed pt-2" data-i18n="fin_note">💡 الحساب يعتمد على ثمن البيع المستهدف مطروحاً منه تكلفة الشراء من تاجر، مصاريف التجهيز، ومصاريف الإعلانات المسجلة.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم سجل الطلبات -->
+            <div id="admin-subtab-orders" class="hidden space-y-4">
+                <div class="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-2xl border shadow-sm gap-4">
+                    <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2 whitespace-nowrap">
+                        <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="orders_header_title">إدارة الطلبات وإرسالها للتاجر</span>
+                    </h3>
                     <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <input type="text" id="search-bfd-input" onkeyup="filterBfdTable()" placeholder="بحث في عروض BFD..." data-i18n-placeholder="search_bfd_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-amber-600">
-                        <button onclick="openProductModalForAdd()" class="bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-700 shadow-md flex items-center gap-1.5 whitespace-nowrap">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_bfd">إضافة منتج BFD جديد</span>
+                        <input type="text" id="search-orders-input" onkeyup="filterOrdersTable()" placeholder="بحث في الطلبات..." data-i18n-placeholder="search_orders_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
+                        <button onclick="downloadAllSentToTajirExcel()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> <span data-i18n="btn_excel_group">Excel جماعي</span>
                         </button>
                     </div>
                 </div>
-                <div class="overflow-x-auto custom-scroll-container">
-                    <table class="w-full text-right text-sm text-gray-600">
+                <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto custom-scroll-container">
+                    <table class="w-full text-right text-sm text-gray-600 min-w-[800px]">
+                        <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
+                            <tr>
+                                <th class="p-4" data-i18n="th_cust_name">اسم الزبون</th>
+                                <th class="p-4" data-i18n="th_phone">الهاتف</th>
+                                <th class="p-4" data-i18n="th_address">العنوان</th>
+                                <th class="p-4" data-i18n="th_product">المنتج</th>
+                                <th class="p-4" data-i18n="th_product_admin">المسؤول عن المنتج</th>
+                                <th class="p-4" data-i18n="th_amount">المبلغ</th>
+                                <th class="p-4" data-i18n="th_order_status">حالة الطلب (إرسال إلى تاجر)</th>
+                                <th class="p-4" data-i18n="th_actions">الإجراءات (حذف)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-table-body" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- قسم إدارة المنتجات -->
+            <div id="admin-subtab-products" class="hidden space-y-4">
+                <div class="flex items-center justify-between bg-white p-4 rounded-2xl border shadow-sm">
+                    <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">
+                        <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="products_list_title">قائمة المنتجات</span>
+                    </h3>
+                    <input type="text" id="search-products-input" onkeyup="filterProductsTable()" placeholder="بحث في المنتجات..." data-i18n-placeholder="search_products_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
+                </div>
+                <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto custom-scroll-container">
+                    <table class="w-full text-right text-sm text-gray-600 min-w-[700px]">
                         <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
                             <tr>
                                 <th class="p-4" data-i18n="th_image">الصورة</th>
-                                <th class="p-4" data-i18n="th_title">العنوان</th>
-                                <th class="p-4" data-i18n="th_price">السعر</th>
-                                <th class="p-4" data-i18n="th_badge">البادج</th>
-                                <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
+                                <th class="p-4" data-i18n="th_prod_name">اسم المنتج</th>
+                                <th class="p-4">SKU</th>
+                                <th class="p-4" data-i18n="th_orig_price">الثمن الأصلي</th>
+                                <th class="p-4" data-i18n="th_disc_price">ثمن الخصم</th>
+                                <th class="p-4" data-i18n="th_admin">المسؤول</th>
+                                <th class="p-4" data-i18n="th_category">القسم</th>
+                                <th class="p-4" data-i18n="th_prod_actions">الإجراءات (تعديل / حذف)</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-bfd-table-body" class="divide-y divide-gray-100"></tbody>
+                        <tbody id="admin-products-table-body" class="divide-y divide-gray-100"></tbody>
                     </table>
                 </div>
             </div>
-        </div>
 
-        <!-- قسم مصاريف الإعلانات (ADS) الجديد -->
-        <div id="admin-subtab-ads" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
-                <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="badge-dollar-sign" class="w-5 h-5 text-rose-600"></i> <span data-i18n="ads_mgmt_title">حساب وإدارة مصاريف الإعلانات (ADS)</span>
-                        </h3>
-                        <p class="text-xs text-gray-500 mt-1" data-i18n="ads_mgmt_sub">تسجيل ميزانية مصاريف الإعلانات مع اختيار المنصة والتاريخ ومدة الإغلاق والعداد التنازلي.</p>
-                    </div>
-                    <button onclick="openAdsModalForAdd()" class="bg-rose-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-rose-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_ad">إضافة مصروف إعلاني جديد</span>
-                    </button>
-                </div>
-                <!-- إجمالي المصاريف -->
-                <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between">
-                    <span class="text-xs font-bold text-rose-900" data-i18n="total_ads_label">إجمالي مصاريف الإعلانات المسجلة:</span>
-                    <span id="stat-total-ads-expense" class="text-rose-600 font-black text-lg">0.00 د.م</span>
-                </div>
-                <div class="overflow-x-auto custom-scroll-container">
-                    <table class="w-full text-right text-sm text-gray-600">
-                        <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
-                            <tr>
-                                <th class="p-4" data-i18n="th_platform">المنصة</th>
-                                <th class="p-4" data-i18n="th_amount_dh">المبلغ (د.م)</th>
-                                <th class="p-4" data-i18n="th_start_date">تاريخ البداية</th>
-                                <th class="p-4" data-i18n="th_duration">مدة الإعلان</th>
-                                <th class="p-4" data-i18n="th_countdown">العداد التنازلي وحالة الإعلان</th>
-                                <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-ads-table-body" class="divide-y divide-gray-100"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- قسم مسابقات للخصم الجديد -->
-        <div id="admin-subtab-contests" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-w-3xl mx-auto">
-                <div class="border-b pb-4">
-                    <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                        <i data-lucide="gift" class="w-5 h-5 text-purple-600"></i> <span data-i18n="contests_mgmt_title">إعدادات مسابقات وخصومات الموقع (-50%)</span>
-                    </h3>
-                    <p class="text-xs text-gray-500 mt-1" data-i18n="contests_mgmt_sub">أدخل كلمة أو رقم الكود الخاص بالمسابقة لتفعيل نمط الخصم 50% وتغيير لون الموقع تلقائياً.</p>
-                </div>
-                <div class="space-y-4 text-sm">
-                    <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_contest_code">كود الخصم (كلمة أو رقم) *</label>
-                        <input type="text" id="contest-code-input" placeholder="مثال: BEDAL50 أو 2026" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-purple-600 text-sm font-bold">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_contest_color">لون واجهة الموقع المميز (عند تفعيل الكود) *</label>
-                        <div class="flex items-center gap-3">
-                            <input type="color" id="contest-theme-color" value="#8b5cf6" class="w-12 h-10 rounded-xl border cursor-pointer p-1">
-                            <span class="text-xs text-gray-500" data-i18n="contest_color_desc">اختر اللون الذي سيظهر في أزرار وثيم الموقع عند تفعيل الكود.</span>
+            <!-- إدارة منتجات Black Free Day -->
+            <div id="admin-subtab-bfd" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+                    <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                                <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i> <span data-i18n="bfd_mgmt_title">إدارة منتجات Black Free Day</span>
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1" data-i18n="bfd_mgmt_sub">تعديل وإدارة عروض نهاية الأسبوع الكبرى.</p>
+                        </div>
+                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <input type="text" id="search-bfd-input" onkeyup="filterBfdTable()" placeholder="بحث في عروض BFD..." data-i18n-placeholder="search_bfd_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-amber-600">
+                            <button onclick="openProductModalForAdd()" class="bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-700 shadow-md flex items-center gap-1.5 whitespace-nowrap">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_bfd">إضافة منتج BFD جديد</span>
+                            </button>
                         </div>
                     </div>
-                    <button onclick="saveContestSettings()" class="w-full bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-purple-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="btn_save_contest">حفظ كود المسابقة وتفعيل الخصم العام</span>
-                    </button>
+                    <div class="overflow-x-auto custom-scroll-container">
+                        <table class="w-full text-right text-sm text-gray-600">
+                            <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-4" data-i18n="th_image">الصورة</th>
+                                    <th class="p-4" data-i18n="th_title">العنوان</th>
+                                    <th class="p-4" data-i18n="th_price">السعر</th>
+                                    <th class="p-4" data-i18n="th_badge">البادج</th>
+                                    <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-bfd-table-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- قسم إدارة شرائح السلايدر -->
-        <div id="admin-subtab-slider" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
-                <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
+            <!-- قسم مصاريف الإعلانات (ADS) الجديد -->
+            <div id="admin-subtab-ads" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+                    <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                                <i data-lucide="badge-dollar-sign" class="w-5 h-5 text-rose-600"></i> <span data-i18n="ads_mgmt_title">حساب وإدارة مصاريف الإعلانات (ADS)</span>
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1" data-i18n="ads_mgmt_sub">تسجيل ميزانية مصاريف الإعلانات مع اختيار المنصة والتاريخ ومدة الإغلاق والعداد التنازلي.</p>
+                        </div>
+                        <button onclick="openAdsModalForAdd()" class="bg-rose-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-rose-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_ad">إضافة مصروف إعلاني جديد</span>
+                        </button>
+                    </div>
+                    <!-- إجمالي المصاريف -->
+                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between">
+                        <span class="text-xs font-bold text-rose-900" data-i18n="total_ads_label">إجمالي مصاريف الإعلانات المسجلة:</span>
+                        <span id="stat-total-ads-expense" class="text-rose-600 font-black text-lg">0.00 د.م</span>
+                    </div>
+                    <div class="overflow-x-auto custom-scroll-container">
+                        <table class="w-full text-right text-sm text-gray-600">
+                            <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-4" data-i18n="th_platform">المنصة</th>
+                                    <th class="p-4" data-i18n="th_amount_dh">المبلغ (د.م)</th>
+                                    <th class="p-4" data-i18n="th_start_date">تاريخ البداية</th>
+                                    <th class="p-4" data-i18n="th_duration">مدة الإعلان</th>
+                                    <th class="p-4" data-i18n="th_countdown">العداد التنازلي وحالة الإعلان</th>
+                                    <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-ads-table-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- قسم مسابقات للخصم الجديد -->
+            <div id="admin-subtab-contests" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-w-3xl mx-auto">
+                    <div class="border-b pb-4">
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="slider_mgmt_title">إدارة وتعديل شرائح السلايدر (Hero Slider)</span>
+                            <i data-lucide="gift" class="w-5 h-5 text-purple-600"></i> <span data-i18n="contests_mgmt_title">إعدادات مسابقات وخصومات الموقع (-50%)</span>
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1" data-i18n="slider_mgmt_sub">تعديل العناوين، الأوصاف، وصور الخلفية للسلايدر.</p>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="contests_mgmt_sub">أدخل كلمة أو رقم الكود الخاص بالمسابقة لتفعيل نمط الخصم 50% وتغيير لون الموقع تلقائياً.</p>
                     </div>
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <input type="text" id="search-slider-input" onkeyup="filterSliderEditor()" placeholder="بحث في السلايدر..." data-i18n-placeholder="search_slider_ph" class="px-4 py-2 rounded-xl border text-xs w-48 focus:outline-none focus:border-indigo-600">
-                        <button onclick="toggleSliderModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center gap-1.5">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_slider">إضافة سلايدر</span>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_contest_code">كود الخصم (كلمة أو رقم) *</label>
+                            <input type="text" id="contest-code-input" placeholder="مثال: BEDAL50 أو 2026" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-purple-600 text-sm font-bold">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_contest_color">لون واجهة الموقع المميز (عند تفعيل الكود) *</label>
+                            <div class="flex items-center gap-3">
+                                <input type="color" id="contest-theme-color" value="#8b5cf6" class="w-12 h-10 rounded-xl border cursor-pointer p-1">
+                                <span class="text-xs text-gray-500" data-i18n="contest_color_desc">اختر اللون الذي سيظهر في أزرار وثيم الموقع عند تفعيل الكود.</span>
+                            </div>
+                        </div>
+                        <button onclick="saveContestSettings()" class="w-full bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-purple-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="btn_save_contest">حفظ كود المسابقة وتفعيل الخصم العام</span>
                         </button>
-                        <button onclick="saveSliderChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md" data-i18n="btn_save_changes">
-                            حفظ التغييرات
-                        </button>
                     </div>
-                </div>
-                <div id="admin-slider-editor-container" class="space-y-6 custom-scroll-container p-2"></div>
-            </div>
-        </div>
-
-        <!-- قسم إدارة إعلان الدخول (Popup Ad) المحدث -->
-        <div id="admin-subtab-popupad" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-w-2xl mx-auto">
-                <div class="border-b pb-4">
-                    <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                        <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="popup_mgmt_title">إدارة صورة إعلان الدخول (Popup 9:16)</span>
-                    </h3>
-                    <p class="text-xs text-gray-500 mt-1" data-i18n="popup_mgmt_sub">قم بتغيير وتحديث رابط الصورة (أو رابط Dropbox) التي تظهر للزوار كنافذة منبثقة عند أول مدخل للموقع.</p>
-                </div>
-                <div class="space-y-4 text-sm">
-                    <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_popup_url">رابط صورة الإعلان (Dropbox / متوافق مع الصور) *</label>
-                        <input type="url" id="popup-ad-img-input" placeholder="https://www.dropbox.com/s/... أو رابط مباشر" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm" oninput="previewPopupAdInput()">
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-2xl border flex flex-col items-center justify-center space-y-2">
-                        <span class="text-xs font-bold text-gray-500" data-i18n="preview_current_img">معاينة الصورة الحالية:</span>
-                        <img id="popup-ad-preview-img" src="" alt="معاينة الإعلان" class="w-32 aspect-[9/16] object-cover rounded-xl border shadow-md bg-white" onerror="this.src='https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80'">
-                    </div>
-                    <button onclick="savePopupAdImage()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="btn_save_popup">حفظ وتحديث صورة الإعلان</span>
-                    </button>
                 </div>
             </div>
-        </div>
 
-        <!-- قسم المسؤولين -->
-        <div id="admin-subtab-admins" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
-                <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
+            <!-- قسم إدارة شرائح السلايدر -->
+            <div id="admin-subtab-slider" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+                    <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                                <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="slider_mgmt_title">إدارة وتعديل شرائح السلايدر (Hero Slider)</span>
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1" data-i18n="slider_mgmt_sub">تعديل العناوين، الأوصاف، وصور الخلفية للسلايدر.</p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <input type="text" id="search-slider-input" onkeyup="filterSliderEditor()" placeholder="بحث في السلايدر..." data-i18n-placeholder="search_slider_ph" class="px-4 py-2 rounded-xl border text-xs w-48 focus:outline-none focus:border-indigo-600">
+                            <button onclick="toggleSliderModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center gap-1.5">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_slider">إضافة سلايدر</span>
+                            </button>
+                            <button onclick="saveSliderChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md" data-i18n="btn_save_changes">
+                                حفظ التغييرات
+                            </button>
+                        </div>
+                    </div>
+                    <div id="admin-slider-editor-container" class="space-y-6 custom-scroll-container p-2"></div>
+                </div>
+            </div>
+
+            <!-- قسم إدارة إعلان الدخول (Popup Ad) المحدث -->
+            <div id="admin-subtab-popupad" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-w-2xl mx-auto">
+                    <div class="border-b pb-4">
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="admins_mgmt_title">إدارة المسؤولين وصلاحيات الدخول</span>
+                            <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="popup_mgmt_title">إدارة صورة إعلان الدخول (Popup 9:16)</span>
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1" data-i18n="admins_mgmt_sub">عرض وإدارة الحسابات المسؤولة عن لوحة التحكم وإعدادات الأمان.</p>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="popup_mgmt_sub">قم بتغيير وتحديث رابط الصورة (أو رابط Dropbox) التي تظهر للزوار كنافذة منبثقة عند أول مدخل للموقع.</p>
                     </div>
-                    <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <input type="text" id="search-admins-input" onkeyup="filterAdminsTable()" placeholder="بحث عن مسؤول..." data-i18n-placeholder="search_admins_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-indigo-600">
-                        <button onclick="toggleAdminModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-1.5 whitespace-nowrap">
-                            <i data-lucide="user-plus" class="w-4 h-4"></i> <span data-i18n="btn_add_admin">إضافة مسؤول جديد</span>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_popup_url">رابط صورة الإعلان (Dropbox / متوافق مع الصور) *</label>
+                            <input type="url" id="popup-ad-img-input" placeholder="https://www.dropbox.com/s/... أو رابط مباشر" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm" oninput="previewPopupAdInput()">
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-2xl border flex flex-col items-center justify-center space-y-2">
+                            <span class="text-xs font-bold text-gray-500" data-i18n="preview_current_img">معاينة الصورة الحالية:</span>
+                            <img id="popup-ad-preview-img" src="" alt="معاينة الإعلان" class="w-32 aspect-[9/16] object-cover rounded-xl border shadow-md bg-white" onerror="this.src='https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80'">
+                        </div>
+                        <button onclick="savePopupAdImage()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="btn_save_popup">حفظ وتحديث صورة الإعلان</span>
                         </button>
                     </div>
                 </div>
-                <div class="overflow-x-auto custom-scroll-container">
-                    <table class="w-full text-right text-sm text-gray-600">
-                        <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
-                            <tr>
-                                <th class="p-4" data-i18n="th_username">اسم المستخدم</th>
-                                <th class="p-4" data-i18n="th_role">الصلاحية / الدور</th>
-                                <th class="p-4" data-i18n="th_status">الحالة</th>
-                                <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-admins-table-body" class="divide-y divide-gray-100"></tbody>
-                    </table>
+            </div>
+
+            <!-- قسم المسؤولين -->
+            <div id="admin-subtab-admins" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+                    <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                                <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="admins_mgmt_title">إدارة المسؤولين وصلاحيات الدخول</span>
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1" data-i18n="admins_mgmt_sub">عرض وإدارة الحسابات المسؤولة عن لوحة التحكم وإعدادات الأمان.</p>
+                        </div>
+                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <input type="text" id="search-admins-input" onkeyup="filterAdminsTable()" placeholder="بحث عن مسؤول..." data-i18n-placeholder="search_admins_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-indigo-600">
+                            <button onclick="toggleAdminModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-1.5 whitespace-nowrap">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i> <span data-i18n="btn_add_admin">إضافة مسؤول جديد</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto custom-scroll-container">
+                        <table class="w-full text-right text-sm text-gray-600">
+                            <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-4" data-i18n="th_username">اسم المستخدم</th>
+                                    <th class="p-4" data-i18n="th_role">الصلاحية / الدور</th>
+                                    <th class="p-4" data-i18n="th_status">الحالة</th>
+                                    <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-admins-table-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+
         </div>
+
     </main>
+
+    <!-- زر عائم ثابت في جانب الشاشة (إضافة منتج جديد) - مخفي افتراضياً لحين تسجيل الدخول -->
+    <div id="floating-add-product-btn" class="fixed bottom-6 left-6 z-50 hidden">
+        <button onclick="openProductModalForAdd()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3.5 rounded-full shadow-2xl flex items-center justify-center gap-2 transition-all transform hover:scale-105 border-2 border-white font-bold text-xs" title="إضافة منتج جديد">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+            <span data-i18n="btn_add_product">إضافة منتج جديد</span>
+        </button>
+    </div>
 
     <!-- Modal Form: Add Ads Expense -->
     <div id="ads-expense-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
@@ -689,7 +768,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.93</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.98</span>
                 </span>
             </div>
         </div>
@@ -713,6 +792,7 @@
         let currentAdminUser = "ZAMZAM";
         let currentAdminPass = "AMIRMOUNA303026";
         let currentLang = 'ar'; // اللغة الافتراضية العربية
+        let adminStatsChartInstance = null; // مرجع المبيان الإحصائي
 
         // قاموس الترجمات الشامل للغات الثلاث (AR، FR، EN)
         const translations = {
@@ -731,21 +811,35 @@
                 btn_back_login: "العودة لتسجيل الدخول",
                 recovery_error: "اسم المستخدم الاحتياطي غير صحيح!",
                 header_subtitle: "لوحة الإدارة",
-                main_title: "لوحة التحليلات والإدارة الذكية",
+                dropdown_menu_label: "اختر القسم للانتقال المباشر:",
+                tab_dashboard: "📊 المبيان والإحصائيات الشاملة",
+                tab_orders: "📦 سجل الطلبات",
+                tab_products: "🛍️ إدارة المنتجات",
+                tab_bfd: "🔥 إدارة منتجات Black Free Day",
+                tab_ads: "💰 مصاريف الإعلانات (ADS)",
+                tab_contests: "🎁 مسابقات للخصم",
+                tab_slider: "🖼️ إدارة شرائح السلايدر",
+                tab_popup: "📢 إدارة إعلان الدخول (Popup)",
+                tab_admins: "👥 المسؤولين",
+                tab_meta_feed: "💾 تحميل Data Feed (Meta)",
+                main_title: "لوحة التحليلات والإدارة الذكية والمبيان الإحصائي",
+                dashboard_subtitle_desc: "عرض مرئي شامل للمنتجات، مصاريف الإعلانات، والأرباح النهائية مع التفاصيل الدقيقة.",
+                chart_title: "مبيان إحصائيات الإدارة المالي والمنتجات",
+                chart_subtitle: "تحديث حي مباشر",
+                financial_details_title: "التفاصيل المالية والحسابات",
+                fin_total_sales: "إجمالي المبيعات المحققة:",
+                fin_total_ads: "إجمالي مصاريف الإعلانات:",
+                fin_total_prep: "إجمالي تكاليف التجهيز:",
+                fin_net_profit: "صافي الربح الصافي النهائي:",
+                fin_note: "💡 الحساب يعتمد على ثمن البيع المستهدف مطروحاً منه تكلفة الشراء من تاجر، مصاريف التجهيز، ومصاريف الإعلانات المسجلة.",
+                stat_ads_total: "إجمالي الإعلانات",
+                stat_net_profit_total: "صافي الأرباح النهائية",
                 btn_meta_feed: "تحميل Data Feed (Meta)",
-                btn_add_product: "إضافة منتج جديد",
+                btn_add_product: "+ إضافة منتج جديد",
                 stat_orders_count: "عدد الطلبات",
                 stat_products_count: "إجمالي المنتجات",
                 bfd_timer_title: "العد التنازولي لعروض Black Free Day (نهاية الأسبوع)",
                 bfd_timer_sub: "الوقت المتبقي لانتهاء عروض السبت والأحد:",
-                tab_orders: "سجل الطلبات",
-                tab_products: "إدارة المنتجات",
-                tab_bfd: "إدارة منتجات Black Free Day",
-                tab_ads: "مصاريف الإعلانات (ADS)",
-                tab_contests: "مسابقات للخصم",
-                tab_slider: "إدارة شرائح السلايدر",
-                tab_popup: "إدارة إعلان الدخول (Popup)",
-                tab_admins: "المسؤولين",
                 orders_header_title: "إدارة الطلبات وإرسالها للتاجر",
                 search_orders_ph: "بحث في الطلبات...",
                 btn_excel_group: "Excel جماعي",
@@ -769,7 +863,7 @@
                 bfd_mgmt_title: "إدارة منتجات Black Free Day",
                 bfd_mgmt_sub: "تعديل وإدارة عروض نهاية الأسبوع الكبرى.",
                 search_bfd_ph: "بحث في عروض BFD...",
-                btn_add_bfd: "إضافة منتج BFD جديد",
+                btn_add_bfd: "+ إضافة منتج BFD جديد",
                 th_title: "العنوان",
                 th_price: "السعر",
                 th_badge: "البادج",
@@ -853,7 +947,6 @@
                 confirm_delete_desc: "هل أنت متأكد من رغبتك في إتمام عملية الحذف نهائياً؟",
                 btn_cancel: "إلغاء",
                 btn_delete: "حذف",
-                // ترجمة المصطلحات الديناميكية الإضافية
                 orders_unit: "طلبات",
                 products_unit: "منتج",
                 day_unit: "يوم",
@@ -877,21 +970,35 @@
                 btn_back_login: "Retour à la connexion",
                 recovery_error: "Nom d'utilisateur de secours incorrect !",
                 header_subtitle: "Panneau d'administration",
-                main_title: "Tableau de Bord et Gestion Intelligente",
+                dropdown_menu_label: "Sélectionnez la section :",
+                tab_dashboard: "📊 Tableau de bord & Graphiques",
+                tab_orders: "📦 Commandes",
+                tab_products: "🛍️ Gestion des produits",
+                tab_bfd: "🔥 Produits Black Free Day",
+                tab_ads: "💰 Dépenses Publicitaires (ADS)",
+                tab_contests: "🎁 Concours de Réduction",
+                tab_slider: "🖼️ Gestion du Slider",
+                tab_popup: "📢 Annonce Popup",
+                tab_admins: "👥 Administrateurs",
+                tab_meta_feed: "💾 Télécharger Data Feed (Meta)",
+                main_title: "Tableau de Bord, Analyses et Graphiques",
+                dashboard_subtitle_desc: "Vue d'ensemble visuelle des produits, dépenses publicitaires et bénéfices nets.",
+                chart_title: "Graphique Financier & Statistiques",
+                chart_subtitle: "Mise à jour en direct",
+                financial_details_title: "Détails Financiers & Calculs",
+                fin_total_sales: "Ventes totales réalisées :",
+                fin_total_ads: "Total dépenses publicitaires :",
+                fin_total_prep: "Total coûts de préparation :",
+                fin_net_profit: "Bénéfice net final :",
+                fin_note: "💡 Le calcul est basé sur le prix de vente ciblé moins le coût d'achat fournisseur, les frais de préparation et les dépenses publicitaires.",
+                stat_ads_total: "Total Publicités",
+                stat_net_profit_total: "Bénéfice Net Total",
                 btn_meta_feed: "Télécharger Data Feed (Meta)",
-                btn_add_product: "Ajouter un produit",
+                btn_add_product: "+ Ajouter un produit",
                 stat_orders_count: "Nombre de commandes",
                 stat_products_count: "Total des produits",
                 bfd_timer_title: "Compte à rebours Black Free Day (Weekend)",
                 bfd_timer_sub: "Temps restant pour les offres du weekend :",
-                tab_orders: "Commandes",
-                tab_products: "Gestion des produits",
-                tab_bfd: "Produits Black Free Day",
-                tab_ads: "Dépenses Publicitaires (ADS)",
-                tab_contests: "Concours de Réduction",
-                tab_slider: "Gestion du Slider",
-                tab_popup: "Annonce Popup",
-                tab_admins: "Administrateurs",
                 orders_header_title: "Gestion des commandes et envoi au fournisseur",
                 search_orders_ph: "Rechercher des commandes...",
                 btn_excel_group: "Excel groupé",
@@ -915,7 +1022,7 @@
                 bfd_mgmt_title: "Gestion Black Free Day",
                 bfd_mgmt_sub: "Modifier et gérer les offres majeures du weekend.",
                 search_bfd_ph: "Rechercher BFD...",
-                btn_add_bfd: "Ajouter un produit BFD",
+                btn_add_bfd: "+ Ajouter un produit BFD",
                 th_title: "Titre",
                 th_price: "Prix",
                 th_badge: "Badge",
@@ -1022,21 +1129,35 @@
                 btn_back_login: "Back to Login",
                 recovery_error: "Incorrect recovery username!",
                 header_subtitle: "Admin Panel",
-                main_title: "Analytics and Smart Management Panel",
+                dropdown_menu_label: "Select section:",
+                tab_dashboard: "📊 Dashboard & Analytics",
+                tab_orders: "📦 Orders Log",
+                tab_products: "🛍️ Products Management",
+                tab_bfd: "🔥 Black Free Day Management",
+                tab_ads: "💰 Ad Expenses (ADS)",
+                tab_contests: "🎁 Discount Contests",
+                tab_slider: "🖼️ Slider Management",
+                tab_popup: "📢 Popup Ad Management",
+                tab_admins: "👥 Administrators",
+                tab_meta_feed: "💾 Download Meta Data Feed",
+                main_title: "Analytics, Smart Management & Statistical Chart",
+                dashboard_subtitle_desc: "Visual overview of products, ad expenses, and net profits with precise calculations.",
+                chart_title: "Financial & Product Statistics Chart",
+                chart_subtitle: "Live update",
+                financial_details_title: "Financial Details & Calculations",
+                fin_total_sales: "Total Sales Achieved:",
+                fin_total_ads: "Total Ad Expenses:",
+                fin_total_prep: "Total Prep Costs:",
+                fin_net_profit: "Final Net Profit:",
+                fin_note: "💡 Calculations are based on target sale price minus supplier cost, preparation costs, and recorded ad expenses.",
+                stat_ads_total: "Total Ads",
+                stat_net_profit_total: "Total Net Profit",
                 btn_meta_feed: "Download Meta Data Feed",
-                btn_add_product: "Add New Product",
+                btn_add_product: "+ Add New Product",
                 stat_orders_count: "Total Orders",
                 stat_products_count: "Total Products",
                 bfd_timer_title: "Black Free Day Countdown (Weekend)",
                 bfd_timer_sub: "Time remaining for weekend offers:",
-                tab_orders: "Orders Log",
-                tab_products: "Products Management",
-                tab_bfd: "Black Free Day Management",
-                tab_ads: "Ad Expenses (ADS)",
-                tab_contests: "Discount Contests",
-                tab_slider: "Slider Management",
-                tab_popup: "Popup Ad Management",
-                tab_admins: "Administrators",
                 orders_header_title: "Manage Orders and Send to Supplier",
                 search_orders_ph: "Search orders...",
                 btn_excel_group: "Bulk Excel",
@@ -1060,7 +1181,7 @@
                 bfd_mgmt_title: "Black Free Day Management",
                 bfd_mgmt_sub: "Edit and manage major weekend offers.",
                 search_bfd_ph: "Search BFD offers...",
-                btn_add_bfd: "Add New BFD Product",
+                btn_add_bfd: "+ Add New BFD Product",
                 th_title: "Title",
                 th_price: "Price",
                 th_badge: "Badge",
@@ -1154,12 +1275,28 @@
             }
         };
 
+        // دالة إظهار وإخفاء قائمة اللغات المنسدلة
+        function toggleLangDropdown() {
+            const menu = document.getElementById('lang-dropdown-menu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        // إغلاق قائمة اللغات عند النقر خارجها
+        window.addEventListener('click', (e) => {
+            const btn = document.getElementById('lang-dropdown-btn');
+            const menu = document.getElementById('lang-dropdown-menu');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
         // دالة تغيير اللغة الشاملة
         function changeLanguage(lang) {
             currentLang = lang;
             const htmlRoot = document.getElementById('html-root');
             
-            // ضبط الاتجاه واللغة بناءً على الخيار
             if (lang === 'ar') {
                 htmlRoot.setAttribute('lang', 'ar');
                 htmlRoot.setAttribute('dir', 'rtl');
@@ -1168,19 +1305,11 @@
                 htmlRoot.setAttribute('dir', 'ltr');
             }
 
-            // تحديث تصميم أزرار اللغة في الهيدر
-            ['ar', 'fr', 'en'].forEach(l => {
-                const btn = document.getElementById(`lang-btn-${l}`);
-                if (btn) {
-                    if (l === lang) {
-                        btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm transition-all";
-                    } else {
-                        btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold text-gray-600 hover:text-indigo-600 transition-all";
-                    }
-                }
-            });
+            const langLabel = document.getElementById('current-lang-label');
+            if (langLabel) {
+                langLabel.innerText = lang.toUpperCase();
+            }
 
-            // ترجمة العناصر التي تحتوي على خاصية data-i18n
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[lang] && translations[lang][key]) {
@@ -1188,7 +1317,6 @@
                 }
             });
 
-            // ترجمة العناصر ذات placeholders
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (translations[lang] && translations[lang][key]) {
@@ -1196,10 +1324,8 @@
                 }
             });
 
-            // تحديث عنوان الصفحة
             document.getElementById('page-title').innerText = translations[lang]['page_title'] || translations['ar']['page_title'];
 
-            // تحديث القيم الديناميكية في لوحة التحكم فوراً لتتوافق مع اللغة المختارة
             const totalOrdersEl = document.getElementById('stat-total-orders');
             if (totalOrdersEl) {
                 const count = salesOrdersDatabase.length;
@@ -1218,6 +1344,7 @@
             renderAdminOrders();
             renderAdsExpensesTable();
             renderBfdTable();
+            updateAdminStatsChartAndCalculations();
         }
 
         function showCustomAlert(message, title = "تنبيه") {
@@ -1255,13 +1382,11 @@
             lucide.createIcons();
         }
 
-        // المعادلة المطلوبة وحساب الربح الصافي والثمن الأصلي في السوق تلقائياً بزيادة 70% وتعبئة خانات الثمن الأصلي وثمن الخصم أوتوماتيكياً
         function calculateNetProfitAuto() {
             const tajirVal = parseFloat(document.getElementById('calc-tajir-price').value) || 0;
             const prepVal = parseFloat(document.getElementById('calc-prep-cost').value) || 0;
             const targetSaleVal = parseFloat(document.getElementById('calc-target-sale-price').value) || 0;
 
-            // الربح الصافي النهائي = الثمن المستهدف للبيع - (ثمن المنتوج في tajir + ثمن تجهيز المنتوج)
             let netProfitVal = targetSaleVal - (tajirVal + prepVal);
             
             const netProfitInputEl = document.getElementById('calc-net-profit-input');
@@ -1274,14 +1399,12 @@
                 storePriceEl.innerText = targetSaleVal > 0 ? targetSaleVal.toFixed(2) + ' د.م' : '0.00 د.م';
             }
 
-            // الثمن الأصلي في السوق يرتفع تلقائياً بنسبة 70% على الثمن المقترح في المتجر (المستهدف للبيع)
             let marketPriceVal = targetSaleVal * 1.70;
             const marketPriceEl = document.getElementById('calc-result-market-price');
             if (marketPriceEl) {
-                marketPriceEl.innerText = targetSaleVal > 0 ? marketPriceVal.toFixed(2) + ' د.م' : '0.00 د.م';
+                marketPriceEl.innerText = targetSaleVal > 0 ? targetSaleVal.toFixed(2) + ' د.م' : '0.00 د.م';
             }
 
-            // تحديث الخانتين المقفلتين أسفل اسم المنتج أوتوماتيكياً
             const prodFormPrice = document.getElementById('prod-form-price');
             const prodFormDiscount = document.getElementById('prod-form-discount-price');
             if (prodFormPrice) prodFormPrice.value = targetSaleVal > 0 ? marketPriceVal.toFixed(2) : '';
@@ -1332,6 +1455,8 @@
                     headerAdminNameEl.innerText = currentAdminUser;
                 }
                 document.getElementById('login-overlay').classList.add('hidden');
+                // إظهار زر إضافة منتج جديد العائم بعد تسجيل الدخول بنجاح
+                document.getElementById('floating-add-product-btn').classList.remove('hidden');
                 errEl.classList.add('hidden');
             } else {
                 errEl.classList.remove('hidden');
@@ -1517,9 +1642,97 @@
                 renderSliderEditor();
                 renderBfdTable();
                 initAdsCountdowns();
+                updateAdminStatsChartAndCalculations();
             } catch (err) {
                 console.error("خطأ في جلب البيانات:", err);
             }
+        }
+
+        // دالة تحديث المبيان الإحصائي والحسابات المالية التفصيلية بدقة
+        function updateAdminStatsChartAndCalculations() {
+            let totalSales = 0;
+            salesOrdersDatabase.forEach(o => {
+                totalSales += parseFloat(o.price) || 0;
+            });
+
+            let totalAds = 0;
+            adsExpensesDatabase.forEach(a => {
+                totalAds += parseFloat(a.amount) || 0;
+            });
+
+            let totalPrepCost = 0;
+            let totalNetProfit = 0;
+            productsDatabase.forEach(p => {
+                totalPrepCost += parseFloat(p.prepCost) || 0;
+                totalNetProfit += parseFloat(p.netProfit) || 0;
+            });
+
+            // تحديث البطاقات الإحصائية والتقرير المالي السلس
+            const statAdsTotalEl = document.getElementById('stat-chart-ads-total');
+            const statProfitTotalEl = document.getElementById('stat-chart-profit-total');
+            if (statAdsTotalEl) statAdsTotalEl.innerText = totalAds.toFixed(2) + ' د.م';
+            if (statProfitTotalEl) statProfitTotalEl.innerText = totalNetProfit.toFixed(2) + ' د.م';
+
+            const finSalesValEl = document.getElementById('fin-total-sales-val');
+            const finAdsValEl = document.getElementById('fin-total-ads-val');
+            const finPrepValEl = document.getElementById('fin-total-prep-val');
+            const finNetProfitValEl = document.getElementById('fin-net-profit-val');
+
+            if (finSalesValEl) finSalesValEl.innerText = totalSales.toFixed(2) + ' د.م';
+            if (finAdsValEl) finAdsValEl.innerText = totalAds.toFixed(2) + ' د.م';
+            if (finPrepValEl) finPrepValEl.innerText = totalPrepCost.toFixed(2) + ' د.م';
+            if (finNetProfitValEl) finNetProfitValEl.innerText = totalNetProfit.toFixed(2) + ' د.م';
+
+            // رسم أو تحديث المبيان (Chart.js)
+            const ctx = document.getElementById('adminStatsCanvas');
+            if (!ctx) return;
+
+            if (adminStatsChartInstance) {
+                adminStatsChartInstance.destroy();
+            }
+
+            adminStatsChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['إجمالي المبيعات', 'مصاريف الإعلانات', 'تكاليف التجهيز', 'صافي الأرباح', 'عدد المنتجات'],
+                    datasets: [{
+                        label: 'إحصائيات الإدارة الشاملة (د.م / عدد)',
+                        data: [totalSales, totalAds, totalPrepCost, totalNetProfit, productsDatabase.length],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(244, 63, 94, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(99, 102, 241, 0.7)',
+                            'rgba(139, 92, 246, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(16, 185, 129)',
+                            'rgb(244, 63, 94)',
+                            'rgb(245, 158, 11)',
+                            'rgb(99, 102, 241)',
+                            'rgb(139, 92, 246)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
         }
 
         async function loadPopupAdSettings() {
@@ -1646,6 +1859,7 @@
                         if (!exists) {
                             salesOrdersDatabase.unshift(payload.new);
                             renderAdminOrders();
+                            updateAdminStatsChartAndCalculations();
                         }
                     }
                 })
@@ -1655,6 +1869,7 @@
                         if (index !== -1) {
                             salesOrdersDatabase[index] = payload.new;
                             renderAdminOrders();
+                            updateAdminStatsChartAndCalculations();
                         }
                     }
                 })
@@ -1662,6 +1877,7 @@
                     if (payload.old) {
                         salesOrdersDatabase = salesOrdersDatabase.filter(o => o.id !== payload.old.id);
                         renderAdminOrders();
+                        updateAdminStatsChartAndCalculations();
                     }
                 })
                 .subscribe();
@@ -1733,6 +1949,7 @@
             const unitProducts = translations[currentLang]['products_unit'] || 'منتج';
             document.getElementById('stat-total-products').innerText = `${productsDatabase.length} ${unitProducts}`;
             lucide.createIcons();
+            updateAdminStatsChartAndCalculations();
         }
 
         function filterProductsTable() {
@@ -1793,6 +2010,7 @@
             toggleAdsModal();
             renderAdsExpensesTable();
             initAdsCountdowns();
+            updateAdminStatsChartAndCalculations();
         }
 
         function renderAdsExpensesTable() {
@@ -1842,6 +2060,7 @@
             if (totalEl) totalEl.innerText = totalSum.toFixed(2) + ' د.م';
             lucide.createIcons();
             initAdsCountdowns();
+            updateAdminStatsChartAndCalculations();
         }
 
         function initAdsCountdowns() {
@@ -2054,6 +2273,7 @@
             const unitOrders = translations[currentLang]['orders_unit'] || 'طلبات';
             document.getElementById('stat-total-orders').innerText = `${salesOrdersDatabase.length} ${unitOrders}`;
             lucide.createIcons();
+            updateAdminStatsChartAndCalculations();
         }
 
         function filterOrdersTable() {
@@ -2636,56 +2856,46 @@
             });
         }
 
-        function switchAdminTab(tabKey) {
-            document.getElementById('admin-subtab-orders').classList.add('hidden');
-            document.getElementById('admin-subtab-products').classList.add('hidden');
-            document.getElementById('admin-subtab-bfd').classList.add('hidden');
-            document.getElementById('admin-subtab-ads').classList.add('hidden');
-            document.getElementById('admin-subtab-contests').classList.add('hidden');
-            document.getElementById('admin-subtab-slider').classList.add('hidden');
-            document.getElementById('admin-subtab-popupad').classList.add('hidden');
-            document.getElementById('admin-subtab-admins').classList.add('hidden');
+        // دالة تغيير الأقسام عبر القائمة المنسدلة (Dropdown Menu) لعرض نافذة القسم المختار
+        function handleDropdownSectionChange(tabKey) {
+            if (tabKey === 'meta_feed') {
+                downloadMetaCatalogDataFeed();
+                // إعادة اختيار لوحة التحكم بعد التحميل لتجنب البقاء في خيار فارغ
+                document.getElementById('admin-sections-dropdown').value = 'dashboard';
+                return;
+            }
 
-            document.getElementById('admin-tab-btn-orders').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
-            document.getElementById('admin-tab-btn-products').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
-            document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
-            document.getElementById('admin-tab-btn-ads').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
-            document.getElementById('admin-tab-btn-contests').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
-            document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
-            document.getElementById('admin-tab-btn-popupad').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
-            document.getElementById('admin-tab-btn-admins').className = "px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap";
+            const tabs = ['dashboard', 'orders', 'products', 'bfd', 'ads', 'contests', 'slider', 'popupad', 'admins'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`admin-subtab-${t}`);
+                if (el) {
+                    if (t === tabKey) {
+                        el.classList.remove('hidden');
+                        el.classList.add('block');
+                    } else {
+                        el.classList.add('hidden');
+                        el.classList.remove('block');
+                    }
+                }
+            });
 
-            if (tabKey === 'products') {
-                document.getElementById('admin-subtab-products').classList.remove('hidden');
-                document.getElementById('admin-tab-btn-products').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
+            if (tabKey === 'dashboard') {
+                updateAdminStatsChartAndCalculations();
+            } else if (tabKey === 'products') {
                 renderAdminProducts();
             } else if (tabKey === 'bfd') {
-                document.getElementById('admin-subtab-bfd').classList.remove('hidden');
-                document.getElementById('admin-tab-btn-bfd').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderBfdTable();
             } else if (tabKey === 'ads') {
-                document.getElementById('admin-subtab-ads').classList.remove('hidden');
-                document.getElementById('admin-tab-btn-ads').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderAdsExpensesTable();
             } else if (tabKey === 'contests') {
-                document.getElementById('admin-subtab-contests').classList.remove('hidden');
-                document.getElementById('admin-tab-btn-contests').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 loadContestSettings();
             } else if (tabKey === 'slider') {
-                document.getElementById('admin-subtab-slider').classList.remove('hidden');
-                document.getElementById('admin-tab-btn-slider').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderSliderEditor();
             } else if (tabKey === 'popupad') {
-                document.getElementById('admin-subtab-popupad').classList.remove('hidden');
-                document.getElementById('admin-tab-btn-popupad').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 loadPopupAdSettings();
             } else if (tabKey === 'admins') {
-                document.getElementById('admin-subtab-admins').classList.remove('hidden');
-                document.getElementById('admin-tab-btn-admins').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
                 renderAdminsTable();
-            } else {
-                document.getElementById('admin-subtab-orders').classList.remove('hidden');
-                document.getElementById('admin-tab-btn-orders').className = "px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap";
+            } else if (tabKey === 'orders') {
                 renderAdminOrders();
             }
         }
