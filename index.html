@@ -499,7 +499,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
-                    <span>«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
+                    <span>«الدفع عند الاستلاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
@@ -524,7 +524,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
-                    <span>«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
+                    <span>«الدفع عند الاستلاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
@@ -661,8 +661,11 @@
             <div class="bg-white rounded-2xl border border-amber-200/60 shadow-lg overflow-hidden p-5 sm:p-6 space-y-6">
                 
                 <div class="space-y-2">
-                    <div class="flex items-center justify-end text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
-                        <span id="detail-product-cat" class="text-[#0F172A] bg-gray-100 px-2 py-0.5 rounded">متنوع</span>
+                    <div class="flex items-center justify-between">
+                        <span id="detail-unavailable-badge" class="hidden bg-gray-800 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-md uppercase tracking-wider">غير متاح حالياً</span>
+                        <div class="flex items-center justify-end text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 ms-auto">
+                            <span id="detail-product-cat" class="text-[#0F172A] bg-gray-100 px-2 py-0.5 rounded">متنوع</span>
+                        </div>
                     </div>
                     <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
@@ -756,7 +759,7 @@
                 </div>
 
                 <!-- زر "اطلب الآن - الدفع عند الاستلاستلام" الجديد أسفل وصف المنتج مع خاصية التمرير للأعلى -->
-                <div class="pt-4">
+                <div id="detail-bottom-order-btn-box" class="pt-4">
                     <button onclick="scrollToOrderForm()" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-4 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-base bfd-attention-btn cursor-pointer">
                         <i data-lucide="shopping-bag" class="w-6 h-6 animate-bounce"></i>
                         <span data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلاستلام</span>
@@ -859,7 +862,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.7</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.9</span>
                     </span>
                 </div>
             </div>
@@ -1229,7 +1232,7 @@
         const itemsPerPage = 10;
         let currentFilterCategory = 'all';
 
-        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '', sku: '' };
+        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '', sku: '', is_available: true };
         let fullBfdDescriptionText = '';
         let isBfdDescExpanded = false;
 
@@ -1381,9 +1384,9 @@
                         let originalPrice = parseFloat(p.price || 0);
                         let finalDiscPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
                         
-                        // فحص دقيق وشامل لكافة احتمالات أعمدة الحالة والتوفر في قاعدة البيانات
+                        // فحص دقيق وشامل لكافة احتمالات أعمدة الحالة والتوفر في قاعدة البيانات (مثل is_active أو is_available أو status)
                         let isAvailable = true;
-                        const rawStatus = p.is_available !== undefined ? p.is_available : (p.status !== undefined ? p.status : (p.available !== undefined ? p.available : (p.active !== undefined ? p.active : true)));
+                        const rawStatus = p.is_active !== undefined ? p.is_active : (p.is_available !== undefined ? p.is_available : (p.status !== undefined ? p.status : (p.available !== undefined ? p.available : (p.active !== undefined ? p.active : true))));
                         
                         if (rawStatus === false || rawStatus === 0 || String(rawStatus).toLowerCase() === 'false' || String(rawStatus).toLowerCase() === '0' || String(rawStatus).toLowerCase().includes('غير متاح') || String(rawStatus).toLowerCase().includes('unavailable') || String(rawStatus).toLowerCase().includes('inactive')) {
                             isAvailable = false;
@@ -1413,7 +1416,7 @@
                         let discPrice = (b.discountPrice !== undefined && b.discountPrice !== null && b.discountPrice !== '') ? parseFloat(b.discountPrice) : originalPrice;
                         
                         let isAvailable = true;
-                        const rawBfdStatus = b.is_available !== undefined ? b.is_available : (b.status !== undefined ? b.status : (b.available !== undefined ? b.available : (b.active !== undefined ? b.active : true)));
+                        const rawBfdStatus = b.is_active !== undefined ? b.is_active : (b.is_available !== undefined ? b.is_available : (b.status !== undefined ? b.status : (b.available !== undefined ? b.available : (b.active !== undefined ? b.active : true))));
                         
                         if (rawBfdStatus === false || rawBfdStatus === 0 || String(rawBfdStatus).toLowerCase() === 'false' || String(rawBfdStatus).toLowerCase() === '0' || String(rawBfdStatus).toLowerCase().includes('غير متاح') || String(rawBfdStatus).toLowerCase().includes('unavailable') || String(rawBfdStatus).toLowerCase().includes('inactive')) {
                             isAvailable = false;
@@ -1546,11 +1549,10 @@
                     storeThumbnailsHtml += `</div>`;
                 }
 
-                // تطبيق الأسلوب الرمادي وتغيير الخلفية في حال كان المنتج غير متاح
-                const cardBgClass = isAvailable ? 'bg-white' : 'bg-gray-200 opacity-80 grayscale';
+                const cardBgClass = isAvailable ? 'bg-white' : 'bg-gray-200 opacity-75 grayscale';
                 const imgFilterClass = isAvailable ? '' : 'grayscale';
-                const titleColorClass = isAvailable ? 'text-[#0F172A] hover:text-[#F97316]' : 'text-gray-700';
-                const unavailableBadge = !isAvailable ? `<span class="absolute top-3 right-3 z-20 bg-gray-700 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">غير متاح</span>` : '';
+                const titleColorClass = isAvailable ? 'text-[#0F172A] hover:text-[#F97316]' : 'text-gray-700 font-semibold';
+                const unavailableBadge = !isAvailable ? `<span class="absolute top-3 right-3 z-20 bg-gray-800 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg uppercase tracking-wider">غير متاح</span>` : '';
 
                 let cartBtnHtml = '';
                 let waBtnHtml = '';
@@ -2009,7 +2011,8 @@
                 currentImgIndex: 0,
                 category: p.catLabel || p.category || 'عام',
                 description: p.description || '',
-                videos: p.videos || []
+                videos: p.videos || [],
+                is_available: (p.is_available !== false)
             };
 
             updateMetaTagsForProduct(p);
@@ -2035,6 +2038,24 @@
             document.getElementById('detail-cust-name').value = '';
             document.getElementById('detail-cust-phone').value = '';
             document.getElementById('detail-cust-city').value = '';
+
+            // تطبيق إلغاء وإخفاء أزرار وخانات الطلب إذا كان المنتج غير متاح في صفحة التفاصيل
+            const orderFormContainer = document.getElementById('order-form-container');
+            const bottomOrderBtnBox = document.getElementById('detail-bottom-order-btn-box');
+            const unavailableBadge = document.getElementById('detail-unavailable-badge');
+            const detailImgEl = document.getElementById('detail-product-img');
+
+            if (!currentProduct.is_available) {
+                if (orderFormContainer) orderFormContainer.classList.add('hidden');
+                if (bottomOrderBtnBox) bottomOrderBtnBox.classList.add('hidden');
+                if (unavailableBadge) unavailableBadge.classList.remove('hidden');
+                if (detailImgEl) detailImgEl.classList.add('grayscale');
+            } else {
+                if (orderFormContainer) orderFormContainer.classList.remove('hidden');
+                if (bottomOrderBtnBox) bottomOrderBtnBox.classList.remove('hidden');
+                if (unavailableBadge) unavailableBadge.classList.add('hidden');
+                if (detailImgEl) detailImgEl.classList.remove('grayscale');
+            }
 
             const videoBox = document.getElementById('detail-video-box');
             const videoLink = document.getElementById('detail-video-link');
