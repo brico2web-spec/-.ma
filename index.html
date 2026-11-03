@@ -669,8 +669,7 @@
             <div class="bg-white rounded-2xl border border-amber-200/60 shadow-lg overflow-hidden p-5 sm:p-6 space-y-6">
                 
                 <div class="space-y-2">
-                    <div class="flex items-center justify-between text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
-                        <span id="detail-badge-text" class="flex items-center gap-1">🏷️ تخفيض حصري</span>
+                    <div class="flex items-center justify-end text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
                         <span id="detail-product-cat" class="text-[#0F172A] bg-gray-100 px-2 py-0.5 rounded">متنوع</span>
                     </div>
                     <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
@@ -868,7 +867,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.5.8</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.6.0</span>
                     </span>
                 </div>
             </div>
@@ -1325,7 +1324,6 @@
                 return;
             }
 
-            // إضافة التعليق لقوائم اللغات لتحديثه فوراً
             Object.keys(reviewsDataByLang).forEach(l => {
                 reviewsDataByLang[l].push({ name, comment: `«${comment}»`, stars });
             });
@@ -1494,9 +1492,6 @@
 
             let html = '';
             paginatedItems.forEach(p => {
-                let discountPercent = p.oldPrice > p.price ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
-                const badgeText = discountPercent > 0 ? `-%${discountPercent}` : 'عرض خاص';
-                
                 const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
                 const firstImg = productImages[0];
 
@@ -1517,9 +1512,6 @@
                 html += `
                     <div class="product-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                         <div>
-                            <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none">
-                                ${badgeText}
-                            </div>
                             <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
                                 <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover store-card-img group-hover:scale-105 transition-transform duration-300">
                             </div>
@@ -1889,9 +1881,6 @@
                     html += `
                         <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300 cursor-pointer" onclick="openBfdProductModal('${p.id}')">
                             <div>
-                                <div class="absolute top-3 right-3 z-10 bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 text-white text-xs font-black px-3 py-1 rounded-lg shadow-md border border-white/80 pointer-events-none" data-i18n="major_discounts">
-                                    تخفيض كبرى
-                                </div>
                                 <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
                                     <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover bfd-card-img">
                                 </div>
@@ -1949,10 +1938,6 @@
                 const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
                 window.history.pushState({path:newUrl}, '', newUrl);
             }
-
-            let discountPercent = currentProduct.oldPrice > currentProduct.price ? Math.round(((currentProduct.oldPrice - currentProduct.price) / currentProduct.oldPrice) * 100) : 0;
-            const badgeTextEl = document.getElementById('detail-badge-text');
-            if (badgeTextEl) badgeTextEl.innerText = discountPercent > 0 ? `🏷️ -%${discountPercent}` : '🏷️ عرض حصري';
 
             updateDetailImageViewer();
             renderDetailThumbnails();
