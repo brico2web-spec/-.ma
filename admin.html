@@ -499,7 +499,7 @@
             <input type="hidden" id="prod-form-id">
             <input type="hidden" id="prod-form-is-bfd-edit-id">
 
-            <!-- آلة حاسبة الأرباح والتسعير التلقائي بالترتيب والمطلوب بدقة -->
+            <!-- آلة حاسبة الأرباح والتسعير التلقائي بدقة -->
             <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-3">
                 <h4 class="font-bold text-emerald-900 text-xs sm:text-sm flex items-center gap-2">
                     <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i> آلة حاسبة التسعير والتصحيح التلقائي
@@ -566,7 +566,7 @@
                     </label>
                 </div>
 
-                <!-- خانة حالة الإعلان (Ads Status) الجديدة المطلوبة -->
+                <!-- خانة حالة الإعلان (Ads Status) الجديدة -->
                 <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3">
                     <input type="checkbox" id="prod-form-has-ads" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
                     <label for="prod-form-has-ads" class="font-bold text-rose-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
@@ -672,7 +672,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.87</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.88</span>
                 </span>
             </div>
         </div>
@@ -696,7 +696,6 @@
         let currentAdminUser = "ZAMZAM";
         let currentAdminPass = "AMIRMOUNA303026";
 
-        // دوال النوافذ المخصصة الاحترافية بدلاً من alert و confirm التقليدية
         function showCustomAlert(message, title = "تنبيه") {
             document.getElementById('custom-alert-title').innerText = title;
             document.getElementById('custom-alert-message').innerText = message;
@@ -732,9 +731,8 @@
             lucide.createIcons();
         }
 
-        // المعادلات المطلوبة للحاسبة بدقة:
-        // 1. الثمن المقترح في المتجر = (ثمن المنتوج في tajir) + (ثمن تجهيز المنتوج) + (الربح الصافي النهائي)
-        // 2. الربح الصافي النهائي = (ثمن المستهدف للبيع) - (الثمن المقترح في المتجر)
+        // دالة حساب الثمن المقترح في المتجر بناءً على المعادلة:
+        // الثمن المقترح في المتجر = (ثمن المنتوج في tajir) + (ثمن تجهيز المنتوج) + (الربح الصافي النهائي)
         function calculateStorePriceAuto() {
             const tajirVal = parseFloat(document.getElementById('calc-tajir-price').value) || 0;
             const prepVal = parseFloat(document.getElementById('calc-prep-cost').value) || 0;
@@ -748,16 +746,20 @@
             }
         }
 
+        // دالة حساب الربح الصافي تلقائياً بناءً على:
+        // الربح الصافي النهائي = (ثمن المستهدف للبيع) - (ثمن المنتوج في tajir + ثمن تجهيز المنتوج)
         function calculateNetProfitAuto() {
             const tajirVal = parseFloat(document.getElementById('calc-tajir-price').value) || 0;
             const prepVal = parseFloat(document.getElementById('calc-prep-cost').value) || 0;
             const targetSaleVal = parseFloat(document.getElementById('calc-target-sale-price').value) || 0;
-            const netProfitVal = parseFloat(document.getElementById('calc-net-profit-input').value) || 0;
 
-            // إذا أدخل المستخدم ثمن المستهدف للبيع يتم حساب الربح الصافي تلقائياً بناءً عليه
             if (targetSaleVal > 0) {
-                let calculatedStorePrice = tajirVal + prepVal + netProfitVal;
-                // الربح الصافي النهائي = ثمن المستهدف للبيع - الثمن المقترح في المتجر أو حسب المعادلة المطلوبة
+                let calculatedNetProfit = targetSaleVal - (tajirVal + prepVal);
+                const netProfitInput = document.getElementById('calc-net-profit-input');
+                if (netProfitInput && document.activeElement === document.getElementById('calc-target-sale-price')) {
+                    netProfitInput.value = calculatedNetProfit >= 0 ? calculatedNetProfit.toFixed(2) : 0;
+                    calculateStorePriceAuto();
+                }
             }
         }
 
@@ -775,7 +777,6 @@
             }
         }
 
-        // التحقق من تسجيل الدخول مباشرة من جدول admins
         async function handleLogin() {
             const uInput = document.getElementById('login-username').value.trim();
             const pInput = document.getElementById('login-password').value.trim();
@@ -1225,7 +1226,6 @@
             renderAdminProducts(filtered);
         }
 
-        // دوال مصاريف الإعلانات (ADS Expenses) مع العداد التنازلي وتوقيت الإغلاق
         function toggleAdsModal() {
             document.getElementById('ads-expense-modal').classList.toggle('hidden');
         }
@@ -1996,7 +1996,6 @@
                 return;
             }
 
-            // تعديل عرض BFD
             if (bfdEditId !== "") {
                 const bfdData = {
                     title: title,
@@ -2027,7 +2026,6 @@
                 return;
             }
 
-            // إضافة منتج جديد لـ BFD مع كافة الصور
             if (isBfdChecked) {
                 const bfdData = {
                     title: title,
