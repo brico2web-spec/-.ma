@@ -859,7 +859,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.4</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.6</span>
                     </span>
                 </div>
             </div>
@@ -1380,8 +1380,20 @@
                     fetchedProducts = prods.map(p => {
                         let originalPrice = parseFloat(p.price || 0);
                         let finalDiscPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
-                        let isAvailable = (p.is_available !== undefined && p.is_available !== null) ? p.is_available : true;
-                        if (p.status && (p.status.includes('غير متاح') || p.status.includes('نفد') || p.status.toLowerCase() === 'unavailable')) isAvailable = false;
+                        
+                        // التحقق الشامل من حالة التوفر في قاعدة البيانات (is_available أو status)
+                        let isAvailable = true;
+                        if (p.is_available !== undefined && p.is_available !== null) {
+                            if (p.is_available === false || p.is_available === 0 || String(p.is_available).toLowerCase() === 'false' || String(p.is_available).toLowerCase() === 'غير متاح') {
+                                isAvailable = false;
+                            }
+                        }
+                        if (p.status) {
+                            const st = String(p.status).toLowerCase();
+                            if (st.includes('غير متاح') || st.includes('نفد') || st.includes('unavailable') || st === 'false' || st === '0') {
+                                isAvailable = false;
+                            }
+                        }
 
                         return {
                             ...p,
@@ -1405,7 +1417,19 @@
                         let productDescription = b.description || (matchedNormalProd ? matchedNormalProd.description : 'لا يوجد وصف متاح.');
                         let originalPrice = parseFloat(b.price || 0);
                         let discPrice = (b.discountPrice !== undefined && b.discountPrice !== null && b.discountPrice !== '') ? parseFloat(b.discountPrice) : originalPrice;
-                        let isAvailable = (b.is_available !== undefined && b.is_available !== null) ? b.is_available : true;
+                        
+                        let isAvailable = true;
+                        if (b.is_available !== undefined && b.is_available !== null) {
+                            if (b.is_available === false || b.is_available === 0 || String(b.is_available).toLowerCase() === 'false' || String(b.is_available).toLowerCase() === 'غير متاح') {
+                                isAvailable = false;
+                            }
+                        }
+                        if (b.status) {
+                            const st = String(b.status).toLowerCase();
+                            if (st.includes('غير متاح') || st.includes('نفد') || st.includes('unavailable') || st === 'false' || st === '0') {
+                                isAvailable = false;
+                            }
+                        }
 
                         return {
                             ...b,
