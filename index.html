@@ -9,9 +9,8 @@
     <meta property="og:title" id="meta-og-title" content="bedal.online - منتوجات بي تخفيض خيالي">
     <meta property="og:description" id="meta-og-desc" content="تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلام.">
     <meta property="og:image" id="meta-og-image" content="https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=13y6gkvb&raw=1">
-    <meta property="og:url" content="https://bedal.online/">
+    <meta property="og:url" id="meta-og-url" content="https://bedal.online/">
     <meta property="og:type" content="website">
-    <!-- Meta Property fb:app_id added to resolve Facebook Sharing Debugger missing asset warning -->
     <meta property="fb:app_id" content="123456789012345">
 
     <!-- Google tag (gtag.js) -->
@@ -560,7 +559,6 @@
             </div>
 
             <div>
-                <!-- تم تعديل العبارة وتوحيد القياسات وإزالة الرمز والإطار والخلفية -->
                 <div class="flex justify-center mb-6">
                     <h2 class="text-base sm:text-lg font-black text-[#0F172A] tracking-wide">
                         <span data-i18n="featured_products">منتوجات بي تخفيضات - 40%</span>
@@ -861,7 +859,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.7.3</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.7.4</span>
                     </span>
                 </div>
             </div>
@@ -1146,7 +1144,6 @@
             }
         };
 
-        // ترجمات شريط التقييمات المتحرك للغات الثلاث
         const reviewsDataByLang = {
             ar: [
                 { name: "يوسف (القنيطرة)", comment: "«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!»", stars: 5 },
@@ -1202,7 +1199,6 @@
             });
         }
 
-        // دالة التمرير السلس إلى خانات ملء الطلب عند الضغط على الزر الجديد أسفل الوصف
         function scrollToOrderForm() {
             const orderForm = document.getElementById('order-form-container');
             if (orderForm) {
@@ -1834,20 +1830,31 @@
             document.getElementById('section-black-free-day').classList.add('hidden');
             document.getElementById('section-bfd-album').classList.add('hidden');
 
-            if (tabName === 'detail') document.getElementById('section-product-detail').classList.remove('hidden');
-            else if (tabName === 'vendor') document.getElementById('section-vendor-store').classList.remove('hidden');
-            else if (tabName === 'black_free_day') document.getElementById('section-black-free-day').classList.remove('hidden');
-            else if (tabName === 'bfd-album') document.getElementById('section-bfd-album').classList.remove('hidden');
-            else {
+            const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+
+            if (tabName === 'detail') {
+                document.getElementById('section-product-detail').classList.remove('hidden');
+            } else if (tabName === 'vendor') {
+                document.getElementById('section-vendor-store').classList.remove('hidden');
+            } else if (tabName === 'black_free_day') {
+                document.getElementById('section-black-free-day').classList.remove('hidden');
+                if (window.history.pushState) {
+                    window.history.pushState({path: baseUrl}, '', baseUrl);
+                }
+                document.getElementById('meta-og-title').setAttribute('content', 'عروض نهاية الأسبوع الكبرى - bedal.online');
+                document.getElementById('meta-og-desc').setAttribute('content', 'اكتشف تخفيضات نهاية الأسبوع الجنونية حتى -70% مع الدفع عند الاستلام.');
+                document.getElementById('meta-og-url').setAttribute('content', baseUrl);
+            } else if (tabName === 'bfd-album') {
+                document.getElementById('section-bfd-album').classList.remove('hidden');
+            } else {
                 document.getElementById('section-store').classList.remove('hidden');
                 if (window.history.pushState) {
-                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                    window.history.pushState({path:newUrl}, '', newUrl);
+                    window.history.pushState({path: baseUrl}, '', baseUrl);
                 }
-                // إعادة تعيين الميتا تاغز للقيم الافتراضية عند العودة للرئيسية
                 document.getElementById('meta-og-title').setAttribute('content', 'bedal.online - منتوجات بي تخفيض خيالي');
                 document.getElementById('meta-og-desc').setAttribute('content', 'تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلام.');
                 document.getElementById('meta-og-image').setAttribute('content', 'https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=13y6gkvb&raw=1');
+                document.getElementById('meta-og-url').setAttribute('content', baseUrl);
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1932,7 +1939,6 @@
                 videos: p.videos || []
             };
 
-            // تحديث ميتا تاغز الخاصة بصفحة المنتج ديناميكياً (og:title, og:description, og:image)
             const prodTitle = currentProduct.title ? `${currentProduct.title} - ${currentProduct.price.toFixed(2)} د.م` : 'bedal.online';
             const prodDesc = currentProduct.description ? currentProduct.description.substring(0, 150) : 'اكتشف هذا المنتج الحصري بأفضل الأسعار مع الدفع عند الاستلام.';
             const prodImg = images[0] || '';
@@ -1940,14 +1946,17 @@
             const metaTitleEl = document.getElementById('meta-og-title');
             const metaDescEl = document.getElementById('meta-og-desc');
             const metaImgEl = document.getElementById('meta-og-image');
+            const metaUrlEl = document.getElementById('meta-og-url');
 
             if (metaTitleEl) metaTitleEl.setAttribute('content', prodTitle);
             if (metaDescEl) metaDescEl.setAttribute('content', prodDesc);
             if (metaImgEl && prodImg) metaImgEl.setAttribute('content', prodImg);
 
+            const productPageUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
+            if (metaUrlEl) metaUrlEl.setAttribute('content', productPageUrl);
+
             if (p.id && window.history.pushState) {
-                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + p.id;
-                window.history.pushState({path:newUrl}, '', newUrl);
+                window.history.pushState({path: productPageUrl}, '', productPageUrl);
             }
 
             updateDetailImageViewer();
@@ -1997,7 +2006,6 @@
             updateDetailImageViewer();
             renderDetailThumbnails();
             
-            // تحديث الصورة في ميتا تاغ عند تغيير صورة المعاينة المصغرة للمنتج
             const metaImgEl = document.getElementById('meta-og-image');
             if (metaImgEl && currentProduct.images[idx]) {
                 metaImgEl.setAttribute('content', currentProduct.images[idx]);
