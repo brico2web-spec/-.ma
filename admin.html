@@ -556,12 +556,12 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold mb-1">الثمن الأصلي *</label>
-                        <input type="number" id="prod-form-price" class="w-full px-4 py-2.5 rounded-xl border">
+                        <label class="block font-semibold mb-1 text-gray-700">الثمن الأصلي (أوتوماتيكي مقفل) *</label>
+                        <input type="number" id="prod-form-price" class="w-full px-4 py-2.5 rounded-xl border bg-gray-100 font-bold text-gray-700 cursor-not-allowed" readonly>
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1">ثمن الخصم (المستهدف للبيع)</label>
-                        <input type="number" id="prod-form-discount-price" class="w-full px-4 py-2.5 rounded-xl border">
+                        <label class="block font-semibold mb-1 text-gray-700">ثمن الخصم / المستهدف (أوتوماتيكي مقفل)</label>
+                        <input type="number" id="prod-form-discount-price" class="w-full px-4 py-2.5 rounded-xl border bg-gray-100 font-bold text-gray-700 cursor-not-allowed" readonly>
                     </div>
                 </div>
 
@@ -679,7 +679,7 @@
             <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.90</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.91</span>
                 </span>
             </div>
         </div>
@@ -738,7 +738,7 @@
             lucide.createIcons();
         }
 
-        // المعادلة المطلوبة وحساب الربح الصافي والثمن الأصلي في السوق تلقائياً بزيادة 70%
+        // المعادلة المطلوبة وحساب الربح الصافي والثمن الأصلي في السوق تلقائياً بزيادة 70% وتعبئة خانات الثمن الأصلي وثمن الخصم أوتوماتيكياً
         function calculateNetProfitAuto() {
             const tajirVal = parseFloat(document.getElementById('calc-tajir-price').value) || 0;
             const prepVal = parseFloat(document.getElementById('calc-prep-cost').value) || 0;
@@ -758,11 +758,17 @@
             }
 
             // الثمن الأصلي في السوق يرتفع تلقائياً بنسبة 70% على الثمن المقترح في المتجر (المستهدف للبيع)
+            let marketPriceVal = targetSaleVal * 1.70;
             const marketPriceEl = document.getElementById('calc-result-market-price');
             if (marketPriceEl) {
-                let marketPriceVal = targetSaleVal * 1.70;
                 marketPriceEl.innerText = targetSaleVal > 0 ? marketPriceVal.toFixed(2) + ' د.م' : '0.00 د.م';
             }
+
+            // تحديث الخانتين المقفلتين أسفل اسم المنتج أوتوماتيكياً
+            const prodFormPrice = document.getElementById('prod-form-price');
+            const prodFormDiscount = document.getElementById('prod-form-discount-price');
+            if (prodFormPrice) prodFormPrice.value = targetSaleVal > 0 ? marketPriceVal.toFixed(2) : '';
+            if (prodFormDiscount) prodFormDiscount.value = targetSaleVal > 0 ? targetSaleVal.toFixed(2) : '';
         }
 
         function applyCalculatedPriceToForm() {
