@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bedal.online - لوحة التحكم والإدارة المتكاملة</title>
+    <title id="page-title">bedal.online - لوحة التحكم والإدارة المتكاملة</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -47,7 +47,7 @@
             </div>
             <h4 id="custom-alert-title" class="font-bold text-gray-900 text-base">تنبيه</h4>
             <p id="custom-alert-message" class="text-xs text-gray-600 leading-relaxed"></p>
-            <button onclick="closeCustomAlert()" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-xl hover:bg-indigo-700 transition-colors text-xs shadow-md">حسناً</button>
+            <button onclick="closeCustomAlert()" data-i18n="btn_ok" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-xl hover:bg-indigo-700 transition-colors text-xs shadow-md">حسناً</button>
         </div>
     </div>
 
@@ -57,11 +57,11 @@
             <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl mx-auto flex items-center justify-center">
                 <i data-lucide="alert-triangle" class="w-6 h-6"></i>
             </div>
-            <h4 class="font-bold text-gray-900 text-base">تأكيد عملية الحذف</h4>
-            <p id="custom-confirm-message" class="text-xs text-gray-600 leading-relaxed">هل أنت متأكد من رغبتك في إتمام عملية الحذف نهائياً؟</p>
+            <h4 class="font-bold text-gray-900 text-base" data-i18n="confirm_delete_title">تأكيد عملية الحذف</h4>
+            <p id="custom-confirm-message" class="text-xs text-gray-600 leading-relaxed" data-i18n="confirm_delete_desc">هل أنت متأكد من رغبتك في إتمام عملية الحذف نهائياً؟</p>
             <div class="grid grid-cols-2 gap-3 pt-2">
-                <button id="custom-confirm-cancel-btn" class="bg-gray-100 text-gray-700 font-bold py-2.5 rounded-xl hover:bg-gray-200 transition-colors text-xs">إلغاء</button>
-                <button id="custom-confirm-yes-btn" class="bg-rose-600 text-white font-bold py-2.5 rounded-xl hover:bg-rose-700 transition-colors text-xs shadow-md">حذف</button>
+                <button id="custom-confirm-cancel-btn" class="bg-gray-100 text-gray-700 font-bold py-2.5 rounded-xl hover:bg-gray-200 transition-colors text-xs" data-i18n="btn_cancel">إلغاء</button>
+                <button id="custom-confirm-yes-btn" class="bg-rose-600 text-white font-bold py-2.5 rounded-xl hover:bg-rose-700 transition-colors text-xs shadow-md" data-i18n="btn_delete">حذف</button>
             </div>
         </div>
     </div>
@@ -71,41 +71,41 @@
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-8 space-y-6 relative">
             <div class="text-center space-y-2">
                 <div class="w-14 h-14 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center text-white font-bold text-2xl shadow-lg">B</div>
-                <h2 class="text-2xl font-black text-gray-900">تسجيل الدخول لوحة الإدارة</h2>
-                <p class="text-xs text-gray-500">أدخل اسم المستخدم وكلمة المرور للوصول إلى لوحة التحكم</p>
+                <h2 class="text-2xl font-black text-gray-900" data-i18n="login_title">تسجيل الدخول لوحة الإدارة</h2>
+                <p class="text-xs text-gray-500" data-i18n="login_subtitle">أدخل اسم المستخدم وكلمة المرور للوصول إلى لوحة التحكم</p>
             </div>
 
             <div id="login-form-box" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold mb-1 text-gray-700">اسم المستخدم</label>
+                    <label class="block text-xs font-semibold mb-1 text-gray-700" data-i18n="label_username">اسم المستخدم</label>
                     <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold mb-1 text-gray-700">كلمة المرور</label>
+                    <label class="block text-xs font-semibold mb-1 text-gray-700" data-i18n="label_password">كلمة المرور</label>
                     <input type="password" id="login-password" placeholder="أدخل كلمة المرور" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
                 </div>
                 <div class="flex items-center justify-between text-xs">
-                    <button onclick="showForgotPasswordModal()" class="text-indigo-600 font-semibold hover:underline">نسيت كلمة المرور؟</button>
+                    <button onclick="showForgotPasswordModal()" class="text-indigo-600 font-semibold hover:underline" data-i18n="btn_forgot_pass">نسيت كلمة المرور؟</button>
                 </div>
-                <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm">دخول</button>
-                <p id="login-error" class="text-xs text-rose-600 text-center font-bold hidden">اسم المستخدم أو كلمة المرور غير صحيحة!</p>
+                <button onclick="handleLogin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm" data-i18n="btn_login">دخول</button>
+                <p id="login-error" class="text-xs text-rose-600 text-center font-bold hidden" data-i18n="login_error">اسم المستخدم أو كلمة المرور غير صحيحة!</p>
             </div>
 
             <!-- Forgot Password Box (Hidden by default) -->
             <div id="forgot-password-box" class="space-y-4 hidden">
                 <div>
-                    <label class="block text-xs font-semibold mb-1 text-gray-700">اسم المستخدم الاحتياطي</label>
+                    <label class="block text-xs font-semibold mb-1 text-gray-700" data-i18n="label_recovery_user">اسم المستخدم الاحتياطي</label>
                     <input type="text" id="recovery-username" placeholder="أدخل اسم المستخدم الاحتياطي" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold mb-1 text-gray-700">كلمة المرور الجديدة</label>
+                    <label class="block text-xs font-semibold mb-1 text-gray-700" data-i18n="label_new_pass">كلمة المرور الجديدة</label>
                     <input type="password" id="new-password-input" placeholder="أدخل كلمة المرور الجديدة" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
                 </div>
-                <button onclick="handleResetPassword()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg transition-colors text-sm">تحديث كلمة المرور</button>
+                <button onclick="handleResetPassword()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg transition-colors text-sm" data-i18n="btn_update_pass">تحديث كلمة المرور</button>
                 <div class="text-center">
-                    <button onclick="hideForgotPasswordModal()" class="text-xs text-gray-500 hover:underline">العودة لتسجيل الدخول</button>
+                    <button onclick="hideForgotPasswordModal()" class="text-xs text-gray-500 hover:underline" data-i18n="btn_back_login">العودة لتسجيل الدخول</button>
                 </div>
-                <p id="recovery-error" class="text-xs text-rose-600 text-center font-bold hidden">اسم المستخدم الاحتياطي غير صحيح!</p>
+                <p id="recovery-error" class="text-xs text-rose-600 text-center font-bold hidden" data-i18n="recovery_error">اسم المستخدم الاحتياطي غير صحيح!</p>
             </div>
         </div>
     </div>
@@ -115,12 +115,22 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="window.location.href='index.html'">
                 <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">B</div>
-                <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">bedal.online - لوحة الإدارة</span>
+                <span class="text-xl font-extrabold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">bedal.online - <span data-i18n="header_subtitle">لوحة الإدارة</span></span>
             </div>
-            <!-- إضافة اسم المستخدم النشط في الهيدر -->
-            <div class="flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl">
-                <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
-                <span class="text-xs font-bold text-indigo-900" id="header-logged-admin-name">ZAMZAM</span>
+            
+            <div class="flex items-center gap-3">
+                <!-- زر تغيير اللغة المطلوب (AR, FR, EN) في الأعلى -->
+                <div class="flex items-center bg-gray-100 p-1 rounded-xl border border-gray-200">
+                    <button onclick="changeLanguage('ar')" id="lang-btn-ar" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm transition-all">AR</button>
+                    <button onclick="changeLanguage('fr')" id="lang-btn-fr" class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-600 hover:text-indigo-600 transition-all">FR</button>
+                    <button onclick="changeLanguage('en')" id="lang-btn-en" class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-600 hover:text-indigo-600 transition-all">EN</button>
+                </div>
+
+                <!-- إضافة اسم المستخدم النشط في الهيدر -->
+                <div class="flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl">
+                    <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
+                    <span class="text-xs font-bold text-indigo-900" id="header-logged-admin-name">ZAMZAM</span>
+                </div>
             </div>
         </div>
     </header>
@@ -131,15 +141,15 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600"></i> لوحة التحليلات والإدارة الذكية
+                    <i data-lucide="shield-check" class="w-7 h-7 text-indigo-600"></i> <span data-i18n="main_title">لوحة التحليلات والإدارة الذكية</span>
                 </h1>
             </div>
             <div class="flex items-center gap-3 flex-wrap">
                 <button onclick="downloadMetaCatalogDataFeed()" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 shadow-lg">
-                    <i data-lucide="database" class="w-5 h-5"></i> تحميل Data Feed (Meta)
+                    <i data-lucide="database" class="w-5 h-5"></i> <span data-i18n="btn_meta_feed">تحميل Data Feed (Meta)</span>
                 </button>
                 <button onclick="openProductModalForAdd()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg">
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i> إضافة منتج جديد
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> <span data-i18n="btn_add_product">إضافة منتج جديد</span>
                 </button>
             </div>
         </div>
@@ -147,11 +157,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
                 <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i data-lucide="shopping-bag" class="w-6 h-6"></i></div>
-                <div><p class="text-xs text-gray-500">عدد الطلبات</p><h4 id="stat-total-orders" class="text-xl font-extrabold">0 طلبات</h4></div>
+                <div><p class="text-xs text-gray-500" data-i18n="stat_orders_count">عدد الطلبات</p><h4 id="stat-total-orders" class="text-xl font-extrabold">0 طلبات</h4></div>
             </div>
             <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center gap-4">
                 <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i data-lucide="package" class="w-6 h-6"></i></div>
-                <div><p class="text-xs text-gray-500">إجمالي المنتجات</p><h4 id="stat-total-products" class="text-xl font-extrabold">0 منتج</h4></div>
+                <div><p class="text-xs text-gray-500" data-i18n="stat_products_count">إجمالي المنتجات</p><h4 id="stat-total-products" class="text-xl font-extrabold">0 منتج</h4></div>
             </div>
         </div>
 
@@ -162,8 +172,8 @@
                     <i data-lucide="flame" class="w-6 h-6 text-white"></i>
                 </div>
                 <div>
-                    <h4 class="font-bold text-base">العد التنازولي لعروض Black Free Day (نهاية الأسبوع)</h4>
-                    <p id="bfd-timer-msg" class="text-xs text-amber-100 mt-0.5">الوقت المتبقي لانتهاء عروض السبت والأحد:</p>
+                    <h4 class="font-bold text-base" data-i18n="bfd_timer_title">العد التنازولي لعروض Black Free Day (نهاية الأسبوع)</h4>
+                    <p id="bfd-timer-msg" class="text-xs text-amber-100 mt-0.5" data-i18n="bfd_timer_sub">الوقت المتبقي لانتهاء عروض السبت والأحد:</p>
                 </div>
             </div>
             <div id="bfd-countdown-clock" class="flex items-center gap-2 text-center font-mono font-black text-lg bg-black/20 px-4 py-2 rounded-xl backdrop-blur-sm">
@@ -173,26 +183,26 @@
 
         <!-- أزرار تبديل الأقسام -->
         <div class="flex items-center gap-3 border-b border-gray-200 overflow-x-auto pb-1">
-            <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap">سجل الطلبات</button>
-            <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة المنتجات</button>
-            <button onclick="switchAdminTab('bfd')" id="admin-tab-btn-bfd" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> إدارة منتجات Black Free Day</button>
-            <button onclick="switchAdminTab('ads')" id="admin-tab-btn-ads" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> مصاريف الإعلانات (ADS)</button>
-            <button onclick="switchAdminTab('contests')" id="admin-tab-btn-contests" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="gift" class="w-4 h-4 text-purple-600"></i> مسابقات للخصم</button>
-            <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap">إدارة شرائح السلايدر</button>
-            <button onclick="switchAdminTab('popupad')" id="admin-tab-btn-popupad" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-indigo-600"></i> إدارة إعلان الدخول (Popup)</button>
-            <button onclick="switchAdminTab('admins')" id="admin-tab-btn-admins" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4 text-indigo-600"></i> المسؤولين</button>
+            <button onclick="switchAdminTab('orders')" id="admin-tab-btn-orders" class="px-5 py-3 border-b-2 border-indigo-600 text-indigo-600 font-bold text-sm whitespace-nowrap" data-i18n="tab_orders">سجل الطلبات</button>
+            <button onclick="switchAdminTab('products')" id="admin-tab-btn-products" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap" data-i18n="tab_products">إدارة المنتجات</button>
+            <button onclick="switchAdminTab('bfd')" id="admin-tab-btn-bfd" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> <span data-i18n="tab_bfd">إدارة منتجات Black Free Day</span></button>
+            <button onclick="switchAdminTab('ads')" id="admin-tab-btn-ads" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> <span data-i18n="tab_ads">مصاريف الإعلانات (ADS)</span></button>
+            <button onclick="switchAdminTab('contests')" id="admin-tab-btn-contests" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="gift" class="w-4 h-4 text-purple-600"></i> <span data-i18n="tab_contests">مسابقات للخصم</span></button>
+            <button onclick="switchAdminTab('slider')" id="admin-tab-btn-slider" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap" data-i18n="tab_slider">إدارة شرائح السلايدر</button>
+            <button onclick="switchAdminTab('popupad')" id="admin-tab-btn-popupad" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-indigo-600"></i> <span data-i18n="tab_popup">إدارة إعلان الدخول (Popup)</span></button>
+            <button onclick="switchAdminTab('admins')" id="admin-tab-btn-admins" class="px-5 py-3 border-b-2 border-transparent text-gray-500 font-bold text-sm whitespace-nowrap flex items-center gap-1.5"><i data-lucide="users" class="w-4 h-4 text-indigo-600"></i> <span data-i18n="tab_admins">المسؤولين</span></button>
         </div>
 
         <!-- قسم سجل الطلبات -->
         <div id="admin-subtab-orders" class="block space-y-4">
             <div class="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-2xl border shadow-sm gap-4">
                 <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2 whitespace-nowrap">
-                    <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-600"></i> إدارة الطلبات وإرسالها للتاجر
+                    <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="orders_header_title">إدارة الطلبات وإرسالها للتاجر</span>
                 </h3>
                 <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <input type="text" id="search-orders-input" onkeyup="filterOrdersTable()" placeholder="بحث في الطلبات..." class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
+                    <input type="text" id="search-orders-input" onkeyup="filterOrdersTable()" placeholder="بحث في الطلبات..." data-i18n-placeholder="search_orders_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
                     <button onclick="downloadAllSentToTajirExcel()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel جماعي
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> <span data-i18n="btn_excel_group">Excel جماعي</span>
                     </button>
                 </div>
             </div>
@@ -200,14 +210,14 @@
                 <table class="w-full text-right text-sm text-gray-600 min-w-[800px]">
                     <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
                         <tr>
-                            <th class="p-4">اسم الزبون</th>
-                            <th class="p-4">الهاتف</th>
-                            <th class="p-4">العنوان</th>
-                            <th class="p-4">المنتج</th>
-                            <th class="p-4">المسؤول عن المنتج</th>
-                            <th class="p-4">المبلغ</th>
-                            <th class="p-4">حالة الطلب (إرسال إلى تاجر)</th>
-                            <th class="p-4">الإجراءات (حذف)</th>
+                            <th class="p-4" data-i18n="th_cust_name">اسم الزبون</th>
+                            <th class="p-4" data-i18n="th_phone">الهاتف</th>
+                            <th class="p-4" data-i18n="th_address">العنوان</th>
+                            <th class="p-4" data-i18n="th_product">المنتج</th>
+                            <th class="p-4" data-i18n="th_product_admin">المسؤول عن المنتج</th>
+                            <th class="p-4" data-i18n="th_amount">المبلغ</th>
+                            <th class="p-4" data-i18n="th_order_status">حالة الطلب (إرسال إلى تاجر)</th>
+                            <th class="p-4" data-i18n="th_actions">الإجراءات (حذف)</th>
                         </tr>
                     </thead>
                     <tbody id="admin-orders-table-body" class="divide-y divide-gray-100"></tbody>
@@ -219,22 +229,22 @@
         <div id="admin-subtab-products" class="hidden space-y-4">
             <div class="flex items-center justify-between bg-white p-4 rounded-2xl border shadow-sm">
                 <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">
-                    <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i> قائمة المنتجات
+                    <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="products_list_title">قائمة المنتجات</span>
                 </h3>
-                <input type="text" id="search-products-input" onkeyup="filterProductsTable()" placeholder="بحث في المنتجات..." class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
+                <input type="text" id="search-products-input" onkeyup="filterProductsTable()" placeholder="بحث في المنتجات..." data-i18n-placeholder="search_products_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
             </div>
             <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto custom-scroll-container">
                 <table class="w-full text-right text-sm text-gray-600 min-w-[700px]">
                     <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
                         <tr>
-                            <th class="p-4">الصورة</th>
-                            <th class="p-4">اسم المنتج</th>
+                            <th class="p-4" data-i18n="th_image">الصورة</th>
+                            <th class="p-4" data-i18n="th_prod_name">اسم المنتج</th>
                             <th class="p-4">SKU</th>
-                            <th class="p-4">الثمن الأصلي</th>
-                            <th class="p-4">ثمن الخصم</th>
-                            <th class="p-4">المسؤول</th>
-                            <th class="p-4">القسم</th>
-                            <th class="p-4">الإجراءات (تعديل / حذف)</th>
+                            <th class="p-4" data-i18n="th_orig_price">الثمن الأصلي</th>
+                            <th class="p-4" data-i18n="th_disc_price">ثمن الخصم</th>
+                            <th class="p-4" data-i18n="th_admin">المسؤول</th>
+                            <th class="p-4" data-i18n="th_category">القسم</th>
+                            <th class="p-4" data-i18n="th_prod_actions">الإجراءات (تعديل / حذف)</th>
                         </tr>
                     </thead>
                     <tbody id="admin-products-table-body" class="divide-y divide-gray-100"></tbody>
@@ -248,14 +258,14 @@
                 <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i> إدارة منتجات Black Free Day
+                            <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i> <span data-i18n="bfd_mgmt_title">إدارة منتجات Black Free Day</span>
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">تعديل وإدارة عروض نهاية الأسبوع الكبرى.</p>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="bfd_mgmt_sub">تعديل وإدارة عروض نهاية الأسبوع الكبرى.</p>
                     </div>
                     <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <input type="text" id="search-bfd-input" onkeyup="filterBfdTable()" placeholder="بحث في عروض BFD..." class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-amber-600">
+                        <input type="text" id="search-bfd-input" onkeyup="filterBfdTable()" placeholder="بحث في عروض BFD..." data-i18n-placeholder="search_bfd_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-amber-600">
                         <button onclick="openProductModalForAdd()" class="bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-700 shadow-md flex items-center gap-1.5 whitespace-nowrap">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة منتج BFD جديد
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_bfd">إضافة منتج BFD جديد</span>
                         </button>
                     </div>
                 </div>
@@ -263,11 +273,11 @@
                     <table class="w-full text-right text-sm text-gray-600">
                         <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
                             <tr>
-                                <th class="p-4">الصورة</th>
-                                <th class="p-4">العنوان</th>
-                                <th class="p-4">السعر</th>
-                                <th class="p-4">البادج</th>
-                                <th class="p-4">الإجراءات</th>
+                                <th class="p-4" data-i18n="th_image">الصورة</th>
+                                <th class="p-4" data-i18n="th_title">العنوان</th>
+                                <th class="p-4" data-i18n="th_price">السعر</th>
+                                <th class="p-4" data-i18n="th_badge">البادج</th>
+                                <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="admin-bfd-table-body" class="divide-y divide-gray-100"></tbody>
@@ -282,29 +292,29 @@
                 <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="badge-dollar-sign" class="w-5 h-5 text-rose-600"></i> حساب وإدارة مصاريف الإعلانات (ADS)
+                            <i data-lucide="badge-dollar-sign" class="w-5 h-5 text-rose-600"></i> <span data-i18n="ads_mgmt_title">حساب وإدارة مصاريف الإعلانات (ADS)</span>
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">تسجيل ميزانية مصاريف الإعلانات مع اختيار المنصة والتاريخ ومدة الإغلاق والعداد التنازلي.</p>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="ads_mgmt_sub">تسجيل ميزانية مصاريف الإعلانات مع اختيار المنصة والتاريخ ومدة الإغلاق والعداد التنازلي.</p>
                     </div>
                     <button onclick="openAdsModalForAdd()" class="bg-rose-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-rose-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة مصروف إعلاني جديد
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_ad">إضافة مصروف إعلاني جديد</span>
                     </button>
                 </div>
                 <!-- إجمالي المصاريف -->
                 <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-center justify-between">
-                    <span class="text-xs font-bold text-rose-900">إجمالي مصاريف الإعلانات المسجلة:</span>
+                    <span class="text-xs font-bold text-rose-900" data-i18n="total_ads_label">إجمالي مصاريف الإعلانات المسجلة:</span>
                     <span id="stat-total-ads-expense" class="text-rose-600 font-black text-lg">0.00 د.م</span>
                 </div>
                 <div class="overflow-x-auto custom-scroll-container">
                     <table class="w-full text-right text-sm text-gray-600">
                         <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
                             <tr>
-                                <th class="p-4">المنصة</th>
-                                <th class="p-4">المبلغ (د.م)</th>
-                                <th class="p-4">تاريخ البداية</th>
-                                <th class="p-4">مدة الإعلان</th>
-                                <th class="p-4">العداد التنازلي وحالة الإعلان</th>
-                                <th class="p-4">الإجراءات</th>
+                                <th class="p-4" data-i18n="th_platform">المنصة</th>
+                                <th class="p-4" data-i18n="th_amount_dh">المبلغ (د.م)</th>
+                                <th class="p-4" data-i18n="th_start_date">تاريخ البداية</th>
+                                <th class="p-4" data-i18n="th_duration">مدة الإعلان</th>
+                                <th class="p-4" data-i18n="th_countdown">العداد التنازلي وحالة الإعلان</th>
+                                <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="admin-ads-table-body" class="divide-y divide-gray-100"></tbody>
@@ -318,24 +328,24 @@
             <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-w-3xl mx-auto">
                 <div class="border-b pb-4">
                     <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                        <i data-lucide="gift" class="w-5 h-5 text-purple-600"></i> إعدادات مسابقات وخصومات الموقع (-50%)
+                        <i data-lucide="gift" class="w-5 h-5 text-purple-600"></i> <span data-i18n="contests_mgmt_title">إعدادات مسابقات وخصومات الموقع (-50%)</span>
                     </h3>
-                    <p class="text-xs text-gray-500 mt-1">أدخل كلمة أو رقم الكود الخاص بالمسابقة لتفعيل نمط الخصم 50% وتغيير لون الموقع تلقائياً.</p>
+                    <p class="text-xs text-gray-500 mt-1" data-i18n="contests_mgmt_sub">أدخل كلمة أو رقم الكود الخاص بالمسابقة لتفعيل نمط الخصم 50% وتغيير لون الموقع تلقائياً.</p>
                 </div>
                 <div class="space-y-4 text-sm">
                     <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700">كود الخصم (كلمة أو رقم) *</label>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_contest_code">كود الخصم (كلمة أو رقم) *</label>
                         <input type="text" id="contest-code-input" placeholder="مثال: BEDAL50 أو 2026" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-purple-600 text-sm font-bold">
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700">لون واجهة الموقع المميز (عند تفعيل الكود) *</label>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_contest_color">لون واجهة الموقع المميز (عند تفعيل الكود) *</label>
                         <div class="flex items-center gap-3">
                             <input type="color" id="contest-theme-color" value="#8b5cf6" class="w-12 h-10 rounded-xl border cursor-pointer p-1">
-                            <span class="text-xs text-gray-500">اختر اللون الذي سيظهر في أزرار وثيم الموقع عند تفعيل الكود.</span>
+                            <span class="text-xs text-gray-500" data-i18n="contest_color_desc">اختر اللون الذي سيظهر في أزرار وثيم الموقع عند تفعيل الكود.</span>
                         </div>
                     </div>
                     <button onclick="saveContestSettings()" class="w-full bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-purple-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i> حفظ كود المسابقة وتفعيل الخصم العام
+                        <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="btn_save_contest">حفظ كود المسابقة وتفعيل الخصم العام</span>
                     </button>
                 </div>
             </div>
@@ -347,16 +357,16 @@
                 <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i> إدارة وتعديل شرائح السلايدر (Hero Slider)
+                            <i data-lucide="sliders" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="slider_mgmt_title">إدارة وتعديل شرائح السلايدر (Hero Slider)</span>
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">تعديل العناوين، الأوصاف، وصور الخلفية للسلايدر.</p>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="slider_mgmt_sub">تعديل العناوين، الأوصاف، وصور الخلفية للسلايدر.</p>
                     </div>
                     <div class="flex items-center gap-2 flex-wrap">
-                        <input type="text" id="search-slider-input" onkeyup="filterSliderEditor()" placeholder="بحث في السلايدر..." class="px-4 py-2 rounded-xl border text-xs w-48 focus:outline-none focus:border-indigo-600">
+                        <input type="text" id="search-slider-input" onkeyup="filterSliderEditor()" placeholder="بحث في السلايدر..." data-i18n-placeholder="search_slider_ph" class="px-4 py-2 rounded-xl border text-xs w-48 focus:outline-none focus:border-indigo-600">
                         <button onclick="toggleSliderModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center gap-1.5">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة سلايدر
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_slider">إضافة سلايدر</span>
                         </button>
-                        <button onclick="saveSliderChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md">
+                        <button onclick="saveSliderChanges()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md" data-i18n="btn_save_changes">
                             حفظ التغييرات
                         </button>
                     </div>
@@ -370,21 +380,21 @@
             <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6 max-w-2xl mx-auto">
                 <div class="border-b pb-4">
                     <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                        <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> إدارة صورة إعلان الدخول (Popup 9:16)
+                        <i data-lucide="image" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="popup_mgmt_title">إدارة صورة إعلان الدخول (Popup 9:16)</span>
                     </h3>
-                    <p class="text-xs text-gray-500 mt-1">قم بتغيير وتحديث رابط الصورة (أو رابط Dropbox) التي تظهر للزوار كنافذة منبثقة عند أول مدخل للموقع.</p>
+                    <p class="text-xs text-gray-500 mt-1" data-i18n="popup_mgmt_sub">قم بتغيير وتحديث رابط الصورة (أو رابط Dropbox) التي تظهر للزوار كنافذة منبثقة عند أول مدخل للموقع.</p>
                 </div>
                 <div class="space-y-4 text-sm">
                     <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700">رابط صورة الإعلان (Dropbox / متوافق مع الصور) *</label>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_popup_url">رابط صورة الإعلان (Dropbox / متوافق مع الصور) *</label>
                         <input type="url" id="popup-ad-img-input" placeholder="https://www.dropbox.com/s/... أو رابط مباشر" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm" oninput="previewPopupAdInput()">
                     </div>
                     <div class="p-4 bg-gray-50 rounded-2xl border flex flex-col items-center justify-center space-y-2">
-                        <span class="text-xs font-bold text-gray-500">معاينة الصورة الحالية:</span>
+                        <span class="text-xs font-bold text-gray-500" data-i18n="preview_current_img">معاينة الصورة الحالية:</span>
                         <img id="popup-ad-preview-img" src="" alt="معاينة الإعلان" class="w-32 aspect-[9/16] object-cover rounded-xl border shadow-md bg-white" onerror="this.src='https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80'">
                     </div>
                     <button onclick="savePopupAdImage()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i> حفظ وتحديث صورة الإعلان
+                        <i data-lucide="save" class="w-4 h-4"></i> <span data-i18n="btn_save_popup">حفظ وتحديث صورة الإعلان</span>
                     </button>
                 </div>
             </div>
@@ -396,14 +406,14 @@
                 <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                            <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> إدارة المسؤولين وصلاحيات الدخول
+                            <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="admins_mgmt_title">إدارة المسؤولين وصلاحيات الدخول</span>
                         </h3>
-                        <p class="text-xs text-gray-500 mt-1">عرض وإدارة الحسابات المسؤولة عن لوحة التحكم وإعدادات الأمان.</p>
+                        <p class="text-xs text-gray-500 mt-1" data-i18n="admins_mgmt_sub">عرض وإدارة الحسابات المسؤولة عن لوحة التحكم وإعدادات الأمان.</p>
                     </div>
                     <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <input type="text" id="search-admins-input" onkeyup="filterAdminsTable()" placeholder="بحث عن مسؤول..." class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-indigo-600">
+                        <input type="text" id="search-admins-input" onkeyup="filterAdminsTable()" placeholder="بحث عن مسؤول..." data-i18n-placeholder="search_admins_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-indigo-600">
                         <button onclick="toggleAdminModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-1.5 whitespace-nowrap">
-                            <i data-lucide="user-plus" class="w-4 h-4"></i> إضافة مسؤول جديد
+                            <i data-lucide="user-plus" class="w-4 h-4"></i> <span data-i18n="btn_add_admin">إضافة مسؤول جديد</span>
                         </button>
                     </div>
                 </div>
@@ -411,10 +421,10 @@
                     <table class="w-full text-right text-sm text-gray-600">
                         <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
                             <tr>
-                                <th class="p-4">اسم المستخدم</th>
-                                <th class="p-4">الصلاحية / الدور</th>
-                                <th class="p-4">الحالة</th>
-                                <th class="p-4">الإجراءات</th>
+                                <th class="p-4" data-i18n="th_username">اسم المستخدم</th>
+                                <th class="p-4" data-i18n="th_role">الصلاحية / الدور</th>
+                                <th class="p-4" data-i18n="th_status">الحالة</th>
+                                <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="admin-admins-table-body" class="divide-y divide-gray-100"></tbody>
@@ -428,10 +438,10 @@
     <div id="ads-expense-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
             <button onclick="toggleAdsModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 class="text-xl font-bold text-gray-900">تسجيل مصروف إعلاني جديد</h3>
+            <h3 class="text-xl font-bold text-gray-900" data-i18n="modal_add_ad_title">تسجيل مصروف إعلاني جديد</h3>
             <div class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-semibold mb-1">المنصة *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_platform">المنصة *</label>
                     <select id="ads-form-platform" class="w-full px-4 py-2.5 rounded-xl border bg-white">
                         <option value="Facebook">Facebook</option>
                         <option value="Instagram">Instagram</option>
@@ -440,15 +450,15 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">المبلغ (د.م) *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_amount_dh">المبلغ (د.م) *</label>
                     <input type="number" id="ads-form-amount" placeholder="0.00" class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">تاريخ البداية *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_start_date">تاريخ البداية *</label>
                     <input type="date" id="ads-form-date" class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">توقيت / مدة إغلاق الإعلان في المنصة *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_duration">توقيت / مدة إغلاق الإعلان في المنصة *</label>
                     <select id="ads-form-duration" class="w-full px-4 py-2.5 rounded-xl border bg-white font-bold">
                         <option value="1">يوم واحد (24 ساعة)</option>
                         <option value="2">يومان (48 ساعة)</option>
@@ -459,7 +469,7 @@
                         <option value="30">شهر واحد (30 يوماً)</option>
                     </select>
                 </div>
-                <button onclick="saveAdsExpense()" class="w-full bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-700 shadow-lg">حفظ المصروف الإعلاني والعداد</button>
+                <button onclick="saveAdsExpense()" class="w-full bg-rose-600 text-white font-bold py-3 rounded-xl hover:bg-rose-700 shadow-lg" data-i18n="btn_save_ad">حفظ المصروف الإعلاني والعداد</button>
             </div>
         </div>
     </div>
@@ -478,14 +488,14 @@
             </div>
             <div class="space-y-4">
                 <h4 class="font-extrabold text-sm text-gray-800 flex items-center gap-2">
-                    <i data-lucide="package" class="w-4 h-4 text-indigo-600"></i> تفاصيل المنتجات المطلوبة والكمية:
+                    <i data-lucide="package" class="w-4 h-4 text-indigo-600"></i> <span data-i18n="order_details_products">تفاصيل المنتجات المطلوبة والكمية:</span>
                 </h4>
                 <div id="modal-cust-products-container" class="space-y-3">
                     <!-- Dynamic Clean Product Details Cards -->
                 </div>
             </div>
             <div class="pt-4 border-t flex justify-between items-center text-sm font-bold">
-                <span>المبلغ الإجمالي:</span>
+                <span data-i18n="total_amount_label">المبلغ الإجمالي:</span>
                 <span id="modal-cust-total-price" class="text-indigo-600 text-lg">0.00 د.م</span>
             </div>
         </div>
@@ -495,58 +505,58 @@
     <div id="product-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
             <button onclick="toggleProductModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 id="prod-modal-title" class="text-xl font-bold text-gray-900">إضافة منتج جديد</h3>
+            <h3 id="prod-modal-title" class="text-xl font-bold text-gray-900" data-i18n="modal_add_product_title">إضافة منتج جديد</h3>
             <input type="hidden" id="prod-form-id">
             <input type="hidden" id="prod-form-is-bfd-edit-id">
 
             <!-- آلة حاسبة الأرباح والتسعير التلقائي (المعادلة المحدثة) -->
             <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-3">
                 <h4 class="font-bold text-emerald-900 text-xs sm:text-sm flex items-center gap-2">
-                    <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i> آلة حاسبة التسعير وحساب الربح الصافي تلقائياً
+                    <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i> <span data-i18n="calc_title">آلة حاسبة التسعير وحساب الربح الصافي تلقائياً</span>
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن المنتوج في tajir *</label>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_tajir_price">ثمن المنتوج في tajir *</label>
                         <input type="number" id="calc-tajir-price" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs" oninput="calculateNetProfitAuto()">
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن تجهيز المنتوج *</label>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_prep_cost">ثمن تجهيز المنتوج *</label>
                         <input type="number" id="calc-prep-cost" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs" oninput="calculateNetProfitAuto()">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700">ثمن المستهدف للبيع *</label>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_target_sale">ثمن المستهدف للبيع *</label>
                         <input type="number" id="calc-target-sale-price" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-white text-xs" oninput="calculateNetProfitAuto()">
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1 text-xs text-gray-700">الربح الصافي النهائي (أوتوماتيكي مقفل) *</label>
+                        <label class="block font-semibold mb-1 text-xs text-gray-700" data-i18n="label_net_profit">الربح الصافي النهائي (أوتوماتيكي مقفل) *</label>
                         <input type="number" id="calc-net-profit-input" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-gray-100 text-xs font-bold text-emerald-700 cursor-not-allowed" readonly>
                     </div>
                 </div>
                 <!-- الثمن المقترح في المتجر -->
                 <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-center justify-between shadow-sm">
                     <span class="text-xs font-bold text-emerald-900 flex items-center gap-1">
-                        <i data-lucide="tag" class="w-4 h-4 text-emerald-600"></i> الثمن المقترح في المتجر:
+                        <i data-lucide="tag" class="w-4 h-4 text-emerald-600"></i> <span data-i18n="label_store_price">الثمن المقترح في المتجر:</span>
                     </span>
                     <span id="calc-result-store-price" class="text-emerald-600 font-black text-base">0.00 د.م</span>
                 </div>
                 <!-- خانة الثمن الأصلي في السوق الجديدة (تزيد تلقائياً 70% على الثمن المقترح في المتجر) -->
                 <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-center justify-between shadow-sm">
                     <span class="text-xs font-bold text-emerald-900 flex items-center gap-1">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i> الثمن الأصلي في السوق (+70% تلقائي):
+                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i> <span data-i18n="label_market_price">الثمن الأصلي في السوق (+70% تلقائي):</span>
                     </span>
                     <span id="calc-result-market-price" class="text-emerald-700 font-black text-base">0.00 د.م</span>
                 </div>
                 <button onclick="applyCalculatedPriceToForm()" class="w-full bg-emerald-600 text-white font-bold py-2 rounded-xl hover:bg-emerald-700 transition-colors text-xs shadow-sm flex items-center justify-center gap-1.5">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> تطبيق الثمن المقترح في المتجر والثمن المستهدف أوتوماتيكياً
+                    <i data-lucide="check-circle" class="w-4 h-4"></i> <span data-i18n="btn_apply_price">تطبيق الثمن المقترح في المتجر والثمن المستهدف أوتوماتيكياً</span>
                 </button>
             </div>
             
             <div class="space-y-4 text-sm">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold mb-1">اسم المنتج *</label>
+                        <label class="block font-semibold mb-1" data-i18n="label_prod_name">اسم المنتج *</label>
                         <input type="text" id="prod-form-title" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:border-indigo-600">
                     </div>
                     <div>
@@ -556,11 +566,11 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold mb-1 text-gray-700">الثمن الأصلي (أوتوماتيكي مقفل) *</label>
+                        <label class="block font-semibold mb-1 text-gray-700" data-i18n="label_form_orig_price">الثمن الأصلي (أوتوماتيكي مقفل) *</label>
                         <input type="number" id="prod-form-price" class="w-full px-4 py-2.5 rounded-xl border bg-gray-100 font-bold text-gray-700 cursor-not-allowed" readonly>
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1 text-gray-700">ثمن الخصم / المستهدف (أوتوماتيكي مقفل)</label>
+                        <label class="block font-semibold mb-1 text-gray-700" data-i18n="label_form_disc_price">ثمن الخصم / المستهدف (أوتوماتيكي مقفل)</label>
                         <input type="number" id="prod-form-discount-price" class="w-full px-4 py-2.5 rounded-xl border bg-gray-100 font-bold text-gray-700 cursor-not-allowed" readonly>
                     </div>
                 </div>
@@ -569,7 +579,7 @@
                 <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3">
                     <input type="checkbox" id="prod-form-is-bfd" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
                     <label for="prod-form-is-bfd" class="font-bold text-amber-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
-                        <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> نقل هذا المنتج إلى إدارة منتجات Black Free Day وإخفائه من المنتجات العادية
+                        <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> <span data-i18n="label_move_bfd">نقل هذا المنتج إلى إدارة منتجات Black Free Day وإخفائه من المنتجات العادية</span>
                     </label>
                 </div>
 
@@ -577,22 +587,22 @@
                 <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3">
                     <input type="checkbox" id="prod-form-has-ads" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
                     <label for="prod-form-has-ads" class="font-bold text-rose-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
-                        <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> هل تم إطلاق إعلانات (Ads) على هذا المنتج؟ (تحديد حالة الإعلان)
+                        <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> <span data-i18n="label_prod_has_ads">هل تم إطلاق إعلانات (Ads) على هذا المنتج؟ (تحديد حالة الإعلان)</span>
                     </label>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold mb-1">القسم *</label>
+                        <label class="block font-semibold mb-1" data-i18n="label_category">القسم *</label>
                         <select id="prod-form-category" class="w-full px-4 py-2.5 rounded-xl border bg-white">
-                            <option value="women">نساء</option>
-                            <option value="men">رجال</option>
-                            <option value="kids">أطفال</option>
-                            <option value="various">منتجات متنوعة</option>
+                            <option value="women" data-i18n="cat_women">نساء</option>
+                            <option value="men" data-i18n="cat_men">رجال</option>
+                            <option value="kids" data-i18n="cat_kids">أطفال</option>
+                            <option value="various" data-i18n="cat_various">منتجات متنوعة</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block font-semibold mb-1">المسؤول *</label>
+                        <label class="block font-semibold mb-1" data-i18n="label_admin_assigned">المسؤول *</label>
                         <select id="prod-form-admin" class="w-full px-4 py-2.5 rounded-xl border bg-white">
                             <option value="ZAMZAM">ZAMZAM</option>
                         </select>
@@ -601,7 +611,7 @@
 
                 <!-- خانات الـ 5 صور -->
                 <div class="space-y-2 border-t pt-3">
-                    <label class="block font-bold text-gray-800">رابط الصور (حتى 5 صور)</label>
+                    <label class="block font-bold text-gray-800" data-i18n="label_img_links">رابط الصور (حتى 5 صور)</label>
                     <input type="url" id="prod-form-img-1" placeholder="رابط الصورة الرئيسية 1 *" class="w-full px-4 py-2 rounded-xl border mb-2">
                     <input type="url" id="prod-form-img-2" placeholder="رابط الصورة 2" class="w-full px-4 py-2 rounded-xl border mb-2">
                     <input type="url" id="prod-form-img-3" placeholder="رابط الصورة 3" class="w-full px-4 py-2 rounded-xl border mb-2">
@@ -611,16 +621,16 @@
 
                 <!-- خانات الفيديوهات -->
                 <div class="space-y-2 border-t pt-3">
-                    <label class="block font-bold text-gray-800">روابط الفيديوهات (إن وجدت)</label>
+                    <label class="block font-bold text-gray-800" data-i18n="label_video_links">روابط الفيديوهات (إن وجدت)</label>
                     <input type="url" id="prod-form-video-1" placeholder="رابط الفيديو الأول (YouTube / MP4)" class="w-full px-4 py-2 rounded-xl border mb-2">
                     <input type="url" id="prod-form-video-2" placeholder="رابط الفيديو الثاني" class="w-full px-4 py-2 rounded-xl border">
                 </div>
 
                 <div>
-                    <label class="block font-semibold mb-1">وصف المنتج *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_prod_desc">وصف المنتج *</label>
                     <textarea id="prod-form-desc" rows="2" class="w-full px-4 py-2.5 rounded-xl border"></textarea>
                 </div>
-                <button onclick="saveProductForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ البيانات</button>
+                <button onclick="saveProductForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg" data-i18n="btn_save_data">حفظ البيانات</button>
             </div>
         </div>
     </div>
@@ -629,26 +639,26 @@
     <div id="slider-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
             <button onclick="toggleSliderModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 class="text-xl font-bold text-gray-900">إضافة شريحة سلايدر جديدة</h3>
+            <h3 class="text-xl font-bold text-gray-900" data-i18n="modal_add_slider_title">إضافة شريحة سلايدر جديدة</h3>
             
             <div class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-semibold mb-1">شارة البادج (Badge)</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_badge">شارة البادج (Badge)</label>
                     <input type="text" id="slider-form-badge" placeholder="تخفيضات الكبرى" class="w-full px-4 py-2.5 rounded-xl border focus:outline-none focus:border-indigo-600">
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">رابط الصورة *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_img_url">رابط الصورة *</label>
                     <input type="url" id="slider-form-img" placeholder="https://..." class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">العنوان الرئيسي *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_main_title">العنوان الرئيسي *</label>
                     <input type="text" id="slider-form-title" placeholder="عنوان السلايدر..." class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">العبارة / الوصف الفرعي *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_sub_desc">العبارة / الوصف الفرعي *</label>
                     <textarea id="slider-form-desc" rows="2" placeholder="العبارة أو الوصف..." class="w-full px-4 py-2.5 rounded-xl border"></textarea>
                 </div>
-                <button onclick="saveNewSlider()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg">حفظ السلايدر</button>
+                <button onclick="saveNewSlider()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700 shadow-lg" data-i18n="btn_save_slider">حفظ السلايدر</button>
             </div>
         </div>
     </div>
@@ -657,18 +667,18 @@
     <div id="admin-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
             <button onclick="toggleAdminModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 class="text-xl font-bold text-gray-900">إضافة مسؤول جديد</h3>
+            <h3 class="text-xl font-bold text-gray-900" data-i18n="modal_add_admin_title">إضافة مسؤول جديد</h3>
             
             <div class="space-y-4 text-sm">
                 <div>
-                    <label class="block font-semibold mb-1">اسم المستخدم *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_username">اسم المستخدم *</label>
                     <input type="text" id="admin-form-username" placeholder="اسم المستخدم (مثال: oubari)" class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
                 <div>
-                    <label class="block font-semibold mb-1">كلمة المرور *</label>
+                    <label class="block font-semibold mb-1" data-i18n="label_password">كلمة المرور *</label>
                     <input type="password" id="admin-form-password" placeholder="كلمة المرور" class="w-full px-4 py-2.5 rounded-xl border">
                 </div>
-                <button onclick="saveNewAdmin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg">حفظ المسؤول</button>
+                <button onclick="saveNewAdmin()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg" data-i18n="btn_save_admin">حفظ المسؤول</button>
             </div>
         </div>
     </div>
@@ -676,10 +686,10 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <div>© 2026 جميع الحقوق محفوظة لـ <span class="font-semibold text-gray-700">bedal.online</span>.</div>
+            <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> الإصدار المعدل: <span class="text-indigo-600 font-bold">إصدار v 3.9.91</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.93</span>
                 </span>
             </div>
         </div>
@@ -702,6 +712,513 @@
 
         let currentAdminUser = "ZAMZAM";
         let currentAdminPass = "AMIRMOUNA303026";
+        let currentLang = 'ar'; // اللغة الافتراضية العربية
+
+        // قاموس الترجمات الشامل للغات الثلاث (AR، FR، EN)
+        const translations = {
+            ar: {
+                page_title: "bedal.online - لوحة التحكم والإدارة المتكاملة",
+                login_title: "تسجيل الدخول لوحة الإدارة",
+                login_subtitle: "أدخل اسم المستخدم وكلمة المرور للوصول إلى لوحة التحكم",
+                label_username: "اسم المستخدم",
+                label_password: "كلمة المرور",
+                btn_forgot_pass: "نسيت كلمة المرور؟",
+                btn_login: "دخول",
+                login_error: "اسم المستخدم أو كلمة المرور غير صحيحة!",
+                label_recovery_user: "اسم المستخدم الاحتياطي",
+                label_new_pass: "كلمة المرور الجديدة",
+                btn_update_pass: "تحديث كلمة المرور",
+                btn_back_login: "العودة لتسجيل الدخول",
+                recovery_error: "اسم المستخدم الاحتياطي غير صحيح!",
+                header_subtitle: "لوحة الإدارة",
+                main_title: "لوحة التحليلات والإدارة الذكية",
+                btn_meta_feed: "تحميل Data Feed (Meta)",
+                btn_add_product: "إضافة منتج جديد",
+                stat_orders_count: "عدد الطلبات",
+                stat_products_count: "إجمالي المنتجات",
+                bfd_timer_title: "العد التنازولي لعروض Black Free Day (نهاية الأسبوع)",
+                bfd_timer_sub: "الوقت المتبقي لانتهاء عروض السبت والأحد:",
+                tab_orders: "سجل الطلبات",
+                tab_products: "إدارة المنتجات",
+                tab_bfd: "إدارة منتجات Black Free Day",
+                tab_ads: "مصاريف الإعلانات (ADS)",
+                tab_contests: "مسابقات للخصم",
+                tab_slider: "إدارة شرائح السلايدر",
+                tab_popup: "إدارة إعلان الدخول (Popup)",
+                tab_admins: "المسؤولين",
+                orders_header_title: "إدارة الطلبات وإرسالها للتاجر",
+                search_orders_ph: "بحث في الطلبات...",
+                btn_excel_group: "Excel جماعي",
+                th_cust_name: "اسم الزبون",
+                th_phone: "الهاتف",
+                th_address: "العنوان",
+                th_product: "المنتج",
+                th_product_admin: "المسؤول عن المنتج",
+                th_amount: "المبلغ",
+                th_order_status: "حالة الطلب (إرسال إلى تاجر)",
+                th_actions: "الإجراءات (حذف)",
+                products_list_title: "قائمة المنتجات",
+                search_products_ph: "بحث في المنتجات...",
+                th_image: "الصورة",
+                th_prod_name: "اسم المنتج",
+                th_orig_price: "الثمن الأصلي",
+                th_disc_price: "ثمن الخصم",
+                th_admin: "المسؤول",
+                th_category: "القسم",
+                th_prod_actions: "الإجراءات (تعديل / حذف)",
+                bfd_mgmt_title: "إدارة منتجات Black Free Day",
+                bfd_mgmt_sub: "تعديل وإدارة عروض نهاية الأسبوع الكبرى.",
+                search_bfd_ph: "بحث في عروض BFD...",
+                btn_add_bfd: "إضافة منتج BFD جديد",
+                th_title: "العنوان",
+                th_price: "السعر",
+                th_badge: "البادج",
+                th_actions_simple: "الإجراءات",
+                ads_mgmt_title: "حساب وإدارة مصاريف الإعلانات (ADS)",
+                ads_mgmt_sub: "تسجيل ميزانية مصاريف الإعلانات مع اختيار المنصة والتاريخ ومدة الإغلاق والعداد التنازلي.",
+                btn_add_ad: "إضافة مصروف إعلاني جديد",
+                total_ads_label: "إجمالي مصاريف الإعلانات المسجلة:",
+                th_platform: "المنصة",
+                th_amount_dh: "المبلغ (د.م)",
+                th_start_date: "تاريخ البداية",
+                th_duration: "مدة الإعلان",
+                th_countdown: "العداد التنازلي وحالة الإعلان",
+                contests_mgmt_title: "إعدادات مسابقات وخصومات الموقع (-50%)",
+                contests_mgmt_sub: "أدخل كلمة أو رقم الكود الخاص بالمسابقة لتفعيل نمط الخصم 50% وتغيير لون الموقع تلقائياً.",
+                label_contest_code: "كود الخصم (كلمة أو رقم) *",
+                label_contest_color: "لون واجهة الموقع المميز (عند تفعيل الكود) *",
+                contest_color_desc: "اختر اللون الذي سيظهر في أزرار وثيم الموقع عند تفعيل الكود.",
+                btn_save_contest: "حفظ كود المسابقة وتفعيل الخصم العام",
+                slider_mgmt_title: "إدارة وتعديل شرائح السلايدر (Hero Slider)",
+                slider_mgmt_sub: "تعديل العناوين، الأوصاف، وصور الخلفية للسلايدر.",
+                search_slider_ph: "بحث في السلايدر...",
+                btn_add_slider: "إضافة سلايدر",
+                btn_save_changes: "حفظ التغييرات",
+                popup_mgmt_title: "إدارة صورة إعلان الدخول (Popup 9:16)",
+                popup_mgmt_sub: "قم بتغيير وتحديث رابط الصورة (أو رابط Dropbox) التي تظهر للزوار كنافذة منبثقة عند أول مدخل للموقع.",
+                label_popup_url: "رابط صورة الإعلان (Dropbox / متوافق مع الصور) *",
+                preview_current_img: "معاينة الصورة الحالية:",
+                btn_save_popup: "حفظ وتحديث صورة الإعلان",
+                admins_mgmt_title: "إدارة المسؤولين وصلاحيات الدخول",
+                admins_mgmt_sub: "عرض وإدارة الحسابات المسؤولة عن لوحة التحكم وإعدادات الأمان.",
+                search_admins_ph: "بحث عن مسؤول...",
+                btn_add_admin: "إضافة مسؤول جديد",
+                th_username: "اسم المستخدم",
+                th_role: "الصلاحية / الدور",
+                th_status: "الحالة",
+                modal_add_ad_title: "تسجيل مصروف إعلاني جديد",
+                label_platform: "المنصة *",
+                label_amount_dh: "المبلغ (د.م) *",
+                label_start_date: "تاريخ البداية *",
+                label_duration: "توقيت / مدة إغلاق الإعلان في المنصة *",
+                btn_save_ad: "حفظ المصروف الإعلاني والعداد",
+                order_details_products: "تفاصيل المنتجات المطلوبة والكمية:",
+                total_amount_label: "المبلغ الإجمالي:",
+                modal_add_product_title: "إضافة منتج جديد",
+                calc_title: "آلة حاسبة التسعير وحساب الربح الصافي تلقائياً",
+                label_tajir_price: "ثمن المنتوج في tajir *",
+                label_prep_cost: "ثمن تجهيز المنتوج *",
+                label_target_sale: "ثمن المستهدف للبيع *",
+                label_net_profit: "الربح الصافي النهائي (أوتوماتيكي مقفل) *",
+                label_store_price: "الثمن المقترح في المتجر:",
+                label_market_price: "الثمن الأصلي في السوق (+70% تلقائي):",
+                btn_apply_price: "تطبيق الثمن المقترح في المتجر والثمن المستهدف أوتوماتيكياً",
+                label_prod_name: "اسم المنتج *",
+                label_form_orig_price: "الثمن الأصلي (أوتوماتيكي مقفل) *",
+                label_form_disc_price: "ثمن الخصم / المستهدف (أوتوماتيكي مقفل)",
+                label_move_bfd: "نقل هذا المنتج إلى إدارة منتجات Black Free Day وإخفائه من المنتجات العادية",
+                label_prod_has_ads: "هل تم إطلاق إعلانات (Ads) على هذا المنتج؟ (تحديد حالة الإعلان)",
+                label_category: "القسم *",
+                cat_women: "نساء",
+                cat_men: "رجال",
+                cat_kids: "أطفال",
+                cat_various: "منتجات متنوعة",
+                label_admin_assigned: "المسؤول *",
+                label_img_links: "رابط الصور (حتى 5 صور)",
+                label_video_links: "روابط الفيديوهات (إن وجدت)",
+                label_prod_desc: "وصف المنتج *",
+                btn_save_data: "حفظ البيانات",
+                modal_add_slider_title: "إضافة شريحة سلايدر جديدة",
+                label_badge: "شارة البادج (Badge)",
+                label_img_url: "رابط الصورة *",
+                label_main_title: "العنوان الرئيسي *",
+                label_sub_desc: "العبارة / الوصف الفرعي *",
+                btn_save_slider: "حفظ السلايدر",
+                modal_add_admin_title: "إضافة مسؤول جديد",
+                btn_save_admin: "حفظ المسؤول",
+                footer_rights: "جميع الحقوق محفوظة لـ",
+                footer_version: "الإصدار المعدل:",
+                btn_ok: "حسناً",
+                confirm_delete_title: "تأكيد عملية الحذف",
+                confirm_delete_desc: "هل أنت متأكد من رغبتك في إتمام عملية الحذف نهائياً؟",
+                btn_cancel: "إلغاء",
+                btn_delete: "حذف",
+                // ترجمة المصطلحات الديناميكية الإضافية
+                orders_unit: "طلبات",
+                products_unit: "منتج",
+                day_unit: "يوم",
+                hour_unit: "س",
+                min_unit: "د",
+                sec_unit: "ث",
+                time_remaining: "متبقي:"
+            },
+            fr: {
+                page_title: "bedal.online - Tableau de Bord et Gestion Intégrée",
+                login_title: "Connexion - Panneau d'Administration",
+                login_subtitle: "Entrez le nom d'utilisateur et le mot de passe",
+                label_username: "Nom d'utilisateur",
+                label_password: "Mot de passe",
+                btn_forgot_pass: "Mot de passe oublié ?",
+                btn_login: "Connexion",
+                login_error: "Nom d'utilisateur ou mot de passe incorrect !",
+                label_recovery_user: "Nom d'utilisateur de secours",
+                label_new_pass: "Nouveau mot de passe",
+                btn_update_pass: "Mettre à jour le mot de passe",
+                btn_back_login: "Retour à la connexion",
+                recovery_error: "Nom d'utilisateur de secours incorrect !",
+                header_subtitle: "Panneau d'administration",
+                main_title: "Tableau de Bord et Gestion Intelligente",
+                btn_meta_feed: "Télécharger Data Feed (Meta)",
+                btn_add_product: "Ajouter un produit",
+                stat_orders_count: "Nombre de commandes",
+                stat_products_count: "Total des produits",
+                bfd_timer_title: "Compte à rebours Black Free Day (Weekend)",
+                bfd_timer_sub: "Temps restant pour les offres du weekend :",
+                tab_orders: "Commandes",
+                tab_products: "Gestion des produits",
+                tab_bfd: "Produits Black Free Day",
+                tab_ads: "Dépenses Publicitaires (ADS)",
+                tab_contests: "Concours de Réduction",
+                tab_slider: "Gestion du Slider",
+                tab_popup: "Annonce Popup",
+                tab_admins: "Administrateurs",
+                orders_header_title: "Gestion des commandes et envoi au fournisseur",
+                search_orders_ph: "Rechercher des commandes...",
+                btn_excel_group: "Excel groupé",
+                th_cust_name: "Client",
+                th_phone: "Téléphone",
+                th_address: "Adresse",
+                th_product: "Produit",
+                th_product_admin: "Admin du produit",
+                th_amount: "Montant",
+                th_order_status: "Statut (Envoyé fournisseur)",
+                th_actions: "Actions (Supprimer)",
+                products_list_title: "Liste des produits",
+                search_products_ph: "Rechercher des produits...",
+                th_image: "Image",
+                th_prod_name: "Nom du produit",
+                th_orig_price: "Prix d'origine",
+                th_disc_price: "Prix promo",
+                th_admin: "Admin",
+                th_category: "Catégorie",
+                th_prod_actions: "Actions (Modifier / Supprimer)",
+                bfd_mgmt_title: "Gestion Black Free Day",
+                bfd_mgmt_sub: "Modifier et gérer les offres majeures du weekend.",
+                search_bfd_ph: "Rechercher BFD...",
+                btn_add_bfd: "Ajouter un produit BFD",
+                th_title: "Titre",
+                th_price: "Prix",
+                th_badge: "Badge",
+                th_actions_simple: "Actions",
+                ads_mgmt_title: "Gestion des Dépenses Publicitaires (ADS)",
+                ads_mgmt_sub: "Enregistrer le budget publicitaire, la plateforme, la date et le compte à rebours.",
+                btn_add_ad: "Ajouter une dépense pub",
+                total_ads_label: "Total des dépenses publicitaires :",
+                th_platform: "Plateforme",
+                th_amount_dh: "Montant (MAD)",
+                th_start_date: "Date de début",
+                th_duration: "Durée",
+                th_countdown: "Compte à rebours et statut",
+                contests_mgmt_title: "Paramètres des Concours et Réductions (-50%)",
+                contests_mgmt_sub: "Entrez le code du concours pour activer -50% et changer la couleur du thème.",
+                label_contest_code: "Code de réduction (Mot ou chiffre) *",
+                label_contest_color: "Couleur principale du site *",
+                contest_color_desc: "Choisissez la couleur des boutons et du thème.",
+                btn_save_contest: "Enregistrer le code et activer la réduction",
+                slider_mgmt_title: "Gestion et Modification du Slider",
+                slider_mgmt_sub: "Modifier les titres, descriptions et images de fond du slider.",
+                search_slider_ph: "Rechercher dans le slider...",
+                btn_add_slider: "Ajouter un slider",
+                btn_save_changes: "Enregistrer",
+                popup_mgmt_title: "Gestion de l'image Popup d'entrée (9:16)",
+                popup_mgmt_sub: "Mettez à jour le lien de l'image popup affichée à l'accueil.",
+                label_popup_url: "Lien de l'image Popup (Dropbox / Direct) *",
+                preview_current_img: "Aperçu de l'image actuelle :",
+                btn_save_popup: "Enregistrer l'image Popup",
+                admins_mgmt_title: "Gestion des Administrateurs",
+                admins_mgmt_sub: "Afficher et gérer les comptes admin et la sécurité.",
+                search_admins_ph: "Rechercher un admin...",
+                btn_add_admin: "Ajouter un administrateur",
+                th_username: "Nom d'utilisateur",
+                th_role: "Rôle",
+                th_status: "Statut",
+                modal_add_ad_title: "Enregistrer une dépense publicitaire",
+                label_platform: "Plateforme *",
+                label_amount_dh: "Montant (MAD) *",
+                label_start_date: "Date de début *",
+                label_duration: "Durée de l'annonce *",
+                btn_save_ad: "Enregistrer la dépense",
+                order_details_products: "Détails des produits commandés et quantité :",
+                total_amount_label: "Montant total :",
+                modal_add_product_title: "Ajouter un nouveau produit",
+                calc_title: "Calculateur de prix et bénéfice net automatique",
+                label_tajir_price: "Prix du produit sur tajir *",
+                label_prep_cost: "Coût de préparation *",
+                label_target_sale: "Prix de vente ciblé *",
+                label_net_profit: "Bénéfice net final (Verrouillé auto) *",
+                label_store_price: "Prix suggéré en boutique :",
+                label_market_price: "Prix d'origine sur le marché (+70%) :",
+                btn_apply_price: "Appliquer automatiquement les prix",
+                label_prod_name: "Nom du produit *",
+                label_form_orig_price: "Prix d'origine (Verrouillé auto) *",
+                label_form_disc_price: "Prix promo / ciblé (Verrouillé auto)",
+                label_move_bfd: "Déplacer ce produit vers Black Free Day et le masquer des produits normaux",
+                label_prod_has_ads: "Des publicités (Ads) ont-elles été lancées sur ce produit ?",
+                label_category: "Catégorie *",
+                cat_women: "Femmes",
+                cat_men: "Hommes",
+                cat_kids: "Enfants",
+                cat_various: "Produits divers",
+                label_admin_assigned: "Administrateur *",
+                label_img_links: "Liens des images (jusqu'à 5)",
+                label_video_links: "Liens vidéos (si disponibles)",
+                label_prod_desc: "Description du produit *",
+                btn_save_data: "Enregistrer",
+                modal_add_slider_title: "Ajouter un nouveau slider",
+                label_badge: "Badge",
+                label_img_url: "Lien de l'image *",
+                label_main_title: "Titre principal *",
+                label_sub_desc: "Description / Sous-titre *",
+                btn_save_slider: "Enregistrer le slider",
+                modal_add_admin_title: "Ajouter un administrateur",
+                btn_save_admin: "Enregistrer l'admin",
+                footer_rights: "Tous droits réservés à",
+                footer_version: "Version modifiée :",
+                btn_ok: "OK",
+                confirm_delete_title: "Confirmation de suppression",
+                confirm_delete_desc: "Êtes-vous sûr de vouloir supprimer définitivement ?",
+                btn_cancel: "Annuler",
+                btn_delete: "Supprimer",
+                orders_unit: "commandes",
+                products_unit: "produit",
+                day_unit: "j",
+                hour_unit: "h",
+                min_unit: "m",
+                sec_unit: "s",
+                time_remaining: "Restant :"
+            },
+            en: {
+                page_title: "bedal.online - Control Panel and Integrated Management",
+                login_title: "Admin Panel Login",
+                login_subtitle: "Enter username and password to access the control panel",
+                label_username: "Username",
+                label_password: "Password",
+                btn_forgot_pass: "Forgot Password?",
+                btn_login: "Login",
+                login_error: "Incorrect username or password!",
+                label_recovery_user: "Recovery Username",
+                label_new_pass: "New Password",
+                btn_update_pass: "Update Password",
+                btn_back_login: "Back to Login",
+                recovery_error: "Incorrect recovery username!",
+                header_subtitle: "Admin Panel",
+                main_title: "Analytics and Smart Management Panel",
+                btn_meta_feed: "Download Meta Data Feed",
+                btn_add_product: "Add New Product",
+                stat_orders_count: "Total Orders",
+                stat_products_count: "Total Products",
+                bfd_timer_title: "Black Free Day Countdown (Weekend)",
+                bfd_timer_sub: "Time remaining for weekend offers:",
+                tab_orders: "Orders Log",
+                tab_products: "Products Management",
+                tab_bfd: "Black Free Day Management",
+                tab_ads: "Ad Expenses (ADS)",
+                tab_contests: "Discount Contests",
+                tab_slider: "Slider Management",
+                tab_popup: "Popup Ad Management",
+                tab_admins: "Administrators",
+                orders_header_title: "Manage Orders and Send to Supplier",
+                search_orders_ph: "Search orders...",
+                btn_excel_group: "Bulk Excel",
+                th_cust_name: "Customer Name",
+                th_phone: "Phone",
+                th_address: "Address",
+                th_product: "Product",
+                th_product_admin: "Product Admin",
+                th_amount: "Amount",
+                th_order_status: "Order Status (Sent to Supplier)",
+                th_actions: "Actions (Delete)",
+                products_list_title: "Products List",
+                search_products_ph: "Search products...",
+                th_image: "Image",
+                th_prod_name: "Product Name",
+                th_orig_price: "Original Price",
+                th_disc_price: "Discount Price",
+                th_admin: "Admin",
+                th_category: "Category",
+                th_prod_actions: "Actions (Edit / Delete)",
+                bfd_mgmt_title: "Black Free Day Management",
+                bfd_mgmt_sub: "Edit and manage major weekend offers.",
+                search_bfd_ph: "Search BFD offers...",
+                btn_add_bfd: "Add New BFD Product",
+                th_title: "Title",
+                th_price: "Price",
+                th_badge: "Badge",
+                th_actions_simple: "Actions",
+                ads_mgmt_title: "Ad Expenses Management (ADS)",
+                ads_mgmt_sub: "Track advertising budget with platform, date, duration, and countdown.",
+                btn_add_ad: "Add New Ad Expense",
+                total_ads_label: "Total Registered Ad Expenses:",
+                th_platform: "Platform",
+                th_amount_dh: "Amount (MAD)",
+                th_start_date: "Start Date",
+                th_duration: "Duration",
+                th_countdown: "Countdown & Status",
+                contests_mgmt_title: "Contests & Discount Settings (-50%)",
+                contests_mgmt_sub: "Enter contest code to activate 50% discount mode and change theme color.",
+                label_contest_code: "Discount Code (Word or Number) *",
+                label_contest_color: "Theme Color (When Code Active) *",
+                contest_color_desc: "Choose the color that will appear on buttons and theme.",
+                btn_save_contest: "Save Contest Code & Activate Discount",
+                slider_mgmt_title: "Hero Slider Management",
+                slider_mgmt_sub: "Edit titles, descriptions, and background images for the slider.",
+                search_slider_ph: "Search slider...",
+                btn_add_slider: "Add Slider",
+                btn_save_changes: "Save Changes",
+                popup_mgmt_title: "Popup Ad Image Management (9:16)",
+                popup_mgmt_sub: "Update the image link (or Dropbox link) shown as a popup for visitors.",
+                label_popup_url: "Popup Image URL (Dropbox / Direct) *",
+                preview_current_img: "Current Image Preview:",
+                btn_save_popup: "Save & Update Popup Image",
+                admins_mgmt_title: "Administrators & Access Management",
+                admins_mgmt_sub: "View and manage administrator accounts and security settings.",
+                search_admins_ph: "Search admin...",
+                btn_add_admin: "Add New Admin",
+                th_username: "Username",
+                th_role: "Role / Permission",
+                th_status: "Status",
+                modal_add_ad_title: "Record New Ad Expense",
+                label_platform: "Platform *",
+                label_amount_dh: "Amount (MAD) *",
+                label_start_date: "Start Date *",
+                label_duration: "Ad Duration *",
+                btn_save_ad: "Save Ad Expense & Countdown",
+                order_details_products: "Ordered Products Details & Quantity:",
+                total_amount_label: "Total Amount:",
+                modal_add_product_title: "Add New Product",
+                calc_title: "Pricing Calculator & Automatic Net Profit",
+                label_tajir_price: "Tajir Product Price *",
+                label_prep_cost: "Preparation Cost *",
+                label_target_sale: "Target Selling Price *",
+                label_net_profit: "Final Net Profit (Locked Auto) *",
+                label_store_price: "Suggested Store Price:",
+                label_market_price: "Original Market Price (+70% Auto):",
+                btn_apply_price: "Apply Suggested Store & Target Prices Automatically",
+                label_prod_name: "Product Name *",
+                label_form_orig_price: "Original Price (Locked Auto) *",
+                label_form_disc_price: "Discount / Target Price (Locked Auto)",
+                label_move_bfd: "Move this product to Black Free Day and hide from regular products",
+                label_prod_has_ads: "Were ads launched for this product? (Ad Status)",
+                label_category: "Category *",
+                cat_women: "Women",
+                cat_men: "Men",
+                cat_kids: "Kids",
+                cat_various: "Various Products",
+                label_admin_assigned: "Admin *",
+                label_img_links: "Image Links (Up to 5)",
+                label_video_links: "Video Links (If any)",
+                label_prod_desc: "Product Description *",
+                btn_save_data: "Save Data",
+                modal_add_slider_title: "Add New Slider Slide",
+                label_badge: "Badge",
+                label_img_url: "Image URL *",
+                label_main_title: "Main Title *",
+                label_sub_desc: "Description / Subtitle *",
+                btn_save_slider: "Save Slider",
+                modal_add_admin_title: "Add New Administrator",
+                btn_save_admin: "Save Administrator",
+                footer_rights: "All rights reserved to",
+                footer_version: "Modified Version:",
+                btn_ok: "OK",
+                confirm_delete_title: "Confirm Deletion",
+                confirm_delete_desc: "Are you sure you want to permanently delete this item?",
+                btn_cancel: "Cancel",
+                btn_delete: "Delete",
+                orders_unit: "orders",
+                products_unit: "product",
+                day_unit: "d",
+                hour_unit: "h",
+                min_unit: "m",
+                sec_unit: "s",
+                time_remaining: "Remaining:"
+            }
+        };
+
+        // دالة تغيير اللغة الشاملة
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const htmlRoot = document.getElementById('html-root');
+            
+            // ضبط الاتجاه واللغة بناءً على الخيار
+            if (lang === 'ar') {
+                htmlRoot.setAttribute('lang', 'ar');
+                htmlRoot.setAttribute('dir', 'rtl');
+            } else {
+                htmlRoot.setAttribute('lang', lang);
+                htmlRoot.setAttribute('dir', 'ltr');
+            }
+
+            // تحديث تصميم أزرار اللغة في الهيدر
+            ['ar', 'fr', 'en'].forEach(l => {
+                const btn = document.getElementById(`lang-btn-${l}`);
+                if (btn) {
+                    if (l === lang) {
+                        btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white shadow-sm transition-all";
+                    } else {
+                        btn.className = "px-2.5 py-1 rounded-lg text-xs font-bold text-gray-600 hover:text-indigo-600 transition-all";
+                    }
+                }
+            });
+
+            // ترجمة العناصر التي تحتوي على خاصية data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+
+            // ترجمة العناصر ذات placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[lang] && translations[lang][key]) {
+                    el.placeholder = translations[lang][key];
+                }
+            });
+
+            // تحديث عنوان الصفحة
+            document.getElementById('page-title').innerText = translations[lang]['page_title'] || translations['ar']['page_title'];
+
+            // تحديث القيم الديناميكية في لوحة التحكم فوراً لتتوافق مع اللغة المختارة
+            const totalOrdersEl = document.getElementById('stat-total-orders');
+            if (totalOrdersEl) {
+                const count = salesOrdersDatabase.length;
+                const unitOrders = translations[currentLang]['orders_unit'] || 'طلبات';
+                totalOrdersEl.innerText = `${count} ${unitOrders}`;
+            }
+
+            const totalProductsEl = document.getElementById('stat-total-products');
+            if (totalProductsEl) {
+                const countP = productsDatabase.length;
+                const unitProducts = translations[currentLang]['products_unit'] || 'منتج';
+                totalProductsEl.innerText = `${countP} ${unitProducts}`;
+            }
+
+            renderAdminProducts();
+            renderAdminOrders();
+            renderAdsExpensesTable();
+            renderBfdTable();
+        }
 
         function showCustomAlert(message, title = "تنبيه") {
             document.getElementById('custom-alert-title').innerText = title;
@@ -1213,7 +1730,8 @@
                 });
             }
             tbody.innerHTML = html;
-            document.getElementById('stat-total-products').innerText = productsDatabase.length + ' منتج';
+            const unitProducts = translations[currentLang]['products_unit'] || 'منتج';
+            document.getElementById('stat-total-products').innerText = `${productsDatabase.length} ${unitProducts}`;
             lucide.createIcons();
         }
 
@@ -1296,7 +1814,8 @@
                     else if (exp.platform === 'TikTok') badgeColor = 'bg-purple-50 text-purple-700';
                     else if (exp.platform === 'Autre') badgeColor = 'bg-gray-100 text-gray-700';
 
-                    let durationLabel = `${exp.durationDays || 1} يوم`;
+                    const dayUnit = translations[currentLang]['day_unit'] || 'يوم';
+                    let durationLabel = `${exp.durationDays || 1} ${dayUnit}`;
 
                     html += `
                         <tr>
@@ -1348,7 +1867,13 @@
                     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                    clockEl.innerHTML = `<span class="inline-flex items-center gap-1 text-amber-700 font-bold"><i data-lucide="clock" class="w-3.5 h-3.5"></i> متبقي: ${days} يوم : ${String(hours).padStart(2, '0')}س : ${String(minutes).padStart(2, '0')}د : ${String(seconds).padStart(2, '0')}ث</span>`;
+                    const dUnit = translations[currentLang]['day_unit'] || 'يوم';
+                    const hUnit = translations[currentLang]['hour_unit'] || 'س';
+                    const mUnit = translations[currentLang]['min_unit'] || 'د';
+                    const sUnit = translations[currentLang]['sec_unit'] || 'ث';
+                    const remLabel = translations[currentLang]['time_remaining'] || 'متبقي:';
+
+                    clockEl.innerHTML = `<span class="inline-flex items-center gap-1 text-amber-700 font-bold"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${remLabel} ${days} ${dUnit} : ${String(hours).padStart(2, '0')}${hUnit} : ${String(minutes).padStart(2, '0')}${mUnit} : ${String(seconds).padStart(2, '0')}${sUnit}</span>`;
                     clockEl.className = "font-mono font-bold text-xs px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-800";
                 }
             });
@@ -1526,7 +2051,8 @@
                 `;
             });
             tbody.innerHTML = html;
-            document.getElementById('stat-total-orders').innerText = salesOrdersDatabase.length + ' طلبات';
+            const unitOrders = translations[currentLang]['orders_unit'] || 'طلبات';
+            document.getElementById('stat-total-orders').innerText = `${salesOrdersDatabase.length} ${unitOrders}`;
             lucide.createIcons();
         }
 
@@ -2196,7 +2722,12 @@
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                clockEl.innerHTML = `<span>${String(days).padStart(2, '0')}</span> يوم : <span>${String(hours).padStart(2, '0')}</span> س : <span>${String(minutes).padStart(2, '0')}</span> د : <span>${String(seconds).padStart(2, '0')}</span> ث`;
+                const dUnit = translations[currentLang]['day_unit'] || 'يوم';
+                const hUnit = translations[currentLang]['hour_unit'] || 'س';
+                const mUnit = translations[currentLang]['min_unit'] || 'د';
+                const sUnit = translations[currentLang]['sec_unit'] || 'ث';
+
+                clockEl.innerHTML = `<span>${String(days).padStart(2, '0')}</span> ${dUnit} : <span>${String(hours).padStart(2, '0')}</span> ${hUnit} : <span>${String(minutes).padStart(2, '0')}</span> ${mUnit} : <span>${String(seconds).padStart(2, '0')}</span> ${sUnit}`;
             }
 
             updateTimer();
@@ -2204,6 +2735,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            changeLanguage('ar'); // تعيين اللغة العربية كافتراضية رسمية
             fetchSupabaseData();
             setupSupabaseRealtime();
             initBfdCountdown();
