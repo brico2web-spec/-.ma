@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>bedal.online - منتوجات بي تخفيض خيالي</title>
     
+    <!-- Open Graph Meta Tags for Social & WhatsApp Link Preview -->
+    <meta property="og:title" content="bedal.online - منتوجات بي تخفيض خيالي">
+    <meta property="og:description" content="تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلام.">
+    <meta property="og:image" content="https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=13y6gkvb&raw=1">
+    <meta property="og:url" content="https://bedal.online/">
+    <meta property="og:type" content="website">
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDPGZ9SXD3"></script>
     <script>
@@ -117,14 +124,12 @@
         }
         @keyframes cyberGlow {
             0%, 100% {
-                box-shadow: 0 0 15px rgba(245, 158, 11, 0.6), inset 0 0 15px rgba(239, 68, 68, 0.4);
-                border-color: #F59E0B;
+                text-shadow: 0 0 10px rgba(245, 158, 11, 0.6), 0 0 20px rgba(249, 115, 22, 0.4);
                 transform: scale(1);
             }
             50% {
-                box-shadow: 0 0 35px rgba(245, 158, 11, 0.95), inset 0 0 25px rgba(245, 158, 11, 0.7);
-                border-color: #FEE140;
-                transform: scale(1.02);
+                text-shadow: 0 0 20px rgba(245, 158, 11, 0.95), 0 0 35px rgba(249, 115, 22, 0.8), 0 0 45px rgba(239, 68, 68, 0.6);
+                transform: scale(1.03);
             }
         }
         .black-free-day-flash {
@@ -533,43 +538,29 @@
         
         <!-- SECTION 1: STORE FRONT -->
         <section id="section-store" class="block space-y-0">
-            <div class="w-full">
-                <div class="relative w-full h-40 sm:h-52 rounded-2xl overflow-hidden shadow-lg bg-[#0F172A] watermarked-container">
-                    <div class="hero-slide absolute inset-0 opacity-100 transition-opacity duration-1000 flex items-center justify-between px-6 sm:px-12 text-white">
-                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40">
-                        <div class="relative z-10 max-w-lg space-y-1">
-                            <span class="bg-[#F97316] text-white text-[10px] sm:text-xs px-2.5 py-0.5 rounded-lg font-bold inline-block shadow" data-i18n="major_discounts">تخفيضات الكبرى</span>
-                            <h2 class="text-xl sm:text-2xl font-black leading-tight" data-i18n="hero_title">عروض حصرية تصل إلى 40%</h2>
-                            <p class="text-gray-200 text-xs sm:text-sm" data-i18n="hero_subtitle">تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.</p>
-                        </div>
+            <div class="py-6">
+                <div class="max-w-xs mx-auto space-y-1.5 text-center cursor-pointer group" onclick="openBlackFreeDayPage()">
+                    <div class="inline-flex items-center gap-2">
+                        <i data-lucide="flame" class="w-5 h-5 text-amber-500 animate-bounce"></i>
+                        <span class="font-black text-xl sm:text-2xl bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 bg-clip-text text-transparent tracking-wider uppercase black-free-day-flash group-hover:scale-105 transition-transform">Black Free Day</span>
+                        <i data-lucide="flame" class="w-5 h-5 text-amber-500 animate-bounce"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs sm:text-sm font-black text-[#0F172A] tracking-wide block animate-pulse" data-i18n="weekend_exclusive">عروض السبت والأحد الحصرية</span>
                     </div>
                 </div>
             </div>
 
-            <div class="py-6">
-                <div class="max-w-xs mx-auto space-y-2 text-center">
-                    <div class="inline-block bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white text-[11px] sm:text-xs font-black px-4 py-1.5 rounded-full shadow-lg animate-pulse tracking-wide border border-amber-200/50" data-i18n="shock_offer_banner">
-                        ⚡ اضغط هنا لاغتنام تخفيضات الصدمة قبل نفاد الكمية! ⚡
-                    </div>
-                    <button onclick="openBlackFreeDayPage()" class="w-full group relative h-24 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-400 transition-all transform hover:-translate-y-1.5 black-free-day-flash cursor-pointer">
-                        <img src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=400&q=80" alt="Black Free Day" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-60">
-                        <div class="absolute inset-0 bg-gradient-to-r from-zinc-950/95 via-stone-900/90 to-amber-950/80 backdrop-blur-[2px] flex flex-col items-center justify-center p-2 text-white text-center">
-                            <div class="flex items-center gap-1.5 mb-0.5">
-                                <i data-lucide="flame" class="w-5 h-5 text-amber-400 animate-bounce"></i>
-                                <span class="font-black text-sm sm:text-base bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent tracking-wider uppercase drop-shadow">Black Free Day</span>
-                                <i data-lucide="sparkles" class="w-4 h-4 text-amber-400 animate-spin"></i>
-                            </div>
-                            <span class="text-[10px] bg-gradient-to-r from-red-600 to-rose-600 text-white px-3 py-0.5 rounded-full font-black mt-1 shadow-md border border-red-400/40 animate-pulse" data-i18n="weekend_exclusive">🔥 عروض السبت والأحد الحصرية 🔥</span>
-                        </div>
-                    </button>
-                </div>
+            <!-- شريط فاصل بين Black free day و (منتوجات بي تخفيضات - 40%) -->
+            <div class="w-full flex items-center justify-center my-6">
+                <div class="w-full max-w-xl h-[2px] bg-gradient-to-r from-transparent via-orange-300 to-transparent"></div>
             </div>
 
             <div>
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-[#0F172A] flex items-center gap-2">
-                        <i data-lucide="sparkles" class="w-6 h-6 text-[#F97316]"></i>
-                        <span data-i18n="featured_products">المنتجات المميزة بالعروض الكبرى</span>
+                <!-- تم تعديل العبارة وتوحيد القياسات وإزالة الرمز والإطار والخلفية -->
+                <div class="flex justify-center mb-6">
+                    <h2 class="text-base sm:text-lg font-black text-[#0F172A] tracking-wide">
+                        <span data-i18n="featured_products">منتوجات بي تخفيضات - 40%</span>
                     </h2>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="store-products-grid">
@@ -867,7 +858,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.6.0</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.6.6</span>
                     </span>
                 </div>
             </div>
@@ -927,8 +918,8 @@
                 hero_title: "عروض حصرية تصل إلى 40%",
                 hero_subtitle: "تصفح التشكيلة الجديدة بأفضل الأسعار المتاحة.",
                 shock_offer_banner: "⚡ اضغط هنا لاغتنام تخفيضات الصدمة قبل نفاد الكمية! ⚡",
-                weekend_exclusive: "🔥 عروض السبت والأحد الحصرية 🔥",
-                featured_products: "المنتجات المميزة بالعروض الكبرى",
+                weekend_exclusive: "عروض السبت والأحد الحصرية",
+                featured_products: "منتوجات بي تخفيضات - 40%",
                 back_to_home: "العودة للرئيسية",
                 weekend_offers: "عروض نهاية الأسبوع الكبرى",
                 bfd_desc_header: "المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!",
@@ -1015,8 +1006,8 @@
                 hero_title: "Offres exclusives jusqu'à -40%",
                 hero_subtitle: "Découvrez notre nouvelle collection aux meilleurs prix.",
                 shock_offer_banner: "⚡ Cliquez ici pour profiter des soldes choc avant rupture ! ⚡",
-                weekend_exclusive: "🔥 Offres Exclusives Samedi & Dimanche 🔥",
-                featured_products: "Produits Vedettes en Méga Soldes",
+                weekend_exclusive: "Offres Exclusives Samedi & Dimanche",
+                featured_products: "Produits avec Réductions - 40%",
                 back_to_home: "Retour à l'accueil",
                 weekend_offers: "Super Soldes du Weekend",
                 bfd_desc_header: "Produits exclusifs du weekend .. Des réductions folles vous attendent !",
@@ -1103,8 +1094,8 @@
                 hero_title: "Exclusive offers up to 40% OFF",
                 hero_subtitle: "Browse the new collection at the best available prices.",
                 shock_offer_banner: "⚡ Click here to grab shock discounts before stock runs out! ⚡",
-                weekend_exclusive: "🔥 Saturday & Sunday Exclusive Deals 🔥",
-                featured_products: "Featured Products with Mega Discounts",
+                weekend_exclusive: "Saturday & Sunday Exclusive Deals",
+                featured_products: "Products with 40% Discounts",
                 back_to_home: "Back to Home",
                 weekend_offers: "Weekend Mega Deals",
                 bfd_desc_header: "Exclusive Saturday & Sunday products .. Unprecedented crazy discounts await you!",
@@ -1997,7 +1988,7 @@
             }, 150);
         }
 
-        function filterCategory(catKey) {
+        filterCategory = (catKey) => {
             document.querySelectorAll('[id^="cat-drawer-btn-"]').forEach(btn => btn.classList.remove('border-[#F97316]', 'bg-orange-50'));
             const activeBtn = document.getElementById(`cat-drawer-btn-${catKey}`);
             if (activeBtn) activeBtn.classList.add('border-[#F97316]', 'bg-orange-50');
