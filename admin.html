@@ -788,7 +788,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.100</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.101</span>
                 </span>
             </div>
         </div>
@@ -1934,7 +1934,7 @@
             select.innerHTML = html;
         }
 
-        // دالة تبديل وتحديث حالة المنتج (متاح / غير متاح) مع الحفظ في قاعدة البيانات
+        // دالة تبديل وتحديث حالة المنتج (متاح / غير متاح) مع الحفظ في قاعدة البيانات وعمود is_active
         async function toggleProductAvailability(idx, isActiveValue) {
             const prod = productsDatabase[idx];
             if (!prod) return;
