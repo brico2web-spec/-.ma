@@ -84,7 +84,7 @@
         .animate-marquee-reviews {
             display: flex;
             width: max-content;
-            animation: marqueeReviews 90s linear infinite;
+            animation: marqueeReviews 45s linear infinite;
         }
         #detail-product-img, .bfd-card-img, .store-card-img {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -348,7 +348,7 @@
                 </h3>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="full_name">الاسم الكامل *</label>
-                    <input type="text" id="invoice-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
+                    <input type="text" id="invoice-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="phone_number">رقم الهاتف *</label>
@@ -356,7 +356,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="address_city">العنوان الكامل والمدينة *</label>
-                    <input type="text" id="invoice-cust-address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
+                    <input type="text" id="invoice-cust-address" data-i18n-placeholder="placeholder_address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
                 </div>
                 <button onclick="submitInvoiceOrder()" class="w-full bg-[#F97316] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md">
                     <i data-lucide="send" class="w-5 h-5"></i>
@@ -397,7 +397,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="full_name">الإسم الكامل *</label>
-                    <input type="text" id="wa-cust-name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
+                    <input type="text" id="wa-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="phone_number">رقم الهاتف *</label>
@@ -405,7 +405,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="city">المدينة *</label>
-                    <input type="text" id="wa-cust-city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
+                    <input type="text" id="wa-cust-city" data-i18n-placeholder="placeholder_city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
                 </div>
                 <div id="wa-success-alert" class="hidden p-3 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center" data-i18n="wa_success_alert">
                     ✨ سيتم التواصل معك في أقرب وقت!
@@ -455,20 +455,6 @@
                     <button onclick="toggleCategoriesDrawer()" class="p-2 text-[#0F172A] hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
-                    
-                    <!-- Language Selector Dropdown Button -->
-                    <div class="relative">
-                        <button onclick="toggleLangDropdown()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-xs font-bold text-gray-700 transition-colors shadow-sm cursor-pointer">
-                            <i data-lucide="globe" class="w-4 h-4 text-[#F97316]"></i>
-                            <span id="current-lang-label">AR</span>
-                            <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>
-                        </button>
-                        <div id="lang-dropdown-menu" class="absolute top-full mt-1 left-0 bg-white border border-gray-200 rounded-xl shadow-xl hidden z-50 overflow-hidden min-w-[90px]">
-                            <button onclick="changeLanguage('ar')" class="w-full text-right px-4 py-2 text-xs font-bold hover:bg-orange-50 hover:text-[#F97316] transition-colors flex items-center justify-between"><span>العربية</span> <span class="text-[10px] text-gray-400">AR</span></button>
-                            <button onclick="changeLanguage('fr')" class="w-full text-right px-4 py-2 text-xs font-bold hover:bg-orange-50 hover:text-[#F97316] transition-colors flex items-center justify-between"><span>Français</span> <span class="text-[10px] text-gray-400">FR</span></button>
-                            <button onclick="changeLanguage('en')" class="w-full text-right px-4 py-2 text-xs font-bold hover:bg-orange-50 hover:text-[#F97316] transition-colors flex items-center justify-between"><span>English</span> <span class="text-[10px] text-gray-400">EN</span></button>
-                        </div>
-                    </div>
                 </div>
                 
                 <div class="flex flex-col items-center cursor-pointer group" onclick="switchTab('store')">
@@ -486,39 +472,58 @@
             </div>
         </header>
 
-        <!-- شريط تعليقات الزبناء المغاربة المتحرك ببطء -->
+        <!-- شريط تعليقات الزبناء المغاربة المتحرك باستمرار بدون توقف -->
         <div class="w-full bg-[#1E293B] text-white py-2.5 overflow-hidden shadow-inner border-t border-[#0F172A]">
-            <div class="animate-marquee-reviews flex items-center gap-8 whitespace-nowrap text-xs sm:text-sm font-bold tracking-wide">
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">يوسف (القنيطرة):</span> "السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!"</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سناء (الدار البيضاء):</span> "توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">مهدي (مراكش):</span> "أحسن موقع تعاملت معه، والثمن مناسب بزاف مع التخفيض."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">فاطمة الزهراء (طنجة):</span> "المنتج كيف ما شفته في الصور تماماً، جودة عالية ومضمونة."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">عمر (الرباط):</span> "الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">حمزة (أكادير):</span> "وصلني الطلب في غضون 24 ساعة، تبارك الله على الاحترافية."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">مريم (مكناس):</span> "خدمة ممتازة والمنتجات رائعة، أنصح الجميع بالطلب منهم."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">إبراهيم (فاس):</span> "التخفيضات حقيقية والسلعة ممتازة، الله يسر تجارتكم."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">إهاب (وجدة):</span> "توصيل لحد باب الدار وبدون تعقيدات، شكراً طاقم بدال أونلاين."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">خديجة (تطوان):</span> "المنتج وصلني مغلف مزيان وبحالة مثالية، شكراً جزيلاً."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">رشيد (سلا):</span> "معاملة طيبة وسرعة في التجاوب عبر الواتساب."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">حنان (آسفي):</span> "جودة المنتجات تفوق التوقعات والثمن مناسب جداً."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">عثمان (الجديدة):</span> "أفضل متجر إلكتروني مغربي من حيث المصداقية والسرعة."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">هدى (المحمدية):</span> "طلبت جوج قطعات ووصلوني في نفس الوقت وبجودة عالية."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">أيوب (بني ملال):</span> "شكراً على المصداقية العالية، التوصيل كان في الوقت المحدد."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">كوثر (البرشيد):</span> "منتجات متنوعة وأنيقة، تبارك الله عليكم."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">رضوان (تمارة):</span> "خدمة التوصيل المجاني زادت من إعجابي بالموقع."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">أسماء (الناظور):</span> "كلشي وصلني مزيان، شكراً على حسن التعامل."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">مروان (خريبكة):</span> "أسعار خيالية وجودة تضمنها من أول استعمال."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سهام (تارودانت):</span> "سرعة فائقة في معالجة الطلب وإرساله."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">نبيل (إنزكان):</span> "موقع موثوق يستحق خمس نجوم بكل جدارة."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">بثينة (الخميسات):</span> "عروض وخصومات حقيقية ما كايناش فبلاص أخرى."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">زكرياء (سيدي قاسم):</span> "التوصيل وصل حتى للدار والمخلص كان ظريف بزاف."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">إكرام (العرائش):</span> "أحسن تجربة تسوق إلكتروني درتها حتى دابا."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سفيان (تزنيت):</span> "شكراً لطاقم الدعم على التجاوب السريع والمحترف."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">حليمة (بركان):</span> "منتجات رائعة ومفيدة بزاف، الله يوفقكم."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">سمير (سطات):</span> "ثقة ومصداقية عالية، طلبي وصل في أفضل حلة."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">صوفيا (القصر الكبير):</span> "تغليف متقن وجودة المنتجات ممتازة جداً."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">طارق (الفقيه بن صالح):</span> "خدمة في المستوى المطلوب، أنصح بالتعامل معهم بشدة."</div>
-                <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10">⭐ <span class="text-amber-300 font-extrabold">لمياء (تازة):</span> "كل شيء كان ممتازاً من الطلب حتى الاستلام، شكراً لكم."</div>
+            <div class="animate-marquee-reviews flex items-center gap-12 whitespace-nowrap text-xs sm:text-sm font-bold tracking-wide">
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!» — يوسف (القنيطرة)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online.» — سناء (الدار البيضاء)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«أحسن موقع تعاملت معه، والثمن مناسب بزاف مع التخفيض.» — مهدي (مراكش)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«المنتج كيف ما شفته في الصور تماماً، جودة عالية ومضمونة.» — فاطمة الزهراء (طنجة)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«أحسن خدمة توصيل سرعان ما وصلني الطلب حتى لدارنا.» — حمزة (أكادير)</span>
+                </div>
+                <!-- تكرار العناصر لضمان استمرارية الحركة السلسة بدون فراغ -->
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!» — يوسف (القنيطرة)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online.» — سناء (الدار البيضاء)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«أحسن موقع تعاملت معه، والثمن مناسب بزاف مع التخفيض.» — مهدي (مراكش)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«المنتج كيف ما شفته في الصور تماماً، جودة عالية ومضمونة.» — فاطمة الزهراء (طنجة)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
+                    <span>«أحسن خدمة توصيل سرعان ما وصلني الطلب حتى لدارنا.» — حمزة (أكادير)</span>
+                </div>
             </div>
         </div>
     </div>
@@ -695,7 +700,7 @@
                         <div>
                             <div class="relative flex items-center">
                                 <span class="absolute right-3 text-gray-400"><i data-lucide="user" class="w-4 h-4"></i></span>
-                                <input type="text" id="detail-cust-name" placeholder="الاسم الكامل" data-i18n-placeholder="placeholder_name" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
+                                <input type="text" id="detail-cust-name" data-i18n-placeholder="placeholder_name" placeholder="الاسم الكامل" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
                             </div>
                         </div>
                         <div>
@@ -707,7 +712,7 @@
                         <div>
                             <div class="relative flex items-center">
                                 <span class="absolute right-3 text-gray-400"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
-                                <input type="text" id="detail-cust-city" placeholder="المدينة" data-i18n-placeholder="placeholder_city" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
+                                <input type="text" id="detail-cust-city" data-i18n-placeholder="placeholder_city" placeholder="المدينة" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
                             </div>
                         </div>
                     </div>
@@ -846,14 +851,14 @@
                     <i data-lucide="message-square-plus" class="w-4 h-4 text-[#F97316]"></i> <span data-i18n="add_review_title">أضف تعليقك وتقييمك للموقع</span>
                 </h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <input type="text" id="user-review-name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" data-i18n-placeholder="placeholder_review_name" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white">
+                    <input type="text" id="user-review-name" data-i18n-placeholder="placeholder_review_name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white">
                     <select id="user-review-rating" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white font-bold text-amber-600">
                         <option value="5" data-i18n="star_5">⭐⭐⭐⭐⭐ (5/5 ممتاز جداً)</option>
                         <option value="4" data-i18n="star_4">⭐⭐⭐⭐ (4/5 جيد جداً)</option>
                         <option value="3" data-i18n="star_3">⭐⭐⭐ (3/5 جيد)</option>
                     </select>
                 </div>
-                <textarea id="user-review-comment" placeholder="اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..." data-i18n-placeholder="placeholder_review_comment" rows="2" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white resize-none"></textarea>
+                <textarea id="user-review-comment" data-i18n-placeholder="placeholder_review_comment" placeholder="اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..." rows="2" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white resize-none"></textarea>
                 <button onclick="addNewUserReview()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-bold py-2 px-4 rounded-lg text-xs transition-colors shadow-sm flex items-center justify-center gap-1.5">
                     <i data-lucide="send" class="w-3.5 h-3.5"></i> <span data-i18n="send_comment">إرسال التعليق</span>
                 </button>
@@ -863,7 +868,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.5.5</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.5.8</span>
                     </span>
                 </div>
             </div>
@@ -966,6 +971,7 @@
                 version: "الإصدار:",
                 placeholder_name: "أدخل اسمك الكامل",
                 placeholder_city: "أدخل مدينتك",
+                placeholder_address: "أدخل مدينتك وعنوان الاستلام",
                 placeholder_review_name: "اسمك الكريم والمدينة (مثال: كريم من القنيطرة)",
                 placeholder_review_comment: "اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..."
             },
@@ -1053,6 +1059,7 @@
                 version: "Version :",
                 placeholder_name: "Entrez votre nom complet",
                 placeholder_city: "Entrez votre ville",
+                placeholder_address: "Entrez votre ville et adresse",
                 placeholder_review_name: "Votre nom et ville (ex: Karim de Kénitra)",
                 placeholder_review_comment: "Écrivez votre avis sur nos services..."
             },
@@ -1140,39 +1147,54 @@
                 version: "Version:",
                 placeholder_name: "Enter your full name",
                 placeholder_city: "Enter your city",
+                placeholder_address: "Enter your city and address",
                 placeholder_review_name: "Your name and city (e.g. Karim from Kenitra)",
                 placeholder_review_comment: "Write your review about our services..."
             }
         };
 
-        function toggleLangDropdown() {
-            const menu = document.getElementById('lang-dropdown-menu');
-            if (menu) menu.classList.toggle('hidden');
-        }
+        // ترجمات شريط التقييمات المتحرك للغات الثلاث
+        const reviewsDataByLang = {
+            ar: [
+                { name: "يوسف (القنيطرة)", comment: "«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!»", stars: 5 },
+                { name: "سناء (الدار البيضاء)", comment: "«توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online.»", stars: 5 },
+                { name: "مهدي (مراكش)", comment: "«أحسن موقع تعاملت معه، والثمن مناسب بزاف مع التخفيض.»", stars: 5 },
+                { name: "فاطمة الزهراء (طنجة)", comment: "«المنتج كيف ما شفته في الصور تماماً، جودة عالية ومضمونة.»", stars: 5 },
+                { name: "عمر (الرباط)", comment: "«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.»", stars: 5 }
+            ],
+            fr: [
+                { name: "Youssef (Kénitra)", comment: "«Le colis est arrivé à la date prévue, qualité au top merci !»", stars: 5 },
+                { name: "Sanaa (Casablanca)", comment: "«Livraison rapide et service client au top, merci bedal.online.»", stars: 5 },
+                { name: "Mehdi (Marrakech)", comment: "«Meilleur site, prix très abordable avec la réduction.»", stars: 5 },
+                { name: "Fatima (Tanger)", comment: "«Le produit est exactement comme sur les photos, excellente qualité.»", stars: 5 },
+                { name: "Omar (Rabat)", comment: "«Le paiement à la livraison donne une totale confiance, merci à vous.»", stars: 5 }
+            ],
+            en: [
+                { name: "Youssef (Kenitra)", comment: "«The item arrived on time and the quality is amazing!»", stars: 5 },
+                { name: "Sanaa (Casablanca)", comment: "«Fast delivery and professional customer service, thanks bedal.online.»", stars: 5 },
+                { name: "Mehdi (Marrakech)", comment: "«Best website ever, great prices with the discount.»", stars: 5 },
+                { name: "Fatima (Tangier)", comment: "«The product matches the photos completely, high quality.»", stars: 5 },
+                { name: "Omar (Rabat)", comment: "«Cash on delivery gives full trust, highly recommended.»", stars: 5 }
+            ]
+        };
 
         function changeLanguage(lang) {
             currentLang = lang;
             const htmlRoot = document.getElementById('html-root');
-            const langLabel = document.getElementById('current-lang-label');
             
             if (lang === 'ar') {
                 htmlRoot.setAttribute('lang', 'ar');
                 htmlRoot.setAttribute('dir', 'rtl');
-                if (langLabel) langLabel.innerText = 'AR';
             } else if (lang === 'fr') {
                 htmlRoot.setAttribute('lang', 'fr');
                 htmlRoot.setAttribute('dir', 'ltr');
-                if (langLabel) langLabel.innerText = 'FR';
             } else if (lang === 'en') {
                 htmlRoot.setAttribute('lang', 'en');
                 htmlRoot.setAttribute('dir', 'ltr');
-                if (langLabel) langLabel.innerText = 'EN';
             }
 
-            const menu = document.getElementById('lang-dropdown-menu');
-            if (menu) menu.classList.add('hidden');
-
             applyTranslations();
+            renderCurrentReview();
         }
 
         function applyTranslations() {
@@ -1192,7 +1214,6 @@
             const orderForm = document.getElementById('order-form-container');
             if (orderForm) {
                 orderForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // إضافة ومضة خفيفة للفت الانتباه
                 orderForm.classList.add('ring-4', 'ring-[#F97316]');
                 setTimeout(() => {
                     orderForm.classList.remove('ring-4', 'ring-[#F97316]');
@@ -1223,14 +1244,7 @@
         let fullBfdDescriptionText = '';
         let isBfdDescExpanded = false;
 
-        const siteReviews = [
-            { name: "يوسف من القنيطرة", comment: "«خدمة ممتازة وتوصيل سريع جداً في نفس التاريخ المحدد، شكراً لطاقم bedal.online على المصداقية!»", stars: 5, badge: "زبون مؤكد" },
-            { name: "سناء من الدار البيضاء", comment: "«المنتجات ذات جودة عالية وتطابق الوصف تماماً، والدفع عند الاستلام ميزة رائعة تزيد الثقة.»", stars: 5, badge: "تقييم إيجابي" },
-            { name: "مهدي من مراكش", comment: "«أسعار تنافسية وتخفيضات حقيقية، تعاملت معهم أكثر من مرة وخدمة العملاء في المستوى المطلوب.»", stars: 5, badge: "زبون دائم" },
-            { name: "فاطمة الزهراء من طنجة", comment: "«متجر موثوق يستحق كل التقدير، التغليف متقن والمنتج وصل بحالة مثالية تماماً.»", stars: 5, badge: "تقييم ممتاز" },
-            { name: "عمر من الرباط", comment: "«أفضل منصة تسوق في المغرب من ناحية سرعة التجاوب والاحترافية العالية. أنصح الجميع بالتعامل معهم.»", stars: 5, badge: "زبون مؤكد" }
-        ];
-
+        let siteReviews = [];
         let currentReviewIndex = 0;
 
         async function checkAndShowWelcomeAd() {
@@ -1263,6 +1277,7 @@
         }
 
         function initFooterReviewsSlider() {
+            siteReviews = reviewsDataByLang[currentLang];
             renderCurrentReview();
             setInterval(() => {
                 const container = document.getElementById('footer-reviews-container');
@@ -1270,6 +1285,7 @@
                     container.style.opacity = '0';
                     container.style.transform = 'translateY(8px)';
                     setTimeout(() => {
+                        siteReviews = reviewsDataByLang[currentLang];
                         currentReviewIndex = (currentReviewIndex + 1) % siteReviews.length;
                         renderCurrentReview();
                         container.style.opacity = '1';
@@ -1282,7 +1298,9 @@
         function renderCurrentReview() {
             const container = document.getElementById('footer-reviews-container');
             if (!container) return;
-            const rev = siteReviews[currentReviewIndex];
+            const currentList = reviewsDataByLang[currentLang] || reviewsDataByLang.ar;
+            if (currentReviewIndex >= currentList.length) currentReviewIndex = 0;
+            const rev = currentList[currentReviewIndex];
             let starsHtml = '';
             for(let i = 0; i < rev.stars; i++) starsHtml += `<i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400 inline-block"></i>`;
 
@@ -1290,7 +1308,6 @@
             container.innerHTML = `
                 <div class="flex items-center gap-2 mb-1">
                     <div class="flex items-center gap-0.5">${starsHtml}</div>
-                    <span class="bg-orange-50 text-orange-800 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-orange-100">${rev.badge}</span>
                 </div>
                 <p class="text-xs sm:text-sm font-bold text-gray-700 max-w-2xl leading-relaxed">${rev.comment}</p>
                 <span class="text-[11px] text-gray-400 font-medium mt-1">— ${rev.name}</span>
@@ -1308,8 +1325,11 @@
                 return;
             }
 
-            siteReviews.push({ name, comment: `«${comment}»`, stars, badge: "تقييم جديد" });
-            currentReviewIndex = siteReviews.length - 1;
+            // إضافة التعليق لقوائم اللغات لتحديثه فوراً
+            Object.keys(reviewsDataByLang).forEach(l => {
+                reviewsDataByLang[l].push({ name, comment: `«${comment}»`, stars });
+            });
+            currentReviewIndex = reviewsDataByLang[currentLang].length - 1;
             renderCurrentReview();
             document.getElementById('user-review-name').value = '';
             document.getElementById('user-review-comment').value = '';
