@@ -859,7 +859,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.6</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.7</span>
                     </span>
                 </div>
             </div>
@@ -1381,18 +1381,12 @@
                         let originalPrice = parseFloat(p.price || 0);
                         let finalDiscPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
                         
-                        // التحقق الشامل من حالة التوفر في قاعدة البيانات (is_available أو status)
+                        // فحص دقيق وشامل لكافة احتمالات أعمدة الحالة والتوفر في قاعدة البيانات
                         let isAvailable = true;
-                        if (p.is_available !== undefined && p.is_available !== null) {
-                            if (p.is_available === false || p.is_available === 0 || String(p.is_available).toLowerCase() === 'false' || String(p.is_available).toLowerCase() === 'غير متاح') {
-                                isAvailable = false;
-                            }
-                        }
-                        if (p.status) {
-                            const st = String(p.status).toLowerCase();
-                            if (st.includes('غير متاح') || st.includes('نفد') || st.includes('unavailable') || st === 'false' || st === '0') {
-                                isAvailable = false;
-                            }
+                        const rawStatus = p.is_available !== undefined ? p.is_available : (p.status !== undefined ? p.status : (p.available !== undefined ? p.available : (p.active !== undefined ? p.active : true)));
+                        
+                        if (rawStatus === false || rawStatus === 0 || String(rawStatus).toLowerCase() === 'false' || String(rawStatus).toLowerCase() === '0' || String(rawStatus).toLowerCase().includes('غير متاح') || String(rawStatus).toLowerCase().includes('unavailable') || String(rawStatus).toLowerCase().includes('inactive')) {
+                            isAvailable = false;
                         }
 
                         return {
@@ -1419,16 +1413,10 @@
                         let discPrice = (b.discountPrice !== undefined && b.discountPrice !== null && b.discountPrice !== '') ? parseFloat(b.discountPrice) : originalPrice;
                         
                         let isAvailable = true;
-                        if (b.is_available !== undefined && b.is_available !== null) {
-                            if (b.is_available === false || b.is_available === 0 || String(b.is_available).toLowerCase() === 'false' || String(b.is_available).toLowerCase() === 'غير متاح') {
-                                isAvailable = false;
-                            }
-                        }
-                        if (b.status) {
-                            const st = String(b.status).toLowerCase();
-                            if (st.includes('غير متاح') || st.includes('نفد') || st.includes('unavailable') || st === 'false' || st === '0') {
-                                isAvailable = false;
-                            }
+                        const rawBfdStatus = b.is_available !== undefined ? b.is_available : (b.status !== undefined ? b.status : (b.available !== undefined ? b.available : (b.active !== undefined ? b.active : true)));
+                        
+                        if (rawBfdStatus === false || rawBfdStatus === 0 || String(rawBfdStatus).toLowerCase() === 'false' || String(rawBfdStatus).toLowerCase() === '0' || String(rawBfdStatus).toLowerCase().includes('غير متاح') || String(rawBfdStatus).toLowerCase().includes('unavailable') || String(rawBfdStatus).toLowerCase().includes('inactive')) {
+                            isAvailable = false;
                         }
 
                         return {
