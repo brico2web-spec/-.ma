@@ -314,11 +314,20 @@
 
             <!-- قسم إدارة المنتجات -->
             <div id="admin-subtab-products" class="hidden space-y-4">
-                <div class="flex items-center justify-between bg-white p-4 rounded-2xl border shadow-sm">
+                <div class="flex flex-col sm:flex-row items-center justify-between bg-white p-4 rounded-2xl border shadow-sm gap-4">
                     <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">
                         <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i> <span data-i18n="products_list_title">قائمة المنتجات</span>
                     </h3>
-                    <input type="text" id="search-products-input" onkeyup="filterProductsTable()" placeholder="بحث في المنتجات..." data-i18n-placeholder="search_products_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-64 focus:outline-none focus:border-indigo-600">
+                    <div class="flex items-center gap-3 w-full sm:w-auto flex-wrap">
+                        <!-- زر الفلتر الجديد حسب المسؤولين -->
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-gray-500 whitespace-nowrap"><i data-lucide="filter" class="w-3.5 h-3.5 inline"></i> المسؤول:</label>
+                            <select id="admin-filter-select" onchange="filterProductsByAdmin(this.value)" class="px-3 py-2 rounded-xl border text-xs font-bold bg-indigo-50/50 text-indigo-900 focus:outline-none focus:border-indigo-600">
+                                <option value="all">جميع المسؤولين</option>
+                            </select>
+                        </div>
+                        <input type="text" id="search-products-input" onkeyup="filterProductsTable()" placeholder="بحث في المنتجات..." data-i18n-placeholder="search_products_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-indigo-600">
+                    </div>
                 </div>
                 <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto custom-scroll-container">
                     <table class="w-full text-right text-sm text-gray-600 min-w-[700px]">
@@ -788,7 +797,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.101</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.102</span>
                 </span>
             </div>
         </div>
@@ -1651,6 +1660,7 @@
                 }
 
                 updateAdminSelectOptions();
+                updateAdminFilterSelectOptions();
                 renderAdminsTable();
 
                 const { data: slider } = await supabaseClient.from('slider').select('*');
@@ -1934,6 +1944,32 @@
             select.innerHTML = html;
         }
 
+        // تحديث خيارات قائمة الفلتر حسب المسؤولين لتشمل جميع الصفوف والمسؤولين المسجلين
+        function updateAdminFilterSelectOptions() {
+            const select = document.getElementById('admin-filter-select');
+            if (!select) return;
+            let html = `<option value="all">جميع المسؤولين</option>`;
+            adminsDatabase.forEach(adm => {
+                html += `<option value="${adm.username}">${adm.username}</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        // دالة الفلترة حسب المسؤول لقائمة المنتجات (بحيث تشمل جميع الصفوف)
+        function filterProductsByAdmin(adminName) {
+            const searchVal = document.getElementById('search-products-input').value.toLowerCase().trim();
+            
+            let filtered = productsDatabase.filter(p => {
+                const matchesAdmin = (adminName === 'all') || (p.adminKey && p.adminKey.trim().toLowerCase() === adminName.trim().toLowerCase());
+                const matchesSearch = !searchVal || 
+                    (p.title && p.title.toLowerCase().includes(searchVal)) ||
+                    (p.sku && p.sku.toLowerCase().includes(searchVal)) ||
+                    (p.category && p.category.toLowerCase().includes(searchVal));
+                return matchesAdmin && matchesSearch;
+            });
+            renderAdminProducts(filtered);
+        }
+
         // دالة تبديل وتحديث حالة المنتج (متاح / غير متاح) مع الحفظ في قاعدة البيانات وعمود is_active
         async function toggleProductAvailability(idx, isActiveValue) {
             const prod = productsDatabase[idx];
@@ -1956,7 +1992,7 @@
             const listToRender = filteredList || productsDatabase;
             let html = '';
             if (listToRender.length === 0) {
-                html = `<tr><td colspan="9" class="p-6 text-center text-gray-400">لا توجد منتجات مسجلة حالياً.</td></tr>`;
+                html = `<tr><td colspan="9" class="p-6 text-center text-gray-400">لا توجد منتجات مسجلة حالياً تطابق معايير البحث أو المسؤول.</td></tr>`;
             } else {
                 listToRender.forEach((prod, idx) => {
                     const originalIdx = productsDatabase.indexOf(prod);
@@ -2019,17 +2055,8 @@
         }
 
         function filterProductsTable() {
-            const query = document.getElementById('search-products-input').value.toLowerCase().trim();
-            if (!query) {
-                renderAdminProducts();
-                return;
-            }
-            const filtered = productsDatabase.filter(p => 
-                (p.title && p.title.toLowerCase().includes(query)) ||
-                (p.sku && p.sku.toLowerCase().includes(query)) ||
-                (p.category && p.category.toLowerCase().includes(query))
-            );
-            renderAdminProducts(filtered);
+            const adminFilter = document.getElementById('admin-filter-select').value;
+            filterProductsByAdmin(adminFilter);
         }
 
         function toggleAdsModal() {
@@ -3024,3 +3051,4 @@
     </script>
 </body>
 </html>
+ض
