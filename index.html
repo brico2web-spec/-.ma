@@ -78,7 +78,8 @@
         .animate-marquee {
             display: flex;
             width: max-content;
-            animation: marquee 45s linear infinite;
+            /* تم جعل الحركة بطيئة ومستمرة بدون توقف كما طلبت */
+            animation: marquee 60s linear infinite;
         }
         .animate-marquee-slow {
             display: flex;
@@ -150,8 +151,8 @@
             animation: bfdCardGlow 2s infinite ease-in-out;
         }
         @keyframes pricePulseMotion {
-            0%, 100% { transform: scale(1); color: #059669; }
-            50% { transform: scale(1.12); color: #DC2626; }
+            0%, 100% { transform: scale(1); color: #0284C7; }
+            50% { transform: scale(1.12); color: #EA580C; }
         }
         .bfd-moving-price {
             display: inline-block;
@@ -263,14 +264,14 @@
                         <span data-i18n="kids">أطفال</span>
                     </button>
                     <button onclick="filterCategory('various'); toggleCategoriesDrawer();" id="cat-drawer-btn-various" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
-                        <i data-lucide="package" class="w-5 h-5 text-emerald-500"></i>
+                        <i data-lucide="package" class="w-5 h-5 text-[#0284C7]"></i>
                         <span data-i18n="various">منتجات متنوعة</span>
                     </button>
                 </div>
 
                 <div class="mt-8 pt-6 border-t border-gray-100">
-                    <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-sm transition-all border border-emerald-200 shadow-sm">
-                        <i data-lucide="message-circle" class="w-5 h-5 text-emerald-600"></i>
+                    <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-[#0284C7] font-bold text-sm transition-all border border-orange-200 shadow-sm">
+                        <i data-lucide="message-circle" class="w-5 h-5 text-[#0284C7]"></i>
                         <span data-i18n="whatsapp_contact">إتصل بيا عبر الواتساب</span>
                     </a>
                 </div>
@@ -302,7 +303,7 @@
                 <div class="p-3 bg-gradient-to-r from-orange-50 to-slate-50 rounded-xl border border-orange-100 space-y-1">
                     <div class="flex justify-between items-center text-xs text-gray-600 font-semibold">
                         <span data-i18n="total_saving">إجمالي التوفير (الربح من الخصم):</span>
-                        <span id="cart-total-saving" class="text-emerald-600 font-bold">0.00 د.م</span>
+                        <span id="cart-total-saving" class="text-[#0284C7] font-bold">0.00 د.م</span>
                     </div>
                     <div class="flex justify-between items-center text-lg font-bold">
                         <span data-i18n="total_after_disc">المجموع الإجمالي بعد الخصم:</span>
@@ -338,13 +339,13 @@
                     <span data-i18n="original_total">إجمالي المبلغ الأصلي:</span>
                     <span id="invoice-old-total" class="line-through text-red-600">0.00 د.م</span>
                 </div>
-                <div class="flex justify-between font-bold text-emerald-600">
+                <div class="flex justify-between font-bold text-[#0284C7]">
                     <span data-i18n="saving_total">إجمالي ربحك من الخصم:</span>
                     <span id="invoice-saving-total">0.00 د.م</span>
                 </div>
                 <div class="flex justify-between font-black text-base text-[#0F172A] pt-2 border-t">
                     <span data-i18n="final_to_pay">المبلغ المطلوب دفعه:</span>
-                    <span id="invoice-final-total" class="text-emerald-600 text-lg">0.00 د.م</span>
+                    <span id="invoice-final-total" class="text-[#0284C7] text-lg">0.00 د.م</span>
                 </div>
             </div>
             <div class="space-y-4">
@@ -375,7 +376,7 @@
     <!-- Order Success Popup Modal -->
     <div id="order-success-modal" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 text-center">
-            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+            <div class="w-16 h-16 bg-orange-100 text-[#0284C7] rounded-full flex items-center justify-center mx-auto shadow-inner">
                 <i data-lucide="check-circle-2" class="w-10 h-10"></i>
             </div>
             <div class="space-y-2">
@@ -393,7 +394,7 @@
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6">
             <div class="flex items-center justify-between border-b pb-4">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="message-circle" class="w-6 h-6 text-emerald-600"></i>
+                    <i data-lucide="message-circle" class="w-6 h-6 text-[#0284C7]"></i>
                     <h2 class="text-xl font-black text-[#0F172A]" data-i18n="wa_order_title">طلب سريع عبر الواتساب</h2>
                 </div>
                 <button onclick="closeWhatsAppModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
@@ -403,20 +404,20 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="full_name">الإسم الكامل *</label>
-                    <input type="text" id="wa-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
+                    <input type="text" id="wa-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0284C7] bg-white">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="phone_number">رقم الهاتف *</label>
-                    <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white text-right" dir="ltr">
+                    <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0284C7] bg-white text-right" dir="ltr">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="city">المدينة *</label>
-                    <input type="text" id="wa-cust-city" data-i18n-placeholder="placeholder_city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-emerald-600 bg-white">
+                    <input type="text" id="wa-cust-city" data-i18n-placeholder="placeholder_city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0284C7] bg-white">
                 </div>
-                <div id="wa-success-alert" class="hidden p-3 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 text-center" data-i18n="wa_success_alert">
+                <div id="wa-success-alert" class="hidden p-3 rounded-lg text-xs font-bold bg-orange-50 text-[#0284C7] border border-orange-200 text-center" data-i18n="wa_success_alert">
                     ✨ سيتم التواصل معك في أقرب وقت!
                 </div>
-                <button onclick="submitWhatsAppOrder()" class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 shadow-md">
+                <button onclick="submitWhatsAppOrder()" class="w-full bg-[#0284C7] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#0369A1] transition-colors flex items-center justify-center gap-2 shadow-md">
                     <i data-lucide="send" class="w-5 h-5"></i>
                     <span data-i18n="send_wa_btn">إرسال الطلب عبر الواتساب</span>
                 </button>
@@ -426,7 +427,8 @@
 
     <!-- Sticky Header Wrapper -->
     <div class="sticky top-0 z-40 w-full shadow-sm">
-        <div class="bg-[#0F172A] text-white py-2.5 overflow-hidden shadow-inner border-b border-[#1E293B]">
+        <!-- تم تصغير الشريط الأعلى في الهيدر قليلاً (py-1.5 بدلاً من py-2.5) -->
+        <div class="bg-[#0F172A] text-white py-1.5 overflow-hidden shadow-inner border-b border-[#1E293B]">
             <div class="animate-marquee flex items-center gap-12 whitespace-nowrap text-xs sm:text-sm font-black tracking-wide">
                 <div class="flex items-center gap-2">
                     <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
@@ -437,7 +439,7 @@
                     <span data-i18n="marquee_2">عروض حصرية وتخفيضات كبرى يومياً</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                    <i data-lucide="shield-check" class="w-4 h-4 text-[#0284C7]"></i>
                     <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -449,7 +451,7 @@
                     <span data-i18n="marquee_2">عروض حصرية وتخفيضات كبرى يومياً</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
+                    <i data-lucide="shield-check" class="w-4 h-4 text-[#0284C7]"></i>
                     <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
                 </div>
             </div>
@@ -505,7 +507,6 @@
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«أحسن خدمة توصيل سرعان ما وصلني الطلب حتى لدارنا.» — حمزة (أكادير)</span>
                 </div>
-                <!-- تكرار العناصر لضمان استمرارية الحركة السلسة بدون فراغ -->
                 <div class="flex items-center gap-2">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!» — يوسف (القنيطرة)</span>
@@ -564,7 +565,7 @@
                         <span data-i18n="featured_products">منتوجات بي تخفيضات - 40%</span>
                     </h2>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="store-products-grid">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch" id="store-products-grid">
                     <!-- Dynamic Products from Supabase -->
                 </div>
                 <!-- Pagination Controls -->
@@ -591,7 +592,7 @@
                     المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!
                 </p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="black-free-day-products-grid"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" id="black-free-day-products-grid"></div>
         </section>
 
         <!-- SECTION: BFD NEUTRAL PRODUCT ALBUM PAGE -->
@@ -670,7 +671,6 @@
                     <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <!-- تم تعديل العرض ليكون بالارتفاع التلقائي والاحتفاظ بالحجم الأصلي الكامل دون اقتصار -->
                 <div class="w-full rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-2">
                     <img id="detail-product-img" alt="Product Detail" class="w-full h-auto max-h-[85vh] object-contain">
                     <img src="https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png" alt="Watermark" class="watermark-overlay" style="width: 65px; height: 65px;">
@@ -679,9 +679,9 @@
                 <div id="detail-thumbnails-container" class="flex items-center gap-3 overflow-x-auto pb-1"></div>
 
                 <div class="flex items-baseline gap-4 py-2 border-b border-gray-100">
-                    <span id="detail-product-price" class="text-3xl font-black text-emerald-600">0.00 د.م</span>
+                    <span id="detail-product-price" class="text-3xl font-black text-[#0284C7]">0.00 د.م</span>
                     <span id="detail-old-price" class="text-lg font-bold text-gray-400 line-through">0.00 د.م</span>
-                    <span class="bg-rose-50 text-rose-600 text-xs font-black px-2.5 py-1 rounded-lg border border-rose-100" data-i18n="free_shipping_all">التوصيل مجاني لجميع المدن</span>
+                    <span class="bg-orange-50 text-[#0284C7] text-xs font-black px-2.5 py-1 rounded-lg border border-orange-100" data-i18n="free_shipping_all">التوصيل مجاني لجميع المدن</span>
                 </div>
 
                 <!-- خانات ملء الطلب في مكانها الأصلي دون تغيير -->
@@ -719,16 +719,16 @@
                         </div>
                         <div class="flex justify-between">
                             <span data-i18n="shipping_label">التوصيل:</span>
-                            <span class="text-emerald-600" data-i18n="free">مجاني</span>
+                            <span class="text-[#0284C7]" data-i18n="free">مجاني</span>
                         </div>
                         <div class="flex justify-between text-sm pt-1 border-t border-gray-100 font-black">
                             <span data-i18n="total_label">المجموع:</span>
-                            <span id="summary-prod-total" class="text-emerald-600">0.00 د.م</span>
+                            <span id="summary-prod-total" class="text-[#0284C7]">0.00 د.م</span>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#10b981] hover:bg-[#059669] text-white py-3.5 px-4 rounded-lg font-black transition-colors flex items-center justify-center gap-2 shadow-md text-sm">
+                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#0284C7] hover:bg-[#0369A1] text-white py-3.5 px-4 rounded-lg font-black transition-colors flex items-center justify-center gap-2 shadow-md text-sm">
                             <i data-lucide="message-circle" class="w-5 h-5"></i>
                             <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                         </button>
@@ -740,7 +740,7 @@
 
                     <div class="flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500 font-semibold pt-1">
                         <div class="flex items-center gap-1">
-                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="cod_badge">الدفع عند الاستلاستلام</span>
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-[#0284C7]"></i> <span data-i18n="cod_badge">الدفع عند الاستلاستلام</span>
                         </div>
                         <div class="flex items-center gap-1">
                             <i data-lucide="truck" class="w-3.5 h-3.5 text-[#F97316]"></i> <span data-i18n="fast_delivery">توصيل سريع</span>
@@ -769,7 +769,7 @@
 
                 <div id="detail-video-box" class="hidden pt-2">
                     <a id="detail-video-link" href="#" target="_blank" class="inline-flex items-center gap-2 bg-orange-50 border border-orange-100 hover:bg-orange-100 text-orange-900 px-4 py-2.5 rounded-lg text-xs font-bold transition-colors">
-                        <i data-lucide="play-circle" class="w-4 h-4 text-emerald-600 fill-emerald-600 text-white"></i> <span data-i18n="tajer_guide">شرح منصة تاجر</span>
+                        <i data-lucide="play-circle" class="w-4 h-4 text-[#0284C7] fill-[#0284C7] text-white"></i> <span data-i18n="tajer_guide">شرح منصة تاجر</span>
                     </a>
                 </div>
             </div>
@@ -806,7 +806,7 @@
                     </div>
                 </div>
                 <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <div class="w-12 h-12 rounded-xl bg-orange-50 text-[#0284C7] flex items-center justify-center flex-shrink-0 shadow-sm">
                         <i data-lucide="truck" class="w-6 h-6"></i>
                     </div>
                     <div class="space-y-1">
@@ -863,7 +863,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.1</span>
+                        <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.5</span>
                     </span>
                 </div>
             </div>
@@ -1056,7 +1056,7 @@
                 placeholder_city: "Entrez votre ville",
                 placeholder_address: "Entrez votre ville et adresse",
                 placeholder_review_name: "Votre nom et ville (ex: Karim de Kénitra)",
-                placeholder_review_comment: "Écrivez votre avis sur nos services..."
+                placeholder_review_comment: "Éكrivez votre avis sur nos services..."
             },
             en: {
                 exclusive_ad: "✨ Exclusive Offer for Visitors ✨",
@@ -1333,7 +1333,6 @@
             let clean = pathOrUrl.trim();
             if (clean === '' || clean.toLowerCase() === 'null' || clean === '[]') return '';
             
-            // تصحيح روابط Dropbox تلقائياً لتتم قراءتها بنجاح في البطاقات
             if (clean.includes('dropbox.com')) {
                 clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '').replace('&dl=0', '');
                 if (!clean.includes('dl=1') && !clean.includes('raw=1')) {
@@ -1508,7 +1507,7 @@
                             <div class="overflow-hidden space-y-1">
                                 <h4 class="font-extrabold text-sm text-white truncate">${p.title}</h4>
                                 <div class="flex items-baseline gap-2">
-                                    <span class="text-emerald-400 font-black text-sm">${p.price.toFixed(2)} د.م</span>
+                                    <span class="text-[#0284C7] font-black text-sm">${p.price.toFixed(2)} د.م</span>
                                     <span class="text-rose-400 text-xs line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                 </div>
                             </div>
@@ -1546,7 +1545,7 @@
 
                 let storeThumbnailsHtml = '';
                 if (productImages.length > 1) {
-                    storeThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100">`;
+                    storeThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100 flex-shrink-0">`;
                     productImages.forEach((imgUrl, imgIdx) => {
                         const isFirst = imgIdx === 0;
                         storeThumbnailsHtml += `
@@ -1570,7 +1569,7 @@
                     cartBtnHtml = `<button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
                     </button>`;
-                    waBtnHtml = `<button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-emerald-600 text-white py-2.5 px-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
+                    waBtnHtml = `<button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#0284C7] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#0369A1] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
                         <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                     </button>`;
                 } else {
@@ -1583,34 +1582,37 @@
                 }
 
                 html += `
-                    <div class="product-item ${cardBgClass} rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                    <div class="product-item ${cardBgClass} rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer h-full" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                         ${unavailableBadge}
-                        <div>
-                            <!-- تم تعديل العرض لكي تظهر الصورة كاملة بأبعادها الأصلية ودون قص -->
-                            <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2">
-                                <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-auto object-contain store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
+                        <div class="flex flex-col flex-grow">
+                            <!-- تم تكبير حجم صورة المنتوج في البطاقة (h-80 sm:h-96) -->
+                            <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2 h-80 sm:h-96 flex-shrink-0">
+                                <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-contain store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
                             </div>
                             ${storeThumbnailsHtml}
-                            <div class="p-5 space-y-3">
-                                <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'متنوع'}</span>
-                                <h3 class="font-extrabold ${titleColorClass} text-xl leading-snug transition-colors">${p.title}</h3>
-                                <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
-                                <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
+                            <div class="p-4 space-y-2.5 flex flex-col flex-grow justify-between">
+                                <div class="space-y-1.5">
+                                    <span class="text-[11px] font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-0.5 rounded-md inline-block">${p.catLabel || 'متنوع'}</span>
+                                    <!-- تم تكبير حجم كتابة العناوين للمنتوجات قليلاً (text-lg sm:text-xl) -->
+                                    <h3 class="font-extrabold ${titleColorClass} text-lg sm:text-xl leading-snug transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
+                                    <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
+                                </div>
+                                <div class="p-2.5 bg-orange-50/50 border border-orange-100 rounded-lg flex items-center justify-between mt-auto">
                                     <div>
-                                        <span class="text-[10px] font-bold text-emerald-600 block" data-i18n="total_after_disc">الثمن بعد التخفيض:</span>
+                                        <span class="text-[9px] font-bold text-[#0284C7] block" data-i18n="total_after_disc">الثمن بعد التخفيض:</span>
                                         <div class="flex items-baseline gap-1">
-                                            <span class="font-black text-emerald-600 text-3xl">${p.price.toFixed(2)}</span>
-                                            <span class="text-sm font-bold text-emerald-600">د.م</span>
+                                            <span class="font-black text-[#0284C7] text-xl sm:text-2xl">${p.price.toFixed(2)}</span>
+                                            <span class="text-xs font-bold text-[#0284C7]">د.م</span>
                                         </div>
                                     </div>
                                     <div class="text-left">
-                                        <span class="text-[10px] font-bold text-gray-400 block" data-i18n="original_total">الأصلي:</span>
-                                        <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                        <span class="text-[9px] font-bold text-gray-400 block" data-i18n="original_total">الأصلي:</span>
+                                        <span class="text-xs font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-5 pt-0 grid grid-cols-2 gap-2" onclick="event.stopPropagation()">
+                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-auto flex-shrink-0" onclick="event.stopPropagation()">
                             ${cartBtnHtml}
                             ${waBtnHtml}
                         </div>
@@ -1861,7 +1863,7 @@
                         <div class="flex-grow">
                             <h4 class="font-bold text-xs text-gray-800">${item.title}</h4>
                             <div class="flex items-baseline gap-2 mt-0.5">
-                                <span class="text-emerald-600 text-xs font-black">${(item.price * item.quantity).toFixed(2)} د.م</span>
+                                <span class="text-[#0284C7] text-xs font-black">${(item.price * item.quantity).toFixed(2)} د.م</span>
                                 <span class="text-[10px] text-red-600 line-through">${(item.oldPrice * item.quantity).toFixed(2)} د.م</span>
                             </div>
                         </div>
@@ -1956,7 +1958,7 @@
 
                     let bfdThumbnailsHtml = '';
                     if (productImages.length > 1) {
-                        bfdThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100">`;
+                        bfdThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100 flex-shrink-0">`;
                         productImages.forEach((imgUrl, imgIdx) => {
                             const isFirst = imgIdx === 0;
                             bfdThumbnailsHtml += `
@@ -1969,33 +1971,35 @@
                     }
 
                     html += `
-                        <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300 cursor-pointer" onclick="openBfdProductModal('${p.id}')">
-                            <div>
-                                <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2">
-                                    <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-auto object-contain bfd-card-img">
+                        <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full" onclick="openBfdProductModal('${p.id}')">
+                            <div class="flex flex-col flex-grow">
+                                <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2 h-80 sm:h-96 flex-shrink-0">
+                                    <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-contain bfd-card-img">
                                 </div>
                                 ${bfdThumbnailsHtml}
-                                <div class="p-5 space-y-3">
-                                    <span class="text-xs font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-1 rounded-lg">${p.catLabel || 'عروض نهاية الأسبوع'}</span>
-                                    <h3 class="font-extrabold text-[#0F172A] text-xl leading-snug">${p.title}</h3>
-                                    <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
-                                    <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-lg flex items-center justify-between">
+                                <div class="p-4 space-y-2.5 flex flex-col flex-grow justify-between">
+                                    <div class="space-y-1.5">
+                                        <span class="text-[11px] font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-0.5 rounded-md inline-block">${p.catLabel || 'عروض نهاية الأسبوع'}</span>
+                                        <h3 class="font-extrabold text-[#0F172A] text-lg sm:text-xl leading-snug line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
+                                        <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
+                                    </div>
+                                    <div class="p-2.5 bg-orange-50/70 border border-orange-100 rounded-lg flex items-center justify-between mt-auto">
                                         <div>
-                                            <span class="text-[10px] font-bold text-emerald-600 block" data-i18n="total_after_disc">ثمن الصدمة الحصري:</span>
+                                            <span class="text-[9px] font-bold text-[#0284C7] block" data-i18n="total_after_disc">ثمن الصدمة الحصري:</span>
                                             <div class="flex items-baseline gap-1">
-                                                <span class="font-black text-emerald-600 text-3xl bfd-moving-price">${p.price.toFixed(2)}</span>
-                                                <span class="text-sm font-bold text-emerald-600">د.م</span>
+                                                <span class="font-black text-[#0284C7] text-xl sm:text-2xl bfd-moving-price">${p.price.toFixed(2)}</span>
+                                                <span class="text-xs font-bold text-[#0284C7]">د.م</span>
                                             </div>
                                         </div>
                                         <div class="text-left">
-                                            <span class="text-[10px] font-bold text-gray-400 block" data-i18n="original_total">الأصلي:</span>
-                                            <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                            <span class="text-[9px] font-bold text-gray-400 block" data-i18n="original_total">الأصلي:</span>
+                                            <span class="text-xs font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-5 pt-0" onclick="event.stopPropagation()">
-                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-xs bfd-attention-btn cursor-pointer">
+                            <div class="p-4 pt-0 mt-auto flex-shrink-0" onclick="event.stopPropagation()">
+                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-2.5 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-xs bfd-attention-btn cursor-pointer">
                                     <i data-lucide="message-circle" class="w-4 h-4 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
                                 </button>
                             </div>
