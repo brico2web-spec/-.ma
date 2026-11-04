@@ -78,7 +78,6 @@
         .animate-marquee {
             display: flex;
             width: max-content;
-            /* تم جعل الحركة بطيئة ومستمرة بدون توقف كما طلبت */
             animation: marquee 60s linear infinite;
         }
         .animate-marquee-slow {
@@ -104,21 +103,6 @@
             overflow: hidden;
             display: inline-block;
             width: 100%;
-        }
-        .watermark-overlay {
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            width: 54px;
-            height: 54px;
-            opacity: 0.55;
-            pointer-events: none;
-            z-index: 20;
-            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
-            transition: opacity 0.3s ease;
-        }
-        .watermarked-container:hover .watermark-overlay {
-            opacity: 0.85;
         }
 
         .fade-review {
@@ -192,7 +176,7 @@
 
     <!-- نافذة إعلان الموقع الأولى (9:16) عند مدخل الموقع -->
     <div id="welcome-ad-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 transition-opacity duration-300">
-        <div class="relative w-full max-w-sm aspect-[9/16] bg-zinc-950 rounded-2xl shadow-2xl border-2 border-amber-400 overflow-hidden flex flex-col justify-between p-3">
+        <div class="relative w-full max-w-xs aspect-[9/16] bg-zinc-950 rounded-2xl shadow-2xl border-2 border-amber-400 overflow-hidden flex flex-col justify-between p-3">
             <div class="absolute inset-0 w-full h-full">
                 <img id="welcome-ad-img" src="https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png" alt="إعلان الموقع" class="w-full h-full object-cover opacity-90">
                 <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 pointer-events-none"></div>
@@ -221,63 +205,63 @@
         </span>
     </div>
 
-    <!-- Right Side Menu Drawer Modal for Categories & WhatsApp -->
+    <!-- Right Side Menu Drawer Modal for Categories & WhatsApp (تم تصغير العرض إلى max-w-[240px] أو ما يناسب الطلب) -->
     <div id="categories-drawer" class="fixed inset-0 z-50 bg-[#0F172A]/40 backdrop-blur-sm hidden flex justify-start transition-opacity">
-        <div class="bg-white w-full max-w-xs h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto transform transition-transform">
+        <div class="bg-white w-full max-w-[240px] h-full shadow-2xl flex flex-col justify-between p-4 overflow-y-auto transform transition-transform">
             <div>
-                <div class="flex items-center justify-between border-b pb-4 mb-6">
-                    <h2 class="text-lg font-black text-[#0F172A] flex items-center gap-2">
-                        <i data-lucide="layout-grid" class="w-5 h-5 text-[#F97316]"></i>
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h2 class="text-sm font-black text-[#0F172A] flex items-center gap-1.5">
+                        <i data-lucide="layout-grid" class="w-4 h-4 text-[#F97316]"></i>
                         <span data-i18n="store_categories">أقسام المتجر</span>
                     </h2>
-                    <button onclick="toggleCategoriesDrawer()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
-                        <i data-lucide="x" class="w-5 h-5"></i>
+                    <button onclick="toggleCategoriesDrawer()" class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg">
+                        <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
                 
-                <div class="space-y-3 mb-6 pb-6 border-b border-gray-100">
-                    <button onclick="switchTab('store'); toggleCategoriesDrawer();" class="w-full flex items-center gap-3 p-3 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-sm transition-all shadow-sm">
-                        <i data-lucide="home" class="w-5 h-5 text-[#F97316]"></i>
+                <div class="space-y-2 mb-4 pb-4 border-b border-gray-100">
+                    <button onclick="switchTab('store'); toggleCategoriesDrawer();" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-xs transition-all shadow-sm">
+                        <i data-lucide="home" class="w-4 h-4 text-[#F97316]"></i>
                         <span data-i18n="home">الرئيسية</span>
                     </button>
-                    <button onclick="toggleCategoriesDrawer(); toggleCartDrawer();" class="w-full flex items-center gap-3 p-3 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-sm transition-all shadow-sm">
-                        <i data-lucide="shopping-bag" class="w-5 h-5 text-[#F97316]"></i>
+                    <button onclick="toggleCategoriesDrawer(); toggleCartDrawer();" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-xs transition-all shadow-sm">
+                        <i data-lucide="shopping-bag" class="w-4 h-4 text-[#F97316]"></i>
                         <span data-i18n="cart">السلة</span>
                     </button>
                 </div>
 
-                <div class="space-y-3">
-                    <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
-                        <i data-lucide="layers" class="w-5 h-5 text-[#F97316]"></i>
+                <div class="space-y-2">
+                    <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="layers" class="w-4 h-4 text-[#F97316]"></i>
                         <span data-i18n="all">الكل</span>
                     </button>
-                    <button onclick="filterCategory('women'); toggleCategoriesDrawer();" id="cat-drawer-btn-women" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
-                        <i data-lucide="sparkles" class="w-5 h-5 text-pink-500"></i>
+                    <button onclick="filterCategory('women'); toggleCategoriesDrawer();" id="cat-drawer-btn-women" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-pink-500"></i>
                         <span data-i18n="women">نساء</span>
                     </button>
-                    <button onclick="filterCategory('men'); toggleCategoriesDrawer();" id="cat-drawer-btn-men" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
-                        <i data-lucide="shirt" class="w-5 h-5 text-blue-500"></i>
+                    <button onclick="filterCategory('men'); toggleCategoriesDrawer();" id="cat-drawer-btn-men" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="shirt" class="w-4 h-4 text-blue-500"></i>
                         <span data-i18n="men">رجال</span>
                     </button>
-                    <button onclick="filterCategory('kids'); toggleCategoriesDrawer();" id="cat-drawer-btn-kids" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
-                        <i data-lucide="smile" class="w-5 h-5 text-amber-500"></i>
+                    <button onclick="filterCategory('kids'); toggleCategoriesDrawer();" id="cat-drawer-btn-kids" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="smile" class="w-4 h-4 text-amber-500"></i>
                         <span data-i18n="kids">أطفال</span>
                     </button>
-                    <button onclick="filterCategory('various'); toggleCategoriesDrawer();" id="cat-drawer-btn-various" class="w-full flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-sm transition-all">
-                        <i data-lucide="package" class="w-5 h-5 text-[#0284C7]"></i>
+                    <button onclick="filterCategory('various'); toggleCategoriesDrawer();" id="cat-drawer-btn-various" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="package" class="w-4 h-4 text-[#0284C7]"></i>
                         <span data-i18n="various">منتجات متنوعة</span>
                     </button>
                 </div>
 
-                <div class="mt-8 pt-6 border-t border-gray-100">
-                    <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-[#0284C7] font-bold text-sm transition-all border border-orange-200 shadow-sm">
-                        <i data-lucide="message-circle" class="w-5 h-5 text-[#0284C7]"></i>
+                <div class="mt-6 pt-4 border-t border-gray-100">
+                    <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="w-full flex items-center justify-center gap-1.5 p-2.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-[#0284C7] font-bold text-xs transition-all border border-orange-200 shadow-sm">
+                        <i data-lucide="message-circle" class="w-4 h-4 text-[#0284C7]"></i>
                         <span data-i18n="whatsapp_contact">إتصل بيا عبر الواتساب</span>
                     </a>
                 </div>
             </div>
-            <div class="border-t pt-4 text-center">
-                <span class="text-[11px] text-gray-400 font-bold">bedal.online Marketplace</span>
+            <div class="border-t pt-3 text-center">
+                <span class="text-[10px] text-gray-400 font-bold">bedal.online Marketplace</span>
             </div>
         </div>
     </div>
@@ -427,7 +411,6 @@
 
     <!-- Sticky Header Wrapper -->
     <div class="sticky top-0 z-40 w-full shadow-sm">
-        <!-- تم تصغير الشريط الأعلى في الهيدر قليلاً (py-1.5 بدلاً من py-2.5) -->
         <div class="bg-[#0F172A] text-white py-1.5 overflow-hidden shadow-inner border-b border-[#1E293B]">
             <div class="animate-marquee flex items-center gap-12 whitespace-nowrap text-xs sm:text-sm font-black tracking-wide">
                 <div class="flex items-center gap-2">
@@ -440,7 +423,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-4 h-4 text-[#0284C7]"></i>
-                    <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
+                    <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلاستلام</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
@@ -452,7 +435,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <i data-lucide="shield-check" class="w-4 h-4 text-[#0284C7]"></i>
-                    <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
+                    <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلاستلام</span>
                 </div>
             </div>
         </div>
@@ -540,16 +523,11 @@
         
         <!-- SECTION 1: STORE FRONT -->
         <section id="section-store" class="block space-y-0">
-            <div class="py-6">
-                <div class="max-w-md mx-auto space-y-2 text-center cursor-pointer group bg-gradient-to-r from-zinc-900 via-neutral-900 to-black p-4 rounded-2xl border-2 border-amber-500 shadow-xl" onclick="openBlackFreeDayPage()">
-                    <div class="font-black text-lg sm:text-xl text-amber-400 tracking-wide uppercase group-hover:scale-105 transition-transform">
-                        🎁 هدية الويكاند من BEDAL 🎁
-                    </div>
-                    <div class="text-sm sm:text-base font-bold text-white">
-                        💥 -70% على منتجاتك المفضلة
-                    </div>
-                    <div class="text-xs font-semibold text-amber-300/90 tracking-wider">
-                        📅 السبت والاحد فقط.
+            <!-- تم تصغير العرض (max-w-xs بدلاً من max-w-md أو max-w-lg) وتقليل الطول في نسبة العرض للارتفاع (aspect-[28/9]) لضمان ظهور الكتابة كاملة وواضحة جداً -->
+            <div class="py-3 flex justify-center">
+                <div class="w-full max-w-xs cursor-pointer group rounded-xl overflow-hidden shadow-xl transition-transform hover:scale-[1.02]" onclick="openBlackFreeDayPage()">
+                    <div class="w-full aspect-[28/9] sm:aspect-[16/5.5] watermarked-container bg-zinc-950 flex items-center justify-center">
+                        <img src="https://dl.dropboxusercontent.com/scl/fi/rn9rkccvwwb2fgv6pwua9/Meta_AI_884822598_1746169016472049_4568012206892948502_n_20261104_032318.webp?rlkey=1sz87jslx0q4jmnkrqumerthb&st=omqwghdm&raw=1" alt="هدية الويكاند من BEDAL" class="w-full h-full object-cover">
                     </div>
                 </div>
             </div>
@@ -612,7 +590,7 @@
                 </div>
 
                 <div id="bfd-album-images-container" class="space-y-6 flex flex-col items-center">
-                    <!-- الصور يتم حقنها ديناميكياً مع اللوغو -->
+                    <!-- الصور يتم حقنها ديناميكياً -->
                 </div>
 
                 <div class="pt-6 border-t border-zinc-800 space-y-3">
@@ -646,7 +624,6 @@
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <div class="h-36 sm:h-48 bg-gradient-to-r from-[#0F172A] to-[#1E293B] relative watermarked-container">
                     <img id="vendor-cover-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover opacity-30">
-                    <img src="https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png" alt="Watermark" class="watermark-overlay" style="width: 70px; height: 70px;">
                 </div>
             </div>
         </section>
@@ -673,7 +650,6 @@
 
                 <div class="w-full rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-2">
                     <img id="detail-product-img" alt="Product Detail" class="w-full h-auto max-h-[85vh] object-contain">
-                    <img src="https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png" alt="Watermark" class="watermark-overlay" style="width: 65px; height: 65px;">
                 </div>
 
                 <div id="detail-thumbnails-container" class="flex items-center gap-3 overflow-x-auto pb-1"></div>
@@ -863,7 +839,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.5</span>
+                        <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.10</span>
                     </span>
                 </div>
             </div>
@@ -876,8 +852,6 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
-
-        const WATERMARK_LOGO_URL = 'https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png';
 
         // نظام اللغات المتكامل (AR, FR, EN)
         let currentLang = 'ar';
@@ -1056,7 +1030,7 @@
                 placeholder_city: "Entrez votre ville",
                 placeholder_address: "Entrez votre ville et adresse",
                 placeholder_review_name: "Votre nom et ville (ex: Karim de Kénitra)",
-                placeholder_review_comment: "Éكrivez votre avis sur nos services..."
+                placeholder_review_comment: "Écrivez votre avis sur nos services..."
             },
             en: {
                 exclusive_ad: "✨ Exclusive Offer for Visitors ✨",
@@ -1585,7 +1559,6 @@
                     <div class="product-item ${cardBgClass} rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer h-full" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                         ${unavailableBadge}
                         <div class="flex flex-col flex-grow">
-                            <!-- تم تكبير حجم صورة المنتوج في البطاقة (h-80 sm:h-96) -->
                             <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2 h-80 sm:h-96 flex-shrink-0">
                                 <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-contain store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
                             </div>
@@ -1593,7 +1566,6 @@
                             <div class="p-4 space-y-2.5 flex flex-col flex-grow justify-between">
                                 <div class="space-y-1.5">
                                     <span class="text-[11px] font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-0.5 rounded-md inline-block">${p.catLabel || 'متنوع'}</span>
-                                    <!-- تم تكبير حجم كتابة العناوين للمنتوجات قليلاً (text-lg sm:text-xl) -->
                                     <h3 class="font-extrabold ${titleColorClass} text-lg sm:text-xl leading-snug transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
                                     <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                 </div>
@@ -1755,7 +1727,6 @@
                     html += `
                         <div class="w-full bg-zinc-900 rounded-xl overflow-hidden border border-amber-500/40 p-2 flex items-center justify-center shadow-2xl watermarked-container">
                             <img src="${imgUrl}" alt="Album Image ${idx + 1}" class="w-full h-auto object-contain rounded-lg max-h-[85vh]">
-                            <img src="${WATERMARK_LOGO_URL}" alt="Watermark" class="watermark-overlay" style="width: 75px; height: 75px; bottom: 18px; left: 18px;">
                         </div>
                     `;
                 });
