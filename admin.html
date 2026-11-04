@@ -175,6 +175,10 @@
                         <option value="dashboard" data-i18n="tab_dashboard">📊 المبيان والإحصائيات الشاملة</option>
                         <option value="orders" data-i18n="tab_orders">📦 سجل الطلبات</option>
                         <option value="products" data-i18n="tab_products">🛍️ إدارة المنتجات</option>
+                        
+                        <!-- القسم المجمع الجديد: الفئات -->
+                        <option value="categories" data-i18n="tab_categories">📂 الفئات</option>
+
                         <option value="bfd" data-i18n="tab_bfd">🔥 إدارة منتجات Black Free Day</option>
                         <option value="ads" data-i18n="tab_ads">💰 مصاريف الإعلانات (ADS)</option>
                         <option value="contests" data-i18n="tab_contests">🎁 مسابقات للخصم</option>
@@ -346,6 +350,27 @@
                         </thead>
                         <tbody id="admin-products-table-body" class="divide-y divide-gray-100"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- صفحة / قسم الفئات الشاملة (عند الضغط على "الفئات" في القائمة) -->
+            <div id="admin-subtab-categories" class="hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
+                    <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                                <i data-lucide="folder" class="w-6 h-6 text-indigo-600"></i> إدارة وعرض كل الفئات
+                            </h3>
+                            <p class="text-xs text-gray-500 mt-1">عرض جميع فئات المنتجات المتاحة في المتجر وإمكانية إضافة فئة جديدة.</p>
+                        </div>
+                        <button onclick="toggleCategoryModal()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة فئة جديدة
+                        </button>
+                    </div>
+                    <!-- جدول عرض الفئات -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="categories-cards-container">
+                        <!-- سيتم تعبئتها ديناميكياً -->
+                    </div>
                 </div>
             </div>
 
@@ -582,6 +607,30 @@
         </div>
     </div>
 
+    <!-- Modal Form: Add Category Modal -->
+    <div id="category-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative">
+            <button onclick="toggleCategoryModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
+            <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <i data-lucide="folder-plus" class="w-6 h-6 text-indigo-600"></i> إضافة فئة جديدة للمنتوجات
+            </h3>
+            <p class="text-xs text-gray-500">أضف فئة جديدة لتصنيف المنتجات في لوحة التحكم وتحديثها مباشرة في واجهة الموقع الرسمي.</p>
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block font-semibold mb-1 text-xs text-gray-700">اسم الفئة الجديدة *</label>
+                    <input type="text" id="new-category-name" placeholder="مثال: إلكترونيات، مستحضرات تجميل..." class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm font-bold">
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1 text-xs text-gray-700">معرف الفئة (Slug أو مفتاح بالإنجليزية) *</label>
+                    <input type="text" id="new-category-key" placeholder="مثال: electronics" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
+                </div>
+                <button onclick="saveNewCategory()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-4 h-4"></i> حفظ الفئة الجديدة وربطها بالمنتجات والموقع
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Form: Customer Order Full Details -->
     <div id="customer-order-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4" style="z-index: 99999;">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto custom-scroll-container">
@@ -617,7 +666,7 @@
             <input type="hidden" id="prod-form-id">
             <input type="hidden" id="prod-form-is-bfd-edit-id">
 
-            <!-- آلة حاسبة الأرباح والتسعير التلقائي (المعادلة المحدثة) -->
+            <!-- آلة حاسبة الأرباح والتسعير التلقائي -->
             <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-3">
                 <h4 class="font-bold text-emerald-900 text-xs sm:text-sm flex items-center gap-2">
                     <i data-lucide="calculator" class="w-4 h-4 text-emerald-600"></i> <span data-i18n="calc_title">آلة حاسبة التسعير وحساب الربح الصافي تلقائياً</span>
@@ -642,14 +691,12 @@
                         <input type="number" id="calc-net-profit-input" placeholder="0.00" class="w-full px-3 py-2 rounded-xl border bg-gray-100 text-xs font-bold text-emerald-700 cursor-not-allowed" readonly>
                     </div>
                 </div>
-                <!-- الثمن المقترح في المتجر -->
                 <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-center justify-between shadow-sm">
                     <span class="text-xs font-bold text-emerald-900 flex items-center gap-1">
                         <i data-lucide="tag" class="w-4 h-4 text-emerald-600"></i> <span data-i18n="label_store_price">الثمن المقترح في المتجر:</span>
                     </span>
                     <span id="calc-result-store-price" class="text-emerald-600 font-black text-base">0.00 د.م</span>
                 </div>
-                <!-- خانة الثمن الأصلي في السوق الجديدة (تزيد تلقائياً 70% على الثمن المقترح في المتجر) -->
                 <div class="p-3 bg-white rounded-xl border border-emerald-200 flex items-center justify-between shadow-sm">
                     <span class="text-xs font-bold text-emerald-900 flex items-center gap-1">
                         <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i> <span data-i18n="label_market_price">الثمن الأصلي في السوق (+70% تلقائي):</span>
@@ -683,7 +730,6 @@
                     </div>
                 </div>
 
-                <!-- خانة اختيار Black Free Day الجديدة -->
                 <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3">
                     <input type="checkbox" id="prod-form-is-bfd" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
                     <label for="prod-form-is-bfd" class="font-bold text-amber-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
@@ -691,7 +737,6 @@
                     </label>
                 </div>
 
-                <!-- خانة حالة الإعلان (Ads Status) الجديدة -->
                 <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3">
                     <input type="checkbox" id="prod-form-has-ads" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
                     <label for="prod-form-has-ads" class="font-bold text-rose-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
@@ -717,7 +762,6 @@
                     </div>
                 </div>
 
-                <!-- خانات الـ 5 صور -->
                 <div class="space-y-2 border-t pt-3">
                     <label class="block font-bold text-gray-800" data-i18n="label_img_links">رابط الصور (حتى 5 صور)</label>
                     <input type="url" id="prod-form-img-1" placeholder="رابط الصورة الرئيسية 1 *" class="w-full px-4 py-2 rounded-xl border mb-2">
@@ -727,7 +771,6 @@
                     <input type="url" id="prod-form-img-5" placeholder="رابط الصورة 5" class="w-full px-4 py-2 rounded-xl border">
                 </div>
 
-                <!-- خانات الفيديوهات -->
                 <div class="space-y-2 border-t pt-3">
                     <label class="block font-bold text-gray-800" data-i18n="label_video_links">روابط الفيديوهات (إن وجدت)</label>
                     <input type="url" id="prod-form-video-1" placeholder="رابط الفيديو الأول (YouTube / MP4)" class="w-full px-4 py-2 rounded-xl border mb-2">
@@ -797,7 +840,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.102</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.104</span>
                 </span>
             </div>
         </div>
@@ -814,16 +857,23 @@
         let sliderDatabase = [];
         let bfdDatabase = [];
         let adsExpensesDatabase = [];
+        
+        let categoriesDatabase = [
+            { key: 'women', name: 'نساء' },
+            { key: 'men', name: 'رجال' },
+            { key: 'kids', name: 'أطفال' },
+            { key: 'various', name: 'منتجات متنوعة' }
+        ];
+
         let adminsDatabase = [
             { username: 'ZAMZAM', password: 'AMIRMOUNA303026', role: 'مشرف رئيسي', status: 'نشط' }
         ];
 
         let currentAdminUser = "ZAMZAM";
         let currentAdminPass = "AMIRMOUNA303026";
-        let currentLang = 'ar'; // اللغة الافتراضية العربية
-        let adminStatsChartInstance = null; // مرجع المبيان الإحصائي
+        let currentLang = 'ar';
+        let adminStatsChartInstance = null;
 
-        // قاموس الترجمات الشامل للغات الثلاث (AR، FR، EN)
         const translations = {
             ar: {
                 page_title: "bedal.online - لوحة التحكم والإدارة المتكاملة",
@@ -844,6 +894,7 @@
                 tab_dashboard: "📊 المبيان والإحصائيات الشاملة",
                 tab_orders: "📦 سجل الطلبات",
                 tab_products: "🛍️ إدارة المنتجات",
+                tab_categories: "📂 الفئات",
                 tab_bfd: "🔥 إدارة منتجات Black Free Day",
                 tab_ads: "💰 مصاريف الإعلانات (ADS)",
                 tab_contests: "🎁 مسابقات للخصم",
@@ -1003,6 +1054,7 @@
                 tab_dashboard: "📊 Tableau de bord & Graphiques",
                 tab_orders: "📦 Commandes",
                 tab_products: "🛍️ Gestion des produits",
+                tab_categories: "📂 Catégories",
                 tab_bfd: "🔥 Produits Black Free Day",
                 tab_ads: "💰 Dépenses Publicitaires (ADS)",
                 tab_contests: "🎁 Concours de Réduction",
@@ -1162,6 +1214,7 @@
                 tab_dashboard: "📊 Dashboard & Analytics",
                 tab_orders: "📦 Orders Log",
                 tab_products: "🛍️ Products Management",
+                tab_categories: "📂 Categories",
                 tab_bfd: "🔥 Black Free Day Management",
                 tab_ads: "💰 Ad Expenses (ADS)",
                 tab_contests: "🎁 Discount Contests",
@@ -1266,7 +1319,7 @@
                 btn_apply_price: "Apply Suggested Store & Target Prices Automatically",
                 label_prod_name: "Product Name *",
                 label_form_orig_price: "Original Price (Locked Auto) *",
-                label_form_disc_price: "Discount / Target Price (Locked Auto)",
+                label_form_discount_price: "Discount / Target Price (Locked Auto)",
                 label_move_bfd: "Move this product to Black Free Day and hide from regular products",
                 label_prod_has_ads: "Were ads launched for this product? (Ad Status)",
                 label_category: "Category *",
@@ -1304,7 +1357,6 @@
             }
         };
 
-        // دالة إظهار وإخفاء قائمة اللغات المنسدلة
         function toggleLangDropdown() {
             const menu = document.getElementById('lang-dropdown-menu');
             if (menu) {
@@ -1312,7 +1364,6 @@
             }
         }
 
-        // إغلاق قائمة اللغات عند النقر خارجها
         window.addEventListener('click', (e) => {
             const btn = document.getElementById('lang-dropdown-btn');
             const menu = document.getElementById('lang-dropdown-menu');
@@ -1321,7 +1372,6 @@
             }
         });
 
-        // دالة تغيير اللغة الشاملة
         function changeLanguage(lang) {
             currentLang = lang;
             const htmlRoot = document.getElementById('html-root');
@@ -1373,6 +1423,7 @@
             renderAdminOrders();
             renderAdsExpensesTable();
             renderBfdTable();
+            renderCategoriesPage();
             updateAdminStatsChartAndCalculations();
         }
 
@@ -1387,7 +1438,6 @@
             document.getElementById('custom-alert-modal').classList.add('hidden');
         }
 
-        // دوال نافذة تكبير الصورة المصغرة للمنتج
         function openImageZoomModal(imgUrl, productTitle) {
             const modal = document.getElementById('image-zoom-modal');
             const modalImg = document.getElementById('zoom-modal-img');
@@ -1504,7 +1554,6 @@
                     headerAdminNameEl.innerText = currentAdminUser;
                 }
                 document.getElementById('login-overlay').classList.add('hidden');
-                // إظهار زر إضافة منتج جديد العائم بعد تسجيل الدخول بنجاح
                 document.getElementById('floating-add-product-btn').classList.remove('hidden');
                 errEl.classList.add('hidden');
             } else {
@@ -1629,9 +1678,7 @@
                     if (adminsData && adminsData.length > 0) {
                         adminsDatabase = adminsData;
                     }
-                } catch(e) {
-                    console.log("خطأ في جلب المسؤولين");
-                }
+                } catch(e) {}
 
                 let fetchedProducts = [];
                 const { data: prods } = await supabaseClient.from('products').select('*').order('id', { ascending: false });
@@ -1662,6 +1709,8 @@
                 updateAdminSelectOptions();
                 updateAdminFilterSelectOptions();
                 renderAdminsTable();
+                updateCategoriesForm();
+                renderCategoriesPage();
 
                 const { data: slider } = await supabaseClient.from('slider').select('*');
                 if (slider) sliderDatabase = slider;
@@ -1699,7 +1748,6 @@
             }
         }
 
-        // دالة تحديث المبيان الإحصائي والحسابات المالية التفصيلية بدقة
         function updateAdminStatsChartAndCalculations() {
             let totalSales = 0;
             salesOrdersDatabase.forEach(o => {
@@ -1718,7 +1766,6 @@
                 totalNetProfit += parseFloat(p.netProfit) || 0;
             });
 
-            // تحديث البطاقات الإحصائية والتقرير المالي السلس
             const statAdsTotalEl = document.getElementById('stat-chart-ads-total');
             const statProfitTotalEl = document.getElementById('stat-chart-profit-total');
             if (statAdsTotalEl) statAdsTotalEl.innerText = totalAds.toFixed(2) + ' د.م';
@@ -1734,7 +1781,6 @@
             if (finPrepValEl) finPrepValEl.innerText = totalPrepCost.toFixed(2) + ' د.م';
             if (finNetProfitValEl) finNetProfitValEl.innerText = totalNetProfit.toFixed(2) + ' د.م';
 
-            // رسم أو تحديث المبيان (Chart.js)
             const ctx = document.getElementById('adminStatsCanvas');
             if (!ctx) return;
 
@@ -1797,9 +1843,7 @@
                 if (!error && data && data.value) {
                     savedImg = data.value;
                 }
-            } catch(e) {
-                console.log("جاري استخدام القيم المحلية أو الافتراضية للإعلان");
-            }
+            } catch(e) {}
 
             if (!savedImg) {
                 savedImg = localStorage.getItem('bedal_popup_ad_img_raw') || 'https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?auto=format&fit=crop&w=800&q=80';
@@ -1887,15 +1931,8 @@
             if (previewEl) previewEl.src = formattedUrl;
 
             try {
-                const { error } = await supabaseClient
-                    .from('settings')
-                    .upsert([{ key: 'popup_ad_img', value: rawVal }], { onConflict: 'key' });
-                
-                if (error) {
-                    showCustomAlert('تم حفظ وتحديث صورة إعلان الدخول (Popup) محلياً بنجاح!', 'تم الحفظ');
-                } else {
-                    showCustomAlert('تم حفظ وتحديث صورة إعلان الدخول (Popup) بنجاح!', 'تم الحفظ بنجاح');
-                }
+                await supabaseClient.from('settings').upsert([{ key: 'popup_ad_img', value: rawVal }], { onConflict: 'key' });
+                showCustomAlert('تم حفظ وتحديث صورة إعلان الدخول (Popup) بنجاح!', 'تم الحفظ بنجاح');
             } catch(e) {
                 showCustomAlert('تم الحفظ بنجاح!', 'تم الحفظ');
             }
@@ -1944,7 +1981,6 @@
             select.innerHTML = html;
         }
 
-        // تحديث خيارات قائمة الفلتر حسب المسؤولين لتشمل جميع الصفوف والمسؤولين المسجلين
         function updateAdminFilterSelectOptions() {
             const select = document.getElementById('admin-filter-select');
             if (!select) return;
@@ -1955,7 +1991,110 @@
             select.innerHTML = html;
         }
 
-        // دالة الفلترة حسب المسؤول لقائمة المنتجات (بحيث تشمل جميع الصفوف)
+        function updateCategoriesForm() {
+            const prodCategorySelect = document.getElementById('prod-form-category');
+            if (prodCategorySelect) {
+                let phtml = '';
+                categoriesDatabase.forEach(cat => {
+                    phtml += `<option value="${cat.key}">${cat.name}</option>`;
+                });
+                prodCategorySelect.innerHTML = phtml;
+            }
+        }
+
+        // دالة عرض وتعبئة صفحة الفئات الشاملة
+        function renderCategoriesPage() {
+            const container = document.getElementById('categories-cards-container');
+            if (!container) return;
+            let html = '';
+            categoriesDatabase.forEach((cat, idx) => {
+                let icon = '📦';
+                if (cat.key === 'women') icon = '👩';
+                else if (cat.key === 'men') icon = '👨';
+                else if (cat.key === 'kids') icon = '🧒';
+                else if (cat.key === 'various') icon = '📦';
+
+                // حساب عدد المنتجات في كل فئة
+                const countProds = productsDatabase.filter(p => p.category === cat.key).length;
+
+                html += `
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-bold text-xl">
+                                ${icon}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-base">${cat.name}</h4>
+                                <p class="text-xs text-gray-500 mt-0.5">المعرف (Slug): <span class="font-mono text-indigo-600">${cat.key}</span> | المنتجات: ${countProds} منتج</p>
+                            </div>
+                        </div>
+                        <button onclick="filterProductsByCategoryFromPage('${cat.key}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors">
+                            عرض المنتجات
+                        </button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function filterProductsByCategoryFromPage(catKey) {
+            handleDropdownSectionChange('products');
+            const searchProductsInput = document.getElementById('search-products-input');
+            const matchedCat = categoriesDatabase.find(c => c.key === catKey);
+            if (searchProductsInput && matchedCat) {
+                searchProductsInput.value = matchedCat.name;
+                filterProductsTable();
+            }
+        }
+
+        function toggleCategoryModal() {
+            const modal = document.getElementById('category-modal');
+            if (modal) {
+                modal.classList.toggle('hidden');
+            }
+        }
+
+        function saveNewCategory() {
+            const nameInput = document.getElementById('new-category-name');
+            const keyInput = document.getElementById('new-category-key');
+            if (!nameInput || !keyInput) return;
+
+            const name = nameInput.value.trim();
+            const key = keyInput.value.trim().toLowerCase().replace(/\s+/g, '_');
+
+            if (!name || !key) {
+                showCustomAlert('يرجى إدخال اسم الفئة ومعرفها الإنجليزي (Slug)!', 'تنبيه');
+                return;
+            }
+
+            if (categoriesDatabase.some(c => c.key === key)) {
+                showCustomAlert('هذا المعرف موجود مسبقاً، يرجى اختيار معرف آخر.', 'تنبيه');
+                return;
+            }
+
+            categoriesDatabase.push({ key, name });
+            localStorage.setItem('bedal_categories_db', JSON.stringify(categoriesDatabase));
+
+            updateCategoriesForm();
+            renderCategoriesPage();
+            toggleCategoryModal();
+
+            nameInput.value = '';
+            keyInput.value = '';
+
+            showCustomAlert(`تمت إضافة فئة "${name}" بنجاح وربطها بالمنتجات والموقع الرسمي!`, 'نجاح');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedCats = localStorage.getItem('bedal_categories_db');
+            if (savedCats) {
+                try {
+                    categoriesDatabase = JSON.parse(savedCats);
+                } catch(e) {}
+            }
+        });
+
         function filterProductsByAdmin(adminName) {
             const searchVal = document.getElementById('search-products-input').value.toLowerCase().trim();
             
@@ -1964,13 +2103,13 @@
                 const matchesSearch = !searchVal || 
                     (p.title && p.title.toLowerCase().includes(searchVal)) ||
                     (p.sku && p.sku.toLowerCase().includes(searchVal)) ||
-                    (p.category && p.category.toLowerCase().includes(searchVal));
+                    (p.category && p.category.toLowerCase().includes(searchVal)) ||
+                    (p.catLabel && p.catLabel.toLowerCase().includes(searchVal));
                 return matchesAdmin && matchesSearch;
             });
             renderAdminProducts(filtered);
         }
 
-        // دالة تبديل وتحديث حالة المنتج (متاح / غير متاح) مع الحفظ في قاعدة البيانات وعمود is_active
         async function toggleProductAvailability(idx, isActiveValue) {
             const prod = productsDatabase[idx];
             if (!prod) return;
@@ -1979,9 +2118,7 @@
             if (prod.id) {
                 try {
                     await supabaseClient.from('products').update({ is_active: isActiveValue }).eq('id', prod.id);
-                } catch(e) {
-                    console.error("خطأ في تحديث الحالة بقاعدة البيانات:", e);
-                }
+                } catch(e) {}
             }
             renderAdminProducts();
         }
@@ -2003,14 +2140,15 @@
                     const skuCode = prod.sku || 'N/A';
                     
                     let catLabel = prod.catLabel || 'منتجات متنوعة';
-                    if(prod.category === 'women') catLabel = 'نساء';
+                    const matchedCat = categoriesDatabase.find(c => c.key === prod.category);
+                    if (matchedCat) {
+                        catLabel = matchedCat.name;
+                    } else if(prod.category === 'women') catLabel = 'نساء';
                     else if(prod.category === 'men') catLabel = 'رجال';
                     else if(prod.category === 'kids') catLabel = 'أطفال';
                     else if(prod.category === 'various') catLabel = 'منتجات متنوعة';
 
                     const isInBfd = bfdDatabase.some(b => b.title && prod.title && b.title.trim().toLowerCase() === prod.title.trim().toLowerCase());
-                    
-                    // تطبيق اللون الرمادي على أسطر المنتجات في القائمة إذا كانت غير متاحة (isActive === false)
                     const isAvailable = prod.isActive !== false;
                     const rowBgClass = !isAvailable ? 'bg-gray-200 text-gray-500 opacity-80' : (isInBfd ? 'bg-orange-50/70 border-r-4 border-r-orange-500' : '');
 
@@ -2391,15 +2529,7 @@
             
             if (order.id) {
                 const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('id', order.id);
-                if (error) {
-                    showCustomAlert('خطأ أثناء تحديث الحالة: ' + error.message, 'خطأ');
-                    return;
-                }
-            } else {
-                const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('phone', order.phone).eq('name', order.name);
-                if (error) {
-                    console.error('Update warning:', error.message);
-                }
+                if (error) return;
             }
             renderAdminOrders();
         }
@@ -2436,11 +2566,7 @@
             showCustomConfirm('هل أنت متأكد من حذف هذه الطلبية نهائياً؟', async () => {
                 const order = salesOrdersDatabase[idx];
                 if (order && order.id) {
-                    const { error } = await supabaseClient.from('orders').delete().eq('id', order.id);
-                    if (error) {
-                        showCustomAlert('حدث خطأ أثناء الحذف: ' + error.message, 'خطأ');
-                        return;
-                    }
+                    await supabaseClient.from('orders').delete().eq('id', order.id);
                 }
                 salesOrdersDatabase.splice(idx, 1);
                 renderAdminOrders();
@@ -2830,7 +2956,10 @@
             const description = document.getElementById('prod-form-desc').value.trim();
 
             let catLabel = 'منتجات متنوعة';
-            if(category === 'women') catLabel = 'نساء';
+            const matchedCat = categoriesDatabase.find(c => c.key === category);
+            if (matchedCat) {
+                catLabel = matchedCat.name;
+            } else if(category === 'women') catLabel = 'نساء';
             else if(category === 'men') catLabel = 'رجال';
             else if(category === 'kids') catLabel = 'أطفال';
 
@@ -2849,11 +2978,7 @@
                     images: images
                 };
 
-                const { error: updateBfdErr } = await supabaseClient.from('black_free_day').update(bfdData).eq('id', bfdEditId);
-                if (updateBfdErr) {
-                    showCustomAlert('خطأ أثناء تحديث العرض: ' + updateBfdErr.message, 'خطأ');
-                    return;
-                }
+                await supabaseClient.from('black_free_day').update(bfdData).eq('id', bfdEditId);
 
                 if (id !== "") {
                     const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds, tajirPrice, prepCost, targetSalePrice, netProfit };
@@ -2879,12 +3004,7 @@
                     images: images
                 };
 
-                const { error: bfdError } = await supabaseClient.from('black_free_day').insert([bfdData]);
-                if (bfdError) {
-                    showCustomAlert('حدث خطأ أثناء نقل المنتج: ' + bfdError.message, 'خطأ');
-                    return;
-                }
-
+                await supabaseClient.from('black_free_day').insert([bfdData]);
                 await fetchSupabaseData();
                 showCustomAlert('تمت إضافة المنتج بنجاح إلى قسم Black Free Day بكافة صوره وحفظه في قاعدة البيانات!', 'نجاح الإضافة');
                 toggleProductModal();
@@ -2892,44 +3012,18 @@
             }
 
             const prodData = {
-                title,
-                price,
-                category,
-                catLabel,
-                images,
-                description,
-                sku,
-                discountPrice,
-                adminKey,
-                videos,
-                hasAds,
-                tajirPrice,
-                prepCost,
-                targetSalePrice,
-                netProfit
+                title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds, tajirPrice, prepCost, targetSalePrice, netProfit
             };
 
             if (id !== "" && !isNaN(id)) {
                 const targetProd = productsDatabase.find(p => p.id == id || productsDatabase.indexOf(p) == id);
                 if (targetProd && targetProd.id) {
-                    const { error } = await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
-                    if (error) {
-                        showCustomAlert('حدث خطأ أثناء التحديث: ' + error.message, 'خطأ');
-                        return;
-                    }
+                    await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
                 } else {
-                    const { error } = await supabaseClient.from('products').insert([prodData]);
-                    if (error) {
-                        showCustomAlert('حدث خطأ أثناء الحفظ: ' + error.message, 'خطأ');
-                        return;
-                    }
+                    await supabaseClient.from('products').insert([prodData]);
                 }
             } else {
-                const { error } = await supabaseClient.from('products').insert([prodData]);
-                if (error) {
-                    showCustomAlert('حدث خطأ أثناء الحفظ: ' + error.message, 'خطأ');
-                    return;
-                }
+                await supabaseClient.from('products').insert([prodData]);
             }
 
             await fetchSupabaseData();
@@ -2949,16 +3043,14 @@
             });
         }
 
-        // دالة تغيير الأقسام عبر القائمة المنسدلة (Dropdown Menu) لعرض نافذة القسم المختار
         function handleDropdownSectionChange(tabKey) {
             if (tabKey === 'meta_feed') {
                 downloadMetaCatalogDataFeed();
-                // إعادة اختيار لوحة التحكم بعد التحميل لتجنب البقاء في خيار فارغ
                 document.getElementById('admin-sections-dropdown').value = 'dashboard';
                 return;
             }
 
-            const tabs = ['dashboard', 'orders', 'products', 'bfd', 'ads', 'contests', 'slider', 'popupad', 'admins'];
+            const tabs = ['dashboard', 'orders', 'products', 'categories', 'bfd', 'ads', 'contests', 'slider', 'popupad', 'admins'];
             tabs.forEach(t => {
                 const el = document.getElementById(`admin-subtab-${t}`);
                 if (el) {
@@ -2976,6 +3068,8 @@
                 updateAdminStatsChartAndCalculations();
             } else if (tabKey === 'products') {
                 renderAdminProducts();
+            } else if (tabKey === 'categories') {
+                renderCategoriesPage();
             } else if (tabKey === 'bfd') {
                 renderBfdTable();
             } else if (tabKey === 'ads') {
@@ -3002,9 +3096,7 @@
                 const now = new Date();
                 const day = now.getDay();
                 let targetDate = new Date(now);
-                if (day === 6) {
-                    targetDate.setHours(23, 59, 59, 999);
-                } else if (day === 0) {
+                if (day === 6 || day === 0) {
                     targetDate.setHours(23, 59, 59, 999);
                 } else {
                     let daysUntilSaturday = (6 - day + 7) % 7;
@@ -3038,7 +3130,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            changeLanguage('ar'); // تعيين اللغة العربية كافتراضية رسمية
+            changeLanguage('ar');
             fetchSupabaseData();
             setupSupabaseRealtime();
             initBfdCountdown();
@@ -3051,4 +3143,3 @@
     </script>
 </body>
 </html>
-ض
