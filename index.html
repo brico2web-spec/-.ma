@@ -670,8 +670,9 @@
                     <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <div class="relative w-full rounded-xl overflow-hidden bg-gray-100 h-72 sm:h-96 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container">
-                    <img id="detail-product-img" alt="Product Detail" class="w-full h-full object-cover">
+                <!-- تم تعديل العرض ليكون بالارتفاع التلقائي والاحتفاظ بالحجم الأصلي الكامل دون اقتصار -->
+                <div class="w-full rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-2">
+                    <img id="detail-product-img" alt="Product Detail" class="w-full h-auto max-h-[85vh] object-contain">
                     <img src="https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png" alt="Watermark" class="watermark-overlay" style="width: 65px; height: 65px;">
                 </div>
 
@@ -862,7 +863,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.8.9</span>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.1</span>
                     </span>
                 </div>
             </div>
@@ -965,7 +966,7 @@
                 version: "الإصدار:",
                 placeholder_name: "أدخل اسمك الكامل",
                 placeholder_city: "أدخل مدينتك",
-                placeholder_address: "أدخل مدينتك وعنوان الاستلام",
+                placeholder_address: "أدخل مدينتك وعنوان الاستلاستلام",
                 placeholder_review_name: "اسمك الكريم والمدينة (مثال: كريم من القنيطرة)",
                 placeholder_review_comment: "اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..."
             },
@@ -1331,6 +1332,15 @@
             if (!pathOrUrl || typeof pathOrUrl !== 'string') return '';
             let clean = pathOrUrl.trim();
             if (clean === '' || clean.toLowerCase() === 'null' || clean === '[]') return '';
+            
+            // تصحيح روابط Dropbox تلقائياً لتتم قراءتها بنجاح في البطاقات
+            if (clean.includes('dropbox.com')) {
+                clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '').replace('&dl=0', '');
+                if (!clean.includes('dl=1') && !clean.includes('raw=1')) {
+                    clean += (clean.includes('?') ? '&' : '?') + 'raw=1';
+                }
+            }
+
             if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('data:image/') || clean.startsWith('/')) return clean;
             return `${SUPABASE_URL}/storage/v1/object/public/products/${clean}`;
         }
@@ -1384,7 +1394,6 @@
                         let originalPrice = parseFloat(p.price || 0);
                         let finalDiscPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
                         
-                        // فحص دقيق وشامل لكافة احتمالات أعمدة الحالة والتوفر في قاعدة البيانات (مثل is_active أو is_available أو status)
                         let isAvailable = true;
                         const rawStatus = p.is_active !== undefined ? p.is_active : (p.is_available !== undefined ? p.is_available : (p.status !== undefined ? p.status : (p.available !== undefined ? p.available : (p.active !== undefined ? p.active : true))));
                         
@@ -1577,8 +1586,9 @@
                     <div class="product-item ${cardBgClass} rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                         ${unavailableBadge}
                         <div>
-                            <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
-                                <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
+                            <!-- تم تعديل العرض لكي تظهر الصورة كاملة بأبعادها الأصلية ودون قص -->
+                            <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2">
+                                <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-auto object-contain store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
                             </div>
                             ${storeThumbnailsHtml}
                             <div class="p-5 space-y-3">
@@ -1961,8 +1971,8 @@
                     html += `
                         <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300 cursor-pointer" onclick="openBfdProductModal('${p.id}')">
                             <div>
-                                <div class="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center">
-                                    <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-cover bfd-card-img">
+                                <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2">
+                                    <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-auto object-contain bfd-card-img">
                                 </div>
                                 ${bfdThumbnailsHtml}
                                 <div class="p-5 space-y-3">
@@ -2039,7 +2049,6 @@
             document.getElementById('detail-cust-phone').value = '';
             document.getElementById('detail-cust-city').value = '';
 
-            // تطبيق إلغاء وإخفاء أزرار وخانات الطلب إذا كان المنتج غير متاح في صفحة التفاصيل
             const orderFormContainer = document.getElementById('order-form-container');
             const bottomOrderBtnBox = document.getElementById('detail-bottom-order-btn-box');
             const unavailableBadge = document.getElementById('detail-unavailable-badge');
