@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="html-root">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-main-title">bedal.online - مستحضرات التجميل والعناية بالصحة</title>
+    
+    <!-- Open Graph Meta Tags for Social & WhatsApp Link Preview -->
+    <meta property="og:title" id="meta-og-title" content="bedal.online - مستحضرات التجميل والعناية بالصحة">
+    <meta property="og:description" id="meta-og-desc" content="تصفح أحدث مستحضرات التجميل ومنتجات العناية بالصحة بأفضل الأسعار مع الدفع عند الاستلام.">
+    <meta property="og:image" id="meta-og-image" content="https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=v6qhfqa0&dl=1">
+    <meta property="og:url" id="meta-og-url" content="https://bedal.online/produite.html">
+    <meta property="og:type" content="website">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FDPGZ9SXD3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-FDPGZ9SXD3');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '1122334455667788');
+      fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1122334455667788&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Google Fonts: Readex Pro & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Readex+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Readex Pro', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #FAF8F5;
+            color: #2D3748;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        .brand-font {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 0.5px;
+            font-weight: 900;
+        }
+        @keyframes cartFlash {
+            0% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(52, 211, 153, 0.4); }
+            50% { transform: scale(1.25) rotate(-8deg); box-shadow: 0 0 30px 10px rgba(52, 211, 153, 0.8), 0 0 45px 15px rgba(16, 185, 129, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(52, 211, 153, 0.4); }
+        }
+        .cart-bounce-active {
+            animation: cartFlash 0.6s ease-in-out infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee 60s linear infinite;
+        }
+        .animate-marquee-slow {
+            display: flex;
+            width: max-content;
+            animation: marquee 200s linear infinite;
+        }
+        @keyframes marqueeReviews {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
+        }
+        .animate-marquee-reviews {
+            display: flex;
+            width: max-content;
+            animation: marqueeReviews 45s linear infinite;
+        }
+        #detail-product-img, .bfd-card-img, .store-card-img {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .watermarked-container {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .fade-review {
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+        }
+        @keyframes cyberGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(52, 211, 153, 0.6), 0 0 20px rgba(16, 185, 129, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(52, 211, 153, 0.95), 0 0 35px rgba(16, 185, 129, 0.8), 0 0 45px rgba(110, 231, 183, 0.6);
+                transform: scale(1.03);
+            }
+        }
+        .black-free-day-flash {
+            animation: cyberGlow 1.8s infinite ease-in-out;
+        }
+        @keyframes bfdCardGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(52, 211, 153, 0.5), 0 0 40px rgba(16, 185, 129, 0.3);
+                border-color: #34D399;
+            }
+            50% {
+                box-shadow: 0 0 35px rgba(52, 211, 153, 0.9), 0 0 60px rgba(16, 185, 129, 0.6);
+                border-color: #6EE7B7;
+            }
+        }
+        .bfd-glowing-card {
+            animation: bfdCardGlow 2s infinite ease-in-out;
+        }
+        @keyframes pricePulseMotion {
+            0%, 100% { transform: scale(1); color: #34D399; }
+            50% { transform: scale(1.12); color: #059669; }
+        }
+        .bfd-moving-price {
+            display: inline-block;
+            animation: pricePulseMotion 1.2s infinite ease-in-out;
+        }
+        @keyframes btnPulseAttention {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(52, 211, 153, 0.4); }
+            50% { transform: scale(1.04); box-shadow: 0 0 25px rgba(52, 211, 153, 0.8); }
+        }
+        .bfd-attention-btn {
+            animation: btnPulseAttention 1.5s infinite ease-in-out;
+        }
+        @keyframes whiteSoftGlow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.8);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 35px rgba(255, 255, 255, 0.5);
+                border-color: #ffffff;
+            }
+        }
+        .white-glow-btn {
+            animation: whiteSoftGlow 2s infinite ease-in-out;
+        }
+        @keyframes softGreenGlowPagination {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(52, 211, 153, 0.3), 0 0 18px rgba(52, 211, 153, 0.1);
+                border-color: rgba(52, 211, 153, 0.35);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(52, 211, 153, 0.65), 0 0 30px rgba(110, 231, 183, 0.35);
+                border-color: rgba(110, 231, 183, 0.75);
+            }
+        }
+        .pagination-green-glow {
+            animation: softGreenGlowPagination 3s infinite ease-in-out;
+            border-radius: 8px;
+            background: rgba(52, 211, 153, 0.03);
+        }
+
+        button, .custom-btn {
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        button:hover {
+            transform: translateY(-1.5px);
+        }
+    </style>
+</head>
+<body class="bg-[#FAF8F5] text-[#2D3748] flex flex-col min-h-screen relative">
+
+    <!-- نافذة إعلان الموقع الأولى (9:16) -->
+    <div id="welcome-ad-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 transition-opacity duration-300">
+        <div class="relative w-full max-w-sm aspect-[9/16] bg-[#047857] rounded-2xl shadow-2xl border-2 border-[#34D399] overflow-hidden flex flex-col justify-between p-3">
+            <div class="absolute inset-0 w-full h-full flex items-center justify-center">
+                <img id="welcome-ad-img" src="https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png" alt="إعلان الموقع" class="w-full h-full object-fill opacity-95">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#047857] via-transparent to-black/30 pointer-events-none"></div>
+            </div>
+
+            <div class="relative z-10 text-center pt-2">
+                <span class="bg-[#34D399] text-[#064E3B] text-xs sm:text-sm font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider" data-i18n="exclusive_ad">
+                    ✨ إعلان حصري لزوارنا ✨
+                </span>
+            </div>
+
+            <div class="relative z-10 pb-2 flex justify-center">
+                <button onclick="closeWelcomeAdModal()" class="w-11/12 bg-white/25 hover:bg-white/40 text-white font-black py-2.5 px-4 rounded-xl border-2 border-white white-glow-btn backdrop-blur-md transition-all flex items-center justify-center gap-2 text-sm sm:text-base shadow-xl cursor-pointer">
+                    <i data-lucide="x-circle" class="w-5 h-5 text-white"></i>
+                    <span data-i18n="close_ad">إغلاق الإعلان ومتابعة التصفح</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Side Cart Button -->
+    <div id="floating-cart-btn" onclick="toggleCartDrawer()" class="fixed bottom-6 left-6 z-30 cursor-pointer bg-[#059669] hover:bg-[#047857] text-white p-4 rounded-full shadow-2xl border-2 border-white flex items-center justify-center transition-all duration-300 hover:scale-110 group">
+        <i data-lucide="shopping-cart" class="w-7 h-7"></i>
+        <span id="cart-count-badge" class="absolute -top-1 -right-1 bg-[#34D399] text-[#064E3B] text-xs font-black rounded-full w-6 h-6 flex items-center justify-center border-2 border-white shadow-sm">
+            0
+        </span>
+    </div>
+
+    <!-- Right Side Menu Drawer Modal -->
+    <div id="categories-drawer" class="fixed inset-0 z-50 bg-[#047857]/50 backdrop-blur-sm hidden flex justify-start transition-opacity">
+        <div class="bg-white w-full max-w-[270px] h-full shadow-2xl flex flex-col justify-between p-5 overflow-y-auto transform transition-transform">
+            <div>
+                <div class="flex items-center justify-between border-b pb-3 mb-4">
+                    <h2 class="text-base font-black text-[#2D3748] flex items-center gap-2">
+                        <i data-lucide="layout-grid" class="w-5 h-5 text-[#34D399]"></i>
+                        <span data-i18n="store_categories">أقسام المتجر</span>
+                    </h2>
+                    <button onclick="toggleCategoriesDrawer()" class="p-2 text-gray-500 hover:text-gray-800 rounded-lg">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-2.5 mb-4 pb-4 border-b border-gray-100">
+                    <a href="index.html" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-[#2D3748] font-extrabold text-sm transition-all shadow-sm">
+                        <i data-lucide="home" class="w-5 h-5 text-[#34D399]"></i>
+                        <span data-i18n="home">الرئيسية (index)</span>
+                    </a>
+                    <button onclick="toggleCategoriesDrawer(); toggleCartDrawer();" class="w-full flex items-center justify-between p-3 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-[#2D3748] font-extrabold text-sm transition-all shadow-sm">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="shopping-bag" class="w-5 h-5 text-[#34D399]"></i>
+                            <span data-i18n="cart">السلة</span>
+                        </div>
+                        <span id="drawer-cart-count-badge" class="bg-[#34D399] text-[#064E3B] text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm">0</span>
+                    </button>
+                </div>
+
+                <div class="space-y-2.5">
+                    <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="layers" class="w-5 h-5 text-[#34D399]"></i>
+                        <span data-i18n="all">الكل</span>
+                    </button>
+                    <button onclick="filterCategory('cosmetics'); toggleCategoriesDrawer();" id="cat-drawer-btn-cosmetics" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-[#34D399]"></i>
+                        <span data-i18n="cosmetics">مستحضرات التجميل</span>
+                    </button>
+                    <button onclick="filterCategory('health_care'); toggleCategoriesDrawer();" id="cat-drawer-btn-health_care" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="activity" class="w-5 h-5 text-[#34D399]"></i>
+                        <span data-i18n="health_care">العناية بالصحة</span>
+                    </button>
+                    <button onclick="filterCategory('skincare'); toggleCategoriesDrawer();" id="cat-drawer-btn-skincare" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="heart" class="w-5 h-5 text-[#34D399]"></i>
+                        <span data-i18n="skincare">العناية بالبشرة والشعر</span>
+                    </button>
+                    <button onclick="filterCategory('organic'); toggleCategoriesDrawer();" id="cat-drawer-btn-organic" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="leaf" class="w-5 h-5 text-[#34D399]"></i>
+                        <span data-i18n="organic">منتجات طبيعية</span>
+                    </button>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-center gap-4">
+                    <a href="https://www.facebook.com/BedalOnlineShop" target="_blank" aria-label="Facebook" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <img src="https://www.dropbox.com/scl/fi/b64dz8sct76lw3gnxje0d/Meta_AI_4_facebook_1024_20261105_174053.png?rlkey=a7x1q84s4362nyuxi0byfy3cr&st=6r9051le&raw=1" alt="Facebook" class="w-7 h-7 object-contain">
+                    </a>
+                    <a href="https://www.instagram.com/bedal_online_shop/" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <img src="https://www.dropbox.com/scl/fi/86073utombw0040esp03e/Meta_AI_4_instagram_1024_20261105_174050.png?rlkey=e3vkkv6v6gupblla1dp0ps4xo&st=3328469h&raw=1" alt="Instagram" class="w-7 h-7 object-contain">
+                    </a>
+                    <a href="https://www.tiktok.com/@bedalonlinestor" target="_blank" aria-label="TikTok" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <img src="https://www.dropbox.com/scl/fi/6880k7lxqnwv4se4z27yf/Meta_AI_4_music_1024_20261105_174055.png?rlkey=jzx0evote70f6mjfwe9im6iv4&st=r6tc9dc3&raw=1" alt="TikTok" class="w-7 h-7 object-contain">
+                    </a>
+                    <a href="https://wa.me/212601749553" target="_blank" aria-label="WhatsApp" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <img src="https://www.dropbox.com/scl/fi/wzhlpurlotgdbcm5mvqzb/Meta_AI_4_whatsapp_1024_20261105_174047.png?rlkey=q6xfeu9ea7keb7usskbtbsd1d&st=gtqo09yo&raw=1" alt="WhatsApp" class="w-7 h-7 object-contain">
+                    </a>
+                </div>
+            </div>
+            <div class="border-t pt-3 text-center">
+                <span class="text-xs text-gray-500 font-bold">bedal.online - مستحضرات التجميل</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cart Drawer Modal -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 bg-[#047857]/50 backdrop-blur-sm hidden flex justify-end transition-opacity">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto transform transition-transform">
+            <div>
+                <div class="flex items-center justify-between border-b pb-4 mb-4">
+                    <h2 class="text-xl font-extrabold text-[#2D3748] flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-6 h-6 text-[#34D399]"></i>
+                        <span data-i18n="shopping_cart">سلة التسوق</span>
+                    </h2>
+                    <button onclick="toggleCartDrawer()" class="p-2 text-gray-500 hover:text-gray-800 rounded-lg">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div id="cart-items-container" class="space-y-4">
+                    <p id="empty-cart-msg" class="text-center text-gray-500 py-10 text-base font-semibold" data-i18n="empty_cart">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>
+                </div>
+            </div>
+            <div class="border-t pt-4 space-y-4">
+                <div class="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl border border-emerald-200 space-y-2">
+                    <div class="flex justify-between items-center text-sm text-gray-700 font-bold">
+                        <span data-i18n="total_saving">إجمالي التوفير (الربح من الخصم):</span>
+                        <span id="cart-total-saving" class="text-[#059669] font-extrabold text-base">0.00 د.م</span>
+                    </div>
+                    <div class="flex justify-between items-center text-base font-extrabold">
+                        <span data-i18n="total_after_disc">المجموع الإجمالي بعد الخصم:</span>
+                        <span class="text-[#2D3748] font-black text-2xl"><span id="cart-total-price">0.00</span> د.م</span>
+                    </div>
+                </div>
+                <button onclick="openCheckoutModal()" class="w-full bg-[#059669] text-white py-3.5 rounded-xl font-black text-base hover:bg-[#047857] transition-colors flex items-center justify-center gap-2 shadow-md">
+                    <i data-lucide="check-circle" class="w-6 h-6"></i>
+                    <span data-i18n="confirm_order_btn">تأكيد وإتمام الطلب</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Neutral Checkout Invoice & Order Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-[#047857]/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b pb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-6 h-6 text-[#34D399]"></i>
+                    <h2 class="text-xl font-black text-[#2D3748]" data-i18n="invoice_title">فاتورة الطلب وإتمام المعلومات</h2>
+                </div>
+                <button onclick="closeCheckoutModal()" class="p-2 text-gray-500 hover:text-gray-800 rounded-lg">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="bg-[#FAF8F5] p-4 rounded-xl border border-gray-200 space-y-3 text-base">
+                <div class="flex justify-between font-bold text-gray-800 border-b pb-2">
+                    <span data-i18n="items_count">عدد المنتجات في السلة:</span>
+                    <span id="invoice-items-count" class="text-[#059669] font-black">0 منتج</span>
+                </div>
+                <div class="flex justify-between font-bold text-gray-800">
+                    <span data-i18n="original_total">إجمالي المبلغ الأصلي:</span>
+                    <span id="invoice-old-total" class="line-through text-red-500 font-bold">0.00 د.م</span>
+                </div>
+                <div class="flex justify-between font-bold text-[#059669]">
+                    <span data-i18n="saving_total">إجمالي ربحك من الخصم:</span>
+                    <span id="invoice-saving-total" class="font-extrabold">0.00 د.م</span>
+                </div>
+                <div class="flex justify-between font-black text-lg text-[#2D3748] pt-2 border-t">
+                    <span data-i18n="final_to_pay">المبلغ المطلوب دفعه:</span>
+                    <span id="invoice-final-total" class="text-[#059669] text-xl font-black">0.00 د.م</span>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <h3 class="font-extrabold text-[#2D3748] text-base flex items-center gap-2">
+                    <i data-lucide="user" class="w-5 h-5 text-[#34D399]"></i>
+                    <span data-i18n="delivery_info">معلومات التوصيل الخاصة بك</span>
+                </h3>
+                <div>
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="full_name">الاسم الكامل *</label>
+                    <input type="text" id="invoice-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="phone_number">رقم الهاتف *</label>
+                    <input type="tel" id="invoice-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white text-right" dir="ltr">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="address_city">العنوان الكامل والمدينة *</label>
+                    <input type="text" id="invoice-cust-address" data-i18n-placeholder="placeholder_address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white">
+                </div>
+                <button onclick="submitInvoiceOrder()" class="w-full bg-[#059669] text-white font-black py-3.5 px-4 rounded-xl hover:bg-[#047857] transition-colors flex items-center justify-center gap-2 shadow-md text-base">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                    <span data-i18n="send_order_admin">إرسال الطلب إلى الإدارة</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Popup Modal -->
+    <div id="order-success-modal" class="fixed inset-0 z-50 bg-[#047857]/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 text-center">
+            <div class="w-20 h-20 bg-emerald-100 text-[#059669] rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <i data-lucide="check-circle-2" class="w-12 h-12"></i>
+            </div>
+            <div class="space-y-3">
+                <h3 class="text-2xl font-black text-[#2D3748]" data-i18n="order_success_title">تم إرسال طلبك بنجاح!</h3>
+                <p class="text-gray-700 text-base font-semibold leading-relaxed" data-i18n="order_success_desc">في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.</p>
+            </div>
+            <button onclick="closeSuccessModal()" class="w-full bg-[#059669] hover:bg-[#047857] text-white font-black py-3.5 px-4 rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 text-base">
+                <i data-lucide="x-circle" class="w-5 h-5"></i> <span data-i18n="close">إغلاق</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- WhatsApp Direct Order Modal -->
+    <div id="whatsapp-modal" class="fixed inset-0 z-50 bg-[#047857]/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6">
+            <div class="flex items-center justify-between border-b pb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="message-circle" class="w-6 h-6 text-[#34D399]"></i>
+                    <h2 class="text-xl font-black text-[#2D3748]" data-i18n="wa_order_title">طلب سريع عبر الواتساب</h2>
+                </div>
+                <button onclick="closeWhatsAppModal()" class="p-2 text-gray-500 hover:text-gray-800 rounded-lg">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="full_name">الإسم الكامل *</label>
+                    <input type="text" id="wa-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="phone_number">رقم الهاتف *</label>
+                    <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white text-right" dir="ltr">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="city">المدينة *</label>
+                    <input type="text" id="wa-cust-city" data-i18n-placeholder="placeholder_city" placeholder="أدخل مدينتك" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white">
+                </div>
+                <div id="wa-success-alert" class="hidden p-3.5 rounded-xl text-sm font-bold bg-emerald-50 text-[#059669] border border-emerald-200 text-center" data-i18n="wa_success_alert">
+                    ✨ سيتم التواصل معك في أقرب وقت!
+                </div>
+                <button onclick="submitWhatsAppOrder()" class="w-full bg-[#059669] text-white font-black py-3.5 px-4 rounded-xl hover:bg-[#047857] transition-colors flex items-center justify-center gap-2 shadow-md text-base">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                    <span data-i18n="send_wa_btn">إرسال الطلب عبر الواتساب</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Header Wrapper -->
+    <div class="sticky top-0 z-40 w-full shadow-sm">
+        <div class="bg-[#059669] text-white py-2 overflow-hidden shadow-inner border-b border-[#047857]">
+            <div class="animate-marquee flex items-center gap-12 whitespace-nowrap text-sm sm:text-base font-black tracking-wide">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="truck" class="w-5 h-5 text-amber-300"></i>
+                    <span data-i18n="marquee_1">توصيل مجاني لجميع المدن في المغرب</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-amber-300"></i>
+                    <span data-i18n="marquee_2">عروض حصرية وتخفيضات كبرى يومياً</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-[#34D399]"></i>
+                    <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="truck" class="w-5 h-5 text-amber-300"></i>
+                    <span data-i18n="marquee_1">توصيل مجاني لجميع المدن في المغرب</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-amber-300"></i>
+                    <span data-i18n="marquee_2">عروض حصرية وتخفيضات كبرى يومياً</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-[#34D399]"></i>
+                    <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
+                </div>
+            </div>
+        </div>
+
+        <header class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleCategoriesDrawer()" class="p-2.5 text-[#2D3748] hover:bg-gray-100 rounded-xl transition-colors flex items-center justify-center">
+                        <i data-lucide="menu" class="w-7 h-7"></i>
+                    </button>
+                    <a href="index.html" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-[#059669] font-extrabold text-sm border border-emerald-200 shadow-xs hover:bg-emerald-100 transition-colors">
+                        <i data-lucide="home" class="w-4 h-4"></i>
+                        <span>الرئيسية</span>
+                    </a>
+                </div>
+                
+                <!-- صورة الاسم الجديدة بحجم متناسق -->
+                <div class="flex items-center justify-center cursor-pointer group py-1" onclick="switchTab('store')">
+                    <img src="https://www.dropbox.com/scl/fi/n2eg2axtnvgtfgjjzcwo7/Meta_AI_bedal_only_bedal_green_white_20261105_191651.png?rlkey=xx52shjficdl0hfk5qqqjtwtb&st=5mvfvowl&raw=1" alt="bedal.online SMART MARKETPLACE" class="h-10 sm:h-12 w-auto object-contain">
+                </div>
+
+                <!-- اللوغو -->
+                <div class="flex items-center cursor-pointer group" onclick="switchTab('store')">
+                    <div class="relative w-12 h-12 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                        <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=l63dmtwa&raw=1" alt="Logo" class="w-full h-full object-contain rounded-xl">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- شريط تعليقات الزبناء المغاربة -->
+        <div class="w-full bg-[#059669] text-white py-3 overflow-hidden shadow-inner border-t border-[#047857]">
+            <div class="animate-marquee-reviews flex items-center gap-12 whitespace-nowrap text-sm sm:text-base font-bold tracking-wide">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-amber-300">⭐⭐⭐⭐⭐</span>
+                    <span>«مستحضرات التجميل أصلية والجودة عالية جداً، تبارك الله!» — يوسف (القنيطرة)</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="text-amber-300">⭐⭐⭐⭐⭐</span>
+                    <span>«توصيل سريع وخدمة عملاء ممتازة للعناية بالصحة.» — سناء (الدار البيضاء)</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="text-amber-300">⭐⭐⭐⭐⭐</span>
+                    <span>«أحسن موقع للعناية الشخصية، والثمن مناسب بزاف مع التخفيض.» — مهدي (مراكش)</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="text-amber-300">⭐⭐⭐⭐⭐</span>
+                    <span>«المنتجات طبيعية كيف ما شفته في الصور تماماً، جودة مضمونة.» — فاطمة الزهراء (طنجة)</span>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="text-amber-300">⭐⭐⭐⭐⭐</span>
+                    <span>«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، شكراً bedal.online.» — عمر (الرباط)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- SECTION 1: STORE FRONT -->
+        <section id="section-store" class="block space-y-0">
+            <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-700 rounded-2xl border-2 border-amber-300 shadow-xl p-6 sm:p-10 text-white text-center space-y-4 mb-8">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 text-amber-200 text-xs sm:text-sm font-black border border-amber-300/40">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i> قسم مستحضرات التجميل والعناية بالصحة
+                </span>
+                <h1 class="text-2xl sm:text-4xl font-black tracking-wide text-amber-100">
+                    أفضل منتجات الجمال والعناية الشخصية والطبيعية بالمغرب
+                </h1>
+                <p class="text-gray-100 text-sm sm:text-base max-w-2xl mx-auto font-medium">
+                    اكتشف تشكيلة حصرية من مستحضرات التجميل ومنتجات العناية بالبشرة والصحة بتخفيضات كبرى والدفع عند الاستلام.
+                </p>
+            </div>
+
+            <div class="w-full flex items-center justify-center my-6">
+                <div class="w-full max-w-xl h-[3px] bg-gradient-to-r from-transparent via-emerald-400 to-transparent"></div>
+            </div>
+
+            <div>
+                <div class="flex justify-center mb-8">
+                    <h2 class="text-xl sm:text-2xl font-black text-[#2D3748] tracking-wide">
+                        <span data-i18n="featured_products">منتجات التجميل والعناية - تخفيضات خاصة</span>
+                    </h2>
+                </div>
+                <!-- الصفحة فارغة بانتظار تحميل المنتجات من Supabase -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch" id="store-products-grid">
+                    <p class="col-span-full text-center text-gray-500 py-16 text-lg font-bold">جاري تحميل منتجات التجميل والعناية بالصحة من قاعدة البيانات...</p>
+                </div>
+                
+                <div id="pagination-container" class="flex items-center justify-center gap-2.5 mt-10 pt-6 border-t border-gray-200 flex-wrap"></div>
+            </div>
+        </section>
+
+        <!-- SECTION: VENDOR STORE PAGE -->
+        <section id="section-vendor-store" class="hidden space-y-8">
+            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-base font-bold text-[#2D3748] hover:text-[#059669] bg-gray-100 px-5 py-2.5 rounded-xl transition-colors shadow-sm">
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                <span data-i18n="back_main_store">العودة للمتجر الرئيسي</span>
+            </button>
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="h-36 sm:h-48 bg-gradient-to-r from-emerald-600 to-teal-700 relative watermarked-container flex items-center justify-center">
+                    <img id="vendor-cover-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-contain opacity-30">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: PRODUCT DETAIL -->
+        <section id="section-product-detail" class="hidden space-y-6 max-w-2xl mx-auto">
+            <div>
+                <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-base font-bold text-white bg-[#059669] hover:bg-[#047857] px-6 py-2.5 rounded-xl shadow-md transition-all">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i> <span data-i18n="back_to_home">الرجوع إلى الرئيسية</span>
+                </button>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-emerald-200 shadow-xl overflow-hidden p-6 sm:p-8 space-y-6">
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span id="detail-unavailable-badge" class="hidden bg-gray-800 text-white text-sm font-black px-4 py-1.5 rounded-full shadow-md uppercase tracking-wider">غير متاح حالياً</span>
+                        <div class="flex items-center justify-end text-sm font-bold px-3.5 py-1.5 rounded-xl border ms-auto shadow-xs" id="detail-product-cat-container">
+                            <span id="detail-product-cat" class="font-extrabold">مستحضرات التجميل</span>
+                        </div>
+                    </div>
+                    <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-black text-[#2D3748] leading-snug">عنوان المنتج</h1>
+                </div>
+
+                <div class="w-full rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-3">
+                    <img id="detail-product-img" alt="Product Detail" class="w-full h-auto max-h-[85vh] object-contain">
+                </div>
+
+                <div id="detail-thumbnails-container" class="flex items-center gap-3 overflow-x-auto pb-2"></div>
+
+                <div class="flex items-baseline gap-4 py-3 border-b border-gray-200">
+                    <span id="detail-product-price" class="text-3xl sm:text-4xl font-black text-[#059669]">0.00 د.م</span>
+                    <span id="detail-old-price" class="text-xl font-bold text-gray-400 line-through">0.00 د.م</span>
+                    <span class="bg-emerald-50 text-[#059669] text-sm font-black px-3 py-1.5 rounded-xl border border-emerald-200 shadow-xs" data-i18n="free_shipping_all">التوصيل مجاني لجميع المدن</span>
+                </div>
+
+                <div id="order-form-container" class="bg-emerald-50/70 rounded-2xl border border-emerald-300 p-5 sm:p-8 space-y-5 shadow-sm">
+                    <div class="text-center space-y-1.5 pb-2 border-b border-emerald-200">
+                        <h3 class="font-black text-[#2D3748] text-lg sm:text-xl" data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</h3>
+                        <p class="text-sm text-gray-700 font-bold" data-i18n="fill_info_fast">املأ المعلومات أدناه لتأكيد طلبك بسرعة وسهولة</p>
+                    </div>
+
+                    <div class="space-y-4 text-base">
+                        <div>
+                            <div class="relative flex items-center">
+                                <span class="absolute right-3.5 text-gray-500"><i data-lucide="user" class="w-5 h-5"></i></span>
+                                <input type="text" id="detail-cust-name" data-i18n-placeholder="placeholder_name" placeholder="الاسم الكامل" class="w-full pr-11 pl-4 py-3.5 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white shadow-sm">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="relative flex items-center">
+                                <span class="absolute right-3.5 text-gray-500"><i data-lucide="phone" class="w-5 h-5"></i></span>
+                                <input type="tel" id="detail-cust-phone" placeholder="06 XX XX XX XX" class="w-full pr-11 pl-4 py-3.5 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white shadow-sm text-right" dir="ltr">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="relative flex items-center">
+                                <span class="absolute right-3.5 text-gray-500"><i data-lucide="map-pin" class="w-5 h-5"></i></span>
+                                <input type="text" id="detail-cust-city" data-i18n-placeholder="placeholder_city" placeholder="المدينة" class="w-full pr-11 pl-4 py-3.5 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#34D399] bg-white shadow-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-emerald-200 space-y-2 text-sm font-bold text-gray-800 shadow-xs">
+                        <div class="flex justify-between">
+                            <span data-i18n="product_label">المنتج:</span>
+                            <span id="summary-prod-name" class="text-[#2D3748] truncate max-w-[220px]">المنتج</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span data-i18n="shipping_label">التوصيل:</span>
+                            <span class="text-[#059669] font-extrabold" data-i18n="free">مجاني</span>
+                        </div>
+                        <div class="flex justify-between text-base pt-2 border-t border-gray-200 font-black">
+                            <span data-i18n="total_label">المجموع:</span>
+                            <span id="summary-prod-total" class="text-[#059669] text-lg">0.00 د.م</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#059669] hover:bg-[#047857] text-white py-4 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md text-base">
+                            <i data-lucide="message-circle" class="w-6 h-6"></i>
+                            <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
+                        </button>
+                        <button onclick="submitDirectProductOrder()" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md text-base">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                            <span data-i18n="site_order_btn">الطلب عبر الموقع</span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-5 text-xs text-gray-700 font-bold pt-1">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-[#059669]"></i> <span data-i18n="cod_badge">الدفع عند الاستلام</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="truck" class="w-4 h-4 text-amber-600"></i> <span data-i18n="fast_delivery">توصيل سريع</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> <span data-i18n="guaranteed_quality">جودة مضمونة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-4 border-t border-gray-200">
+                    <h3 class="font-black text-[#2D3748] text-lg flex items-center gap-2.5">
+                        <i data-lucide="file-text" class="w-6 h-6 text-[#059669]"></i> <span data-i18n="product_desc">وصف المنتج</span>
+                    </h3>
+                    <p id="detail-product-desc" class="text-gray-800 text-base sm:text-lg leading-relaxed whitespace-pre-line bg-[#FAF8F5] p-5 rounded-2xl border border-gray-200 font-medium">وصف المنتوج هنا...</p>
+                </div>
+
+                <div id="detail-bottom-order-btn-box" class="pt-4">
+                    <button onclick="scrollToOrderForm()" class="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-500 hover:from-emerald-600 hover:to-amber-600 text-white font-black py-4 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-lg bfd-attention-btn cursor-pointer">
+                        <i data-lucide="shopping-bag" class="w-6 h-6 animate-bounce"></i>
+                        <span data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Partner Products Slider Section -->
+    <section class="bg-[#059669] text-white py-12 border-t border-[#047857] overflow-hidden shadow-2xl relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
+            <div class="text-center space-y-3">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-sm font-black bg-emerald-500/20 text-emerald-100 border border-emerald-400/30">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i> <span data-i18n="exclusive_selection">تشكيلة مستحضرات التجميل المميزة</span>
+                </span>
+                <h3 class="text-2xl sm:text-4xl font-black tracking-tight" data-i18n="discover_latest">اكتشف أحدث منتجات التجميل والعناية بالصحة</h3>
+            </div>
+            <div class="relative w-full overflow-hidden py-3">
+                <div id="partner-products-marquee" class="animate-marquee-slow flex items-center gap-6"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-[#FAF8F5] border border-gray-200 hover:shadow-md transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-[#059669] flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i data-lucide="shield-check" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-black text-[#2D3748] text-lg" data-i18n="feat_1_title">جودة مضمونة وأصلية</h4>
+                        <p class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium" data-i18n="feat_1_desc">مستحضرات تجميل أصلية 100% ومختارة بعناية فائقة لصحتك وبشرتك.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-[#FAF8F5] border border-gray-200 hover:shadow-md transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-[#059669] flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i data-lucide="truck" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-black text-[#2D3748] text-lg" data-i18n="feat_2_title">توصيل سريع</h4>
+                        <p class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium" data-i18n="feat_2_desc">خدمة توصيل سريعة لجميع المدن في المغرب.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-[#FAF8F5] border border-gray-200 hover:shadow-md transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i data-lucide="refresh-cw" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-black text-[#2D3748] text-lg" data-i18n="feat_3_title">إرجاع سهل</h4>
+                        <p class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium" data-i18n="feat_3_desc">ضمان الاسترجاع في حال لم تكن راضياً عن المنتج.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-[#FAF8F5] border border-gray-200 hover:shadow-md transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i data-lucide="wallet" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-black text-[#2D3748] text-lg" data-i18n="feat_4_title">الدفع عند الاستلام</h4>
+                        <p class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium" data-i18n="feat_4_desc">خلص ملي يوصلك الكوموند ديالك بكل أمان وثقة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div id="footer-reviews-container" class="pb-4 border-b border-gray-200 flex flex-col items-center justify-center min-h-[85px] text-center"></div>
+
+            <div class="bg-[#FAF8F5] p-5 rounded-2xl border border-gray-200 max-w-xl mx-auto space-y-4 shadow-xs">
+                <h4 class="font-black text-[#2D3748] text-sm sm:text-base text-center flex items-center justify-center gap-2">
+                    <i data-lucide="message-square-plus" class="w-5 h-5 text-[#059669]"></i> <span data-i18n="add_review_title">أضف تعليقك وتقييمك للمتجر</span>
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="text" id="user-review-name" data-i18n-placeholder="placeholder_review_name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" class="w-full px-4 py-2.5 text-sm font-medium rounded-xl border border-gray-300 focus:outline-none focus:border-[#34D399] bg-white">
+                    <select id="user-review-rating" class="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:border-[#34D399] bg-white font-extrabold text-amber-600">
+                        <option value="5" data-i18n="star_5">⭐⭐⭐⭐⭐ (5/5 ممتاز جداً)</option>
+                        <option value="4" data-i18n="star_4">⭐⭐⭐⭐ (4/5 جيد جداً)</option>
+                        <option value="3" data-i18n="star_3">⭐⭐⭐ (3/5 جيد)</option>
+                    </select>
+                </div>
+                <textarea id="user-review-comment" data-i18n-placeholder="placeholder_review_comment" placeholder="اكتب تعليقك حول منتجات التجميل والعناية بالصحة..." rows="2" class="w-full px-4 py-2.5 text-sm font-medium rounded-xl border border-gray-300 focus:outline-none focus:border-[#34D399] bg-white resize-none"></textarea>
+                <button onclick="addNewUserReview()" class="w-full bg-[#059669] hover:bg-[#047857] text-white font-black py-2.5 px-4 rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> <span data-i18n="send_comment">إرسال التعليق</span>
+                </button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-700 pt-4 border-t border-gray-200">
+                <div class="flex items-center gap-3">
+                    <img src="https://www.dropbox.com/scl/fi/n2eg2axtnvgtfgjjzcwo7/Meta_AI_bedal_only_bedal_green_white_20261105_191651.png?rlkey=xx52shjficdl0hfk5qqqjtwtb&st=5mvfvowl&raw=1" alt="bedal.online" class="h-6 w-auto object-contain">
+                    <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-extrabold text-gray-900">bedal.online</span>.</div>
+                </div>
+                <div class="flex items-center gap-4 flex-wrap justify-center">
+                    <div class="flex items-center gap-3">
+                        <a href="https://www.facebook.com/BedalOnlineShop" target="_blank" aria-label="Facebook" class="hover:scale-110 transition-transform flex items-center justify-center">
+                            <img src="https://www.dropbox.com/scl/fi/b64dz8sct76lw3gnxje0d/Meta_AI_4_facebook_1024_20261105_174053.png?rlkey=a7x1q84s4362nyuxi0byfy3cr&st=6r9051le&raw=1" alt="Facebook" class="w-7 h-7 object-contain">
+                        </a>
+                        <a href="https://www.instagram.com/bedal_online_shop/" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
+                            <img src="https://www.dropbox.com/scl/fi/86073utombw0040esp03e/Meta_AI_4_instagram_1024_20261105_174050.png?rlkey=e3vkkv6v6gupblla1dp0ps4xo&st=3328469h&raw=1" alt="Instagram" class="w-7 h-7 object-contain">
+                        </a>
+                        <a href="https://www.tiktok.com/@bedalonlinestor" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
+                            <img src="https://www.dropbox.com/scl/fi/6880k7lxqnwv4se4z27yf/Meta_AI_4_music_1024_20261105_174055.png?rlkey=jzx0evote70f6mjfwe9im6iv4&st=r6tc9dc3&raw=1" alt="TikTok" class="w-7 h-7 object-contain">
+                        </a>
+                    </div>
+                    
+                    <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.36</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App Logic Script & Supabase Integration -->
+    <script>
+        const SUPABASE_URL = 'https://xgdtszzzxzlhtgmrextl.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
+
+        let categoriesDatabase = [
+            { key: 'cosmetics', name: 'مستحضرات التجميل', color: '#10B981' },
+            { key: 'health_care', name: 'العناية بالصحة', color: '#059669' },
+            { key: 'skincare', name: 'العناية بالبشرة', color: '#34D399' },
+            { key: 'organic', name: 'منتجات طبيعية', color: '#047857' },
+            { key: 'various', name: 'منتجات متنوعة', color: '#6EE7B7' }
+        ];
+
+        let currentLang = 'ar';
+        const translations = {
+            ar: {
+                exclusive_ad: "✨ إعلان حصري لزوارنا ✨",
+                close_ad: "إغلاق الإعلان ومتابعة التصفح",
+                store_categories: "أقسام المتجر",
+                home: "الرئيسية (index)",
+                cart: "السلة",
+                all: "الكل",
+                cosmetics: "مستحضرات التجميل",
+                health_care: "العناية بالصحة",
+                skincare: "العناية بالبشرة والشعر",
+                organic: "منتجات طبيعية",
+                whatsapp_contact: "إتصل بيا عبر الواتساب",
+                shopping_cart: "سلة التسوق",
+                empty_cart: "السلة فارغة حالياً. اضغط على إضافة منتجات!",
+                total_saving: "إجمالي التوفير (الربح من الخصم):",
+                total_after_disc: "المجموع الإجمالي بعد الخصم:",
+                confirm_order_btn: "تأكيد وإتمام الطلب",
+                invoice_title: "فاتورة الطلب وإتمام المعلومات",
+                items_count: "عدد المنتجات في السلة:",
+                original_total: "إجمالي المبلغ الأصلي:",
+                saving_total: "إجمالي ربحك من الخصم:",
+                final_to_pay: "المبلغ المطلوب دفعه:",
+                delivery_info: "معلومات التوصيل الخاصة بك",
+                full_name: "الاسم الكامل *",
+                phone_number: "رقم الهاتف *",
+                address_city: "العنوان الكامل والمدينة *",
+                send_order_admin: "إرسال الطلب إلى الإدارة",
+                order_success_title: "تم إرسال طلبك بنجاح!",
+                order_success_desc: "في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.",
+                close: "إغلاق",
+                wa_order_title: "طلب سريع عبر الواتساب",
+                city: "المدينة *",
+                wa_success_alert: "✨ سيتم التواصل معك في أقرب وقت!",
+                send_wa_btn: "إرسال الطلب عبر الواتساب",
+                marquee_1: "توصيل مجاني لجميع المدن في المغرب",
+                marquee_2: "عروض حصرية وتخفيضات كبرى يومياً",
+                marquee_3: "ضمان الجودة والدفع عند الاستلام",
+                featured_products: "منتجات التجميل والعناية - تخفيضات خاصة",
+                back_to_home: "العودة للرئيسية",
+                back_main_store: "العودة للمتجر الرئيسي",
+                free_shipping_all: "التوصيل مجاني لجميع المدن",
+                order_now_cod: "اطلب الآن - الدفع عند الاستلام",
+                fill_info_fast: "املأ المعلومات أدناه لتأكيد طلبك بسرعة وسهولة",
+                product_label: "المنتج:",
+                shipping_label: "التوصيل:",
+                free: "مجاني",
+                total_label: "المجموع:",
+                whatsapp_order_btn: "طلب عبر الواتساب",
+                site_order_btn: "الطلب عبر الموقع",
+                cod_badge: "الدفع عند الاستلام",
+                fast_delivery: "توصيل سريع",
+                guaranteed_quality: "جودة مضمونة",
+                exclusive_selection: "تشكيلة مستحضرات التجميل المميزة",
+                discover_latest: "اكتشف أحدث منتجات التجميل والعناية بالصحة",
+                feat_1_title: "جودة مضمونة وأصلية",
+                feat_1_desc: "مستحضرات تجميل أصلية 100% ومختارة بعناية فائقة لصحتك وبشرتك.",
+                feat_2_title: "توصيل سريع",
+                feat_2_desc: "خدمة توصيل سريعة لجميع المدن في المغرب.",
+                feat_3_title: "إرجاع سهل",
+                feat_3_desc: "ضمان الاسترجاع في حال لم تكن راضياً عن المنتج.",
+                feat_4_title: "الدفع عند الاستلام",
+                feat_4_desc: "خلص ملي يوصلك الكوموند ديالك بكل أمان وثقة.",
+                add_review_title: "أضف تعليقك وتقييمك للمتجر",
+                star_5: "⭐⭐⭐⭐⭐ (5/5 ممتاز جداً)",
+                star_4: "⭐⭐⭐⭐ (4/5 جيد جداً)",
+                star_3: "⭐⭐⭐ (3/5 جيد)",
+                send_comment: "إرسال التعليق",
+                rights_reserved: "جميع الحقوق محفوظة لـ",
+                version: "الإصدار:",
+                placeholder_name: "أدخل اسمك الكامل",
+                placeholder_city: "أدخل مدينتك",
+                placeholder_address: "أدخل مدينتك وعنوان الاستلام",
+                placeholder_review_name: "اسمك الكريم والمدينة (مثال: كريم من القنيطرة)",
+                placeholder_review_comment: "اكتب تعليقك حول منتجات التجميل والعناية بالصحة..."
+            },
+            fr: {
+                exclusive_ad: "✨ Offre Exclusive pour Nos Visiteurs ✨",
+                close_ad: "Fermer et Continuer",
+                store_categories: "Catégories",
+                home: "Accueil (index)",
+                cart: "Panier",
+                all: "Tous",
+                cosmetics: "Cosmétiques",
+                health_care: "Soins de Santé",
+                skincare: "Soins Visage & Cheveux",
+                organic: "Produits Bio",
+                whatsapp_contact: "Contactez-nous via WhatsApp",
+                shopping_cart: "Panier d'Achats",
+                empty_cart: "Votre panier est vide.",
+                total_saving: "Économie totale:",
+                total_after_disc: "Total après remise:",
+                confirm_order_btn: "Confirmer la Commande",
+                invoice_title: "Facture et Détails",
+                items_count: "Articles:",
+                original_total: "Total d'origine:",
+                saving_total: "Votre économie:",
+                final_to_pay: "À payer:",
+                delivery_info: "Informations de Livraison",
+                full_name: "Nom complet *",
+                phone_number: "Téléphone *",
+                address_city: "Adresse et Ville *",
+                send_order_admin: "Envoyer la commande",
+                order_success_title: "Commande envoyée avec succès !",
+                order_success_desc: "Nous vous contacterons sous 24h.",
+                close: "Fermer",
+                wa_order_title: "Commande WhatsApp",
+                city: "Ville *",
+                wa_success_alert: "✨ Nous vous contacterons bientôt !",
+                send_wa_btn: "Envoyer via WhatsApp",
+                marquee_1: "Livraison gratuite partout au Maroc",
+                marquee_2: "Offres exclusives quotidiennes",
+                marquee_3: "Qualité garantie et Paiement à la livraison",
+                featured_products: "Cosmétiques & Soins - Soldes",
+                back_to_home: "Retour à l'accueil",
+                back_main_store: "Retour au magasin",
+                free_shipping_all: "Livraison gratuite",
+                order_now_cod: "Commander - Paiement à la livraison",
+                fill_info_fast: "Remplissez vos informations",
+                product_label: "Produit:",
+                shipping_label: "Livraison:",
+                free: "Gratuite",
+                total_label: "Total:",
+                whatsapp_order_btn: "Commander via WhatsApp",
+                site_order_btn: "Commander sur le Site",
+                cod_badge: "Paiement à la livraison",
+                fast_delivery: "Livraison rapide",
+                guaranteed_quality: "Qualité garantie",
+                exclusive_selection: "Sélection Cosmétique",
+                discover_latest: "Découvrez nos derniers produits",
+                feat_1_title: "Qualité Garantie",
+                feat_1_desc: "Produits 100% authentiques pour votre beauté et santé.",
+                feat_2_title: "Livraison Rapide",
+                feat_2_desc: "Service rapide dans toutes les villes.",
+                feat_3_title: "Retour Facile",
+                feat_3_desc: "Remboursement garanti.",
+                feat_4_title: "Paiement à la Livraison",
+                feat_4_desc: "Payez en toute sécurité.",
+                add_review_title: "Ajoutez votre avis",
+                star_5: "⭐⭐⭐⭐⭐ (5/5)",
+                star_4: "⭐⭐⭐⭐ (4/5)",
+                star_3: "⭐⭐⭐ (3/5)",
+                send_comment: "Envoyer",
+                rights_reserved: "Tous droits réservés",
+                version: "Version :",
+                placeholder_name: "Votre nom complet",
+                placeholder_city: "Votre ville",
+                placeholder_address: "Adresse complète",
+                placeholder_review_name: "Votre nom et ville",
+                placeholder_review_comment: "Écrivez votre avis..."
+            },
+            en: {
+                exclusive_ad: "✨ Exclusive Offer ✨",
+                close_ad: "Close",
+                store_categories: "Categories",
+                home: "Home (index)",
+                cart: "Cart",
+                all: "All",
+                cosmetics: "Cosmetics",
+                health_care: "Health Care",
+                skincare: "Skin & Hair Care",
+                organic: "Organic Products",
+                whatsapp_contact: "WhatsApp Contact",
+                shopping_cart: "Shopping Cart",
+                empty_cart: "Your cart is empty.",
+                total_saving: "Total Savings:",
+                total_after_disc: "Total After Discount:",
+                confirm_order_btn: "Confirm Order",
+                invoice_title: "Invoice & Details",
+                items_count: "Items:",
+                original_total: "Original Total:",
+                saving_total: "Savings:",
+                final_to_pay: "Amount to Pay:",
+                delivery_info: "Delivery Info",
+                full_name: "Full Name *",
+                phone_number: "Phone *",
+                address_city: "Address & City *",
+                send_order_admin: "Submit Order",
+                order_success_title: "Order Sent Successfully!",
+                order_success_desc: "We will contact you within 24h.",
+                close: "Close",
+                wa_order_title: "Quick WhatsApp Order",
+                city: "City *",
+                wa_success_alert: "✨ We will contact you soon!",
+                send_wa_btn: "Send via WhatsApp",
+                marquee_1: "Free delivery across Morocco",
+                marquee_2: "Exclusive daily offers",
+                marquee_3: "Quality guarantee & Cash on Delivery",
+                featured_products: "Cosmetics & Health Deals",
+                back_to_home: "Back to Home",
+                back_main_store: "Back to Store",
+                free_shipping_all: "Free shipping",
+                order_now_cod: "Order Now - Cash on Delivery",
+                fill_info_fast: "Fill in your details",
+                product_label: "Product:",
+                shipping_label: "Shipping:",
+                free: "Free",
+                total_label: "Total:",
+                whatsapp_order_btn: "Order via WhatsApp",
+                site_order_btn: "Order on Website",
+                cod_badge: "Cash on Delivery",
+                fast_delivery: "Fast Delivery",
+                guaranteed_quality: "Guaranteed Quality",
+                exclusive_selection: "Cosmetics Selection",
+                discover_latest: "Discover our latest products",
+                feat_1_title: "Guaranteed Quality",
+                feat_1_desc: "100% authentic cosmetics for your health and beauty.",
+                feat_2_title: "Fast Delivery",
+                feat_2_desc: "Fast delivery to all cities.",
+                feat_3_title: "Easy Return",
+                feat_3_desc: "Refund guarantee.",
+                feat_4_title: "Cash on Delivery",
+                feat_4_desc: "Pay securely upon receipt.",
+                add_review_title: "Add your review",
+                star_5: "⭐⭐⭐⭐⭐ (5/5)",
+                star_4: "⭐⭐⭐⭐ (4/5)",
+                star_3: "⭐⭐⭐ (3/5)",
+                send_comment: "Send",
+                rights_reserved: "All rights reserved",
+                version: "Version:",
+                placeholder_name: "Full Name",
+                placeholder_city: "City",
+                placeholder_address: "Address",
+                placeholder_review_name: "Your Name",
+                placeholder_review_comment: "Write review..."
+            }
+        };
+
+        const reviewsDataByLang = {
+            ar: [
+                { name: "يوسف (القنيطرة)", comment: "«مستحضرات التجميل أصلية والجودة عالية جداً، تبارك الله!»", stars: 5 },
+                { name: "سناء (الدار البيضاء)", comment: "«توصيل سريع وخدمة عملاء ممتازة للعناية بالصحة.»", stars: 5 },
+                { name: "مهدي (مراكش)", comment: "«أحسن موقع للعناية الشخصية، والثمن مناسب بزاف مع التخفيض.»", stars: 5 },
+                { name: "فاطمة الزهراء (طنجة)", comment: "«المنتجات طبيعية كيف ما شفته في الصور تماماً، جودة مضمونة.»", stars: 5 },
+                { name: "عمر (الرباط)", comment: "«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، شكراً bedal.online.»", stars: 5 }
+            ],
+            fr: [
+                { name: "Youssef (Kénitra)", comment: "«Cosmétiques authentiques et excellente qualité !»", stars: 5 },
+                { name: "Sanaa (Casablanca)", comment: "«Livraison rapide et service client au top.»", stars: 5 },
+                { name: "Mehdi (Marrakech)", comment: "«Meilleur site de soins personnels, super prix.»", stars: 5 },
+                { name: "Fatima (Tanger)", comment: "«Produits naturels conformes aux photos.»", stars: 5 },
+                { name: "Omar (Rabat)", comment: "«Paiement à la livraison sécurisé, merci.»", stars: 5 }
+            ],
+            en: [
+                { name: "Youssef (Kenitra)", comment: "«Authentic cosmetics and amazing quality!»", stars: 5 },
+                { name: "Sanaa (Casablanca)", comment: "«Fast delivery and professional service.»", stars: 5 },
+                { name: "Mehdi (Marrakech)", comment: "«Best personal care site with great discounts.»", stars: 5 },
+                { name: "Fatima (Tangier)", comment: "«Natural products match photos completely.»", stars: 5 },
+                { name: "Omar (Rabat)", comment: "«Cash on delivery gives full trust.»", stars: 5 }
+            ]
+        };
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const htmlRoot = document.getElementById('html-root');
+            if (lang === 'ar') {
+                htmlRoot.setAttribute('lang', 'ar');
+                htmlRoot.setAttribute('dir', 'rtl');
+            } else if (lang === 'fr') {
+                htmlRoot.setAttribute('lang', 'fr');
+                htmlRoot.setAttribute('dir', 'ltr');
+            } else if (lang === 'en') {
+                htmlRoot.setAttribute('lang', 'en');
+                htmlRoot.setAttribute('dir', 'ltr');
+            }
+            applyTranslations();
+            renderCurrentReview();
+        }
+
+        function applyTranslations() {
+            const t = translations[currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.innerText = t[key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (t[key]) el.setAttribute('placeholder', t[key]);
+            });
+        }
+
+        function scrollToOrderForm() {
+            const orderForm = document.getElementById('order-form-container');
+            if (orderForm) {
+                orderForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                orderForm.classList.add('ring-4', 'ring-[#34D399]');
+                setTimeout(() => {
+                    orderForm.classList.remove('ring-4', 'ring-[#34D399]');
+                }, 1500);
+            }
+        }
+
+        async function sendTelegramNotification(orderData) {
+            try {
+                await fetch(MAKE_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+            } catch (err) {}
+        }
+
+        let cart = [];
+        let productsDatabase = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let currentFilterCategory = 'all';
+
+        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '', sku: '', is_available: true };
+        let siteReviews = [];
+        let currentReviewIndex = 0;
+
+        async function checkAndShowWelcomeAd() {
+            let adImgUrl = 'https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png';
+            try {
+                const { data, error } = await supabaseClient.from('settings').select('value').eq('key', 'popup_ad_img').single();
+                if (!error && data && data.value) {
+                    let clean = data.value.trim();
+                    if (clean.includes('dropbox.com')) {
+                        clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '').replace('&dl=0', '');
+                        if (!clean.includes('dl=1') && !clean.includes('raw=1')) clean += (clean.includes('?') ? '&' : '?') + 'raw=1';
+                    }
+                    adImgUrl = clean;
+                }
+            } catch(e) {}
+
+            const imgEl = document.getElementById('welcome-ad-img');
+            if (imgEl) imgEl.src = adImgUrl;
+
+            const modal = document.getElementById('welcome-ad-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                lucide.createIcons();
+            }
+        }
+
+        function closeWelcomeAdModal() {
+            const modal = document.getElementById('welcome-ad-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function initFooterReviewsSlider() {
+            siteReviews = reviewsDataByLang[currentLang];
+            renderCurrentReview();
+            setInterval(() => {
+                const container = document.getElementById('footer-reviews-container');
+                if (container) {
+                    container.style.opacity = '0';
+                    container.style.transform = 'translateY(8px)';
+                    setTimeout(() => {
+                        siteReviews = reviewsDataByLang[currentLang];
+                        currentReviewIndex = (currentReviewIndex + 1) % siteReviews.length;
+                        renderCurrentReview();
+                        container.style.opacity = '1';
+                        container.style.transform = 'translateY(0)';
+                    }, 400);
+                }
+            }, 4500);
+        }
+
+        function renderCurrentReview() {
+            const container = document.getElementById('footer-reviews-container');
+            if (!container) return;
+            const currentList = reviewsDataByLang[currentLang] || reviewsDataByLang.ar;
+            if (currentReviewIndex >= currentList.length) currentReviewIndex = 0;
+            const rev = currentList[currentReviewIndex];
+            let starsHtml = '';
+            for(let i = 0; i < rev.stars; i++) starsHtml += `<i data-lucide="star" class="w-5 h-5 fill-amber-400 text-amber-400 inline-block"></i>`;
+
+            container.className = "pb-4 border-b border-gray-200 flex flex-col items-center justify-center min-h-[85px] text-center fade-review transition-all duration-500";
+            container.innerHTML = `
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="flex items-center gap-1">${starsHtml}</div>
+                </div>
+                <p class="text-sm sm:text-base font-bold text-gray-800 max-w-2xl leading-relaxed">${rev.comment}</p>
+                <span class="text-xs text-gray-500 font-semibold mt-1.5">— ${rev.name}</span>
+            `;
+            lucide.createIcons();
+        }
+
+        function addNewUserReview() {
+            const name = document.getElementById('user-review-name').value.trim();
+            const stars = parseInt(document.getElementById('user-review-rating').value);
+            const comment = document.getElementById('user-review-comment').value.trim();
+
+            if (!name || !comment) {
+                alert('يرجى ملء اسمك وتعليقك قبل الإرسال.');
+                return;
+            }
+
+            Object.keys(reviewsDataByLang).forEach(l => {
+                reviewsDataByLang[l].push({ name, comment: `«${comment}»`, stars });
+            });
+            currentReviewIndex = reviewsDataByLang[currentLang].length - 1;
+            renderCurrentReview();
+            document.getElementById('user-review-name').value = '';
+            document.getElementById('user-review-comment').value = '';
+            alert('شكراً لك! تم إضافة تعليقك بنجاح وعرضه في شريط التقييمات.');
+        }
+
+        function formatImageUrl(pathOrUrl) {
+            if (!pathOrUrl || typeof pathOrUrl !== 'string') return '';
+            let clean = pathOrUrl.trim();
+            if (clean === '' || clean.toLowerCase() === 'null' || clean === '[]') return '';
+            
+            if (clean.includes('dropbox.com')) {
+                clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '').replace('&dl=0', '');
+                if (!clean.includes('dl=1') && !clean.includes('raw=1')) {
+                    clean += (clean.includes('?') ? '&' : '?') + 'raw=1';
+                }
+            }
+
+            if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('data:image/') || clean.startsWith('/')) return clean;
+            return `${SUPABASE_URL}/storage/v1/object/public/products/${clean}`;
+        }
+
+        function extractImagesFromRecord(record) {
+            let imagesList = [];
+            const indexedImageKeys = ['image1', 'image2', 'image3', 'image4', 'image5', 'img1', 'img2', 'img3', 'img4', 'img5'];
+            indexedImageKeys.forEach(k => {
+                if (record[k] && typeof record[k] === 'string' && record[k].trim() !== '') {
+                    const formatted = formatImageUrl(record[k]);
+                    if (formatted) imagesList.push(formatted);
+                }
+            });
+
+            const targetKeys = ['images', 'image', 'img', 'photo', 'photos', 'picture', 'pictures'];
+            targetKeys.forEach(key => {
+                if (record[key]) {
+                    const val = record[key];
+                    if (typeof val === 'string') {
+                        let trimmed = val.trim();
+                        if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+                            try {
+                                const parsed = JSON.parse(trimmed);
+                                if (Array.isArray(parsed)) {
+                                    parsed.forEach(item => { if (item) { const f = formatImageUrl(item); if (f) imagesList.push(f); } });
+                                }
+                            } catch(e) {}
+                        } else if (trimmed.includes(',')) {
+                            trimmed.split(',').forEach(part => { const f = formatImageUrl(part.trim()); if (f) imagesList.push(f); });
+                        } else {
+                            const f = formatImageUrl(trimmed);
+                            if (f) imagesList.push(f);
+                        }
+                    } else if (Array.isArray(val)) {
+                        val.forEach(item => { const f = formatImageUrl(item); if (f) imagesList.push(f); });
+                    }
+                }
+            });
+
+            imagesList = [...new Set(imagesList)];
+            if (imagesList.length === 0) imagesList = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            return imagesList;
+        }
+
+        async function fetchSupabaseStoreData() {
+            try {
+                try {
+                    const { data: catSettings } = await supabaseClient.from('settings').select('value').eq('key', 'categories_db_list').single();
+                    if (catSettings && catSettings.value) {
+                        categoriesDatabase = JSON.parse(catSettings.value);
+                    }
+                } catch(e) {}
+
+                let fetchedProducts = [];
+                const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+                if (prods) {
+                    fetchedProducts = prods.map(p => {
+                        let originalPrice = parseFloat(p.price || 0);
+                        let finalDiscPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
+                        
+                        let isAvailable = true;
+                        const rawStatus = p.is_active !== undefined ? p.is_active : (p.is_available !== undefined ? p.is_available : (p.status !== undefined ? p.status : (p.available !== undefined ? p.available : (p.active !== undefined ? p.active : true))));
+                        
+                        if (rawStatus === false || rawStatus === 0 || String(rawStatus).toLowerCase() === 'false' || String(rawStatus).toLowerCase() === '0' || String(rawStatus).toLowerCase().includes('غير متاح') || String(rawStatus).toLowerCase().includes('unavailable') || String(rawStatus).toLowerCase().includes('inactive')) {
+                            isAvailable = false;
+                        }
+
+                        let catKey = p.category || 'cosmetics';
+                        let foundCat = categoriesDatabase.find(c => c.key === catKey);
+                        let catLabel = foundCat ? foundCat.name : (p.catLabel || 'مستحضرات التجميل');
+
+                        return {
+                            ...p,
+                            category: catKey,
+                            catLabel: catLabel,
+                            is_available: isAvailable,
+                            images: extractImagesFromRecord(p),
+                            videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
+                            price: finalDiscPrice,
+                            oldPrice: originalPrice > finalDiscPrice ? originalPrice : (p.oldPrice ? parseFloat(p.oldPrice) : originalPrice)
+                        };
+                    });
+                }
+
+                productsDatabase = fetchedProducts;
+                renderStoreProducts(productsDatabase);
+                renderPartnerProductsMarquee(productsDatabase);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const productIdParam = urlParams.get('product');
+                if (productIdParam) {
+                    const targetProd = productsDatabase.find(p => String(p.id) === String(productIdParam));
+                    if (targetProd) {
+                        updateMetaTagsForProduct(targetProd);
+                        openProductDetailObject(targetProd);
+                    }
+                }
+            } catch (err) {}
+        }
+
+        function updateMetaTagsForProduct(p) {
+            const prodTitle = p.title ? `${p.title} - ${Number(p.price || 0).toFixed(2)} د.م` : 'bedal.online';
+            const prodDesc = p.description ? p.description.substring(0, 150) : 'اكتشف هذا المنتج الحصري بأفضل الأسعار مع الدفع عند الاستلام.';
+            const images = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            const prodImg = images[0] || '';
+            
+            let cleanOrigin = window.location.origin;
+            if (!cleanOrigin || cleanOrigin === 'null') cleanOrigin = 'https://bedal.online';
+            const exactProductUrl = `${cleanOrigin}${window.location.pathname}?product=${p.id}`;
+
+            const titleEl = document.getElementById('page-main-title');
+            const metaTitleEl = document.getElementById('meta-og-title');
+            const metaDescEl = document.getElementById('meta-og-desc');
+            const metaImgEl = document.getElementById('meta-og-image');
+            const metaUrlEl = document.getElementById('meta-og-url');
+
+            if (titleEl) titleEl.innerText = prodTitle;
+            if (metaTitleEl) metaTitleEl.setAttribute('content', prodTitle);
+            if (metaDescEl) metaDescEl.setAttribute('content', prodDesc);
+            if (metaImgEl && prodImg) metaImgEl.setAttribute('content', prodImg);
+            if (metaUrlEl) metaUrlEl.setAttribute('content', exactProductUrl);
+        }
+
+        function renderPartnerProductsMarquee(productsList) {
+            const marqueeContainer = document.getElementById('partner-products-marquee');
+            if(!marqueeContainer) return;
+            if(!productsList || productsList.length === 0) {
+                marqueeContainer.innerHTML = '<p class="text-emerald-100 text-base font-semibold">لا توجد منتجات للعرض حالياً.</p>';
+                return;
+            }
+            
+            let marqueeHtml = '';
+            for(let i = 0; i < 2; i++) {
+                productsList.forEach(p => {
+                    const mainImg = (p.images && p.images[0]) || '';
+                    marqueeHtml += `
+                        <div class="flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/20 px-5 py-4 rounded-2xl shadow-xl flex-shrink-0 w-80 cursor-pointer hover:bg-white/20 transition-all" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                            <div class="w-20 h-20 rounded-xl overflow-hidden border border-white/30 flex-shrink-0 relative flex items-center justify-center bg-zinc-900">
+                                <img src="${mainImg}" class="w-full h-full object-contain">
+                            </div>
+                            <div class="overflow-hidden space-y-1.5">
+                                <h4 class="font-extrabold text-base text-white truncate">${p.title}</h4>
+                                <div class="flex items-baseline gap-2.5">
+                                    <span class="text-[#34D399] font-black text-base">${p.price.toFixed(2)} د.م</span>
+                                    <span class="text-rose-300 text-sm line-through font-bold">${p.oldPrice.toFixed(2)} د.م</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            marqueeContainer.innerHTML = marqueeHtml;
+        }
+
+        function renderStoreProducts(productsList) {
+            const grid = document.getElementById('store-products-grid');
+            const paginationContainer = document.getElementById('pagination-container');
+            if(!grid) return;
+
+            let filteredList = currentFilterCategory === 'all' ? productsList : productsList.filter(p => (p.category || 'cosmetics') === currentFilterCategory);
+
+            if(filteredList.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-12 text-lg font-bold">لا توجد منتجات مسجلة في هذا القسم حالياً.</p>';
+                if(paginationContainer) paginationContainer.innerHTML = '';
+                return;
+            }
+
+            const totalPages = Math.ceil(filteredList.length / itemsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const paginatedItems = filteredList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+            let html = '';
+            paginatedItems.forEach(p => {
+                const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+                const firstImg = productImages[0];
+                const isAvailable = (p.is_available !== false);
+
+                let catKey = p.category || 'cosmetics';
+                let foundCat = categoriesDatabase.find(c => c.key === catKey);
+                let catLabel = foundCat ? foundCat.name : (p.catLabel || 'مستحضرات التجميل');
+                let catColor = foundCat && foundCat.color ? foundCat.color : '#059669';
+
+                let storeThumbnailsHtml = '';
+                if (productImages.length > 1) {
+                    storeThumbnailsHtml = `<div class="flex items-center gap-2 overflow-x-auto py-2 px-3.5 bg-gray-50 border-t border-gray-200 flex-shrink-0">`;
+                    productImages.forEach((imgUrl, imgIdx) => {
+                        const isFirst = imgIdx === 0;
+                        storeThumbnailsHtml += `
+                            <div onclick="event.stopPropagation(); setStoreCardImage('${p.id}', '${imgUrl}', this)" class="w-12 h-12 bg-white rounded-lg border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-1 overflow-hidden ${isFirst ? 'border-[#059669] ring-2 ring-emerald-200 scale-105 shadow-xs' : 'border-gray-300 opacity-70 hover:opacity-100'}">
+                                <img src="${imgUrl}" class="max-w-full max-h-full object-contain rounded">
+                            </div>
+                        `;
+                    });
+                    storeThumbnailsHtml += `</div>`;
+                }
+
+                const cardBgClass = isAvailable ? 'bg-white' : 'bg-gray-200 opacity-75 grayscale';
+                const imgFilterClass = isAvailable ? '' : 'grayscale';
+                const titleColorClass = isAvailable ? 'text-[#2D3748] hover:text-[#059669]' : 'text-gray-800 font-bold';
+                const unavailableBadge = !isAvailable ? `<span class="absolute top-3 right-3 z-20 bg-gray-900 text-white text-sm font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider">غير متاح</span>` : '';
+
+                let cartBtnHtml = '';
+                let waBtnHtml = '';
+
+                if (isAvailable) {
+                    cartBtnHtml = `<button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#059669] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#047857] transition-colors shadow-md flex items-center justify-center gap-2 text-sm">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
+                    </button>`;
+                    waBtnHtml = `<button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#10B981] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#059669] transition-colors shadow-md flex items-center justify-center gap-2 text-sm">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
+                    </button>`;
+                } else {
+                    cartBtnHtml = `<button disabled class="w-full bg-gray-400 text-gray-200 py-3 px-3 rounded-xl font-extrabold cursor-not-allowed shadow-none flex items-center justify-center gap-2 text-sm">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
+                    </button>`;
+                    waBtnHtml = `<button disabled class="w-full bg-gray-400 text-gray-200 py-3 px-3 rounded-xl font-extrabold cursor-not-allowed shadow-none flex items-center justify-center gap-2 text-sm">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
+                    </button>`;
+                }
+
+                html += `
+                    <div class="product-item ${cardBgClass} rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer h-full" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                        ${unavailableBadge}
+                        <div class="flex flex-col flex-grow">
+                            <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-3 h-80 sm:h-96 flex-shrink-0">
+                                <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-contain store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
+                            </div>
+                            ${storeThumbnailsHtml}
+                            <div class="p-5 space-y-3 flex flex-col flex-grow justify-between">
+                                <div class="space-y-2">
+                                    <span class="text-xs font-bold px-3 py-1.5 rounded-xl inline-block border shadow-xs" style="background-color: ${catColor}15; color: ${catColor}; border-color: ${catColor}40;">${catLabel}</span>
+                                    <h3 class="font-extrabold ${titleColorClass} text-lg sm:text-xl leading-snug transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
+                                    <p class="text-gray-600 text-sm line-clamp-2 font-medium">${p.description || ''}</p>
+                                </div>
+                                <div class="p-3 bg-emerald-50/60 border border-emerald-200 rounded-xl flex items-center justify-between mt-auto shadow-xs">
+                                    <div>
+                                        <span class="text-[11px] font-bold text-[#059669] block" data-i18n="total_after_disc">الثمن بعد التخفيض:</span>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="font-black text-[#059669] text-2xl">${p.price.toFixed(2)}</span>
+                                            <span class="text-sm font-bold text-[#059669]">د.م</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-left">
+                                        <span class="text-[11px] font-bold text-gray-500 block" data-i18n="original_total">الأصلي:</span>
+                                        <span class="text-sm font-bold text-red-500 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-5 pt-0 grid grid-cols-2 gap-2.5 mt-auto flex-shrink-0" onclick="event.stopPropagation()">
+                            ${cartBtnHtml}
+                            ${waBtnHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            grid.innerHTML = html;
+
+            if (paginationContainer && filteredList.length > itemsPerPage) {
+                let paginationHtml = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const isCurrent = i === currentPage;
+                    const btnClasses = isCurrent 
+                        ? 'bg-[#059669] text-white shadow-md ring-2 ring-emerald-200 text-base' 
+                        : 'bg-white border-2 border-[#059669] text-gray-900 hover:bg-emerald-50 pagination-green-glow text-base font-extrabold';
+                    
+                    paginationHtml += `
+                        <button onclick="changePage(${i})" class="w-12 h-12 rounded-xl font-black transition-all shadow-sm flex items-center justify-center ${btnClasses}">
+                            ${i}
+                        </button>
+                    `;
+                }
+                paginationContainer.innerHTML = paginationHtml;
+            } else if (paginationContainer) {
+                paginationContainer.innerHTML = '';
+            }
+            lucide.createIcons();
+            applyTranslations();
+        }
+
+        function setStoreCardImage(productId, imgUrl, thumbEl) {
+            const mainImg = document.getElementById(`store-main-img-${productId}`);
+            if (mainImg) {
+                mainImg.style.opacity = '0';
+                setTimeout(() => {
+                    mainImg.src = imgUrl;
+                    mainImg.style.opacity = '1';
+                }, 150);
+            }
+            const parentThumbContainer = thumbEl.parentElement;
+            if (parentThumbContainer) {
+                Array.from(parentThumbContainer.children).forEach(child => {
+                    child.classList.remove('border-[#059669]', 'ring-2', 'ring-emerald-200', 'scale-105', 'shadow-xs');
+                    child.classList.add('border-gray-300', 'opacity-70');
+                });
+                thumbEl.classList.remove('border-gray-300', 'opacity-70');
+                thumbEl.classList.add('border-[#059669]', 'ring-2', 'ring-emerald-200', 'scale-105', 'shadow-xs');
+            }
+        }
+
+        function changePage(newPage) {
+            currentPage = newPage;
+            renderStoreProducts(productsDatabase);
+            window.scrollTo({ top: 400, behavior: 'smooth' });
+        }
+
+        function addToCart(title, price, oldPrice, img) {
+            const existingItem = cart.find(item => item.title === title);
+            if (existingItem) existingItem.quantity += 1;
+            else cart.push({ title, price: parseFloat(price), oldPrice: parseFloat(oldPrice), img, quantity: 1 });
+            updateCartUI();
+        }
+
+        function openWhatsAppModal(title, price) {
+            currentProduct = { title, price };
+            document.getElementById('wa-cust-name').value = '';
+            document.getElementById('wa-cust-phone').value = '';
+            document.getElementById('wa-cust-city').value = '';
+            document.getElementById('wa-success-alert').classList.add('hidden');
+            document.getElementById('whatsapp-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeWhatsAppModal() {
+            document.getElementById('whatsapp-modal').classList.add('hidden');
+        }
+
+        function submitWhatsAppOrder() {
+            const name = document.getElementById('wa-cust-name').value.trim();
+            const phone = document.getElementById('wa-cust-phone').value.trim();
+            const city = document.getElementById('wa-cust-city').value.trim();
+            if (!name || !phone || !city) { alert('يرجى ملء جميع الخانات المطلوبة'); return; }
+
+            const message = `السلام عليكم، أريد طلب هذا المنتج:\n\n🛍️ *المنتج:* ${currentProduct.title}\n💰 *الثمن:* ${currentProduct.price} د.م\n\n👤 *الإسم الكامل:* ${name}\n📞 *رقم الهاتف:* ${phone}\n📍 *المدينة:* ${city}`;
+            document.getElementById('wa-success-alert').classList.remove('hidden');
+            setTimeout(() => {
+                window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
+                closeWhatsAppModal();
+            }, 1500);
+        }
+
+        function submitDirectWhatsAppOrder() {
+            const name = document.getElementById('detail-cust-name').value.trim();
+            const phone = document.getElementById('detail-cust-phone').value.trim();
+            const city = document.getElementById('detail-cust-city').value.trim();
+            if (!name || !phone || !city) { alert('يرجى ملء جميع خانات معلومات التوصيل المطلوبة'); return; }
+
+            const message = `السلام عليكم، أريد طلب هذا المنتج:\n\n🛍️ *المنتج:* ${currentProduct.title}\n💰 *الثمن:* ${currentProduct.price.toFixed(2)} د.م\n\n👤 *الإسم الكامل:* ${name}\n📞 *رقم الهاتف:* ${phone}\n📍 *المدينة:* ${city}`;
+            window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        async function submitDirectProductOrder() {
+            const name = document.getElementById('detail-cust-name').value.trim();
+            const phone = document.getElementById('detail-cust-phone').value.trim();
+            const city = document.getElementById('detail-cust-city').value.trim();
+            if (!name || !phone || !city) { alert('يرجى ملء جميع خانات معلومات التوصيل المطلوبة'); return; }
+
+            const orderData = { name, phone, address: city, product: `${currentProduct.title} (1)`, price: currentProduct.price, status: 'قيد الانتظار' };
+            try {
+                const { error } = await supabaseClient.from('orders').insert([orderData]);
+                if (!error) sendTelegramNotification(orderData);
+            } catch (err) {}
+
+            document.getElementById('detail-cust-name').value = '';
+            document.getElementById('detail-cust-phone').value = '';
+            document.getElementById('detail-cust-city').value = '';
+            document.getElementById('order-success-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        async function submitInvoiceOrder() {
+            const name = document.getElementById('invoice-cust-name').value.trim();
+            const phone = document.getElementById('invoice-cust-phone').value.trim();
+            const address = document.getElementById('invoice-cust-address').value.trim();
+            if (!name || !phone || !address || cart.length === 0) { alert('يرجى ملء جميع معلومات التوصيل والتأكد من وجود منتجات في السلة!'); return; }
+
+            let productsSummary = cart.map(item => `${item.title} (${item.quantity})`).join(' ، ');
+            let finalTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const orderData = { name, phone, address, product: productsSummary, price: finalTotal, status: 'قيد الانتظار' };
+
+            try {
+                const { error } = await supabaseClient.from('orders').insert([orderData]);
+                if (error) { alert('خطأ: ' + error.message); return; }
+                sendTelegramNotification(orderData);
+            } catch (err) { alert('خطأ في الاتصال.'); return; }
+
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+            document.getElementById('order-success-modal').classList.add('hidden');
+            document.getElementById('order-success-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function updateCartUI() {
+            const countBadge = document.getElementById('cart-count-badge');
+            const drawerCountBadge = document.getElementById('drawer-cart-count-badge');
+            const floatingCartBtn = document.getElementById('floating-cart-btn');
+            const itemsContainer = document.getElementById('cart-items-container');
+            const totalPriceElement = document.getElementById('cart-total-price');
+            const totalSavingElement = document.getElementById('cart-total-saving');
+
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            
+            if (countBadge) countBadge.innerText = totalCount;
+            if (drawerCountBadge) drawerCountBadge.innerText = totalCount;
+
+            if (totalCount > 0) {
+                if (floatingCartBtn) {
+                    floatingCartBtn.classList.add('cart-bounce-active');
+                    setTimeout(() => floatingCartBtn.classList.remove('cart-bounce-active'), 1800);
+                }
+                if (drawerCountBadge) {
+                    drawerCountBadge.classList.add('cart-bounce-active');
+                    setTimeout(() => drawerCountBadge.classList.remove('cart-bounce-active'), 1800);
+                }
+            }
+
+            if (cart.length === 0) {
+                itemsContainer.innerHTML = `<p class="text-center text-gray-500 py-10 text-base font-semibold" data-i18n="empty_cart">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>`;
+                totalPriceElement.innerText = "0.00";
+                totalSavingElement.innerText = "0.00 د.م";
+                applyTranslations();
+                return;
+            }
+
+            let total = 0, totalSaving = 0, html = '';
+            cart.forEach((item, index) => {
+                total += item.price * item.quantity;
+                totalSaving += (item.oldPrice - item.price) * item.quantity;
+                html += `
+                    <div class="flex items-center justify-between bg-[#FAF8F5] p-3.5 rounded-xl border border-gray-200 gap-3">
+                        <div class="w-14 h-14 rounded-xl overflow-hidden border flex-shrink-0 relative flex items-center justify-center bg-gray-100">
+                            <img src="${item.img}" class="w-full h-full object-contain">
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-extrabold text-sm text-gray-900">${item.title}</h4>
+                            <div class="flex items-baseline gap-2.5 mt-1">
+                                <span class="text-[#059669] text-sm font-black">${(item.price * item.quantity).toFixed(2)} د.م</span>
+                                <span class="text-xs text-red-500 line-through font-bold">${(item.oldPrice * item.quantity).toFixed(2)} د.م</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white border border-gray-300 px-2.5 py-1.5 rounded-xl shadow-xs">
+                            <button onclick="cart[${index}].quantity += 1; updateCartUI();" class="text-[#059669] font-black text-base px-1">+</button>
+                            <span class="text-sm font-black text-gray-900">${item.quantity}</span>
+                            <button onclick="cart[${index}].quantity -= 1; if(cart[${index}].quantity<=0) cart.splice(${index},1); updateCartUI();" class="text-rose-500 font-black text-base px-1">-</button>
+                        </div>
+                        <button onclick="cart.splice(${index},1); updateCartUI();" class="text-rose-500 hover:text-rose-700 p-1.5"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                    </div>
+                `;
+            });
+            itemsContainer.innerHTML = html;
+            totalPriceElement.innerText = total.toFixed(2);
+            totalSavingElement.innerText = totalSaving.toFixed(2) + " د.م";
+            lucide.createIcons();
+            applyTranslations();
+        }
+
+        function toggleCartDrawer() { document.getElementById('cart-drawer').classList.toggle('hidden'); }
+        function toggleCategoriesDrawer() { document.getElementById('categories-drawer').classList.toggle('hidden'); }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) { alert('السلة فارغة حالياً!'); return; }
+            toggleCartDrawer();
+            let finalTotal = 0, oldTotal = 0, totalSaving = 0, totalItems = 0;
+            cart.forEach(item => {
+                totalItems += item.quantity;
+                finalTotal += item.price * item.quantity;
+                oldTotal += item.oldPrice * item.quantity;
+                totalSaving += (item.oldPrice - item.price) * item.quantity;
+            });
+            document.getElementById('invoice-items-count').innerText = totalItems + ' منتج';
+            document.getElementById('invoice-old-total').innerText = oldTotal.toFixed(2) + ' د.م';
+            document.getElementById('invoice-saving-total').innerText = totalSaving.toFixed(2) + ' د.م';
+            document.getElementById('invoice-final-total').innerText = finalTotal.toFixed(2) + ' د.م';
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeCheckoutModal() { document.getElementById('checkout-modal').classList.add('hidden'); }
+        function closeSuccessModal() { document.getElementById('order-success-modal').classList.add('hidden'); }
+
+        function switchTab(tabName) {
+            document.getElementById('section-store').classList.add('hidden');
+            document.getElementById('section-product-detail').classList.add('hidden');
+            document.getElementById('section-vendor-store').classList.add('hidden');
+
+            let cleanOrigin = window.location.origin;
+            if (!cleanOrigin || cleanOrigin === 'null') cleanOrigin = 'https://bedal.online';
+            const baseUrl = cleanOrigin + window.location.pathname;
+
+            if (tabName === 'detail') {
+                document.getElementById('section-product-detail').classList.remove('hidden');
+            } else if (tabName === 'vendor') {
+                document.getElementById('section-vendor-store').classList.remove('hidden');
+            } else {
+                document.getElementById('section-store').classList.remove('hidden');
+                if (window.history.pushState) window.history.pushState({path: baseUrl}, '', baseUrl);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openProductDetailObject(p) {
+            const images = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            
+            let catKey = p.category || 'cosmetics';
+            let foundCat = categoriesDatabase.find(c => c.key === catKey);
+            let catLabel = foundCat ? foundCat.name : (p.catLabel || 'مستحضرات التجميل');
+            let catColor = foundCat && foundCat.color ? foundCat.color : '#059669';
+
+            currentProduct = {
+                id: p.id || '',
+                title: p.title || '',
+                price: p.price || 0,
+                oldPrice: p.oldPrice || p.price || 0,
+                images: images,
+                currentImgIndex: 0,
+                category: catLabel,
+                categoryColor: catColor,
+                description: p.description || '',
+                videos: p.videos || [],
+                is_available: (p.is_available !== false)
+            };
+
+            updateMetaTagsForProduct(p);
+
+            let cleanOrigin = window.location.origin;
+            if (!cleanOrigin || cleanOrigin === 'null') cleanOrigin = 'https://bedal.online';
+            const productPageUrl = `${cleanOrigin}${window.location.pathname}?product=${p.id}`;
+            if (p.id && window.history.pushState) {
+                window.history.pushState({path: productPageUrl}, '', productPageUrl);
+            }
+
+            updateDetailImageViewer();
+            renderDetailThumbnails();
+
+            document.getElementById('detail-product-title').innerText = currentProduct.title;
+            document.getElementById('detail-product-price').innerText = currentProduct.price.toFixed(2) + ' د.م';
+            document.getElementById('detail-old-price').innerText = currentProduct.oldPrice.toFixed(2) + ' د.م';
+            
+            const catSpanEl = document.getElementById('detail-product-cat');
+            const catContainerEl = document.getElementById('detail-product-cat-container');
+            if (catSpanEl) catSpanEl.innerText = currentProduct.category;
+            if (catContainerEl) {
+                catContainerEl.style.backgroundColor = `${currentProduct.categoryColor}15`;
+                catContainerEl.style.color = currentProduct.categoryColor;
+                catContainerEl.style.borderColor = `${currentProduct.categoryColor}40`;
+            }
+
+            document.getElementById('detail-product-desc').innerText = currentProduct.description;
+            document.getElementById('summary-prod-name').innerText = currentProduct.title;
+            document.getElementById('summary-prod-total').innerText = currentProduct.price.toFixed(2) + ' د.م';
+
+            document.getElementById('detail-cust-name').value = '';
+            document.getElementById('detail-cust-phone').value = '';
+            document.getElementById('detail-cust-city').value = '';
+
+            const orderFormContainer = document.getElementById('order-form-container');
+            const bottomOrderBtnBox = document.getElementById('detail-bottom-order-btn-box');
+            const unavailableBadge = document.getElementById('detail-unavailable-badge');
+            const detailImgEl = document.getElementById('detail-product-img');
+
+            if (!currentProduct.is_available) {
+                if (orderFormContainer) orderFormContainer.classList.add('hidden');
+                if (bottomOrderBtnBox) bottomOrderBtnBox.classList.add('hidden');
+                if (unavailableBadge) unavailableBadge.classList.remove('hidden');
+                if (detailImgEl) detailImgEl.classList.add('grayscale');
+            } else {
+                if (orderFormContainer) orderFormContainer.classList.remove('hidden');
+                if (bottomOrderBtnBox) bottomOrderBtnBox.classList.remove('hidden');
+                if (unavailableBadge) unavailableBadge.classList.add('hidden');
+                if (detailImgEl) detailImgEl.classList.remove('grayscale');
+            }
+
+            switchTab('detail');
+            lucide.createIcons();
+            applyTranslations();
+        }
+
+        function renderDetailThumbnails() {
+            const container = document.getElementById('detail-thumbnails-container');
+            if (!container) return;
+            let html = '';
+            currentProduct.images.forEach((img, idx) => {
+                const isActive = idx === currentProduct.currentImgIndex;
+                html += `
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 cursor-pointer transition-all duration-300 flex items-center justify-center bg-gray-50 p-1.5 overflow-hidden ${isActive ? 'border-[#059669] scale-105 shadow-md ring-2 ring-emerald-200' : 'border-gray-300 opacity-70 hover:opacity-100'}">
+                        <img src="${img}" onclick="setDetailImageIndex(${idx})" class="w-full h-full object-contain">
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function setDetailImageIndex(idx) {
+            currentProduct.currentImgIndex = idx;
+            updateDetailImageViewer();
+            renderDetailThumbnails();
+            
+            const metaImgEl = document.getElementById('meta-og-image');
+            if (metaImgEl && currentProduct.images[idx]) {
+                metaImgEl.setAttribute('content', currentProduct.images[idx]);
+            }
+        }
+
+        function updateDetailImageViewer() {
+            if(!currentProduct.images.length) return;
+            const imgEl = document.getElementById('detail-product-img');
+            imgEl.style.opacity = '0';
+            setTimeout(() => {
+                imgEl.src = currentProduct.images[currentProduct.currentImgIndex];
+                imgEl.style.opacity = '1';
+            }, 150);
+        }
+
+        filterCategory = (catKey) => {
+            document.querySelectorAll('[id^="cat-drawer-btn-"]').forEach(btn => btn.classList.remove('border-[#059669]', 'bg-emerald-50'));
+            const activeBtn = document.getElementById(`cat-drawer-btn-${catKey}`);
+            if (activeBtn) activeBtn.classList.add('border-[#059669]', 'bg-emerald-50');
+
+            currentFilterCategory = catKey;
+            currentPage = 1;
+            renderStoreProducts(productsDatabase);
+            switchTab('store');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchSupabaseStoreData();
+            initFooterReviewsSlider();
+            checkAndShowWelcomeAd();
+            lucide.createIcons();
+            applyTranslations();
+        });
+    </script>
+</body>
+</html>
