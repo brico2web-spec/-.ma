@@ -49,12 +49,14 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts: Readex Pro & Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Readex+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Readex+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Readex Pro', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #F8F9FA;
             color: #0F172A;
+            font-size: 1.05rem; /* تم تكبير الخط الأساسي قليلاً لوضوح أفضل */
+            line-height: 1.7;
         }
         .brand-font {
             font-family: 'Outfit', sans-serif;
@@ -63,7 +65,7 @@
         }
         @keyframes cartFlash {
             0% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4); }
-            50% { transform: scale(1.25) rotate(-8deg); box-shadow: 0 0 30px 10px rgba(249, 115, 22, 0.8); }
+            50% { transform: scale(1.25) rotate(-8deg); box-shadow: 0 0 30px 10px rgba(2, 132, 199, 0.8), 0 0 45px 15px rgba(249, 115, 22, 0.8); }
             100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4); }
         }
         .cart-bounce-active {
@@ -201,22 +203,22 @@
 </head>
 <body class="bg-[#F8F9FA] text-[#0F172A] flex flex-col min-h-screen relative">
 
-    <!-- نافذة إعلان الموقع الأولى (9:16) عند مدخل الموقع -->
-    <div id="welcome-ad-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4 transition-opacity duration-300">
-        <div class="relative w-full max-w-xs aspect-[9/16] bg-zinc-950 rounded-2xl shadow-2xl border-2 border-amber-400 overflow-hidden flex flex-col justify-between p-3">
+    <!-- نافذة إعلان الموقع الأولى (9:16) عند مدخل الموقع - تم ضبط حجمها وعرضها لتملأ الإطار تماماً بدون قص أو تقلص -->
+    <div id="welcome-ad-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 transition-opacity duration-300">
+        <div class="relative w-full max-w-sm aspect-[9/16] bg-zinc-950 rounded-2xl shadow-2xl border-2 border-amber-400 overflow-hidden flex flex-col justify-between p-3">
             <div class="absolute inset-0 w-full h-full flex items-center justify-center">
-                <img id="welcome-ad-img" src="https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png" alt="إعلان الموقع" class="w-full h-full object-contain opacity-90">
-                <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/40 pointer-events-none"></div>
+                <img id="welcome-ad-img" src="https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png" alt="إعلان الموقع" class="w-full h-full object-fill opacity-95">
+                <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-black/30 pointer-events-none"></div>
             </div>
 
             <div class="relative z-10 text-center pt-2">
-                <span class="bg-amber-500 text-zinc-950 text-xs font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider" data-i18n="exclusive_ad">
+                <span class="bg-amber-500 text-zinc-950 text-xs sm:text-sm font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider" data-i18n="exclusive_ad">
                     ✨ إعلان حصري لزوارنا ✨
                 </span>
             </div>
 
             <div class="relative z-10 pb-2 flex justify-center">
-                <button onclick="closeWelcomeAdModal()" class="w-11/12 bg-white/20 hover:bg-white/30 text-white font-black py-3 px-6 rounded-xl border-2 border-white/80 white-glow-btn backdrop-blur-md transition-all flex items-center justify-center gap-2 text-sm shadow-xl cursor-pointer">
+                <button onclick="closeWelcomeAdModal()" class="w-11/12 bg-white/25 hover:bg-white/40 text-white font-black py-2.5 px-4 rounded-xl border-2 border-white white-glow-btn backdrop-blur-md transition-all flex items-center justify-center gap-2 text-sm sm:text-base shadow-xl cursor-pointer">
                     <i data-lucide="x-circle" class="w-5 h-5 text-white"></i>
                     <span data-i18n="close_ad">إغلاق الإعلان ومتابعة التصفح</span>
                 </button>
@@ -232,113 +234,124 @@
         </span>
     </div>
 
-    <!-- Right Side Menu Drawer Modal for Categories & WhatsApp -->
-    <div id="categories-drawer" class="fixed inset-0 z-50 bg-[#0F172A]/40 backdrop-blur-sm hidden flex justify-start transition-opacity">
-        <div class="bg-white w-full max-w-[240px] h-full shadow-2xl flex flex-col justify-between p-4 overflow-y-auto transform transition-transform">
+    <!-- Right Side Menu Drawer Modal for Categories & Social Media -->
+    <div id="categories-drawer" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex justify-start transition-opacity">
+        <div class="bg-white w-full max-w-[270px] h-full shadow-2xl flex flex-col justify-between p-5 overflow-y-auto transform transition-transform">
             <div>
                 <div class="flex items-center justify-between border-b pb-3 mb-4">
-                    <h2 class="text-sm font-black text-[#0F172A] flex items-center gap-1.5">
-                        <i data-lucide="layout-grid" class="w-4 h-4 text-[#F97316]"></i>
+                    <h2 class="text-base font-black text-[#0F172A] flex items-center gap-2">
+                        <i data-lucide="layout-grid" class="w-5 h-5 text-[#F97316]"></i>
                         <span data-i18n="store_categories">أقسام المتجر</span>
                     </h2>
-                    <button onclick="toggleCategoriesDrawer()" class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg">
-                        <i data-lucide="x" class="w-4 h-4"></i>
+                    <button onclick="toggleCategoriesDrawer()" class="p-2 text-gray-500 hover:text-gray-800 rounded-lg">
+                        <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
                 
-                <div class="space-y-2 mb-4 pb-4 border-b border-gray-100">
-                    <button onclick="switchTab('store'); toggleCategoriesDrawer();" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-xs transition-all shadow-sm">
-                        <i data-lucide="home" class="w-4 h-4 text-[#F97316]"></i>
+                <div class="space-y-2.5 mb-4 pb-4 border-b border-gray-100">
+                    <button onclick="switchTab('store'); toggleCategoriesDrawer();" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-extrabold text-sm transition-all shadow-sm">
+                        <i data-lucide="home" class="w-5 h-5 text-[#F97316]"></i>
                         <span data-i18n="home">الرئيسية</span>
                     </button>
-                    <button onclick="toggleCategoriesDrawer(); toggleCartDrawer();" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-bold text-xs transition-all shadow-sm">
-                        <i data-lucide="shopping-bag" class="w-4 h-4 text-[#F97316]"></i>
-                        <span data-i18n="cart">السلة</span>
+                    <button onclick="toggleCategoriesDrawer(); toggleCartDrawer();" class="w-full flex items-center justify-between p-3 rounded-xl border border-orange-200 bg-orange-50 hover:bg-orange-100 text-[#0F172A] font-extrabold text-sm transition-all shadow-sm">
+                        <div class="flex items-center gap-2.5">
+                            <i data-lucide="shopping-bag" class="w-5 h-5 text-[#F97316]"></i>
+                            <span data-i18n="cart">السلة</span>
+                        </div>
+                        <span id="drawer-cart-count-badge" class="bg-[#F97316] text-white text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm">0</span>
                     </button>
                 </div>
 
-                <div class="space-y-2">
-                    <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="layers" class="w-4 h-4 text-[#F97316]"></i>
+                <div class="space-y-2.5">
+                    <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="layers" class="w-5 h-5 text-[#F97316]"></i>
                         <span data-i18n="all">الكل</span>
                     </button>
-                    <button onclick="filterCategory('women'); toggleCategoriesDrawer();" id="cat-drawer-btn-women" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-pink-500"></i>
+                    <button onclick="filterCategory('women'); toggleCategoriesDrawer();" id="cat-drawer-btn-women" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-pink-500"></i>
                         <span data-i18n="women">نساء</span>
                     </button>
-                    <button onclick="filterCategory('men'); toggleCategoriesDrawer();" id="cat-drawer-btn-men" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="shirt" class="w-4 h-4 text-blue-500"></i>
+                    <button onclick="filterCategory('men'); toggleCategoriesDrawer();" id="cat-drawer-btn-men" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="shirt" class="w-5 h-5 text-blue-500"></i>
                         <span data-i18n="men">رجال</span>
                     </button>
-                    <button onclick="filterCategory('kids'); toggleCategoriesDrawer();" id="cat-drawer-btn-kids" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="smile" class="w-4 h-4 text-amber-500"></i>
+                    <button onclick="filterCategory('kids'); toggleCategoriesDrawer();" id="cat-drawer-btn-kids" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="smile" class="w-5 h-5 text-amber-500"></i>
                         <span data-i18n="kids">أطفال</span>
                     </button>
-                    <button onclick="filterCategory('medical'); toggleCategoriesDrawer();" id="cat-drawer-btn-medical" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="activity" class="w-4 h-4 text-emerald-500"></i>
+                    <button onclick="filterCategory('medical'); toggleCategoriesDrawer();" id="cat-drawer-btn-medical" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="activity" class="w-5 h-5 text-emerald-500"></i>
                         <span data-i18n="medical">مستلزمات طبية</span>
                     </button>
-                    <button onclick="filterCategory('home_supplies'); toggleCategoriesDrawer();" id="cat-drawer-btn-home_supplies" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="home" class="w-4 h-4 text-cyan-600"></i>
+                    <button onclick="filterCategory('home_supplies'); toggleCategoriesDrawer();" id="cat-drawer-btn-home_supplies" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="home" class="w-5 h-5 text-cyan-600"></i>
                         <span data-i18n="home_supplies">منزلية</span>
                     </button>
-                    <button onclick="filterCategory('electronics'); toggleCategoriesDrawer();" id="cat-drawer-btn-electronics" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="cpu" class="w-4 h-4 text-violet-500"></i>
+                    <button onclick="filterCategory('electronics'); toggleCategoriesDrawer();" id="cat-drawer-btn-electronics" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="cpu" class="w-5 h-5 text-violet-500"></i>
                         <span data-i18n="electronics">إليكترونيات</span>
                     </button>
-                    <button onclick="filterCategory('car_devices'); toggleCategoriesDrawer();" id="cat-drawer-btn-car_devices" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="car" class="w-4 h-4 text-rose-500"></i>
+                    <button onclick="filterCategory('car_devices'); toggleCategoriesDrawer();" id="cat-drawer-btn-car_devices" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="car" class="w-5 h-5 text-rose-500"></i>
                         <span data-i18n="car_devices">أجهزة سيارة</span>
                     </button>
-                    <button onclick="filterCategory('various'); toggleCategoriesDrawer();" id="cat-drawer-btn-various" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
-                        <i data-lucide="package" class="w-4 h-4 text-[#0284C7]"></i>
+                    <button onclick="filterCategory('various'); toggleCategoriesDrawer();" id="cat-drawer-btn-various" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-orange-50 hover:border-orange-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="package" class="w-5 h-5 text-[#0284C7]"></i>
                         <span data-i18n="various">منتجات متنوعة</span>
                     </button>
                 </div>
 
-                <div class="mt-6 pt-4 border-t border-gray-100">
-                    <a href="https://wa.me/212601749553?text=%Dالسلام%20عليكم،%20أريد%20الاستفسار." target="_blank" class="w-full flex items-center justify-center gap-1.5 p-2.5 rounded-lg bg-orange-50 hover:bg-orange-100 text-[#0284C7] font-bold text-xs transition-all border border-orange-200 shadow-sm">
-                        <i data-lucide="message-circle" class="w-4 h-4 text-[#0284C7]"></i>
-                        <span data-i18n="whatsapp_contact">إتصل بيا عبر الواتساب</span>
+                <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-center gap-3">
+                    <a href="https://www.facebook.com/BedalOnlineShop" target="_blank" aria-label="Facebook" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <img src="https://www.dropbox.com/scl/fi/xhombb00ivvaba4flh0u4/Meta_AI_facebook_logo_match_20261105_031951.png?rlkey=vkr7bpn15fv9icmb4kk148mfi&st=mkleldlb&dl=1" alt="Facebook" class="w-11 h-11 object-contain rounded-xl shadow-md">
+                    </a>
+                    <a href="https://www.instagram.com/bedal_online_shop/" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <img src="https://www.dropbox.com/scl/fi/7qbpemg9brg5bgvolylj2/Meta_AI_instagram_logo_match_20261105_031949.png?rlkey=gely39c2dxnc6ulziho2knb6y&st=aoue8zhn&dl=1" alt="Instagram" class="w-11 h-11 object-contain rounded-xl shadow-md">
+                    </a>
+                    <a href="https://www.tiktok.com/@bedalonlinestor" target="_blank" aria-label="TikTok" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <img src="https://www.dropbox.com/scl/fi/e4b192rld7raw5nssgwgm/Meta_AI_tiktok_logo_match_20261105_031947.png?rlkey=5x2npsmcn1xx5arfp4o3uakc5&st=mpzq1u89&dl=1" alt="TikTok" class="w-11 h-11 object-contain rounded-xl shadow-md">
+                    </a>
+                    <a href="https://wa.me/212601749553" target="_blank" aria-label="WhatsApp" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <img src="https://www.dropbox.com/scl/fi/ttseda0uexu2q30n74kgv/Meta_AI_whatsapp_logo_match_20261105_034753.png?rlkey=q9kbsmw3s4v07g2jtmdqb36te&st=p0vnzoj2&dl=1" alt="WhatsApp" class="w-11 h-11 object-contain rounded-xl shadow-md">
                     </a>
                 </div>
             </div>
             <div class="border-t pt-3 text-center">
-                <span class="text-[10px] text-gray-400 font-bold">bedal.online Marketplace</span>
+                <span class="text-xs text-gray-500 font-bold">bedal.online Marketplace</span>
             </div>
         </div>
     </div>
 
     <!-- Floating Cart Drawer Modal -->
-    <div id="cart-drawer" class="fixed inset-0 z-50 bg-[#0F172A]/40 backdrop-blur-sm hidden flex justify-end transition-opacity">
+    <div id="cart-drawer" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex justify-end transition-opacity">
         <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto transform transition-transform">
             <div>
                 <div class="flex items-center justify-between border-b pb-4 mb-4">
-                    <h2 class="text-xl font-bold text-[#0F172A] flex items-center gap-2">
+                    <h2 class="text-xl font-extrabold text-[#0F172A] flex items-center gap-2">
                         <i data-lucide="shopping-bag" class="w-6 h-6 text-[#F97316]"></i>
                         <span data-i18n="shopping_cart">سلة التسوق</span>
                     </h2>
-                    <button onclick="toggleCartDrawer()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
+                    <button onclick="toggleCartDrawer()" class="p-2 text-gray-500 hover:text-gray-800 rounded-lg">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
                 </div>
                 <div id="cart-items-container" class="space-y-4">
-                    <p id="empty-cart-msg" class="text-center text-gray-400 py-10 text-sm" data-i18n="empty_cart">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>
+                    <p id="empty-cart-msg" class="text-center text-gray-500 py-10 text-base font-semibold" data-i18n="empty_cart">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>
                 </div>
             </div>
-            <div class="border-t pt-4 space-y-3">
-                <div class="p-3 bg-gradient-to-r from-orange-50 to-slate-50 rounded-xl border border-orange-100 space-y-1">
-                    <div class="flex justify-between items-center text-xs text-gray-600 font-semibold">
+            <div class="border-t pt-4 space-y-4">
+                <div class="p-4 bg-gradient-to-r from-orange-50 to-slate-50 rounded-xl border border-orange-200 space-y-2">
+                    <div class="flex justify-between items-center text-sm text-gray-700 font-bold">
                         <span data-i18n="total_saving">إجمالي التوفير (الربح من الخصم):</span>
-                        <span id="cart-total-saving" class="text-[#0284C7] font-bold">0.00 د.م</span>
+                        <span id="cart-total-saving" class="text-[#0284C7] font-extrabold text-base">0.00 د.م</span>
                     </div>
-                    <div class="flex justify-between items-center text-lg font-bold">
+                    <div class="flex justify-between items-center text-base font-extrabold">
                         <span data-i18n="total_after_disc">المجموع الإجمالي بعد الخصم:</span>
-                        <span class="text-[#0F172A] font-black text-xl"><span id="cart-total-price">0.00</span> د.م</span>
+                        <span class="text-[#0F172A] font-black text-2xl"><span id="cart-total-price">0.00</span> د.م</span>
                     </div>
                 </div>
-                <button onclick="openCheckoutModal()" class="w-full bg-[#F97316] text-white py-3 rounded-lg font-bold hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md">
-                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                <button onclick="openCheckoutModal()" class="w-full bg-[#F97316] text-white py-3.5 rounded-xl font-black text-base hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md">
+                    <i data-lucide="check-circle" class="w-6 h-6"></i>
                     <span data-i18n="confirm_order_btn">تأكيد وإتمام الطلب</span>
                 </button>
             </div>
@@ -346,53 +359,53 @@
     </div>
 
     <!-- Neutral Checkout Invoice & Order Modal -->
-    <div id="checkout-modal" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-[#0F172A]/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b pb-4">
                 <div class="flex items-center gap-2">
                     <i data-lucide="file-text" class="w-6 h-6 text-[#F97316]"></i>
                     <h2 class="text-xl font-black text-[#0F172A]" data-i18n="invoice_title">فاتورة الطلب وإتمام المعلومات</h2>
                 </div>
-                <button onclick="closeCheckoutModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
+                <button onclick="closeCheckoutModal()" class="p-2 text-gray-500 hover:text-gray-800 rounded-lg">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            <div class="bg-[#F8F9FA] p-4 rounded-xl border border-gray-100 space-y-2 text-sm">
-                <div class="flex justify-between font-bold text-gray-700 border-b pb-2">
+            <div class="bg-[#F8F9FA] p-4 rounded-xl border border-gray-200 space-y-3 text-base">
+                <div class="flex justify-between font-bold text-gray-800 border-b pb-2">
                     <span data-i18n="items_count">عدد المنتجات في السلة:</span>
-                    <span id="invoice-items-count" class="text-[#F97316]">0 منتج</span>
+                    <span id="invoice-items-count" class="text-[#F97316] font-black">0 منتج</span>
                 </div>
-                <div class="flex justify-between font-bold text-gray-700">
+                <div class="flex justify-between font-bold text-gray-800">
                     <span data-i18n="original_total">إجمالي المبلغ الأصلي:</span>
-                    <span id="invoice-old-total" class="line-through text-red-600">0.00 د.م</span>
+                    <span id="invoice-old-total" class="line-through text-red-600 font-bold">0.00 د.م</span>
                 </div>
                 <div class="flex justify-between font-bold text-[#0284C7]">
                     <span data-i18n="saving_total">إجمالي ربحك من الخصم:</span>
-                    <span id="invoice-saving-total">0.00 د.م</span>
+                    <span id="invoice-saving-total" class="font-extrabold">0.00 د.م</span>
                 </div>
-                <div class="flex justify-between font-black text-base text-[#0F172A] pt-2 border-t">
+                <div class="flex justify-between font-black text-lg text-[#0F172A] pt-2 border-t">
                     <span data-i18n="final_to_pay">المبلغ المطلوب دفعه:</span>
-                    <span id="invoice-final-total" class="text-[#0284C7] text-lg">0.00 د.م</span>
+                    <span id="invoice-final-total" class="text-[#0284C7] text-xl font-black">0.00 د.م</span>
                 </div>
             </div>
             <div class="space-y-4">
-                <h3 class="font-bold text-[#0F172A] text-sm flex items-center gap-2">
-                    <i data-lucide="user" class="w-4 h-4 text-[#F97316]"></i>
+                <h3 class="font-extrabold text-[#0F172A] text-base flex items-center gap-2">
+                    <i data-lucide="user" class="w-5 h-5 text-[#F97316]"></i>
                     <span data-i18n="delivery_info">معلومات التوصيل الخاصة بك</span>
                 </h3>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="full_name">الاسم الكامل *</label>
-                    <input type="text" id="invoice-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="full_name">الاسم الكامل *</label>
+                    <input type="text" id="invoice-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#F97316] bg-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="phone_number">رقم الهاتف *</label>
-                    <input type="tel" id="invoice-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white text-right" dir="ltr">
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="phone_number">رقم الهاتف *</label>
+                    <input type="tel" id="invoice-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#F97316] bg-white text-right" dir="ltr">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="address_city">العنوان الكامل والمدينة *</label>
-                    <input type="text" id="invoice-cust-address" data-i18n-placeholder="placeholder_address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white">
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="address_city">العنوان الكامل والمدينة *</label>
+                    <input type="text" id="invoice-cust-address" data-i18n-placeholder="placeholder_address" placeholder="أدخل مدينتك وعنوان الاستلام" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#F97316] bg-white">
                 </div>
-                <button onclick="submitInvoiceOrder()" class="w-full bg-[#F97316] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md">
+                <button onclick="submitInvoiceOrder()" class="w-full bg-[#F97316] text-white font-black py-3.5 px-4 rounded-xl hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-md text-base">
                     <i data-lucide="send" class="w-5 h-5"></i>
                     <span data-i18n="send_order_admin">إرسال الطلب إلى الإدارة</span>
                 </button>
@@ -401,50 +414,50 @@
     </div>
 
     <!-- Order Success Popup Modal -->
-    <div id="order-success-modal" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div id="order-success-modal" class="fixed inset-0 z-50 bg-[#0F172A]/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6 text-center">
-            <div class="w-16 h-16 bg-orange-100 text-[#0284C7] rounded-full flex items-center justify-center mx-auto shadow-inner">
-                <i data-lucide="check-circle-2" class="w-10 h-10"></i>
+            <div class="w-20 h-20 bg-orange-100 text-[#0284C7] rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <i data-lucide="check-circle-2" class="w-12 h-12"></i>
             </div>
-            <div class="space-y-2">
-                <h3 class="text-xl font-black text-[#0F172A]" data-i18n="order_success_title">تم إرسال طلبك بنجاح!</h3>
-                <p class="text-gray-600 text-sm leading-relaxed" data-i18n="order_success_desc">في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.</p>
+            <div class="space-y-3">
+                <h3 class="text-2xl font-black text-[#0F172A]" data-i18n="order_success_title">تم إرسال طلبك بنجاح!</h3>
+                <p class="text-gray-700 text-base font-semibold leading-relaxed" data-i18n="order_success_desc">في غضون 24 ساعة سيتم التواصل معك لتأكيد الطلبية.</p>
             </div>
-            <button onclick="closeSuccessModal()" class="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2">
+            <button onclick="closeSuccessModal()" class="w-full bg-[#0F172A] hover:bg-[#1E293B] text-white font-black py-3.5 px-4 rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 text-base">
                 <i data-lucide="x-circle" class="w-5 h-5"></i> <span data-i18n="close">إغلاق</span>
             </button>
         </div>
     </div>
 
     <!-- WhatsApp Direct Order Modal -->
-    <div id="whatsapp-modal" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div id="whatsapp-modal" class="fixed inset-0 z-50 bg-[#0F172A]/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 space-y-6">
             <div class="flex items-center justify-between border-b pb-4">
                 <div class="flex items-center gap-2">
                     <i data-lucide="message-circle" class="w-6 h-6 text-[#0284C7]"></i>
                     <h2 class="text-xl font-black text-[#0F172A]" data-i18n="wa_order_title">طلب سريع عبر الواتساب</h2>
                 </div>
-                <button onclick="closeWhatsAppModal()" class="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
+                <button onclick="closeWhatsAppModal()" class="p-2 text-gray-500 hover:text-gray-800 rounded-lg">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="full_name">الإسم الكامل *</label>
-                    <input type="text" id="wa-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0284C7] bg-white">
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="full_name">الإسم الكامل *</label>
+                    <input type="text" id="wa-cust-name" data-i18n-placeholder="placeholder_name" placeholder="أدخل اسمك الكامل" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#0284C7] bg-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="phone_number">رقم الهاتف *</label>
-                    <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0284C7] bg-white text-right" dir="ltr">
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="phone_number">رقم الهاتف *</label>
+                    <input type="tel" id="wa-cust-phone" placeholder="06XXXXXXXX" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#0284C7] bg-white text-right" dir="ltr">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1" data-i18n="city">المدينة *</label>
-                    <input type="text" id="wa-cust-city" data-i18n-placeholder="placeholder_city" placeholder="أدخل مدينتك" class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#0284C7] bg-white">
+                    <label class="block text-sm font-bold text-gray-800 mb-1.5" data-i18n="city">المدينة *</label>
+                    <input type="text" id="wa-cust-city" data-i18n-placeholder="placeholder_city" placeholder="أدخل مدينتك" class="w-full px-4 py-3 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#0284C7] bg-white">
                 </div>
-                <div id="wa-success-alert" class="hidden p-3 rounded-lg text-xs font-bold bg-orange-50 text-[#0284C7] border border-orange-200 text-center" data-i18n="wa_success_alert">
+                <div id="wa-success-alert" class="hidden p-3.5 rounded-xl text-sm font-bold bg-orange-50 text-[#0284C7] border border-orange-200 text-center" data-i18n="wa_success_alert">
                     ✨ سيتم التواصل معك في أقرب وقت!
                 </div>
-                <button onclick="submitWhatsAppOrder()" class="w-full bg-[#0284C7] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#0369A1] transition-colors flex items-center justify-center gap-2 shadow-md">
+                <button onclick="submitWhatsAppOrder()" class="w-full bg-[#0284C7] text-white font-black py-3.5 px-4 rounded-xl hover:bg-[#0369A1] transition-colors flex items-center justify-center gap-2 shadow-md text-base">
                     <i data-lucide="send" class="w-5 h-5"></i>
                     <span data-i18n="send_wa_btn">إرسال الطلب عبر الواتساب</span>
                 </button>
@@ -454,106 +467,106 @@
 
     <!-- Sticky Header Wrapper -->
     <div class="sticky top-0 z-40 w-full shadow-sm">
-        <div class="bg-[#0F172A] text-white py-1.5 overflow-hidden shadow-inner border-b border-[#1E293B]">
-            <div class="animate-marquee flex items-center gap-12 whitespace-nowrap text-xs sm:text-sm font-black tracking-wide">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
+        <div class="bg-[#0F172A] text-white py-2 overflow-hidden shadow-inner border-b border-[#1E293B]">
+            <div class="animate-marquee flex items-center gap-12 whitespace-nowrap text-sm sm:text-base font-black tracking-wide">
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="truck" class="w-5 h-5 text-[#F97316]"></i>
                     <span data-i18n="marquee_1">توصيل مجاني لجميع المدن في المغرب</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-amber-400"></i>
                     <span data-i18n="marquee_2">عروض حصرية وتخفيضات كبرى يومياً</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-[#0284C7]"></i>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-[#0284C7]"></i>
                     <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="truck" class="w-5 h-5 text-[#F97316]"></i>
                     <span data-i18n="marquee_1">توصيل مجاني لجميع المدن في المغرب</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-amber-400"></i>
                     <span data-i18n="marquee_2">عروض حصرية وتخفيضات كبرى يومياً</span>
                 </div>
-                <div class="flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-[#0284C7]"></i>
+                <div class="flex items-center gap-2.5">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-[#0284C7]"></i>
                     <span data-i18n="marquee_3">ضمان الجودة والدفع عند الاستلام</span>
                 </div>
             </div>
         </div>
 
         <header class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleCategoriesDrawer()" class="p-2 text-[#0F172A] hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    <button onclick="toggleCategoriesDrawer()" class="p-2.5 text-[#0F172A] hover:bg-gray-100 rounded-xl transition-colors flex items-center justify-center">
+                        <i data-lucide="menu" class="w-7 h-7"></i>
                     </button>
                 </div>
                 
                 <div class="flex flex-col items-center cursor-pointer group" onclick="switchTab('store')">
-                    <span class="text-2xl font-black tracking-wider text-[#0F172A] brand-font">
+                    <span class="text-3xl font-black tracking-wider text-[#0F172A] brand-font">
                         bedal<span class="text-[#F97316]">.</span>online
                     </span>
-                    <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Smart Marketplace</span>
+                    <span class="text-xs text-gray-500 font-extrabold tracking-widest uppercase">Smart Marketplace</span>
                 </div>
 
                 <div class="flex items-center cursor-pointer group" onclick="switchTab('store')">
-                    <div class="relative w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                        <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=l63dmtwa&dl=1" alt="Logo" class="w-full h-full object-contain drop-shadow-sm rounded-lg">
+                    <div class="relative w-12 h-12 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                        <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=l63dmtwa&dl=1" alt="Logo" class="w-full h-full object-contain drop-shadow-md rounded-xl">
                     </div>
                 </div>
             </div>
         </header>
 
         <!-- شريط تعليقات الزبناء المغاربة المتحرك باستمرار بدون توقف -->
-        <div class="w-full bg-[#1E293B] text-white py-2.5 overflow-hidden shadow-inner border-t border-[#0F172A]">
-            <div class="animate-marquee-reviews flex items-center gap-12 whitespace-nowrap text-xs sm:text-sm font-bold tracking-wide">
-                <div class="flex items-center gap-2">
+        <div class="w-full bg-[#1E293B] text-white py-3 overflow-hidden shadow-inner border-t border-[#0F172A]">
+            <div class="animate-marquee-reviews flex items-center gap-12 whitespace-nowrap text-sm sm:text-base font-bold tracking-wide">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!» — يوسف (القنيطرة)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online.» — سناء (الدار البيضاء)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«أحسن موقع تعاملت معه، والثمن مناسب بزاف مع التخفيض.» — مهدي (مراكش)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«المنتج كيف ما شفته في الصور تماماً، جودة عالية ومضمونة.» — فاطمة الزهراء (طنجة)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«أحسن خدمة توصيل سرعان ما وصلني الطلب حتى لدارنا.» — حمزة (أكادير)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!» — يوسف (القنيطرة)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online.» — سناء (الدار البيضاء)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«أحسن موقع تعاملت معه، والثمن مناسب بزاف مع التخفيض.» — مهدي (مراكش)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«المنتج كيف ما شفته في الصور تماماً، جودة عالية ومضمونة.» — فاطمة الزهراء (طنجة)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«أحسن خدمة توصيل سرعان ما وصلني الطلب حتى لدارنا.» — حمزة (أكادير)</span>
                 </div>
@@ -577,12 +590,12 @@
 
             <!-- شريط فاصل بين Black free day و (منتوجات بي تخفيضات - 40%) -->
             <div class="w-full flex items-center justify-center my-6">
-                <div class="w-full max-w-xl h-[2px] bg-gradient-to-r from-transparent via-orange-300 to-transparent"></div>
+                <div class="w-full max-w-xl h-[3px] bg-gradient-to-r from-transparent via-orange-400 to-transparent"></div>
             </div>
 
             <div>
-                <div class="flex justify-center mb-6">
-                    <h2 class="text-base sm:text-lg font-black text-[#0F172A] tracking-wide">
+                <div class="flex justify-center mb-8">
+                    <h2 class="text-xl sm:text-2xl font-black text-[#0F172A] tracking-wide">
                         <span data-i18n="featured_products">منتوجات بي تخفيضات - 40%</span>
                     </h2>
                 </div>
@@ -590,7 +603,7 @@
                     <!-- Dynamic Products from Supabase -->
                 </div>
                 <!-- Pagination Controls -->
-                <div id="pagination-container" class="flex items-center justify-center gap-2 mt-8 pt-4 border-t border-gray-200 flex-wrap">
+                <div id="pagination-container" class="flex items-center justify-center gap-2.5 mt-10 pt-6 border-t border-gray-200 flex-wrap">
                     <!-- Dynamic Pagination Numbers -->
                 </div>
             </div>
@@ -598,18 +611,18 @@
 
         <!-- SECTION: BLACK FREE DAY PAGE -->
         <section id="section-black-free-day" class="hidden space-y-8">
-            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:text-amber-900 bg-amber-50 px-4 py-2 rounded-lg transition-colors border border-amber-200">
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <button onclick="switchTab('store')" class="inline-flex items-center gap-2.5 text-base font-bold text-amber-800 hover:text-amber-950 bg-amber-50 px-5 py-2.5 rounded-xl transition-colors border border-amber-200 shadow-sm">
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 <span data-i18n="back_to_home">العودة للرئيسية</span>
             </button>
-            <div class="bg-gradient-to-r from-zinc-900 via-neutral-900 to-black rounded-2xl border-2 border-amber-500 shadow-2xl p-8 sm:p-12 text-white relative overflow-hidden text-center space-y-4">
-                <div class="inline-flex items-center gap-2 bg-amber-500 text-zinc-950 font-black px-4 py-1.5 rounded-lg text-xs uppercase tracking-widest shadow-lg animate-bounce">
-                    <i data-lucide="flame" class="w-4 h-4"></i> <span data-i18n="weekend_offers">عروض نهاية الأسبوع الكبرى</span>
+            <div class="bg-gradient-to-r from-zinc-900 via-neutral-900 to-black rounded-2xl border-2 border-amber-500 shadow-2xl p-8 sm:p-12 text-white relative overflow-hidden text-center space-y-5">
+                <div class="inline-flex items-center gap-2 bg-amber-500 text-zinc-950 font-black px-5 py-2 rounded-xl text-sm uppercase tracking-widest shadow-lg animate-bounce">
+                    <i data-lucide="flame" class="w-5 h-5"></i> <span data-i18n="weekend_offers">عروض نهاية الأسبوع الكبرى</span>
                 </div>
-                <h1 class="text-3xl sm:text-5xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent uppercase drop-shadow-md">
+                <h1 class="text-3xl sm:text-5xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent uppercase drop-shadow-md leading-tight">
                     عروض نهاية الأسبوع الكبرى -70%
                 </h1>
-                <p class="text-amber-100/90 text-base sm:text-lg font-bold max-w-2xl mx-auto" data-i18n="bfd_desc_header">
+                <p class="text-amber-100 text-lg sm:text-xl font-bold max-w-2xl mx-auto leading-relaxed" data-i18n="bfd_desc_header">
                     المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!
                 </p>
             </div>
@@ -619,31 +632,31 @@
         <!-- SECTION: BFD NEUTRAL PRODUCT ALBUM PAGE -->
         <section id="section-bfd-album" class="hidden space-y-6 max-w-3xl mx-auto">
             <div>
-                <button onclick="switchTab('black_free_day')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-zinc-900 hover:bg-black px-5 py-2.5 rounded-xl shadow border border-amber-500/50 transition-all">
-                    <i data-lucide="arrow-right" class="w-4 h-4 text-amber-400"></i> <span data-i18n="back_to_offers">العودة لقائمة العروض</span>
+                <button onclick="switchTab('black_free_day')" class="inline-flex items-center gap-2 text-base font-bold text-white bg-zinc-900 hover:bg-black px-6 py-3 rounded-xl shadow-lg border border-amber-500/50 transition-all">
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-amber-400"></i> <span data-i18n="back_to_offers">العودة لقائمة العروض</span>
                 </button>
             </div>
 
-            <div class="bg-zinc-950 border-2 border-amber-500/80 rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-8 space-y-6 text-white">
-                <div class="border-b border-zinc-800 pb-4 space-y-2">
-                    <div class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 text-xs font-bold px-3 py-1 rounded-lg border border-amber-500/30" data-i18n="exclusive_album">
+            <div class="bg-zinc-950 border-2 border-amber-500/80 rounded-2xl shadow-2xl overflow-hidden p-6 sm:p-10 space-y-6 text-white">
+                <div class="border-b border-zinc-800 pb-5 space-y-3">
+                    <div class="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 text-sm font-bold px-4 py-1.5 rounded-xl border border-amber-500/30" data-i18n="exclusive_album">
                         🔥 ألبوم صور المنتج الحصري
                     </div>
-                    <h1 id="bfd-album-title" class="text-2xl sm:text-3xl font-black text-amber-400">عنوان المنتج</h1>
+                    <h1 id="bfd-album-title" class="text-2xl sm:text-4xl font-black text-amber-400 leading-tight">عنوان المنتج</h1>
                 </div>
 
                 <div id="bfd-album-images-container" class="space-y-6 flex flex-col items-center">
                     <!-- الصور يتم حقنها ديناميكياً -->
                 </div>
 
-                <div class="pt-6 border-t border-zinc-800 space-y-3">
-                    <h3 class="font-extrabold text-amber-400 text-base flex items-center gap-2">
-                        <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i> <span data-i18n="product_desc">وصف المنتج</span>
+                <div class="pt-6 border-t border-zinc-800 space-y-4">
+                    <h3 class="font-extrabold text-amber-400 text-lg flex items-center gap-2.5">
+                        <i data-lucide="file-text" class="w-6 h-6 text-amber-400"></i> <span data-i18n="product_desc">وصف المنتج</span>
                     </h3>
-                    <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 space-y-3">
-                        <p id="bfd-album-description" class="text-zinc-300 text-sm sm:text-base leading-relaxed whitespace-pre-line">وصف المنتج هنا...</p>
+                    <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-4">
+                        <p id="bfd-album-description" class="text-zinc-200 text-base sm:text-lg leading-relaxed whitespace-pre-line font-medium">وصف المنتج هنا...</p>
                         <div class="flex items-center justify-between pt-2">
-                            <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-xs sm:text-sm underline focus:outline-none" data-i18n="more">
+                            <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-sm sm:text-base underline focus:outline-none" data-i18n="more">
                                 المزيد...
                             </button>
                         </div>
@@ -651,8 +664,8 @@
                 </div>
 
                 <div class="pt-6 border-t border-zinc-800 flex justify-center">
-                    <button id="bfd-album-whatsapp-btn" onclick="" class="bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3 px-8 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base bfd-attention-btn cursor-pointer">
-                        <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
+                    <button id="bfd-album-whatsapp-btn" onclick="" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-4 px-8 rounded-xl transition-all shadow-xl flex items-center justify-center gap-3 text-base sm:text-lg bfd-attention-btn cursor-pointer">
+                        <i data-lucide="message-circle" class="w-6 h-6 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
                     </button>
                 </div>
             </div>
@@ -660,11 +673,11 @@
 
         <!-- SECTION: VENDOR STORE PAGE -->
         <section id="section-vendor-store" class="hidden space-y-8">
-            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-semibold text-[#0F172A] hover:text-[#F97316] bg-gray-100 px-4 py-2 rounded-lg transition-colors">
-                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-base font-bold text-[#0F172A] hover:text-[#F97316] bg-gray-100 px-5 py-2.5 rounded-xl transition-colors shadow-sm">
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 <span data-i18n="back_main_store">العودة للمتجر الرئيسي</span>
             </button>
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div class="h-36 sm:h-48 bg-gradient-to-r from-[#0F172A] to-[#1E293B] relative watermarked-container flex items-center justify-center">
                     <img id="vendor-cover-img" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-contain opacity-30">
                 </div>
@@ -674,121 +687,121 @@
         <!-- SECTION: PRODUCT DETAIL -->
         <section id="section-product-detail" class="hidden space-y-6 max-w-2xl mx-auto">
             <div>
-                <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-sm font-bold text-white bg-[#0F172A] hover:bg-[#1E293B] px-5 py-2 rounded-lg shadow transition-all">
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i> <span data-i18n="back_to_home">الرجوع إلى الرئيسية</span>
+                <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-base font-bold text-white bg-[#0F172A] hover:bg-[#1E293B] px-6 py-2.5 rounded-xl shadow-md transition-all">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i> <span data-i18n="back_to_home">الرجوع إلى الرئيسية</span>
                 </button>
             </div>
 
-            <div class="bg-white rounded-2xl border border-amber-200/60 shadow-lg overflow-hidden p-5 sm:p-6 space-y-6">
+            <div class="bg-white rounded-2xl border border-amber-200 shadow-xl overflow-hidden p-6 sm:p-8 space-y-6">
                 
-                <div class="space-y-2">
+                <div class="space-y-3">
                     <div class="flex items-center justify-between">
-                        <span id="detail-unavailable-badge" class="hidden bg-gray-800 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-md uppercase tracking-wider">غير متاح حالياً</span>
-                        <div class="flex items-center justify-end text-xs font-bold px-3 py-1.5 rounded-lg border ms-auto" id="detail-product-cat-container">
-                            <span id="detail-product-cat" class="font-bold">متنوع</span>
+                        <span id="detail-unavailable-badge" class="hidden bg-gray-800 text-white text-sm font-black px-4 py-1.5 rounded-full shadow-md uppercase tracking-wider">غير متاح حالياً</span>
+                        <div class="flex items-center justify-end text-sm font-bold px-3.5 py-1.5 rounded-xl border ms-auto shadow-xs" id="detail-product-cat-container">
+                            <span id="detail-product-cat" class="font-extrabold">متنوع</span>
                         </div>
                     </div>
-                    <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
+                    <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <div class="w-full rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-2">
+                <div class="w-full rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-3">
                     <img id="detail-product-img" alt="Product Detail" class="w-full h-auto max-h-[85vh] object-contain">
                 </div>
 
-                <div id="detail-thumbnails-container" class="flex items-center gap-3 overflow-x-auto pb-1"></div>
+                <div id="detail-thumbnails-container" class="flex items-center gap-3 overflow-x-auto pb-2"></div>
 
-                <div class="flex items-baseline gap-4 py-2 border-b border-gray-100">
-                    <span id="detail-product-price" class="text-3xl font-black text-[#0284C7]">0.00 د.م</span>
-                    <span id="detail-old-price" class="text-lg font-bold text-gray-400 line-through">0.00 د.م</span>
-                    <span class="bg-orange-50 text-[#0284C7] text-xs font-black px-2.5 py-1 rounded-lg border border-orange-100" data-i18n="free_shipping_all">التوصيل مجاني لجميع المدن</span>
+                <div class="flex items-baseline gap-4 py-3 border-b border-gray-200">
+                    <span id="detail-product-price" class="text-3xl sm:text-4xl font-black text-[#0284C7]">0.00 د.م</span>
+                    <span id="detail-old-price" class="text-xl font-bold text-gray-400 line-through">0.00 د.م</span>
+                    <span class="bg-orange-50 text-[#0284C7] text-sm font-black px-3 py-1.5 rounded-xl border border-orange-200 shadow-xs" data-i18n="free_shipping_all">التوصيل مجاني لجميع المدن</span>
                 </div>
 
                 <!-- خانات ملء الطلب في مكانها الأصلي دون تغيير -->
-                <div id="order-form-container" class="bg-amber-50/50 rounded-xl border border-amber-200 p-4 sm:p-6 space-y-4 shadow-sm">
-                    <div class="text-center space-y-1 pb-1 border-b border-amber-100">
-                        <h3 class="font-black text-[#0F172A] text-base" data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</h3>
-                        <p class="text-xs text-gray-500 font-semibold" data-i18n="fill_info_fast">املأ المعلومات أدناه لتأكيد طلبك بسرعة وسهولة</p>
+                <div id="order-form-container" class="bg-amber-50/70 rounded-2xl border border-amber-300 p-5 sm:p-8 space-y-5 shadow-sm">
+                    <div class="text-center space-y-1.5 pb-2 border-b border-amber-200">
+                        <h3 class="font-black text-[#0F172A] text-lg sm:text-xl" data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</h3>
+                        <p class="text-sm text-gray-700 font-bold" data-i18n="fill_info_fast">املأ المعلومات أدناه لتأكيد طلبك بسرعة وسهولة</p>
                     </div>
 
-                    <div class="space-y-3 text-sm">
+                    <div class="space-y-4 text-base">
                         <div>
                             <div class="relative flex items-center">
-                                <span class="absolute right-3 text-gray-400"><i data-lucide="user" class="w-4 h-4"></i></span>
-                                <input type="text" id="detail-cust-name" data-i18n-placeholder="placeholder_name" placeholder="الاسم الكامل" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
+                                <span class="absolute right-3.5 text-gray-500"><i data-lucide="user" class="w-5 h-5"></i></span>
+                                <input type="text" id="detail-cust-name" data-i18n-placeholder="placeholder_name" placeholder="الاسم الكامل" class="w-full pr-11 pl-4 py-3.5 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
                             </div>
                         </div>
                         <div>
                             <div class="relative flex items-center">
-                                <span class="absolute right-3 text-gray-400"><i data-lucide="phone" class="w-4 h-4"></i></span>
-                                <input type="tel" id="detail-cust-phone" placeholder="06 XX XX XX XX" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm text-right" dir="ltr">
+                                <span class="absolute right-3.5 text-gray-500"><i data-lucide="phone" class="w-5 h-5"></i></span>
+                                <input type="tel" id="detail-cust-phone" placeholder="06 XX XX XX XX" class="w-full pr-11 pl-4 py-3.5 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#F97316] bg-white shadow-sm text-right" dir="ltr">
                             </div>
                         </div>
                         <div>
                             <div class="relative flex items-center">
-                                <span class="absolute right-3 text-gray-400"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
-                                <input type="text" id="detail-cust-city" data-i18n-placeholder="placeholder_city" placeholder="المدينة" class="w-full pr-10 pl-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
+                                <span class="absolute right-3.5 text-gray-500"><i data-lucide="map-pin" class="w-5 h-5"></i></span>
+                                <input type="text" id="detail-cust-city" data-i18n-placeholder="placeholder_city" placeholder="المدينة" class="w-full pr-11 pl-4 py-3.5 rounded-xl border border-gray-300 text-base font-medium focus:outline-none focus:border-[#F97316] bg-white shadow-sm">
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white p-3 rounded-lg border border-amber-100 space-y-1.5 text-xs font-bold text-gray-700">
+                    <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-2 text-sm font-bold text-gray-800 shadow-xs">
                         <div class="flex justify-between">
                             <span data-i18n="product_label">المنتج:</span>
-                            <span id="summary-prod-name" class="text-[#0F172A] truncate max-w-[200px]">المنتج</span>
+                            <span id="summary-prod-name" class="text-[#0F172A] truncate max-w-[220px]">المنتج</span>
                         </div>
                         <div class="flex justify-between">
                             <span data-i18n="shipping_label">التوصيل:</span>
-                            <span class="text-[#0284C7]" data-i18n="free">مجاني</span>
+                            <span class="text-[#0284C7] font-extrabold" data-i18n="free">مجاني</span>
                         </div>
-                        <div class="flex justify-between text-sm pt-1 border-t border-gray-100 font-black">
+                        <div class="flex justify-between text-base pt-2 border-t border-gray-200 font-black">
                             <span data-i18n="total_label">المجموع:</span>
-                            <span id="summary-prod-total" class="text-[#0284C7]">0.00 د.م</span>
+                            <span id="summary-prod-total" class="text-[#0284C7] text-lg">0.00 د.م</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#0284C7] hover:bg-[#0369A1] text-white py-3.5 px-4 rounded-lg font-black transition-colors flex items-center justify-center gap-2 shadow-md text-sm">
-                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#0284C7] hover:bg-[#0369A1] text-white py-4 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md text-base">
+                            <i data-lucide="message-circle" class="w-6 h-6"></i>
                             <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                         </button>
-                        <button onclick="submitDirectProductOrder()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white py-3.5 px-4 rounded-lg font-black transition-colors flex items-center justify-center gap-2 shadow-md text-sm">
-                            <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                        <button onclick="submitDirectProductOrder()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white py-4 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md text-base">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                             <span data-i18n="site_order_btn">الطلب عبر الموقع</span>
                         </button>
                     </div>
 
-                    <div class="flex flex-wrap items-center justify-center gap-4 text-[11px] text-gray-500 font-semibold pt-1">
-                        <div class="flex items-center gap-1">
-                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-[#0284C7]"></i> <span data-i18n="cod_badge">الدفع عند الاستلام</span>
+                    <div class="flex flex-wrap items-center justify-center gap-5 text-xs text-gray-700 font-bold pt-1">
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="check-circle" class="w-4 h-4 text-[#0284C7]"></i> <span data-i18n="cod_badge">الدفع عند الاستلام</span>
                         </div>
-                        <div class="flex items-center gap-1">
-                            <i data-lucide="truck" class="w-3.5 h-3.5 text-[#F97316]"></i> <span data-i18n="fast_delivery">توصيل سريع</span>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i> <span data-i18n="fast_delivery">توصيل سريع</span>
                         </div>
-                        <div class="flex items-center gap-1">
-                            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-600"></i> <span data-i18n="guaranteed_quality">جودة مضمونة</span>
+                        <div class="flex items-center gap-1.5">
+                            <i data-lucide="shield-check" class="w-4 h-4 text-amber-600"></i> <span data-i18n="guaranteed_quality">جودة مضمونة</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- وصف المنتج -->
-                <div class="space-y-3 pt-4 border-t border-gray-100">
-                    <h3 class="font-extrabold text-[#0F172A] text-base flex items-center gap-2">
-                        <i data-lucide="file-text" class="w-5 h-5 text-[#F97316]"></i> <span data-i18n="product_desc">وصف المنتج</span>
+                <div class="space-y-3 pt-4 border-t border-gray-200">
+                    <h3 class="font-black text-[#0F172A] text-lg flex items-center gap-2.5">
+                        <i data-lucide="file-text" class="w-6 h-6 text-[#F97316]"></i> <span data-i18n="product_desc">وصف المنتج</span>
                     </h3>
-                    <p id="detail-product-desc" class="text-gray-600 text-sm leading-relaxed whitespace-pre-line bg-[#F8F9FA] p-4 rounded-xl border border-gray-100">وصف المنتوج هنا...</p>
+                    <p id="detail-product-desc" class="text-gray-800 text-base sm:text-lg leading-relaxed whitespace-pre-line bg-[#F8F9FA] p-5 rounded-2xl border border-gray-200 font-medium">وصف المنتوج هنا...</p>
                 </div>
 
                 <!-- زر "اطلب الآن - الدفع عند الاستلام" الجديد أسفل وصف المنتج مع خاصية التمرير للأعلى -->
                 <div id="detail-bottom-order-btn-box" class="pt-4">
-                    <button onclick="scrollToOrderForm()" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-4 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-base bfd-attention-btn cursor-pointer">
+                    <button onclick="scrollToOrderForm()" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-4 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-lg bfd-attention-btn cursor-pointer">
                         <i data-lucide="shopping-bag" class="w-6 h-6 animate-bounce"></i>
                         <span data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</span>
                     </button>
                 </div>
 
-                <div id="detail-video-box" class="hidden pt-2">
-                    <a id="detail-video-link" href="#" target="_blank" class="inline-flex items-center gap-2 bg-orange-50 border border-orange-100 hover:bg-orange-100 text-orange-900 px-4 py-2.5 rounded-lg text-xs font-bold transition-colors">
-                        <i data-lucide="play-circle" class="w-4 h-4 text-[#0284C7] fill-[#0284C7] text-white"></i> <span data-i18n="tajer_guide">شرح منصة تاجر</span>
+                <div id="detail-video-box" class="hidden pt-3">
+                    <a id="detail-video-link" href="#" target="_blank" class="inline-flex items-center gap-2.5 bg-orange-50 border border-orange-200 hover:bg-orange-100 text-orange-950 px-5 py-3 rounded-xl text-sm font-bold transition-colors shadow-xs">
+                        <i data-lucide="play-circle" class="w-5 h-5 text-[#0284C7] fill-[#0284C7] text-white"></i> <span data-i18n="tajer_guide">شرح منصة تاجر</span>
                     </a>
                 </div>
             </div>
@@ -799,11 +812,11 @@
     <!-- Partner Products Slider Section -->
     <section class="bg-[#0F172A] text-white py-12 border-t border-[#1E293B] overflow-hidden shadow-2xl relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
-            <div class="text-center space-y-2">
-                <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-lg text-xs font-black bg-orange-500/20 text-orange-300 border border-orange-500/30">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i> <span data-i18n="exclusive_selection">تشكيلة المنتجات المميزة</span>
+            <div class="text-center space-y-3">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-sm font-black bg-orange-500/20 text-orange-300 border border-orange-500/30">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i> <span data-i18n="exclusive_selection">تشكيلة المنتجات المميزة</span>
                 </span>
-                <h3 class="text-2xl sm:text-3xl font-black tracking-tight" data-i18n="discover_latest">اكتشف أحدث منتجاتنا الحصرية المتاحة الآن</h3>
+                <h3 class="text-2xl sm:text-4xl font-black tracking-tight" data-i18n="discover_latest">اكتشف أحدث منتجاتنا الحصرية المتاحة الآن</h3>
             </div>
             <div class="relative w-full overflow-hidden py-3">
                 <div id="partner-products-marquee" class="animate-marquee-slow flex items-center gap-6"></div>
@@ -812,43 +825,43 @@
     </section>
 
     <!-- قسم الميزات العصري -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-10">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-xl bg-orange-50 text-[#F97316] flex items-center justify-center flex-shrink-0 shadow-sm">
-                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-[#F8F9FA] border border-gray-200 hover:shadow-md transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-50 text-[#F97316] flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i data-lucide="shield-check" class="w-7 h-7"></i>
                     </div>
-                    <div class="space-y-1">
-                        <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_1_title">جودة مضمونة</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_1_desc">منتجات مختارة بعناية فائقة لضمان رضاكم.</p>
-                    </div>
-                </div>
-                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-xl bg-orange-50 text-[#0284C7] flex items-center justify-center flex-shrink-0 shadow-sm">
-                        <i data-lucide="truck" class="w-6 h-6"></i>
-                    </div>
-                    <div class="space-y-1">
-                        <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_2_title">توصيل سريع</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_2_desc">خدمة توصيل سريعة لجميع المدن في المغرب.</p>
+                    <div class="space-y-1.5">
+                        <h4 class="font-black text-[#0F172A] text-lg" data-i18n="feat_1_title">جودة مضمونة</h4>
+                        <p class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium" data-i18n="feat_1_desc">منتجات مختارة بعناية فائقة لضمان رضاكم.</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-sm">
-                        <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-[#F8F9FA] border border-gray-200 hover:shadow-md transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-50 text-[#0284C7] flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i data-lucide="truck" class="w-7 h-7"></i>
                     </div>
-                    <div class="space-y-1">
-                        <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_3_title">إرجاع سهل</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_3_desc">ضمان الاسترجاع في حال لم تكن راضياً.</p>
+                    <div class="space-y-1.5">
+                        <h4 class="font-black text-[#0F172A] text-lg" data-i18n="feat_2_title">توصيل سريع</h4>
+                        <p class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium" data-i18n="feat_2_desc">خدمة توصيل سريعة لجميع المدن في المغرب.</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#F8F9FA] border border-gray-100 hover:shadow-md transition-all">
-                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
-                        <i data-lucide="wallet" class="w-6 h-6"></i>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-[#F8F9FA] border border-gray-200 hover:shadow-md transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i data-lucide="refresh-cw" class="w-7 h-7"></i>
                     </div>
-                    <div class="space-y-1">
-                        <h4 class="font-extrabold text-[#0F172A] text-base" data-i18n="feat_4_title">الدفع عند الاستلام</h4>
-                        <p class="text-gray-500 text-xs sm:text-sm leading-relaxed" data-i18n="feat_4_desc">خلص ملي يوصلك الكوموند ديالك بكل أمان.</p>
+                    <div class="space-y-1.5">
+                        <h4 class="font-black text-[#0F172A] text-lg" data-i18n="feat_3_title">إرجاع سهل</h4>
+                        <p class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium" data-i18n="feat_3_desc">ضمان الاسترجاع في حال لم تكن راضياً.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 p-5 rounded-2xl bg-[#F8F9FA] border border-gray-200 hover:shadow-md transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i data-lucide="wallet" class="w-7 h-7"></i>
+                    </div>
+                    <div class="space-y-1.5">
+                        <h4 class="font-black text-[#0F172A] text-lg" data-i18n="feat_4_title">الدفع عند الاستلام</h4>
+                        <p class="text-gray-700 text-sm sm:text-base leading-relaxed font-medium" data-i18n="feat_4_desc">خلص ملي يوصلك الكوموند ديالك بكل أمان.</p>
                     </div>
                 </div>
             </div>
@@ -856,33 +869,46 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-auto py-6">
+    <footer class="bg-white border-t border-gray-200 mt-auto py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            <div id="footer-reviews-container" class="pb-4 border-b border-gray-100 flex flex-col items-center justify-center min-h-[75px] text-center"></div>
+            <div id="footer-reviews-container" class="pb-4 border-b border-gray-200 flex flex-col items-center justify-center min-h-[85px] text-center"></div>
 
-            <div class="bg-[#F8F9FA] p-4 rounded-xl border border-gray-200/80 max-w-xl mx-auto space-y-3">
-                <h4 class="font-black text-[#0F172A] text-xs sm:text-sm text-center flex items-center justify-center gap-1.5">
-                    <i data-lucide="message-square-plus" class="w-4 h-4 text-[#F97316]"></i> <span data-i18n="add_review_title">أضف تعليقك وتقييمك للموقع</span>
+            <div class="bg-[#F8F9FA] p-5 rounded-2xl border border-gray-200 max-w-xl mx-auto space-y-4 shadow-xs">
+                <h4 class="font-black text-[#0F172A] text-sm sm:text-base text-center flex items-center justify-center gap-2">
+                    <i data-lucide="message-square-plus" class="w-5 h-5 text-[#F97316]"></i> <span data-i18n="add_review_title">أضف تعليقك وتقييمك للموقع</span>
                 </h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <input type="text" id="user-review-name" data-i18n-placeholder="placeholder_review_name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white">
-                    <select id="user-review-rating" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white font-bold text-amber-600">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="text" id="user-review-name" data-i18n-placeholder="placeholder_review_name" placeholder="اسمك الكريم والمدينة (مثال: كريم من القنيطرة)" class="w-full px-4 py-2.5 text-sm font-medium rounded-xl border border-gray-300 focus:outline-none focus:border-[#F97316] bg-white">
+                    <select id="user-review-rating" class="w-full px-4 py-2.5 text-sm rounded-xl border border-gray-300 focus:outline-none focus:border-[#F97316] bg-white font-extrabold text-amber-600">
                         <option value="5" data-i18n="star_5">⭐⭐⭐⭐⭐ (5/5 ممتاز جداً)</option>
                         <option value="4" data-i18n="star_4">⭐⭐⭐⭐ (4/5 جيد جداً)</option>
                         <option value="3" data-i18n="star_3">⭐⭐⭐ (3/5 جيد)</option>
                     </select>
                 </div>
-                <textarea id="user-review-comment" data-i18n-placeholder="placeholder_review_comment" placeholder="اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..." rows="2" class="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[#F97316] bg-white resize-none"></textarea>
-                <button onclick="addNewUserReview()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-bold py-2 px-4 rounded-lg text-xs transition-colors shadow-sm flex items-center justify-center gap-1.5">
-                    <i data-lucide="send" class="w-3.5 h-3.5"></i> <span data-i18n="send_comment">إرسال التعليق</span>
+                <textarea id="user-review-comment" data-i18n-placeholder="placeholder_review_comment" placeholder="اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..." rows="2" class="w-full px-4 py-2.5 text-sm font-medium rounded-xl border border-gray-300 focus:outline-none focus:border-[#F97316] bg-white resize-none"></textarea>
+                <button onclick="addNewUserReview()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-2.5 px-4 rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> <span data-i18n="send_comment">إرسال التعليق</span>
                 </button>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500 pt-2 border-t border-gray-100">
-                <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
-                <div class="flex items-center gap-4">
-                    <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.20</span>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-700 pt-4 border-t border-gray-200">
+                <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-extrabold text-gray-900">bedal.online</span>.</div>
+                <div class="flex items-center gap-4 flex-wrap justify-center">
+                    <!-- Social Media Links (Facebook, Instagram, TikTok) with larger custom icons and no background circles -->
+                    <div class="flex items-center gap-4">
+                        <a href="https://www.facebook.com/BedalOnlineShop" target="_blank" aria-label="Facebook" class="hover:scale-110 transition-transform flex items-center justify-center">
+                            <img src="https://www.dropbox.com/scl/fi/xhombb00ivvaba4flh0u4/Meta_AI_facebook_logo_match_20261105_031951.png?rlkey=vkr7bpn15fv9icmb4kk148mfi&st=mkleldlb&dl=1" alt="Facebook" class="w-14 h-14 object-contain rounded-xl shadow-md">
+                        </a>
+                        <a href="https://www.instagram.com/bedal_online_shop/" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
+                            <img src="https://www.dropbox.com/scl/fi/7qbpemg9brg5bgvolylj2/Meta_AI_instagram_logo_match_20261105_031949.png?rlkey=gely39c2dxnc6ulziho2knb6y&st=aoue8zhn&dl=1" alt="Instagram" class="w-14 h-14 object-contain rounded-xl shadow-md">
+                        </a>
+                        <a href="https://www.tiktok.com/@bedalonlinestor" target="_blank" aria-label="TikTok" class="hover:scale-110 transition-transform flex items-center justify-center">
+                            <img src="https://www.dropbox.com/scl/fi/e4b192rld7raw5nssgwgm/Meta_AI_tiktok_logo_match_20261105_031947.png?rlkey=5x2npsmcn1xx5arfp4o3uakc5&st=mpzq1u89&dl=1" alt="TikTok" class="w-14 h-14 object-contain rounded-xl shadow-md">
+                        </a>
+                    </div>
+                    
+                    <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.28</span>
                     </span>
                 </div>
             </div>
@@ -1336,15 +1362,15 @@
             if (currentReviewIndex >= currentList.length) currentReviewIndex = 0;
             const rev = currentList[currentReviewIndex];
             let starsHtml = '';
-            for(let i = 0; i < rev.stars; i++) starsHtml += `<i data-lucide="star" class="w-4 h-4 fill-amber-400 text-amber-400 inline-block"></i>`;
+            for(let i = 0; i < rev.stars; i++) starsHtml += `<i data-lucide="star" class="w-5 h-5 fill-amber-400 text-amber-400 inline-block"></i>`;
 
-            container.className = "pb-4 border-b border-gray-100 flex flex-col items-center justify-center min-h-[75px] text-center fade-review transition-all duration-500";
+            container.className = "pb-4 border-b border-gray-200 flex flex-col items-center justify-center min-h-[85px] text-center fade-review transition-all duration-500";
             container.innerHTML = `
-                <div class="flex items-center gap-2 mb-1">
-                    <div class="flex items-center gap-0.5">${starsHtml}</div>
+                <div class="flex items-center gap-2 mb-1.5">
+                    <div class="flex items-center gap-1">${starsHtml}</div>
                 </div>
-                <p class="text-xs sm:text-sm font-bold text-gray-700 max-w-2xl leading-relaxed">${rev.comment}</p>
-                <span class="text-[11px] text-gray-400 font-medium mt-1">— ${rev.name}</span>
+                <p class="text-sm sm:text-base font-bold text-gray-800 max-w-2xl leading-relaxed">${rev.comment}</p>
+                <span class="text-xs text-gray-500 font-semibold mt-1.5">— ${rev.name}</span>
             `;
             lucide.createIcons();
         }
@@ -1551,7 +1577,7 @@
             const marqueeContainer = document.getElementById('partner-products-marquee');
             if(!marqueeContainer) return;
             if(!productsList || productsList.length === 0) {
-                marqueeContainer.innerHTML = '<p class="text-orange-200 text-sm">لا توجد منتجات للعرض حالياً.</p>';
+                marqueeContainer.innerHTML = '<p class="text-orange-200 text-base font-semibold">لا توجد منتجات للعرض حالياً.</p>';
                 return;
             }
             
@@ -1560,15 +1586,15 @@
                 productsList.forEach(p => {
                     const mainImg = (p.images && p.images[0]) || '';
                     marqueeHtml += `
-                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 rounded-xl shadow-xl flex-shrink-0 w-72 cursor-pointer hover:bg-white/15 transition-all" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
-                            <div class="w-16 h-16 rounded-lg overflow-hidden border border-white/25 flex-shrink-0 relative flex items-center justify-center bg-zinc-900">
+                        <div class="flex items-center gap-4 bg-white/15 backdrop-blur-md border border-white/20 px-5 py-4 rounded-2xl shadow-xl flex-shrink-0 w-80 cursor-pointer hover:bg-white/20 transition-all" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                            <div class="w-20 h-20 rounded-xl overflow-hidden border border-white/30 flex-shrink-0 relative flex items-center justify-center bg-zinc-900">
                                 <img src="${mainImg}" class="w-full h-full object-contain">
                             </div>
-                            <div class="overflow-hidden space-y-1">
-                                <h4 class="font-extrabold text-sm text-white truncate">${p.title}</h4>
-                                <div class="flex items-baseline gap-2">
-                                    <span class="text-[#0284C7] font-black text-sm">${p.price.toFixed(2)} د.م</span>
-                                    <span class="text-rose-400 text-xs line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                            <div class="overflow-hidden space-y-1.5">
+                                <h4 class="font-extrabold text-base text-white truncate">${p.title}</h4>
+                                <div class="flex items-baseline gap-2.5">
+                                    <span class="text-[#0284C7] font-black text-base">${p.price.toFixed(2)} د.م</span>
+                                    <span class="text-rose-400 text-sm line-through font-bold">${p.oldPrice.toFixed(2)} د.م</span>
                                 </div>
                             </div>
                         </div>
@@ -1586,7 +1612,7 @@
             let filteredList = currentFilterCategory === 'all' ? productsList : productsList.filter(p => (p.category || 'various') === currentFilterCategory);
 
             if(filteredList.length === 0) {
-                grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">لا توجد منتجات مسجلة حالياً.</p>';
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-12 text-lg font-bold">لا توجد منتجات مسجلة حالياً.</p>';
                 if(paginationContainer) paginationContainer.innerHTML = '';
                 return;
             }
@@ -1610,11 +1636,11 @@
 
                 let storeThumbnailsHtml = '';
                 if (productImages.length > 1) {
-                    storeThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100 flex-shrink-0">`;
+                    storeThumbnailsHtml = `<div class="flex items-center gap-2 overflow-x-auto py-2 px-3.5 bg-gray-50 border-t border-gray-200 flex-shrink-0">`;
                     productImages.forEach((imgUrl, imgIdx) => {
                         const isFirst = imgIdx === 0;
                         storeThumbnailsHtml += `
-                            <div onclick="event.stopPropagation(); setStoreCardImage('${p.id}', '${imgUrl}', this)" class="w-10 h-10 bg-white rounded-md border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-0.5 overflow-hidden ${isFirst ? 'border-[#F97316] ring-1 ring-orange-200 scale-105' : 'border-gray-200 opacity-60 hover:opacity-100'}">
+                            <div onclick="event.stopPropagation(); setStoreCardImage('${p.id}', '${imgUrl}', this)" class="w-12 h-12 bg-white rounded-lg border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-1 overflow-hidden ${isFirst ? 'border-[#F97316] ring-2 ring-orange-200 scale-105 shadow-xs' : 'border-gray-300 opacity-70 hover:opacity-100'}">
                                 <img src="${imgUrl}" class="max-w-full max-h-full object-contain rounded">
                             </div>
                         `;
@@ -1624,58 +1650,58 @@
 
                 const cardBgClass = isAvailable ? 'bg-white' : 'bg-gray-200 opacity-75 grayscale';
                 const imgFilterClass = isAvailable ? '' : 'grayscale';
-                const titleColorClass = isAvailable ? 'text-[#0F172A] hover:text-[#F97316]' : 'text-gray-700 font-semibold';
-                const unavailableBadge = !isAvailable ? `<span class="absolute top-3 right-3 z-20 bg-gray-800 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg uppercase tracking-wider">غير متاح</span>` : '';
+                const titleColorClass = isAvailable ? 'text-[#0F172A] hover:text-[#F97316]' : 'text-gray-800 font-bold';
+                const unavailableBadge = !isAvailable ? `<span class="absolute top-3 right-3 z-20 bg-gray-900 text-white text-sm font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider">غير متاح</span>` : '';
 
                 let cartBtnHtml = '';
                 let waBtnHtml = '';
 
                 if (isAvailable) {
-                    cartBtnHtml = `<button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
+                    cartBtnHtml = `<button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-2 text-sm">
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
                     </button>`;
-                    waBtnHtml = `<button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#0284C7] text-white py-2.5 px-2 rounded-lg font-bold hover:bg-[#0369A1] transition-colors shadow-md flex items-center justify-center gap-1.5 text-xs">
+                    waBtnHtml = `<button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#0284C7] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#0369A1] transition-colors shadow-md flex items-center justify-center gap-2 text-sm">
                         <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                     </button>`;
                 } else {
-                    cartBtnHtml = `<button disabled class="w-full bg-gray-400 text-gray-200 py-2.5 px-2 rounded-lg font-bold cursor-not-allowed shadow-none flex items-center justify-center gap-1.5 text-xs">
+                    cartBtnHtml = `<button disabled class="w-full bg-gray-400 text-gray-200 py-3 px-3 rounded-xl font-extrabold cursor-not-allowed shadow-none flex items-center justify-center gap-2 text-sm">
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
                     </button>`;
-                    waBtnHtml = `<button disabled class="w-full bg-gray-400 text-gray-200 py-2.5 px-2 rounded-lg font-bold cursor-not-allowed shadow-none flex items-center justify-center gap-1.5 text-xs">
+                    waBtnHtml = `<button disabled class="w-full bg-gray-400 text-gray-200 py-3 px-3 rounded-xl font-extrabold cursor-not-allowed shadow-none flex items-center justify-center gap-2 text-sm">
                         <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                     </button>`;
                 }
 
                 html += `
-                    <div class="product-item ${cardBgClass} rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer h-full" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                    <div class="product-item ${cardBgClass} rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer h-full" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                         ${unavailableBadge}
                         <div class="flex flex-col flex-grow">
-                            <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2 h-80 sm:h-96 flex-shrink-0">
+                            <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-3 h-80 sm:h-96 flex-shrink-0">
                                 <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-contain store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
                             </div>
                             ${storeThumbnailsHtml}
-                            <div class="p-4 space-y-2.5 flex flex-col flex-grow justify-between">
-                                <div class="space-y-1.5">
-                                    <span class="text-[11px] font-bold px-2.5 py-1 rounded-md inline-block border shadow-xs" style="background-color: ${catColor}15; color: ${catColor}; border-color: ${catColor}40;">${catLabel}</span>
+                            <div class="p-5 space-y-3 flex flex-col flex-grow justify-between">
+                                <div class="space-y-2">
+                                    <span class="text-xs font-bold px-3 py-1.5 rounded-xl inline-block border shadow-xs" style="background-color: ${catColor}15; color: ${catColor}; border-color: ${catColor}40;">${catLabel}</span>
                                     <h3 class="font-extrabold ${titleColorClass} text-lg sm:text-xl leading-snug transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
-                                    <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
+                                    <p class="text-gray-600 text-sm line-clamp-2 font-medium">${p.description || ''}</p>
                                 </div>
-                                <div class="p-2.5 bg-orange-50/50 border border-orange-100 rounded-lg flex items-center justify-between mt-auto">
+                                <div class="p-3 bg-orange-50/60 border border-orange-200 rounded-xl flex items-center justify-between mt-auto shadow-xs">
                                     <div>
-                                        <span class="text-[9px] font-bold text-[#0284C7] block" data-i18n="total_after_disc">الثمن بعد التخفيض:</span>
+                                        <span class="text-[11px] font-bold text-[#0284C7] block" data-i18n="total_after_disc">الثمن بعد التخفيض:</span>
                                         <div class="flex items-baseline gap-1">
-                                            <span class="font-black text-[#0284C7] text-xl sm:text-2xl">${p.price.toFixed(2)}</span>
-                                            <span class="text-xs font-bold text-[#0284C7]">د.م</span>
+                                            <span class="font-black text-[#0284C7] text-2xl">${p.price.toFixed(2)}</span>
+                                            <span class="text-sm font-bold text-[#0284C7]">د.م</span>
                                         </div>
                                     </div>
                                     <div class="text-left">
-                                        <span class="text-[9px] font-bold text-gray-400 block" data-i18n="original_total">الأصلي:</span>
-                                        <span class="text-xs font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                        <span class="text-[11px] font-bold text-gray-500 block" data-i18n="original_total">الأصلي:</span>
+                                        <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-auto flex-shrink-0" onclick="event.stopPropagation()">
+                        <div class="p-5 pt-0 grid grid-cols-2 gap-2.5 mt-auto flex-shrink-0" onclick="event.stopPropagation()">
                             ${cartBtnHtml}
                             ${waBtnHtml}
                         </div>
@@ -1688,13 +1714,12 @@
                 let paginationHtml = '';
                 for (let i = 1; i <= totalPages; i++) {
                     const isCurrent = i === currentPage;
-                    // تمت إضافة كلاس التأثير الأزرق الخفيف والجداب (pagination-blue-glow) هنا على أزرار أرقام الصفحة غير النشطة
                     const btnClasses = isCurrent 
-                        ? 'bg-[#F97316] text-white shadow-md ring-2 ring-orange-200' 
-                        : 'bg-white border-2 border-[#0284C7] text-gray-800 hover:bg-sky-50 pagination-blue-glow pagination-pulse-btn';
+                        ? 'bg-[#F97316] text-white shadow-md ring-2 ring-orange-200 text-base' 
+                        : 'bg-white border-2 border-[#0284C7] text-gray-900 hover:bg-sky-50 pagination-blue-glow pagination-pulse-btn text-base font-extrabold';
                     
                     paginationHtml += `
-                        <button onclick="changePage(${i})" class="w-10 h-10 rounded-lg font-black text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center ${btnClasses}">
+                        <button onclick="changePage(${i})" class="w-12 h-12 rounded-xl font-black transition-all shadow-sm flex items-center justify-center ${btnClasses}">
                             ${i}
                         </button>
                     `;
@@ -1719,11 +1744,11 @@
             const parentThumbContainer = thumbEl.parentElement;
             if (parentThumbContainer) {
                 Array.from(parentThumbContainer.children).forEach(child => {
-                    child.classList.remove('border-[#F97316]', 'ring-1', 'ring-orange-200', 'scale-105');
-                    child.classList.add('border-gray-200', 'opacity-60');
+                    child.classList.remove('border-[#F97316]', 'ring-2', 'ring-orange-200', 'scale-105', 'shadow-xs');
+                    child.classList.add('border-gray-300', 'opacity-70');
                 });
-                thumbEl.classList.remove('border-gray-200', 'opacity-60');
-                thumbEl.classList.add('border-[#F97316]', 'ring-1', 'ring-orange-200', 'scale-105');
+                thumbEl.classList.remove('border-gray-300', 'opacity-70');
+                thumbEl.classList.add('border-[#F97316]', 'ring-2', 'ring-orange-200', 'scale-105', 'shadow-xs');
             }
         }
 
@@ -1782,11 +1807,11 @@
             const parentThumbContainer = thumbEl.parentElement;
             if (parentThumbContainer) {
                 Array.from(parentThumbContainer.children).forEach(child => {
-                    child.classList.remove('border-amber-400', 'scale-105', 'ring-2', 'ring-amber-400/50');
-                    child.classList.add('border-gray-200', 'opacity-60');
+                    child.classList.remove('border-amber-400', 'scale-105', 'ring-2', 'ring-amber-400/50', 'shadow-xs');
+                    child.classList.add('border-gray-300', 'opacity-70');
                 });
-                thumbEl.classList.remove('border-gray-200', 'opacity-60');
-                thumbEl.classList.add('border-amber-400', 'scale-105', 'ring-2', 'ring-amber-400/50');
+                thumbEl.classList.remove('border-gray-300', 'opacity-70');
+                thumbEl.classList.add('border-amber-400', 'scale-105', 'ring-2', 'ring-amber-400/50', 'shadow-xs');
             }
         }
 
@@ -1822,8 +1847,8 @@
                 let html = '';
                 images.forEach((imgUrl, idx) => {
                     html += `
-                        <div class="w-full bg-zinc-900 rounded-xl overflow-hidden border border-amber-500/40 p-2 flex items-center justify-center shadow-2xl watermarked-container">
-                            <img src="${imgUrl}" alt="Album Image ${idx + 1}" class="w-full h-auto object-contain rounded-lg max-h-[85vh]">
+                        <div class="w-full bg-zinc-900 rounded-2xl overflow-hidden border border-amber-500/55 p-3 flex items-center justify-center shadow-2xl watermarked-container">
+                            <img src="${imgUrl}" alt="Album Image ${idx + 1}" class="w-full h-auto object-contain rounded-xl max-h-[85vh]">
                         </div>
                     `;
                 });
@@ -1899,20 +1924,30 @@
 
         function updateCartUI() {
             const countBadge = document.getElementById('cart-count-badge');
+            const drawerCountBadge = document.getElementById('drawer-cart-count-badge');
             const floatingCartBtn = document.getElementById('floating-cart-btn');
             const itemsContainer = document.getElementById('cart-items-container');
             const totalPriceElement = document.getElementById('cart-total-price');
             const totalSavingElement = document.getElementById('cart-total-saving');
 
             const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            countBadge.innerText = totalCount;
+            
+            if (countBadge) countBadge.innerText = totalCount;
+            if (drawerCountBadge) drawerCountBadge.innerText = totalCount;
+
             if (totalCount > 0) {
-                floatingCartBtn.classList.add('cart-bounce-active');
-                setTimeout(() => floatingCartBtn.classList.remove('cart-bounce-active'), 1800);
+                if (floatingCartBtn) {
+                    floatingCartBtn.classList.add('cart-bounce-active');
+                    setTimeout(() => floatingCartBtn.classList.remove('cart-bounce-active'), 1800);
+                }
+                if (drawerCountBadge) {
+                    drawerCountBadge.classList.add('cart-bounce-active');
+                    setTimeout(() => drawerCountBadge.classList.remove('cart-bounce-active'), 1800);
+                }
             }
 
             if (cart.length === 0) {
-                itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-10 text-sm" data-i18n="empty_cart">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>`;
+                itemsContainer.innerHTML = `<p class="text-center text-gray-500 py-10 text-base font-semibold" data-i18n="empty_cart">السلة فارغة حالياً. اضغط على إضافة منتجات!</p>`;
                 totalPriceElement.innerText = "0.00";
                 totalSavingElement.innerText = "0.00 د.م";
                 applyTranslations();
@@ -1924,23 +1959,23 @@
                 total += item.price * item.quantity;
                 totalSaving += (item.oldPrice - item.price) * item.quantity;
                 html += `
-                    <div class="flex items-center justify-between bg-[#F8F9FA] p-3 rounded-lg border border-gray-100 gap-3">
-                        <div class="w-12 h-12 rounded-lg overflow-hidden border flex-shrink-0 relative flex items-center justify-center bg-gray-100">
+                    <div class="flex items-center justify-between bg-[#F8F9FA] p-3.5 rounded-xl border border-gray-200 gap-3">
+                        <div class="w-14 h-14 rounded-xl overflow-hidden border flex-shrink-0 relative flex items-center justify-center bg-gray-100">
                             <img src="${item.img}" class="w-full h-full object-contain">
                         </div>
                         <div class="flex-grow">
-                            <h4 class="font-bold text-xs text-gray-800">${item.title}</h4>
-                            <div class="flex items-baseline gap-2 mt-0.5">
-                                <span class="text-[#0284C7] text-xs font-black">${(item.price * item.quantity).toFixed(2)} د.م</span>
-                                <span class="text-[10px] text-red-600 line-through">${(item.oldPrice * item.quantity).toFixed(2)} د.م</span>
+                            <h4 class="font-extrabold text-sm text-gray-900">${item.title}</h4>
+                            <div class="flex items-baseline gap-2.5 mt-1">
+                                <span class="text-[#0284C7] text-sm font-black">${(item.price * item.quantity).toFixed(2)} د.م</span>
+                                <span class="text-xs text-red-600 line-through font-bold">${(item.oldPrice * item.quantity).toFixed(2)} د.م</span>
                             </div>
                         </div>
-                        <div class="flex items-center gap-1.5 bg-white border border-gray-200 px-2 py-1 rounded-lg">
-                            <button onclick="cart[${index}].quantity += 1; updateCartUI();" class="text-[#F97316] font-bold">+</button>
-                            <span class="text-xs font-extrabold text-gray-800">${item.quantity}</span>
-                            <button onclick="cart[${index}].quantity -= 1; if(cart[${index}].quantity<=0) cart.splice(${index},1); updateCartUI();" class="text-rose-600 font-bold">-</button>
+                        <div class="flex items-center gap-2 bg-white border border-gray-300 px-2.5 py-1.5 rounded-xl shadow-xs">
+                            <button onclick="cart[${index}].quantity += 1; updateCartUI();" class="text-[#F97316] font-black text-base px-1">+</button>
+                            <span class="text-sm font-black text-gray-900">${item.quantity}</span>
+                            <button onclick="cart[${index}].quantity -= 1; if(cart[${index}].quantity<=0) cart.splice(${index},1); updateCartUI();" class="text-rose-600 font-black text-base px-1">-</button>
                         </div>
-                        <button onclick="cart.splice(${index},1); updateCartUI();" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <button onclick="cart.splice(${index},1); updateCartUI();" class="text-rose-500 hover:text-rose-700 p-1.5"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                     </div>
                 `;
             });
@@ -2018,7 +2053,7 @@
             const grid = document.getElementById('black-free-day-products-grid');
             let html = '';
             if(blackFreeDayProducts.length === 0) {
-                grid.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">لا توجد عروض نهاية الأسبوع حالياً.</p>';
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-12 text-lg font-bold">لا توجد عروض نهاية الأسبوع حالياً.</p>';
             } else {
                 blackFreeDayProducts.forEach(p => {
                     const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
@@ -2031,11 +2066,11 @@
 
                     let bfdThumbnailsHtml = '';
                     if (productImages.length > 1) {
-                        bfdThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100 flex-shrink-0">`;
+                        bfdThumbnailsHtml = `<div class="flex items-center gap-2 overflow-x-auto py-2 px-3.5 bg-gray-50 border-t border-gray-200 flex-shrink-0">`;
                         productImages.forEach((imgUrl, imgIdx) => {
                             const isFirst = imgIdx === 0;
                             bfdThumbnailsHtml += `
-                                <div onclick="event.stopPropagation(); setBfdCardImage('${p.id}', '${imgUrl}', this)" class="w-10 h-10 bg-white rounded-md border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-0.5 overflow-hidden ${isFirst ? 'border-amber-500 ring-1 ring-amber-300 scale-105' : 'border-gray-200 opacity-60 hover:opacity-100'}">
+                                <div onclick="event.stopPropagation(); setBfdCardImage('${p.id}', '${imgUrl}', this)" class="w-12 h-12 bg-white rounded-lg border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-1 overflow-hidden ${isFirst ? 'border-amber-500 ring-2 ring-amber-300 scale-105 shadow-xs' : 'border-gray-300 opacity-70 hover:opacity-100'}">
                                     <img src="${imgUrl}" class="max-w-full max-h-full object-contain rounded">
                                 </div>
                             `;
@@ -2046,34 +2081,34 @@
                     html += `
                         <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full" onclick="openBfdProductModal('${p.id}')">
                             <div class="flex flex-col flex-grow">
-                                <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-2 h-80 sm:h-96 flex-shrink-0">
+                                <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-3 h-80 sm:h-96 flex-shrink-0">
                                     <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-contain bfd-card-img">
                                 </div>
                                 ${bfdThumbnailsHtml}
-                                <div class="p-4 space-y-2.5 flex flex-col flex-grow justify-between">
-                                    <div class="space-y-1.5">
-                                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-md inline-block border shadow-xs" style="background-color: ${catColor}15; color: ${catColor}; border-color: ${catColor}40;">${catLabel}</span>
+                                <div class="p-5 space-y-3 flex flex-col flex-grow justify-between">
+                                    <div class="space-y-2">
+                                        <span class="text-xs font-bold px-3 py-1.5 rounded-xl inline-block border shadow-xs" style="background-color: ${catColor}15; color: ${catColor}; border-color: ${catColor}40;">${catLabel}</span>
                                         <h3 class="font-extrabold text-[#0F172A] text-lg sm:text-xl leading-snug line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
-                                        <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
+                                        <p class="text-gray-600 text-sm line-clamp-2 font-medium">${p.description || ''}</p>
                                     </div>
-                                    <div class="p-2.5 bg-orange-50/70 border border-orange-100 rounded-lg flex items-center justify-between mt-auto">
+                                    <div class="p-3 bg-orange-50/75 border border-orange-200 rounded-xl flex items-center justify-between mt-auto shadow-xs">
                                         <div>
-                                            <span class="text-[9px] font-bold text-[#0284C7] block" data-i18n="total_after_disc">ثمن الصدمة الحصري:</span>
+                                            <span class="text-[11px] font-bold text-[#0284C7] block" data-i18n="total_after_disc">ثمن الصدمة الحصري:</span>
                                             <div class="flex items-baseline gap-1">
-                                                <span class="font-black text-[#0284C7] text-xl sm:text-2xl bfd-moving-price">${p.price.toFixed(2)}</span>
-                                                <span class="text-xs font-bold text-[#0284C7]">د.م</span>
+                                                <span class="font-black text-[#0284C7] text-2xl bfd-moving-price">${p.price.toFixed(2)}</span>
+                                                <span class="text-sm font-bold text-[#0284C7]">د.م</span>
                                             </div>
                                         </div>
                                         <div class="text-left">
-                                            <span class="text-[9px] font-bold text-gray-400 block" data-i18n="original_total">الأصلي:</span>
-                                            <span class="text-xs font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
+                                            <span class="text-[11px] font-bold text-gray-500 block" data-i18n="original_total">الأصلي:</span>
+                                            <span class="text-sm font-bold text-red-600 line-through">${p.oldPrice.toFixed(2)} د.م</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-4 pt-0 mt-auto flex-shrink-0" onclick="event.stopPropagation()">
-                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-2.5 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-xs bfd-attention-btn cursor-pointer">
-                                    <i data-lucide="message-circle" class="w-4 h-4 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
+                            <div class="p-5 pt-0 mt-auto flex-shrink-0" onclick="event.stopPropagation()">
+                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3.5 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2.5 text-sm sm:text-base bfd-attention-btn cursor-pointer">
+                                    <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
                                 </button>
                             </div>
                         </div>
@@ -2180,7 +2215,7 @@
             currentProduct.images.forEach((img, idx) => {
                 const isActive = idx === currentProduct.currentImgIndex;
                 html += `
-                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg border-2 cursor-pointer transition-all duration-300 flex items-center justify-center bg-gray-50 p-1 overflow-hidden ${isActive ? 'border-[#F97316] scale-105 shadow-md ring-2 ring-orange-200' : 'border-gray-200 opacity-70 hover:opacity-100'}">
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 cursor-pointer transition-all duration-300 flex items-center justify-center bg-gray-50 p-1.5 overflow-hidden ${isActive ? 'border-[#F97316] scale-105 shadow-md ring-2 ring-orange-200' : 'border-gray-300 opacity-70 hover:opacity-100'}">
                         <img src="${img}" onclick="setDetailImageIndex(${idx})" class="w-full h-full object-contain">
                     </div>
                 `;
