@@ -9,7 +9,7 @@
     <!-- Open Graph Meta Tags for Social & WhatsApp Link Preview -->
     <meta property="og:title" id="meta-og-title" content="bedal.online - منتجات حصرية بأسعار تنافسية
 </title>">
-    <meta property="og:description" id="meta-og-desc" content="تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلام.">
+    <meta property="og:description" id="meta-og-desc" content="تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلاستلام.">
     <meta property="og:image" id="meta-og-image" content="https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=v6qhfqa0&dl=1">
     <meta property="og:url" id="meta-og-url" content="https://bedal.online/">
     <meta property="og:type" content="website">
@@ -98,6 +98,13 @@
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
+        video::-webkit-media-controls {
+            display: none !important;
+        }
+        video::-webkit-media-controls-enclosure {
+            display: none !important;
+        }
+
         .watermarked-container {
             position: relative;
             overflow: hidden;
@@ -491,12 +498,12 @@
                     </button>
                 </div>
                 
-                <!-- تم استبدال النص القديم بصورة الاسم الجديدة مع إزالة الخلفية والظل بحجم متناسق -->
+                <!-- صورة الاسم الجديدة -->
                 <div class="flex items-center justify-center cursor-pointer group py-1" onclick="switchTab('store')">
                     <img src="https://www.dropbox.com/scl/fi/7tfptb3fegx3l48k322jf/1793898774425.jpg?rlkey=bd8fzbs3h2z5nz6ba4lt9evz4&st=9lootmf9&raw=1" alt="bedal.online SMART MARKETPLACE" class="h-10 sm:h-12 w-auto object-contain">
                 </div>
 
-                <!-- اللوغو (مع إزالة الخلفية والظل تماماً) -->
+                <!-- اللوغو -->
                 <div class="flex items-center cursor-pointer group" onclick="switchTab('store')">
                     <div class="relative w-12 h-12 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                         <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=l63dmtwa&raw=1" alt="Logo" class="w-full h-full object-contain rounded-xl">
@@ -658,10 +665,23 @@
                     <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <div class="w-full rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-3">
+                <!-- عرض عنصر الوسائط الرئيسي -->
+                <div id="detail-media-viewer-container" class="w-full rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-3 relative group">
                     <img id="detail-product-img" alt="Product Detail" class="w-full h-auto max-h-[85vh] object-contain">
+                    
+                    <div id="custom-video-wrapper" class="relative w-full h-auto max-h-[85vh] flex items-center justify-center hidden bg-black rounded-xl overflow-hidden">
+                        <video id="detail-product-video" autoplay playsinline loop class="w-full h-auto max-h-[85vh] object-contain"></video>
+                        <!-- شريط التحكم السفلي (كتم/تشغيل الصوت) -->
+                        <div class="absolute bottom-3 left-3 right-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl flex items-center justify-between text-white text-xs z-20">
+                            <button onclick="toggleCustomVideoMute()" class="flex items-center gap-1.5 hover:text-[#F97316] transition-colors focus:outline-none">
+                                <i id="video-mute-icon" data-lucide="volume-2" class="w-5 h-5 text-amber-400"></i>
+                                <span id="video-mute-text">صوت</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- شريط المصغرات للصور فقط بدون فيديوهات -->
                 <div id="detail-thumbnails-container" class="flex items-center gap-3 overflow-x-auto pb-2"></div>
 
                 <div class="flex items-baseline gap-4 py-3 border-b border-gray-200">
@@ -748,12 +768,6 @@
                         <i data-lucide="shopping-bag" class="w-6 h-6 animate-bounce"></i>
                         <span data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</span>
                     </button>
-                </div>
-
-                <div id="detail-video-box" class="hidden pt-3">
-                    <a id="detail-video-link" href="#" target="_blank" class="inline-flex items-center gap-2.5 bg-orange-50 border border-orange-200 hover:bg-orange-100 text-orange-950 px-5 py-3 rounded-xl text-sm font-bold transition-colors shadow-xs">
-                        <i data-lucide="play-circle" class="w-5 h-5 text-[#0284C7] fill-[#0284C7] text-white"></i> <span data-i18n="tajer_guide">شرح منصة تاجر</span>
-                    </a>
                 </div>
             </div>
         </section>
@@ -842,7 +856,7 @@
                 </button>
             </div>
 
-            <!-- تمت إضافة صورة الاسم بحجم صغير في الفوتر مع الحفاظ على التنسيق والروابط -->
+            <!-- صورة الاسم بحجم صغير في الفوتر -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-700 pt-4 border-t border-gray-200">
                 <div class="flex items-center gap-3">
                     <img src="https://www.dropbox.com/scl/fi/7tfptb3fegx3l48k322jf/1793898774425.jpg?rlkey=bd8fzbs3h2z5nz6ba4lt9evz4&st=9lootmf9&raw=1" alt="bedal.online" class="h-6 w-auto object-contain">
@@ -862,7 +876,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.33</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.39</span>
                     </span>
                 </div>
             </div>
@@ -1248,7 +1262,7 @@
         const itemsPerPage = 10;
         let currentFilterCategory = 'all';
 
-        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', images: [], currentImgIndex: 0, category: '', description: '', sku: '', is_available: true };
+        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', mediaItems: [], currentMediaIndex: 0, category: '', description: '', sku: '', is_available: true };
         let fullBfdDescriptionText = '';
         let isBfdDescExpanded = false;
 
@@ -1343,7 +1357,7 @@
             alert('شكراً لك! تم إضافة تعليقك بنجاح وعرضه في شريط التقييمات.');
         }
 
-        function formatImageUrl(pathOrUrl) {
+        function formatMediaUrl(pathOrUrl) {
             if (!pathOrUrl || typeof pathOrUrl !== 'string') return '';
             let clean = pathOrUrl.trim();
             if (clean === '' || clean.toLowerCase() === 'null' || clean === '[]') return '';
@@ -1355,17 +1369,40 @@
                 }
             }
 
-            if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('data:image/') || clean.startsWith('/')) return clean;
+            if (clean.startsWith('http://') || clean.startsWith('https://') || clean.startsWith('data:') || clean.startsWith('/')) return clean;
             return `${SUPABASE_URL}/storage/v1/object/public/products/${clean}`;
         }
 
-        function extractImagesFromRecord(record) {
-            let imagesList = [];
+        function extractMediaFromRecord(record) {
+            let mediaList = [];
+            
             const indexedImageKeys = ['image1', 'image2', 'image3', 'image4', 'image5', 'img1', 'img2', 'img3', 'img4', 'img5'];
             indexedImageKeys.forEach(k => {
                 if (record[k] && typeof record[k] === 'string' && record[k].trim() !== '') {
-                    const formatted = formatImageUrl(record[k]);
-                    if (formatted) imagesList.push(formatted);
+                    const formatted = formatMediaUrl(record[k]);
+                    if (formatted) mediaList.push({ type: 'image', url: formatted });
+                }
+            });
+
+            const videoKeys = ['video', 'videos', 'video1', 'video2', 'link_video'];
+            videoKeys.forEach(vk => {
+                if (record[vk] && typeof record[vk] === 'string' && record[vk].trim() !== '') {
+                    const val = record[vk].trim();
+                    if (val.startsWith('[') || val.startsWith('{')) {
+                        try {
+                            const parsed = JSON.parse(val);
+                            if (Array.isArray(parsed)) {
+                                parsed.forEach(item => { if (item) { const f = formatMediaUrl(item); if (f) mediaList.push({ type: 'video', url: f }); } });
+                            }
+                        } catch(e) {}
+                    } else if (val.includes(',')) {
+                        val.split(',').forEach(part => { const f = formatMediaUrl(part.trim()); if (f) mediaList.push({ type: 'video', url: f }); });
+                    } else {
+                        const f = formatMediaUrl(val);
+                        if (f) mediaList.push({ type: 'video', url: f });
+                    }
+                } else if (Array.isArray(record[vk])) {
+                    record[vk].forEach(item => { const f = formatMediaUrl(item); if (f) mediaList.push({ type: 'video', url: f }); });
                 }
             });
 
@@ -1379,24 +1416,29 @@
                             try {
                                 const parsed = JSON.parse(trimmed);
                                 if (Array.isArray(parsed)) {
-                                    parsed.forEach(item => { if (item) { const f = formatImageUrl(item); if (f) imagesList.push(f); } });
+                                    parsed.forEach(item => { if (item) { const f = formatMediaUrl(item); if (f) mediaList.push({ type: 'image', url: f }); } });
                                 }
                             } catch(e) {}
                         } else if (trimmed.includes(',')) {
-                            trimmed.split(',').forEach(part => { const f = formatImageUrl(part.trim()); if (f) imagesList.push(f); });
+                            trimmed.split(',').forEach(part => { const f = formatMediaUrl(part.trim()); if (f) mediaList.push({ type: 'image', url: f }); });
                         } else {
-                            const f = formatImageUrl(trimmed);
-                            if (f) imagesList.push(f);
+                            const f = formatMediaUrl(trimmed);
+                            if (f) mediaList.push({ type: 'image', url: f });
                         }
                     } else if (Array.isArray(val)) {
-                        val.forEach(item => { const f = formatImageUrl(item); if (f) imagesList.push(f); });
+                        val.forEach(item => { const f = formatMediaUrl(item); if (f) mediaList.push({ type: 'image', url: f }); });
                     }
                 }
             });
 
-            imagesList = [...new Set(imagesList)];
-            if (imagesList.length === 0) imagesList = ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
-            return imagesList;
+            const uniqueMap = new Map();
+            mediaList.forEach(m => { if (m.url && !uniqueMap.has(m.url)) uniqueMap.set(m.url, m); });
+            mediaList = Array.from(uniqueMap.values());
+
+            if (mediaList.length === 0) {
+                mediaList = [{ type: 'image', url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80' }];
+            }
+            return mediaList;
         }
 
         async function fetchSupabaseStoreData() {
@@ -1426,13 +1468,16 @@
                         let foundCat = categoriesDatabase.find(c => c.key === catKey);
                         let catLabel = foundCat ? foundCat.name : (p.catLabel || 'متنوع');
 
+                        const mediaList = extractMediaFromRecord(p);
+                        const imagesList = mediaList.filter(m => m.type === 'image').map(m => m.url);
+
                         return {
                             ...p,
                             category: catKey,
                             catLabel: catLabel,
                             is_available: isAvailable,
-                            images: extractImagesFromRecord(p),
-                            videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
+                            mediaItems: mediaList,
+                            images: imagesList,
                             price: finalDiscPrice,
                             oldPrice: originalPrice > finalDiscPrice ? originalPrice : (p.oldPrice ? parseFloat(p.oldPrice) : originalPrice)
                         };
@@ -1442,11 +1487,13 @@
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
                 if (bfd) {
                     blackFreeDayProducts = bfd.map(b => {
-                        let parsedImagesList = extractImagesFromRecord(b);
+                        let mediaList = extractMediaFromRecord(b);
                         let matchedNormalProd = fetchedProducts.find(p => p.title && b.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
-                        if (parsedImagesList.length <= 1 && matchedNormalProd && matchedNormalProd.images.length > 1) {
-                            parsedImagesList = matchedNormalProd.images;
+                        if (mediaList.length <= 1 && matchedNormalProd && matchedNormalProd.mediaItems.length > 1) {
+                            mediaList = matchedNormalProd.mediaItems;
                         }
+                        const imagesList = mediaList.filter(m => m.type === 'image').map(m => m.url);
+
                         let productDescription = b.description || (matchedNormalProd ? matchedNormalProd.description : 'لا يوجد وصف متاح.');
                         let originalPrice = parseFloat(b.price || 0);
                         let discPrice = (b.discountPrice !== undefined && b.discountPrice !== null && b.discountPrice !== '') ? parseFloat(b.discountPrice) : originalPrice;
@@ -1470,8 +1517,8 @@
                             description: productDescription,
                             price: discPrice,
                             oldPrice: parseFloat(b.oldPrice || originalPrice),
-                            images: parsedImagesList,
-                            videos: typeof b.videos === 'string' ? JSON.parse(b.videos) : (b.videos || [])
+                            mediaItems: mediaList,
+                            images: imagesList
                         };
                     });
                 }
@@ -1579,12 +1626,12 @@
                 let catColor = foundCat && foundCat.color ? foundCat.color : '#6366f1';
 
                 let storeThumbnailsHtml = '';
-                if (productImages.length > 1) {
+                if (p.images && p.images.length > 1) {
                     storeThumbnailsHtml = `<div class="flex items-center gap-2 overflow-x-auto py-2 px-3.5 bg-gray-50 border-t border-gray-200 flex-shrink-0">`;
-                    productImages.forEach((imgUrl, imgIdx) => {
+                    p.images.forEach((imgUrl, imgIdx) => {
                         const isFirst = imgIdx === 0;
                         storeThumbnailsHtml += `
-                            <div onclick="event.stopPropagation(); setStoreCardImage('${p.id}', '${imgUrl}', this)" class="w-12 h-12 bg-white rounded-lg border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-1 overflow-hidden ${isFirst ? 'border-[#F97316] ring-2 ring-orange-200 scale-105 shadow-xs' : 'border-gray-300 opacity-70 hover:opacity-100'}">
+                            <div onclick="event.stopPropagation(); setStoreCardMedia('${p.id}', '${imgUrl}', this)" class="w-12 h-12 bg-white rounded-lg border cursor-pointer transition-all flex-shrink-0 flex items-center justify-center p-1 overflow-hidden ${isFirst ? 'border-[#F97316] ring-2 ring-orange-200 scale-105 shadow-xs' : 'border-gray-300 opacity-70 hover:opacity-100'}">
                                 <img src="${imgUrl}" class="max-w-full max-h-full object-contain rounded">
                             </div>
                         `;
@@ -1676,15 +1723,11 @@
             applyTranslations();
         }
 
-        function setStoreCardImage(productId, imgUrl, thumbEl) {
+        function setStoreCardMedia(productId, imgUrl, thumbEl) {
             const mainImg = document.getElementById(`store-main-img-${productId}`);
-            if (mainImg) {
-                mainImg.style.opacity = '0';
-                setTimeout(() => {
-                    mainImg.src = imgUrl;
-                    mainImg.style.opacity = '1';
-                }, 150);
-            }
+            if (!mainImg) return;
+            mainImg.src = imgUrl;
+
             const parentThumbContainer = thumbEl.parentElement;
             if (parentThumbContainer) {
                 Array.from(parentThumbContainer.children).forEach(child => {
@@ -1763,7 +1806,7 @@
             const product = blackFreeDayProducts.find(p => String(p.id) === String(productId));
             if (!product) return;
 
-            const images = product.images?.length > 0 ? product.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            const mediaItems = product.mediaItems?.length > 0 ? product.mediaItems : [{ type: 'image', url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80' }];
             document.getElementById('bfd-album-title').innerText = product.title || 'ألبوم المنتج';
 
             fullBfdDescriptionText = product.description || 'لا يوجد وصف متاح.';
@@ -1789,12 +1832,20 @@
             const container = document.getElementById('bfd-album-images-container');
             if (container) {
                 let html = '';
-                images.forEach((imgUrl, idx) => {
-                    html += `
-                        <div class="w-full bg-zinc-900 rounded-2xl overflow-hidden border border-amber-500/55 p-3 flex items-center justify-center shadow-2xl watermarked-container">
-                            <img src="${imgUrl}" alt="Album Image ${idx + 1}" class="w-full h-auto object-contain rounded-xl max-h-[85vh]">
-                        </div>
-                    `;
+                mediaItems.forEach((m, idx) => {
+                    if (m.type === 'video') {
+                        html += `
+                            <div class="w-full bg-zinc-900 rounded-2xl overflow-hidden border border-amber-500/55 p-3 flex items-center justify-center shadow-2xl watermarked-container">
+                                <video src="${m.url}" autoplay playsinline loop class="w-full h-auto object-contain rounded-xl max-h-[85vh]"></video>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="w-full bg-zinc-900 rounded-2xl overflow-hidden border border-amber-500/55 p-3 flex items-center justify-center shadow-2xl watermarked-container">
+                                <img src="${m.url}" alt="Album Media ${idx + 1}" class="w-full h-auto object-contain rounded-xl max-h-[85vh]">
+                            </div>
+                        `;
+                    }
                 });
                 container.innerHTML = html;
             }
@@ -1955,6 +2006,17 @@
         function closeSuccessModal() { document.getElementById('order-success-modal').classList.add('hidden'); }
 
         function switchTab(tabName) {
+            // إيقاف أي فيديو يعمل وإخفاء مشغله فوراً عند مغادرة صفحة التفاصيل
+            const videoEl = document.getElementById('detail-product-video');
+            const customVideoWrapper = document.getElementById('custom-video-wrapper');
+            if (videoEl) {
+                videoEl.pause();
+                videoEl.currentTime = 0;
+            }
+            if (customVideoWrapper) {
+                customVideoWrapper.classList.add('hidden');
+            }
+
             document.getElementById('section-store').classList.add('hidden');
             document.getElementById('section-product-detail').classList.add('hidden');
             document.getElementById('section-vendor-store').classList.add('hidden');
@@ -2062,7 +2124,7 @@
         }
 
         function openProductDetailObject(p) {
-            const images = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            const mediaItems = p.mediaItems?.length > 0 ? p.mediaItems : [{ type: 'image', url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80' }];
             
             let catKey = p.category || 'various';
             let foundCat = categoriesDatabase.find(c => c.key === catKey);
@@ -2075,12 +2137,11 @@
                 price: p.price || 0,
                 oldPrice: p.oldPrice || p.price || 0,
                 discountBadge: p.discountBadge || 'عرض خاص',
-                images: images,
-                currentImgIndex: 0,
+                mediaItems: mediaItems,
+                currentMediaIndex: 0,
                 category: catLabel,
                 categoryColor: catColor,
                 description: p.description || '',
-                videos: p.videos || [],
                 is_available: (p.is_available !== false)
             };
 
@@ -2093,7 +2154,7 @@
                 window.history.pushState({path: productPageUrl}, '', productPageUrl);
             }
 
-            updateDetailImageViewer();
+            updateDetailMediaViewer();
             renderDetailThumbnails();
 
             document.getElementById('detail-product-title').innerText = currentProduct.title;
@@ -2134,15 +2195,6 @@
                 if (detailImgEl) detailImgEl.classList.remove('grayscale');
             }
 
-            const videoBox = document.getElementById('detail-video-box');
-            const videoLink = document.getElementById('detail-video-link');
-            if (currentProduct.videos?.length > 0 && currentProduct.videos[0]) {
-                videoLink.href = currentProduct.videos[0];
-                videoBox.classList.remove('hidden');
-            } else {
-                videoBox.classList.add('hidden');
-            }
-
             switchTab('detail');
             lucide.createIcons();
             applyTranslations();
@@ -2152,36 +2204,73 @@
             const container = document.getElementById('detail-thumbnails-container');
             if (!container) return;
             let html = '';
-            currentProduct.images.forEach((img, idx) => {
-                const isActive = idx === currentProduct.currentImgIndex;
+            // تصفية المصغرات لعرض الصور فقط وتجنب عرض أي فيديو أو أيقونة فيديو
+            const imageItemsOnly = currentProduct.mediaItems.filter(m => m.type === 'image');
+            
+            imageItemsOnly.forEach((m, idx) => {
+                const isActive = idx === currentProduct.currentMediaIndex;
+                let thumbContent = `<img src="${m.url}" class="w-full h-full object-contain">`;
+
                 html += `
-                    <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 cursor-pointer transition-all duration-300 flex items-center justify-center bg-gray-50 p-1.5 overflow-hidden ${isActive ? 'border-[#F97316] scale-105 shadow-md ring-2 ring-orange-200' : 'border-gray-300 opacity-70 hover:opacity-100'}">
-                        <img src="${img}" onclick="setDetailImageIndex(${idx})" class="w-full h-full object-contain">
+                    <div onclick="setDetailMediaIndex(${idx})" class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 cursor-pointer transition-all duration-300 flex items-center justify-center bg-gray-50 p-1.5 overflow-hidden ${isActive ? 'border-[#F97316] scale-105 shadow-md ring-2 ring-orange-200' : 'border-gray-300 opacity-70 hover:opacity-100'}">
+                        ${thumbContent}
                     </div>
                 `;
             });
             container.innerHTML = html;
+            lucide.createIcons();
         }
 
-        function setDetailImageIndex(idx) {
-            currentProduct.currentImgIndex = idx;
-            updateDetailImageViewer();
+        function setDetailMediaIndex(idx) {
+            currentProduct.currentMediaIndex = idx;
+            updateDetailMediaViewer();
             renderDetailThumbnails();
             
             const metaImgEl = document.getElementById('meta-og-image');
-            if (metaImgEl && currentProduct.images[idx]) {
-                metaImgEl.setAttribute('content', currentProduct.images[idx]);
+            if (metaImgEl && currentProduct.mediaItems[idx] && currentProduct.mediaItems[idx].type === 'image') {
+                metaImgEl.setAttribute('content', currentProduct.mediaItems[idx].url);
             }
         }
 
-        function updateDetailImageViewer() {
-            if(!currentProduct.images.length) return;
+        function updateDetailMediaViewer() {
+            if (!currentProduct.mediaItems.length) return;
+            const currentItem = currentProduct.mediaItems[currentProduct.currentMediaIndex];
             const imgEl = document.getElementById('detail-product-img');
-            imgEl.style.opacity = '0';
-            setTimeout(() => {
-                imgEl.src = currentProduct.images[currentProduct.currentImgIndex];
-                imgEl.style.opacity = '1';
-            }, 150);
+            const customVideoWrapper = document.getElementById('custom-video-wrapper');
+            const videoEl = document.getElementById('detail-product-video');
+
+            if (currentItem.type === 'video') {
+                imgEl.classList.add('hidden');
+                customVideoWrapper.classList.remove('hidden');
+                videoEl.src = currentItem.url;
+                videoEl.muted = false; // تشغيل الصوت بشكل افتراضي
+                videoEl.play().catch(() => {});
+                updateVideoMuteUI(false);
+            } else {
+                videoEl.pause();
+                customVideoWrapper.classList.add('hidden');
+                imgEl.style.opacity = '0';
+                setTimeout(() => {
+                    imgEl.src = currentItem.url;
+                    imgEl.style.opacity = '1';
+                }, 150);
+                imgEl.classList.remove('hidden');
+            }
+        }
+
+        function toggleCustomVideoMute() {
+            const videoEl = document.getElementById('detail-product-video');
+            if (!videoEl) return;
+            videoEl.muted = !videoEl.muted;
+            updateVideoMuteUI(videoEl.muted);
+        }
+
+        function updateVideoMuteUI(isMuted) {
+            const muteIcon = document.getElementById('video-mute-icon');
+            const muteText = document.getElementById('video-mute-text');
+            if (muteIcon) muteIcon.setAttribute('data-lucide', isMuted ? 'volume-x' : 'volume-2');
+            if (muteText) muteText.innerText = isMuted ? (currentLang === 'ar' ? 'صامت' : 'Mute') : (currentLang === 'ar' ? 'صوت' : 'Sound');
+            lucide.createIcons();
         }
 
         filterCategory = (catKey) => {
