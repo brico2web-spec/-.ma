@@ -163,6 +163,32 @@
         .white-glow-btn {
             animation: whiteSoftGlow 2s infinite ease-in-out;
         }
+        /* لمسة إضافية لجذب الانتباه لأزرار أرقام التصفح غير النشطة */
+        @keyframes paginationPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(249, 115, 22, 0); }
+            50% { transform: scale(1.06); box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); border-color: #F97316; }
+        }
+        .pagination-pulse-btn {
+            animation: paginationPulse 2.2s infinite ease-in-out;
+        }
+        
+        /* التأثير الأزرق الخفيف والجداب (المشابه لتأثير اللوغو) على أزرار أرقام الصفحة */
+        @keyframes softBlueGlowPagination {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(2, 132, 199, 0.3), 0 0 18px rgba(2, 132, 199, 0.1);
+                border-color: rgba(2, 132, 199, 0.35);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(2, 132, 199, 0.65), 0 0 30px rgba(56, 189, 248, 0.35);
+                border-color: rgba(56, 189, 248, 0.75);
+            }
+        }
+        .pagination-blue-glow {
+            animation: softBlueGlowPagination 3s infinite ease-in-out;
+            border-radius: 8px;
+            background: rgba(2, 132, 199, 0.03);
+        }
+
         button, .custom-btn {
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
@@ -247,6 +273,22 @@
                     <button onclick="filterCategory('kids'); toggleCategoriesDrawer();" id="cat-drawer-btn-kids" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
                         <i data-lucide="smile" class="w-4 h-4 text-amber-500"></i>
                         <span data-i18n="kids">أطفال</span>
+                    </button>
+                    <button onclick="filterCategory('medical'); toggleCategoriesDrawer();" id="cat-drawer-btn-medical" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="activity" class="w-4 h-4 text-emerald-500"></i>
+                        <span data-i18n="medical">مستلزمات طبية</span>
+                    </button>
+                    <button onclick="filterCategory('home_supplies'); toggleCategoriesDrawer();" id="cat-drawer-btn-home_supplies" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="home" class="w-4 h-4 text-cyan-600"></i>
+                        <span data-i18n="home_supplies">منزلية</span>
+                    </button>
+                    <button onclick="filterCategory('electronics'); toggleCategoriesDrawer();" id="cat-drawer-btn-electronics" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="cpu" class="w-4 h-4 text-violet-500"></i>
+                        <span data-i18n="electronics">إليكترونيات</span>
+                    </button>
+                    <button onclick="filterCategory('car_devices'); toggleCategoriesDrawer();" id="cat-drawer-btn-car_devices" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
+                        <i data-lucide="car" class="w-4 h-4 text-rose-500"></i>
+                        <span data-i18n="car_devices">أجهزة سيارة</span>
                     </button>
                     <button onclick="filterCategory('various'); toggleCategoriesDrawer();" id="cat-drawer-btn-various" class="w-full flex items-center gap-2 p-2.5 rounded-lg border border-gray-100 bg-gray-50 hover:bg-orange-50 hover:border-orange-200 text-gray-800 font-bold text-xs transition-all">
                         <i data-lucide="package" class="w-4 h-4 text-[#0284C7]"></i>
@@ -840,7 +882,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.17</span>
+                        <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.20</span>
                     </span>
                 </div>
             </div>
@@ -859,6 +901,10 @@
             { key: 'women', name: 'نساء', color: '#ec4899' },
             { key: 'men', name: 'رجال', color: '#3b82f6' },
             { key: 'kids', name: 'أطفال', color: '#f59e0b' },
+            { key: 'medical', name: 'مستلزمات طبية', color: '#10b981' },
+            { key: 'home_supplies', name: 'منزلية', color: '#0891b2' },
+            { key: 'electronics', name: 'إليكترونيات', color: '#8b5cf6' },
+            { key: 'car_devices', name: 'أجهزة سيارة', color: '#f43f5e' },
             { key: 'various', name: 'منتجات متنوعة', color: '#6366f1' }
         ];
 
@@ -875,6 +921,10 @@
                 women: "نساء",
                 men: "رجال",
                 kids: "أطفال",
+                medical: "مستلزمات طبية",
+                home_supplies: "منزلية",
+                electronics: "إليكترونيات",
+                car_devices: "أجهزة سيارة",
                 various: "منتجات متنوعة",
                 whatsapp_contact: "إتصل بيا عبر الواتساب",
                 shopping_cart: "سلة التسوق",
@@ -963,6 +1013,10 @@
                 women: "Femmes",
                 men: "Hommes",
                 kids: "Enfants",
+                medical: "Médical",
+                home_supplies: "Maison",
+                electronics: "Électronique",
+                car_devices: "Auto",
                 various: "Produits Divers",
                 whatsapp_contact: "Contactez-nous via WhatsApp",
                 shopping_cart: "Panier d'Achats",
@@ -1051,6 +1105,10 @@
                 women: "Women",
                 men: "Men",
                 kids: "Kids",
+                medical: "Medical Supplies",
+                home_supplies: "Home Supplies",
+                electronics: "Electronics",
+                car_devices: "Car Devices",
                 various: "Various Products",
                 whatsapp_contact: "Contact us via WhatsApp",
                 shopping_cart: "Shopping Cart",
@@ -1629,8 +1687,14 @@
             if (paginationContainer && filteredList.length > itemsPerPage) {
                 let paginationHtml = '';
                 for (let i = 1; i <= totalPages; i++) {
+                    const isCurrent = i === currentPage;
+                    // تمت إضافة كلاس التأثير الأزرق الخفيف والجداب (pagination-blue-glow) هنا على أزرار أرقام الصفحة غير النشطة
+                    const btnClasses = isCurrent 
+                        ? 'bg-[#F97316] text-white shadow-md ring-2 ring-orange-200' 
+                        : 'bg-white border-2 border-[#0284C7] text-gray-800 hover:bg-sky-50 pagination-blue-glow pagination-pulse-btn';
+                    
                     paginationHtml += `
-                        <button onclick="changePage(${i})" class="w-10 h-10 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center ${i === currentPage ? 'bg-[#F97316] text-white shadow-md ring-2 ring-orange-200' : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'}">
+                        <button onclick="changePage(${i})" class="w-10 h-10 rounded-lg font-black text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center ${btnClasses}">
                             ${i}
                         </button>
                     `;
