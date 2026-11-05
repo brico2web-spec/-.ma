@@ -361,9 +361,9 @@
                             <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
                                 <i data-lucide="folder" class="w-6 h-6 text-indigo-600"></i> إدارة وعرض كل الفئات
                             </h3>
-                            <p class="text-xs text-gray-500 mt-1">عرض جميع فئات المنتجات المتاحة في المتجر وإمكانية إضافة فئة جديدة.</p>
+                            <p class="text-xs text-gray-500 mt-1">عرض جميع فئات المنتجات المتاحة في المتجر وإمكانية إضافة، تعديل أو حذف الفئة مباشرة.</p>
                         </div>
-                        <button onclick="toggleCategoryModal()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
+                        <button onclick="openCategoryModalForAdd()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
                             <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة فئة جديدة
                         </button>
                     </div>
@@ -607,14 +607,15 @@
         </div>
     </div>
 
-    <!-- Modal Form: Add Category Modal -->
+    <!-- Modal Form: Add / Edit Category Modal -->
     <div id="category-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 space-y-5 relative max-h-[90vh] overflow-y-auto">
             <button onclick="toggleCategoryModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <h3 id="category-modal-title" class="text-xl font-bold text-gray-900 flex items-center gap-2">
                 <i data-lucide="folder-plus" class="w-6 h-6 text-indigo-600"></i> إضافة فئة جديدة للمنتوجات
             </h3>
-            <p class="text-xs text-gray-500">أضف فئة جديدة لتصنيف المنتجات في لوحة التحكم وتحديثها مباشرة في واجهة الموقع الرسمي.</p>
+            <input type="hidden" id="category-form-edit-index" value="">
+            <p class="text-xs text-gray-500">أضف أو عدل الفئة لتصنيف المنتجات في لوحة التحكم وتحديثها مباشرة في واجهة الموقع الرسمي.</p>
             <div class="space-y-4 text-sm">
                 <div>
                     <label class="block font-semibold mb-1 text-xs text-gray-700">اسم الفئة الجديدة *</label>
@@ -624,8 +625,23 @@
                     <label class="block font-semibold mb-1 text-xs text-gray-700">معرف الفئة (Slug أو مفتاح بالإنجليزية) *</label>
                     <input type="text" id="new-category-key" placeholder="مثال: electronics" class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:border-indigo-600 text-sm">
                 </div>
-                <button onclick="saveNewCategory()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-4 h-4"></i> حفظ الفئة الجديدة وربطها بالمنتجات والموقع
+                <div>
+                    <label class="block font-semibold mb-1 text-xs text-gray-700">لون الفئة المميز (اختر من اللوحة أو أدخل كود اللون) *</label>
+                    <div class="flex items-center gap-3 mb-3">
+                        <input type="color" id="new-category-color" value="#6366f1" class="w-12 h-10 rounded-xl border cursor-pointer p-1">
+                        <input type="text" id="new-category-color-text" value="#6366f1" placeholder="#6366f1" oninput="document.getElementById('new-category-color').value=this.value" class="w-32 px-3 py-2 rounded-xl border text-xs font-mono font-bold">
+                        <span class="text-xs text-gray-500">لون عصري وخفيف</span>
+                    </div>
+                    <!-- لوحة الألوان السريعة (30 لوناً احترافياً) -->
+                    <div class="p-3 bg-gray-50 rounded-2xl border space-y-2">
+                        <span class="text-[11px] font-bold text-gray-600 block">🎨 بانيل الألوان السريعة (30 لوناً):</span>
+                        <div class="grid grid-cols-10 gap-1.5" id="color-palette-grid">
+                            <!-- سيتم تعبئتها أوتوماتيكياً عبر الجافاسكريبت -->
+                        </div>
+                    </div>
+                </div>
+                <button onclick="saveCategoryForm()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-colors text-sm flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-4 h-4"></i> حفظ وتحديث بيانات الفئة
                 </button>
             </div>
         </div>
@@ -840,7 +856,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.104</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.107</span>
                 </span>
             </div>
         </div>
@@ -859,10 +875,10 @@
         let adsExpensesDatabase = [];
         
         let categoriesDatabase = [
-            { key: 'women', name: 'نساء' },
-            { key: 'men', name: 'رجال' },
-            { key: 'kids', name: 'أطفال' },
-            { key: 'various', name: 'منتجات متنوعة' }
+            { key: 'women', name: 'نساء', color: '#ec4899' },
+            { key: 'men', name: 'رجال', color: '#3b82f6' },
+            { key: 'kids', name: 'أطفال', color: '#f59e0b' },
+            { key: 'various', name: 'منتجات متنوعة', color: '#6366f1' }
         ];
 
         let adminsDatabase = [
@@ -873,6 +889,32 @@
         let currentAdminPass = "AMIRMOUNA303026";
         let currentLang = 'ar';
         let adminStatsChartInstance = null;
+
+        // مصفوفة الألوان الـ 30 المتنوعة والعصرية
+        const quickColorPalette = [
+            '#6366f1', '#4f46e5', '#3b82f6', '#2563eb', '#06b6d4', '#0ea5e9', '#10b981', '#059669', '#84cc16', '#65a30d',
+            '#f59e0b', '#d97706', '#f97316', '#ea580c', '#ef4444', '#dc2626', '#ec4899', '#db2777', '#8b5cf6', '#7c3aed',
+            '#64748b', '#475569', '#1e293b', '#0f172a', '#14b8a6', '#0d9488', '#845ec2', '#d65db1', '#ff6f91', '#ff9671'
+        ];
+
+        function renderColorPalette() {
+            const grid = document.getElementById('color-palette-grid');
+            if (!grid) return;
+            let html = '';
+            quickColorPalette.forEach(hex => {
+                html += `
+                    <button type="button" onclick="selectQuickColor('${hex}')" class="w-6 h-6 rounded-lg border-2 border-white shadow-sm hover:scale-110 transition-transform" style="background-color: ${hex};" title="${hex}"></button>
+                `;
+            });
+            grid.innerHTML = html;
+        }
+
+        function selectQuickColor(hex) {
+            const colorInput = document.getElementById('new-category-color');
+            const colorText = document.getElementById('new-category-color-text');
+            if (colorInput) colorInput.value = hex;
+            if (colorText) colorText.value = hex;
+        }
 
         const translations = {
             ar: {
@@ -1743,6 +1785,7 @@
                 renderBfdTable();
                 initAdsCountdowns();
                 updateAdminStatsChartAndCalculations();
+                renderColorPalette();
             } catch (err) {
                 console.error("خطأ في جلب البيانات:", err);
             }
@@ -2002,7 +2045,7 @@
             }
         }
 
-        // دالة عرض وتعبئة صفحة الفئات الشاملة
+        // دالة عرض وتعبئة صفحة الفئات الشاملة (مع أزرار التعديل والحذف)
         function renderCategoriesPage() {
             const container = document.getElementById('categories-cards-container');
             if (!container) return;
@@ -2014,23 +2057,38 @@
                 else if (cat.key === 'kids') icon = '🧒';
                 else if (cat.key === 'various') icon = '📦';
 
-                // حساب عدد المنتجات في كل فئة
                 const countProds = productsDatabase.filter(p => p.category === cat.key).length;
+                const catColor = cat.color || '#6366f1';
 
                 html += `
-                    <div class="bg-white p-5 rounded-2xl border shadow-sm flex items-center justify-between gap-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-bold text-xl">
-                                ${icon}
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-base">${cat.name}</h4>
-                                <p class="text-xs text-gray-500 mt-0.5">المعرف (Slug): <span class="font-mono text-indigo-600">${cat.key}</span> | المنتجات: ${countProds} منتج</p>
+                    <div class="bg-white p-5 rounded-2xl border shadow-sm flex flex-col justify-between gap-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-xl flex-shrink-0" style="background-color: ${catColor}15; color: ${catColor};">
+                                    ${icon}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-base flex items-center gap-2">
+                                        ${cat.name}
+                                        <span class="w-3 h-3 rounded-full inline-block border shadow-sm" style="background-color: ${catColor};"></span>
+                                    </h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">المعرف: <span class="font-mono text-indigo-600">${cat.key}</span> | المنتجات: ${countProds}</p>
+                                </div>
                             </div>
                         </div>
-                        <button onclick="filterProductsByCategoryFromPage('${cat.key}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors">
-                            عرض المنتجات
-                        </button>
+                        <div class="flex items-center justify-between pt-3 border-t gap-2">
+                            <button onclick="filterProductsByCategoryFromPage('${cat.key}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors">
+                                عرض المنتجات
+                            </button>
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="openCategoryModalForEdit(${idx})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> تعديل
+                                </button>
+                                <button onclick="deleteCategory(${idx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> حذف
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
             });
@@ -2052,47 +2110,104 @@
             const modal = document.getElementById('category-modal');
             if (modal) {
                 modal.classList.toggle('hidden');
+                renderColorPalette();
             }
         }
 
-        function saveNewCategory() {
+        function openCategoryModalForAdd() {
+            document.getElementById('category-modal-title').innerHTML = '<i data-lucide="folder-plus" class="w-6 h-6 text-indigo-600"></i> إضافة فئة جديدة للمنتوجات';
+            document.getElementById('category-form-edit-index').value = '';
+            document.getElementById('new-category-name').value = '';
+            document.getElementById('new-category-key').value = '';
+            document.getElementById('new-category-color').value = '#6366f1';
+            document.getElementById('new-category-color-text').value = '#6366f1';
+            toggleCategoryModal();
+        }
+
+        function openCategoryModalForEdit(idx) {
+            const cat = categoriesDatabase[idx];
+            if (!cat) return;
+            document.getElementById('category-modal-title').innerHTML = '<i data-lucide="edit" class="w-6 h-6 text-indigo-600"></i> تعديل بيانات الفئة';
+            document.getElementById('category-form-edit-index').value = idx;
+            document.getElementById('new-category-name').value = cat.name || '';
+            document.getElementById('new-category-key').value = cat.key || '';
+            document.getElementById('new-category-color').value = cat.color || '#6366f1';
+            document.getElementById('new-category-color-text').value = cat.color || '#6366f1';
+            toggleCategoryModal();
+        }
+
+        async function saveCategoryForm() {
+            const editIdxVal = document.getElementById('category-form-edit-index').value;
             const nameInput = document.getElementById('new-category-name');
             const keyInput = document.getElementById('new-category-key');
-            if (!nameInput || !keyInput) return;
+            const colorInput = document.getElementById('new-category-color');
+            if (!nameInput || !keyInput || !colorInput) return;
 
             const name = nameInput.value.trim();
             const key = keyInput.value.trim().toLowerCase().replace(/\s+/g, '_');
+            const color = colorInput.value.trim() || '#6366f1';
 
             if (!name || !key) {
                 showCustomAlert('يرجى إدخال اسم الفئة ومعرفها الإنجليزي (Slug)!', 'تنبيه');
                 return;
             }
 
-            if (categoriesDatabase.some(c => c.key === key)) {
-                showCustomAlert('هذا المعرف موجود مسبقاً، يرجى اختيار معرف آخر.', 'تنبيه');
-                return;
+            if (editIdxVal !== "") {
+                // حالة التعديل
+                const idx = parseInt(editIdxVal);
+                categoriesDatabase[idx] = { key, name, color };
+                showCustomAlert(`تم تعديل الفئة بنجاح!`, 'نجاح');
+            } else {
+                // حالة الإضافة الجديدة
+                if (categoriesDatabase.some(c => c.key === key)) {
+                    showCustomAlert('هذا المعرف موجود مسبقاً، يرجى اختيار معرف آخر.', 'تنبيه');
+                    return;
+                }
+                categoriesDatabase.push({ key, name, color });
+                showCustomAlert(`تمت إضافة فئة "${name}" بنجاح!`, 'نجاح');
             }
 
-            categoriesDatabase.push({ key, name });
             localStorage.setItem('bedal_categories_db', JSON.stringify(categoriesDatabase));
+            try {
+                await supabaseClient.from('settings').upsert([{ key: 'categories_db_list', value: JSON.stringify(categoriesDatabase) }], { onConflict: 'key' });
+            } catch(e) {}
 
             updateCategoriesForm();
             renderCategoriesPage();
             toggleCategoryModal();
-
-            nameInput.value = '';
-            keyInput.value = '';
-
-            showCustomAlert(`تمت إضافة فئة "${name}" بنجاح وربطها بالمنتجات والموقع الرسمي!`, 'نجاح');
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        function deleteCategory(idx) {
+            const cat = categoriesDatabase[idx];
+            if (!cat) return;
+
+            showCustomConfirm(`هل أنت متأكد من رغبتك في حذف الفئة "${cat.name}"؟`, async () => {
+                categoriesDatabase.splice(idx, 1);
+                localStorage.setItem('bedal_categories_db', JSON.stringify(categoriesDatabase));
+                try {
+                    await supabaseClient.from('settings').upsert([{ key: 'categories_db_list', value: JSON.stringify(categoriesDatabase) }], { onConflict: 'key' });
+                } catch(e) {}
+
+                updateCategoriesForm();
+                renderCategoriesPage();
+                showCustomAlert('تم حذف الفئة بنجاح!', 'تم الحذف');
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
             const savedCats = localStorage.getItem('bedal_categories_db');
             if (savedCats) {
                 try {
                     categoriesDatabase = JSON.parse(savedCats);
                 } catch(e) {}
             }
+            try {
+                const { data } = await supabaseClient.from('settings').select('value').eq('key', 'categories_db_list').single();
+                if (data && data.value) {
+                    categoriesDatabase = JSON.parse(data.value);
+                }
+            } catch(e) {}
+            renderColorPalette();
         });
 
         function filterProductsByAdmin(adminName) {
@@ -2140,13 +2255,15 @@
                     const skuCode = prod.sku || 'N/A';
                     
                     let catLabel = prod.catLabel || 'منتجات متنوعة';
+                    let catColorHex = '#6366f1';
                     const matchedCat = categoriesDatabase.find(c => c.key === prod.category);
                     if (matchedCat) {
                         catLabel = matchedCat.name;
-                    } else if(prod.category === 'women') catLabel = 'نساء';
-                    else if(prod.category === 'men') catLabel = 'رجال';
-                    else if(prod.category === 'kids') catLabel = 'أطفال';
-                    else if(prod.category === 'various') catLabel = 'منتجات متنوعة';
+                        catColorHex = matchedCat.color || '#6366f1';
+                    } else if(prod.category === 'women') { catLabel = 'نساء'; catColorHex = '#ec4899'; }
+                    else if(prod.category === 'men') { catLabel = 'رجال'; catColorHex = '#3b82f6'; }
+                    else if(prod.category === 'kids') { catLabel = 'أطفال'; catColorHex = '#f59e0b'; }
+                    else if(prod.category === 'various') { catLabel = 'منتجات متنوعة'; catColorHex = '#6366f1'; }
 
                     const isInBfd = bfdDatabase.some(b => b.title && prod.title && b.title.trim().toLowerCase() === prod.title.trim().toLowerCase());
                     const isAvailable = prod.isActive !== false;
@@ -2166,7 +2283,11 @@
                             <td class="p-4 font-bold">${originalPrice} د.م</td>
                             <td class="p-4 font-bold">${discountPrice}</td>
                             <td class="p-4 font-semibold">${adminName}</td>
-                            <td class="p-4"><span class="px-2.5 py-1 rounded-md text-xs font-bold ${!isAvailable ? 'bg-gray-300 text-gray-600' : 'bg-indigo-50 text-indigo-600'}">${catLabel}</span></td>
+                            <td class="p-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold border shadow-xs inline-block" style="background-color: ${catColorHex}15; color: ${catColorHex}; border-color: ${catColorHex}40;">
+                                    ${catLabel}
+                                </span>
+                            </td>
                             <td class="p-4">
                                 <select onchange="toggleProductAvailability(${originalIdx}, this.value === 'true')" class="px-3 py-1.5 rounded-xl text-xs font-bold border ${isAvailable ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-gray-300 text-gray-700 border-gray-400'}">
                                     <option value="true" ${isAvailable ? 'selected' : ''}>🟢 متاح</option>
