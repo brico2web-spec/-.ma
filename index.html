@@ -642,8 +642,8 @@
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <span id="detail-unavailable-badge" class="hidden bg-gray-800 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-md uppercase tracking-wider">غير متاح حالياً</span>
-                        <div class="flex items-center justify-end text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 ms-auto">
-                            <span id="detail-product-cat" class="text-[#0F172A] bg-gray-100 px-2 py-0.5 rounded">متنوع</span>
+                        <div class="flex items-center justify-end text-xs font-bold px-3 py-1.5 rounded-lg border ms-auto" id="detail-product-cat-container">
+                            <span id="detail-product-cat" class="font-bold">متنوع</span>
                         </div>
                     </div>
                     <h1 id="detail-product-title" class="text-xl sm:text-2xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
@@ -840,7 +840,7 @@
                 <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
                 <div class="flex items-center gap-4">
                     <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                        <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.16</span>
+                        <span class="w-2 h-2 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-bold">v 0.9.17</span>
                     </span>
                 </div>
             </div>
@@ -853,6 +853,14 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
+
+        // قائمة الفئات الديناميكية والوانها المستمدة من الإدارة
+        let categoriesDatabase = [
+            { key: 'women', name: 'نساء', color: '#ec4899' },
+            { key: 'men', name: 'رجال', color: '#3b82f6' },
+            { key: 'kids', name: 'أطفال', color: '#f59e0b' },
+            { key: 'various', name: 'منتجات متنوعة', color: '#6366f1' }
+        ];
 
         // نظام اللغات المتكامل (AR, FR, EN)
         let currentLang = 'ar';
@@ -1361,6 +1369,13 @@
 
         async function fetchSupabaseStoreData() {
             try {
+                try {
+                    const { data: catSettings } = await supabaseClient.from('settings').select('value').eq('key', 'categories_db_list').single();
+                    if (catSettings && catSettings.value) {
+                        categoriesDatabase = JSON.parse(catSettings.value);
+                    }
+                } catch(e) {}
+
                 let fetchedProducts = [];
                 const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
                 if (prods) {
@@ -1375,8 +1390,14 @@
                             isAvailable = false;
                         }
 
+                        let catKey = p.category || 'various';
+                        let foundCat = categoriesDatabase.find(c => c.key === catKey);
+                        let catLabel = foundCat ? foundCat.name : (p.catLabel || 'متنوع');
+
                         return {
                             ...p,
+                            category: catKey,
+                            catLabel: catLabel,
                             is_available: isAvailable,
                             images: extractImagesFromRecord(p),
                             videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
@@ -1405,8 +1426,14 @@
                             isAvailable = false;
                         }
 
+                        let catKey = b.category || (matchedNormalProd ? matchedNormalProd.category : 'various');
+                        let foundCat = categoriesDatabase.find(c => c.key === catKey);
+                        let catLabel = foundCat ? foundCat.name : (b.catLabel || (matchedNormalProd ? matchedNormalProd.catLabel : 'عروض نهاية الأسبوع'));
+
                         return {
                             ...b,
+                            category: catKey,
+                            catLabel: catLabel,
                             is_available: isAvailable,
                             description: productDescription,
                             price: discPrice,
@@ -1518,6 +1545,11 @@
                 const firstImg = productImages[0];
                 const isAvailable = (p.is_available !== false);
 
+                let catKey = p.category || 'various';
+                let foundCat = categoriesDatabase.find(c => c.key === catKey);
+                let catLabel = foundCat ? foundCat.name : (p.catLabel || 'متنوع');
+                let catColor = foundCat && foundCat.color ? foundCat.color : '#6366f1';
+
                 let storeThumbnailsHtml = '';
                 if (productImages.length > 1) {
                     storeThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100 flex-shrink-0">`;
@@ -1566,7 +1598,7 @@
                             ${storeThumbnailsHtml}
                             <div class="p-4 space-y-2.5 flex flex-col flex-grow justify-between">
                                 <div class="space-y-1.5">
-                                    <span class="text-[11px] font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-0.5 rounded-md inline-block">${p.catLabel || 'متنوع'}</span>
+                                    <span class="text-[11px] font-bold px-2.5 py-1 rounded-md inline-block border shadow-xs" style="background-color: ${catColor}15; color: ${catColor}; border-color: ${catColor}40;">${catLabel}</span>
                                     <h3 class="font-extrabold ${titleColorClass} text-lg sm:text-xl leading-snug transition-colors line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
                                     <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                 </div>
@@ -1928,6 +1960,11 @@
                     const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
                     const firstImg = productImages[0];
 
+                    let catKey = p.category || 'various';
+                    let foundCat = categoriesDatabase.find(c => c.key === catKey);
+                    let catLabel = foundCat ? foundCat.name : (p.catLabel || 'عروض نهاية الأسبوع');
+                    let catColor = foundCat && foundCat.color ? foundCat.color : '#f59e0b';
+
                     let bfdThumbnailsHtml = '';
                     if (productImages.length > 1) {
                         bfdThumbnailsHtml = `<div class="flex items-center gap-1.5 overflow-x-auto py-1.5 px-3 bg-gray-50 border-t border-gray-100 flex-shrink-0">`;
@@ -1951,7 +1988,7 @@
                                 ${bfdThumbnailsHtml}
                                 <div class="p-4 space-y-2.5 flex flex-col flex-grow justify-between">
                                     <div class="space-y-1.5">
-                                        <span class="text-[11px] font-semibold text-[#0F172A] bg-gray-100 px-2.5 py-0.5 rounded-md inline-block">${p.catLabel || 'عروض نهاية الأسبوع'}</span>
+                                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-md inline-block border shadow-xs" style="background-color: ${catColor}15; color: ${catColor}; border-color: ${catColor}40;">${catLabel}</span>
                                         <h3 class="font-extrabold text-[#0F172A] text-lg sm:text-xl leading-snug line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
                                         <p class="text-gray-500 text-xs line-clamp-2">${p.description || ''}</p>
                                     </div>
@@ -1987,6 +2024,12 @@
 
         function openProductDetailObject(p) {
             const images = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
+            
+            let catKey = p.category || 'various';
+            let foundCat = categoriesDatabase.find(c => c.key === catKey);
+            let catLabel = foundCat ? foundCat.name : (p.catLabel || 'عام');
+            let catColor = foundCat && foundCat.color ? foundCat.color : '#6366f1';
+
             currentProduct = {
                 id: p.id || '',
                 title: p.title || '',
@@ -1995,7 +2038,8 @@
                 discountBadge: p.discountBadge || 'عرض خاص',
                 images: images,
                 currentImgIndex: 0,
-                category: p.catLabel || p.category || 'عام',
+                category: catLabel,
+                categoryColor: catColor,
                 description: p.description || '',
                 videos: p.videos || [],
                 is_available: (p.is_available !== false)
@@ -2016,7 +2060,16 @@
             document.getElementById('detail-product-title').innerText = currentProduct.title;
             document.getElementById('detail-product-price').innerText = currentProduct.price.toFixed(2) + ' د.م';
             document.getElementById('detail-old-price').innerText = currentProduct.oldPrice.toFixed(2) + ' د.م';
-            document.getElementById('detail-product-cat').innerText = currentProduct.category;
+            
+            const catSpanEl = document.getElementById('detail-product-cat');
+            const catContainerEl = document.getElementById('detail-product-cat-container');
+            if (catSpanEl) catSpanEl.innerText = currentProduct.category;
+            if (catContainerEl) {
+                catContainerEl.style.backgroundColor = `${currentProduct.categoryColor}15`;
+                catContainerEl.style.color = currentProduct.categoryColor;
+                catContainerEl.style.borderColor = `${currentProduct.categoryColor}40`;
+            }
+
             document.getElementById('detail-product-desc').innerText = currentProduct.description;
             document.getElementById('summary-prod-name').innerText = currentProduct.title;
             document.getElementById('summary-prod-total').innerText = currentProduct.price.toFixed(2) + ' د.م';
