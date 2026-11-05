@@ -55,7 +55,7 @@
             font-family: 'Readex Pro', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #F8F9FA;
             color: #0F172A;
-            font-size: 1.05rem; /* تم تكبير الخط الأساسي قليلاً لوضوح أفضل */
+            font-size: 1.05rem;
             line-height: 1.7;
         }
         .brand-font {
@@ -70,9 +70,6 @@
         }
         .cart-bounce-active {
             animation: cartFlash 0.6s ease-in-out infinite;
-        }
-        .hero-slide {
-            transition: opacity 1s ease-in-out;
         }
         @keyframes marquee {
             0% { transform: translateX(0); }
@@ -165,16 +162,6 @@
         .white-glow-btn {
             animation: whiteSoftGlow 2s infinite ease-in-out;
         }
-        /* لمسة إضافية لجذب الانتباه لأزرار أرقام التصفح غير النشطة */
-        @keyframes paginationPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(249, 115, 22, 0); }
-            50% { transform: scale(1.06); box-shadow: 0 0 12px rgba(249, 115, 22, 0.4); border-color: #F97316; }
-        }
-        .pagination-pulse-btn {
-            animation: paginationPulse 2.2s infinite ease-in-out;
-        }
-        
-        /* التأثير الأزرق الخفيف والجداب (المشابه لتأثير اللوغو) على أزرار أرقام الصفحة */
         @keyframes softBlueGlowPagination {
             0%, 100% {
                 box-shadow: 0 0 10px rgba(2, 132, 199, 0.3), 0 0 18px rgba(2, 132, 199, 0.1);
@@ -203,7 +190,7 @@
 </head>
 <body class="bg-[#F8F9FA] text-[#0F172A] flex flex-col min-h-screen relative">
 
-    <!-- نافذة إعلان الموقع الأولى (9:16) عند مدخل الموقع - تم ضبط حجمها وعرضها لتملأ الإطار تماماً بدون قص أو تقلص -->
+    <!-- نافذة إعلان الموقع الأولى (9:16) -->
     <div id="welcome-ad-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 transition-opacity duration-300">
         <div class="relative w-full max-w-sm aspect-[9/16] bg-zinc-950 rounded-2xl shadow-2xl border-2 border-amber-400 overflow-hidden flex flex-col justify-between p-3">
             <div class="absolute inset-0 w-full h-full flex items-center justify-center">
@@ -234,7 +221,7 @@
         </span>
     </div>
 
-    <!-- Right Side Menu Drawer Modal for Categories & Social Media -->
+    <!-- Right Side Menu Drawer Modal -->
     <div id="categories-drawer" class="fixed inset-0 z-50 bg-[#0F172A]/50 backdrop-blur-sm hidden flex justify-start transition-opacity">
         <div class="bg-white w-full max-w-[270px] h-full shadow-2xl flex flex-col justify-between p-5 overflow-y-auto transform transition-transform">
             <div>
@@ -301,18 +288,18 @@
                     </button>
                 </div>
 
-                <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-center gap-3">
+                <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-center gap-4">
                     <a href="https://www.facebook.com/BedalOnlineShop" target="_blank" aria-label="Facebook" class="hover:scale-110 transition-transform flex items-center justify-center">
-                        <img src="https://www.dropbox.com/scl/fi/b64dz8sct76lw3gnxje0d/Meta_AI_4_facebook_1024_20261105_174053.png?e=1" alt="Facebook" class="w-11 h-11 object-contain rounded-xl shadow-md">
+                        <img src="https://www.dropbox.com/scl/fi/b64dz8sct76lw3gnxje0d/Meta_AI_4_facebook_1024_20261105_174053.png?rlkey=a7x1q84s4362nyuxi0byfy3cr&st=6r9051le&raw=1" alt="Facebook" class="w-7 h-7 object-contain">
                     </a>
                     <a href="https://www.instagram.com/bedal_online_shop/" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
-                        <img src="https://www.dropbox.com/scl/fi/86073utombw0040esp03e/Meta_AI_4_instagram_1024_20261105_174050.png" alt="Instagram" class="w-11 h-11 object-contain rounded-xl shadow-md">
+                        <img src="https://www.dropbox.com/scl/fi/86073utombw0040esp03e/Meta_AI_4_instagram_1024_20261105_174050.png?rlkey=e3vkkv6v6gupblla1dp0ps4xo&st=3328469h&raw=1" alt="Instagram" class="w-7 h-7 object-contain">
                     </a>
                     <a href="https://www.tiktok.com/@bedalonlinestor" target="_blank" aria-label="TikTok" class="hover:scale-110 transition-transform flex items-center justify-center">
-                        <img src="https://www.dropbox.com/scl/fi/6880k7lxqnwv4se4z27yf/Meta_AI_4_music_1024_20261105_174055.png" alt="TikTok" class="w-11 h-11 object-contain rounded-xl shadow-md">
+                        <img src="https://www.dropbox.com/scl/fi/6880k7lxqnwv4se4z27yf/Meta_AI_4_music_1024_20261105_174055.png?rlkey=jzx0evote70f6mjfwe9im6iv4&st=r6tc9dc3&raw=1" alt="TikTok" class="w-7 h-7 object-contain">
                     </a>
                     <a href="https://wa.me/212601749553" target="_blank" aria-label="WhatsApp" class="hover:scale-110 transition-transform flex items-center justify-center">
-                        <img src="https://www.dropbox.com/scl/fi/wzhlpurlotgdbcm5mvqzb/Meta_AI_4_whatsapp_1024_20261105_174047.png" alt="WhatsApp" class="w-11 h-11 object-contain rounded-xl shadow-md">
+                        <img src="https://www.dropbox.com/scl/fi/wzhlpurlotgdbcm5mvqzb/Meta_AI_4_whatsapp_1024_20261105_174047.png?rlkey=q6xfeu9ea7keb7usskbtbsd1d&st=gtqo09yo&raw=1" alt="WhatsApp" class="w-7 h-7 object-contain">
                     </a>
                 </div>
             </div>
@@ -504,48 +491,23 @@
                     </button>
                 </div>
                 
-                <div class="flex flex-col items-center cursor-pointer group" onclick="switchTab('store')">
-                    <span class="text-3xl font-black tracking-wider text-[#0F172A] brand-font">
-                        bedal<span class="text-[#F97316]">.</span>online
-                    </span>
-                    <span class="text-xs text-gray-500 font-extrabold tracking-widest uppercase">Smart Marketplace</span>
+                <!-- تم استبدال النص القديم بصورة الاسم الجديدة مع إزالة الخلفية والظل بحجم متناسق -->
+                <div class="flex items-center justify-center cursor-pointer group py-1" onclick="switchTab('store')">
+                    <img src="https://www.dropbox.com/scl/fi/7tfptb3fegx3l48k322jf/1793898774425.jpg?rlkey=bd8fzbs3h2z5nz6ba4lt9evz4&st=9lootmf9&raw=1" alt="bedal.online SMART MARKETPLACE" class="h-10 sm:h-12 w-auto object-contain">
                 </div>
 
+                <!-- اللوغو (مع إزالة الخلفية والظل تماماً) -->
                 <div class="flex items-center cursor-pointer group" onclick="switchTab('store')">
                     <div class="relative w-12 h-12 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-                        <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=l63dmtwa&dl=1" alt="Logo" class="w-full h-full object-contain drop-shadow-md rounded-xl">
+                        <img src="https://www.dropbox.com/scl/fi/m3zm5dfma509nz4c4lzcr/1793349349153.jpg?rlkey=13qpqm6y4xnasur1fd0tnl7fi&st=l63dmtwa&raw=1" alt="Logo" class="w-full h-full object-contain rounded-xl">
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- شريط تعليقات الزبناء المغاربة المتحرك باستمرار بدون توقف -->
+        <!-- شريط تعليقات الزبناء المغاربة -->
         <div class="w-full bg-[#1E293B] text-white py-3 overflow-hidden shadow-inner border-t border-[#0F172A]">
             <div class="animate-marquee-reviews flex items-center gap-12 whitespace-nowrap text-sm sm:text-base font-bold tracking-wide">
-                <div class="flex items-center gap-2.5">
-                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
-                    <span>«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!» — يوسف (القنيطرة)</span>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
-                    <span>«توصيل سريع وخدمة عملاء في المستوى، شكراً bedal.online.» — سناء (الدار البيضاء)</span>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
-                    <span>«أحسن موقع تعاملت معه، والثمن مناسب بزاف مع التخفيض.» — مهدي (مراكش)</span>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
-                    <span>«المنتج كيف ما شفته في الصور تماماً، جودة عالية ومضمونة.» — فاطمة الزهراء (طنجة)</span>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
-                    <span>«الدفع عند الاستلام ميزة كتعطي الثقة الكاملة، الله يستر عليكم.» — عمر (الرباط)</span>
-                </div>
-                <div class="flex items-center gap-2.5">
-                    <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
-                    <span>«أحسن خدمة توصيل سرعان ما وصلني الطلب حتى لدارنا.» — حمزة (أكادير)</span>
-                </div>
                 <div class="flex items-center gap-2.5">
                     <span class="text-amber-400">⭐⭐⭐⭐⭐</span>
                     <span>«السلعة وصلتني فالتاريخ المحدد والجودة طوب تبارك الله!» — يوسف (القنيطرة)</span>
@@ -579,16 +541,14 @@
         
         <!-- SECTION 1: STORE FRONT -->
         <section id="section-store" class="block space-y-0">
-            <!-- تم تعديل وعاء الصورة هنا لتظهر بحجمها الطبيعي وأبعادها الأصلية بدقة دون فرض قص أو تمديد -->
             <div class="py-3 flex justify-center">
                 <div class="w-full max-w-3xl cursor-pointer group rounded-xl overflow-hidden shadow-xl transition-transform hover:scale-[1.01]" onclick="openBlackFreeDayPage()">
                     <div class="w-full watermarked-container bg-zinc-950 flex items-center justify-center">
-                        <img src="https://www.dropbox.com/scl/fi/etmk8sohwtdfi6zayiazx/Meta_AI_884822598_1746169016472049_4568012206892948502_n_20261104_032318.jpeg?rlkey=7rcsjficeziwkrnw3a1zweek1&st=865waelg&raw=1" alt="هدية الويكاند من BEDAL" class="w-full h-auto object-contain block mx-auto">
+                        <img src="https://www.dropbox.com/scl/fi/etmk8sohwtdfi6zayiazx/Meta_AI_884822598_1746169016472049_4568012206892948502_n_20261104_032318.jpeg?rlkey=7rcsjficeziwkrnw3a1zweek1&raw=1" alt="هدية الويكاند من BEDAL" class="w-full h-auto object-contain block mx-auto">
                     </div>
                 </div>
             </div>
 
-            <!-- شريط فاصل بين Black free day و (منتوجات بي تخفيضات - 40%) -->
             <div class="w-full flex items-center justify-center my-6">
                 <div class="w-full max-w-xl h-[3px] bg-gradient-to-r from-transparent via-orange-400 to-transparent"></div>
             </div>
@@ -599,13 +559,9 @@
                         <span data-i18n="featured_products">منتوجات بي تخفيضات - 40%</span>
                     </h2>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch" id="store-products-grid">
-                    <!-- Dynamic Products from Supabase -->
-                </div>
-                <!-- Pagination Controls -->
-                <div id="pagination-container" class="flex items-center justify-center gap-2.5 mt-10 pt-6 border-t border-gray-200 flex-wrap">
-                    <!-- Dynamic Pagination Numbers -->
-                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch" id="store-products-grid"></div>
+                
+                <div id="pagination-container" class="flex items-center justify-center gap-2.5 mt-10 pt-6 border-t border-gray-200 flex-wrap"></div>
             </div>
         </section>
 
@@ -629,7 +585,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" id="black-free-day-products-grid"></div>
         </section>
 
-        <!-- SECTION: BFD NEUTRAL PRODUCT ALBUM PAGE -->
+        <!-- SECTION: BFD ALBUM PAGE -->
         <section id="section-bfd-album" class="hidden space-y-6 max-w-3xl mx-auto">
             <div>
                 <button onclick="switchTab('black_free_day')" class="inline-flex items-center gap-2 text-base font-bold text-white bg-zinc-900 hover:bg-black px-6 py-3 rounded-xl shadow-lg border border-amber-500/50 transition-all">
@@ -645,9 +601,7 @@
                     <h1 id="bfd-album-title" class="text-2xl sm:text-4xl font-black text-amber-400 leading-tight">عنوان المنتج</h1>
                 </div>
 
-                <div id="bfd-album-images-container" class="space-y-6 flex flex-col items-center">
-                    <!-- الصور يتم حقنها ديناميكياً -->
-                </div>
+                <div id="bfd-album-images-container" class="space-y-6 flex flex-col items-center"></div>
 
                 <div class="pt-6 border-t border-zinc-800 space-y-4">
                     <h3 class="font-extrabold text-amber-400 text-lg flex items-center gap-2.5">
@@ -716,7 +670,6 @@
                     <span class="bg-orange-50 text-[#0284C7] text-sm font-black px-3 py-1.5 rounded-xl border border-orange-200 shadow-xs" data-i18n="free_shipping_all">التوصيل مجاني لجميع المدن</span>
                 </div>
 
-                <!-- خانات ملء الطلب في مكانها الأصلي دون تغيير -->
                 <div id="order-form-container" class="bg-amber-50/70 rounded-2xl border border-amber-300 p-5 sm:p-8 space-y-5 shadow-sm">
                     <div class="text-center space-y-1.5 pb-2 border-b border-amber-200">
                         <h3 class="font-black text-[#0F172A] text-lg sm:text-xl" data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</h3>
@@ -783,7 +736,6 @@
                     </div>
                 </div>
 
-                <!-- وصف المنتج -->
                 <div class="space-y-3 pt-4 border-t border-gray-200">
                     <h3 class="font-black text-[#0F172A] text-lg flex items-center gap-2.5">
                         <i data-lucide="file-text" class="w-6 h-6 text-[#F97316]"></i> <span data-i18n="product_desc">وصف المنتج</span>
@@ -791,7 +743,6 @@
                     <p id="detail-product-desc" class="text-gray-800 text-base sm:text-lg leading-relaxed whitespace-pre-line bg-[#F8F9FA] p-5 rounded-2xl border border-gray-200 font-medium">وصف المنتوج هنا...</p>
                 </div>
 
-                <!-- زر "اطلب الآن - الدفع عند الاستلام" الجديد أسفل وصف المنتج مع خاصية التمرير للأعلى -->
                 <div id="detail-bottom-order-btn-box" class="pt-4">
                     <button onclick="scrollToOrderForm()" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-4 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-lg bfd-attention-btn cursor-pointer">
                         <i data-lucide="shopping-bag" class="w-6 h-6 animate-bounce"></i>
@@ -824,7 +775,7 @@
         </div>
     </section>
 
-    <!-- قسم الميزات العصري -->
+    <!-- Features Section -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
         <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-10">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
@@ -891,24 +842,27 @@
                 </button>
             </div>
 
+            <!-- تمت إضافة صورة الاسم بحجم صغير في الفوتر مع الحفاظ على التنسيق والروابط -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-700 pt-4 border-t border-gray-200">
-                <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-extrabold text-gray-900">bedal.online</span>.</div>
+                <div class="flex items-center gap-3">
+                    <img src="https://www.dropbox.com/scl/fi/7tfptb3fegx3l48k322jf/1793898774425.jpg?rlkey=bd8fzbs3h2z5nz6ba4lt9evz4&st=9lootmf9&raw=1" alt="bedal.online" class="h-6 w-auto object-contain">
+                    <div>© 2026 <span data-i18n="rights_reserved">جميع الحقوق محفوظة لـ</span> <span class="font-extrabold text-gray-900">bedal.online</span>.</div>
+                </div>
                 <div class="flex items-center gap-4 flex-wrap justify-center">
-                    <!-- Social Media Links (Facebook, Instagram, TikTok) with larger custom icons and no background circles -->
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
                         <a href="https://www.facebook.com/BedalOnlineShop" target="_blank" aria-label="Facebook" class="hover:scale-110 transition-transform flex items-center justify-center">
-                            <img src="https://www.dropbox.com/scl/fi/b64dz8sct76lw3gnxje0d/Meta_AI_4_facebook_1024_20261105_174053.png" alt="Facebook" class="w-14 h-14 object-contain rounded-xl shadow-md">
+                            <img src="https://www.dropbox.com/scl/fi/b64dz8sct76lw3gnxje0d/Meta_AI_4_facebook_1024_20261105_174053.png?rlkey=a7x1q84s4362nyuxi0byfy3cr&st=6r9051le&raw=1" alt="Facebook" class="w-7 h-7 object-contain">
                         </a>
                         <a href="https://www.instagram.com/bedal_online_shop/" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
-                            <img src="https://www.dropbox.com/scl/fi/86073utombw0040esp03e/Meta_AI_4_instagram_1024_20261105_174050.png" alt="Instagram" class="w-14 h-14 object-contain rounded-xl shadow-md">
+                            <img src="https://www.dropbox.com/scl/fi/86073utombw0040esp03e/Meta_AI_4_instagram_1024_20261105_174050.png?rlkey=e3vkkv6v6gupblla1dp0ps4xo&st=3328469h&raw=1" alt="Instagram" class="w-7 h-7 object-contain">
                         </a>
                         <a href="https://www.tiktok.com/@bedalonlinestor" target="_blank" aria-label="TikTok" class="hover:scale-110 transition-transform flex items-center justify-center">
-                            <img src="https://www.dropbox.com/scl/fi/6880k7lxqnwv4se4z27yf/Meta_AI_4_music_1024_20261105_174055.png" alt="TikTok" class="w-14 h-14 object-contain rounded-xl shadow-md">
+                            <img src="https://www.dropbox.com/scl/fi/6880k7lxqnwv4se4z27yf/Meta_AI_4_music_1024_20261105_174055.png?rlkey=jzx0evote70f6mjfwe9im6iv4&st=r6tc9dc3&raw=1" alt="TikTok" class="w-7 h-7 object-contain">
                         </a>
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.28</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.33</span>
                     </span>
                 </div>
             </div>
@@ -922,7 +876,6 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
 
-        // قائمة الفئات الديناميكية والوانها المستمدة من الإدارة
         let categoriesDatabase = [
             { key: 'women', name: 'نساء', color: '#ec4899' },
             { key: 'men', name: 'رجال', color: '#3b82f6' },
@@ -934,7 +887,6 @@
             { key: 'various', name: 'منتجات متنوعة', color: '#6366f1' }
         ];
 
-        // نظام اللغات المتكامل (AR, FR, EN)
         let currentLang = 'ar';
         const translations = {
             ar: {
@@ -1242,7 +1194,6 @@
         function changeLanguage(lang) {
             currentLang = lang;
             const htmlRoot = document.getElementById('html-root');
-            
             if (lang === 'ar') {
                 htmlRoot.setAttribute('lang', 'ar');
                 htmlRoot.setAttribute('dir', 'rtl');
@@ -1253,7 +1204,6 @@
                 htmlRoot.setAttribute('lang', 'en');
                 htmlRoot.setAttribute('dir', 'ltr');
             }
-
             applyTranslations();
             renderCurrentReview();
         }
@@ -1288,9 +1238,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderData)
                 });
-            } catch (err) {
-                console.error("خطأ في إرسال إشعار الويب هوك:", err);
-            }
+            } catch (err) {}
         }
 
         let cart = [];
@@ -1543,9 +1491,7 @@
                         openProductDetailObject(targetProd);
                     }
                 }
-            } catch (err) {
-                console.error("خطأ:", err);
-            }
+            } catch (err) {}
         }
 
         function updateMetaTagsForProduct(p) {
@@ -1555,9 +1501,7 @@
             const prodImg = images[0] || '';
             
             let cleanOrigin = window.location.origin;
-            if (!cleanOrigin || cleanOrigin === 'null') {
-                cleanOrigin = 'https://bedal.online';
-            }
+            if (!cleanOrigin || cleanOrigin === 'null') cleanOrigin = 'https://bedal.online';
             const exactProductUrl = `${cleanOrigin}${window.location.pathname}?product=${p.id}`;
 
             const titleEl = document.getElementById('page-main-title');
@@ -2018,7 +1962,7 @@
             document.getElementById('section-bfd-album').classList.add('hidden');
 
             let cleanOrigin = window.location.origin;
-            if (!cleanOrigin || cleanOrigin === 'null') { cleanOrigin = 'https://bedal.online'; }
+            if (!cleanOrigin || cleanOrigin === 'null') cleanOrigin = 'https://bedal.online';
             const baseUrl = cleanOrigin + window.location.pathname;
             const metaUrlEl = document.getElementById('meta-og-url');
 
@@ -2028,9 +1972,7 @@
                 document.getElementById('section-vendor-store').classList.remove('hidden');
             } else if (tabName === 'black_free_day') {
                 document.getElementById('section-black-free-day').classList.remove('hidden');
-                if (window.history.pushState) {
-                    window.history.pushState({path: baseUrl}, '', baseUrl);
-                }
+                if (window.history.pushState) window.history.pushState({path: baseUrl}, '', baseUrl);
                 document.getElementById('meta-og-title').setAttribute('content', 'عروض نهاية الأسبوع الكبرى - bedal.online');
                 document.getElementById('meta-og-desc').setAttribute('content', 'اكتشف تخفيضات نهاية الأسبوع الجنونية حتى -70% مع الدفع عند الاستلام.');
                 if (metaUrlEl) metaUrlEl.setAttribute('content', baseUrl);
@@ -2038,9 +1980,7 @@
                 document.getElementById('section-bfd-album').classList.remove('hidden');
             } else {
                 document.getElementById('section-store').classList.remove('hidden');
-                if (window.history.pushState) {
-                    window.history.pushState({path: baseUrl}, '', baseUrl);
-                }
+                if (window.history.pushState) window.history.pushState({path: baseUrl}, '', baseUrl);
                 document.getElementById('meta-og-title').setAttribute('content', 'bedal.online - منتوجات بي تخفيض خيالي');
                 document.getElementById('meta-og-desc').setAttribute('content', 'تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلام.');
                 document.getElementById('meta-og-image').setAttribute('content', 'https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=v6qhfqa0&dl=1');
@@ -2147,7 +2087,7 @@
             updateMetaTagsForProduct(p);
 
             let cleanOrigin = window.location.origin;
-            if (!cleanOrigin || cleanOrigin === 'null') { cleanOrigin = 'https://bedal.online'; }
+            if (!cleanOrigin || cleanOrigin === 'null') cleanOrigin = 'https://bedal.online';
             const productPageUrl = `${cleanOrigin}${window.location.pathname}?product=${p.id}`;
             if (p.id && window.history.pushState) {
                 window.history.pushState({path: productPageUrl}, '', productPageUrl);
