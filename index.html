@@ -658,8 +658,8 @@
                     <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <!-- فيديو يوتيوب مدمج بمقاس 9:16 مع ضبط الإطار (يتم تعيين المصدر برمجياً فقط عند فتح صفحة المنتج ودون تكرار) -->
-                <div class="w-full max-w-[280px] mx-auto rounded-2xl overflow-hidden bg-black flex items-center justify-center border-2 border-amber-400 shadow-xl watermarked-container p-0 relative aspect-[9/16]" id="video-wrapper-container">
+                <!-- فيديو يوتيوب الخاص بالمنتج (يظهر تلقائياً إذا وُجد رابط في الإدارة أو Supabase) -->
+                <div id="video-wrapper-container" class="hidden w-full max-w-[280px] mx-auto rounded-2xl overflow-hidden bg-black flex items-center justify-center border-2 border-amber-400 shadow-xl watermarked-container p-0 relative aspect-[9/16]">
                     <iframe id="standalone-youtube-video" src="" class="absolute inset-0 w-full h-full object-cover scale-[1.03]" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
 
@@ -863,7 +863,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.75</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.79</span>
                     </span>
                 </div>
             </div>
@@ -876,9 +876,6 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
-
-        // رابط فيديو يوتيوب المخصص الجديد
-        const YOUTUBE_VIDEO_URL = "https://www.youtube.com/embed/VbAV3zG4wOg?enablejsapi=1&autoplay=1&mute=0&loop=1&playlist=VbAV3zG4wOg";
 
         let categoriesDatabase = [
             { key: 'women', name: 'نساء', color: '#ec4899' },
@@ -1252,7 +1249,7 @@
         const itemsPerPage = 10;
         let currentFilterCategory = 'all';
 
-        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', mediaItems: [], currentMediaIndex: 0, category: '', description: '', sku: '', is_available: true };
+        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', mediaItems: [], currentMediaIndex: 0, category: '', description: '', sku: '', is_available: true, youtubeUrl: '' };
         let fullBfdDescriptionText = '';
         let isBfdDescExpanded = false;
 
@@ -1409,6 +1406,32 @@
             return mediaList;
         }
 
+        // دالة شاملة لاستخراج ومعالجة رابط يوتيوب (بما فيها Shorts والعادية) وعرضه بشكل صحيح في ايفريم
+        function getYouTubeEmbedUrl(url) {
+            if (!url || typeof url !== 'string') return '';
+            let cleanUrl = url.trim();
+            if (cleanUrl === '' || cleanUrl.toLowerCase() === 'null') return '';
+            
+            let videoId = '';
+            if (cleanUrl.includes('youtu.be/')) {
+                videoId = cleanUrl.split('youtu.be/')[1]?.split('?')[0]?.split('&')[0];
+            } else if (cleanUrl.includes('youtube.com/shorts/')) {
+                videoId = cleanUrl.split('youtube.com/shorts/')[1]?.split('?')[0]?.split('&')[0];
+            } else if (cleanUrl.includes('youtube.com/watch')) {
+                const urlParams = new URLSearchParams(cleanUrl.split('?')[1]);
+                videoId = urlParams.get('v');
+            } else if (cleanUrl.includes('youtube.com/embed/')) {
+                videoId = cleanUrl.split('youtube.com/embed/')[1]?.split('?')[0]?.split('&')[0];
+            } else if (!cleanUrl.includes('/') && cleanUrl.length >= 10) {
+                videoId = cleanUrl;
+            }
+
+            if (videoId) {
+                return `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1&mute=0&loop=1&playlist=${videoId}`;
+            }
+            return cleanUrl;
+        }
+
         async function fetchSupabaseStoreData() {
             try {
                 try {
@@ -1438,6 +1461,10 @@
 
                         const mediaList = extractMediaFromRecord(p);
                         const imagesList = mediaList.filter(m => m.type === 'image').map(m => m.url);
+                        
+                        // فحص جميع الحقول المحتملة لرابط يوتيوب في Supabase (youtube_url, youtube, video_url, video, youtubeUrl)
+                        const rawYt = p.youtube_url || p.youtube || p.video_url || p.video || p.youtubeUrl || '';
+                        const ytEmbed = getYouTubeEmbedUrl(rawYt);
 
                         return {
                             ...p,
@@ -1446,6 +1473,7 @@
                             is_available: isAvailable,
                             mediaItems: mediaList,
                             images: imagesList,
+                            youtubeUrl: ytEmbed,
                             price: finalDiscPrice,
                             oldPrice: originalPrice > finalDiscPrice ? originalPrice : (p.oldPrice ? parseFloat(p.oldPrice) : originalPrice)
                         };
@@ -1477,6 +1505,9 @@
                         let foundCat = categoriesDatabase.find(c => c.key === catKey);
                         let catLabel = foundCat ? foundCat.name : (b.catLabel || (matchedNormalProd ? matchedNormalProd.catLabel : 'عروض نهاية الأسبوع'));
 
+                        const rawYtBfd = b.youtube_url || b.youtube || b.video_url || b.video || b.youtubeUrl || (matchedNormalProd ? matchedNormalProd.youtubeUrl : '');
+                        const ytEmbedBfd = getYouTubeEmbedUrl(rawYtBfd);
+
                         return {
                             ...b,
                             category: catKey,
@@ -1486,7 +1517,8 @@
                             price: discPrice,
                             oldPrice: parseFloat(b.oldPrice || originalPrice),
                             mediaItems: mediaList,
-                            images: imagesList
+                            images: imagesList,
+                            youtubeUrl: ytEmbedBfd
                         };
                     });
                 }
@@ -1985,17 +2017,22 @@
             const baseUrl = cleanOrigin + window.location.pathname;
             const metaUrlEl = document.getElementById('meta-og-url');
 
-            // إيقاف وتفريغ فيديو يوتيوب عند الخروج من صفحة المنتج لمنع تكراره أو تشغيله في الخلفية
+            // التحكم الديناميكي في إطار وفيديو يوتيوب لكل منتج عند فتح أو إغلاق صفحة التفاصيل
             const youtubeVideo = document.getElementById('standalone-youtube-video');
+            const videoWrapper = document.getElementById('video-wrapper-container');
+
             if (tabName === 'detail') {
                 document.getElementById('section-product-detail').classList.remove('hidden');
-                if (youtubeVideo) {
-                    youtubeVideo.src = YOUTUBE_VIDEO_URL;
+                if (currentProduct.youtubeUrl) {
+                    if (youtubeVideo) youtubeVideo.src = currentProduct.youtubeUrl;
+                    if (videoWrapper) videoWrapper.classList.remove('hidden');
+                } else {
+                    if (youtubeVideo) youtubeVideo.src = "";
+                    if (videoWrapper) videoWrapper.classList.add('hidden');
                 }
             } else {
-                if (youtubeVideo) {
-                    youtubeVideo.src = "";
-                }
+                if (youtubeVideo) youtubeVideo.src = "";
+                if (videoWrapper) videoWrapper.classList.add('hidden');
             }
 
             if (tabName === 'vendor') {
@@ -2110,7 +2147,8 @@
                 category: catLabel,
                 categoryColor: catColor,
                 description: p.description || '',
-                is_available: (p.is_available !== false)
+                is_available: (p.is_available !== false),
+                youtubeUrl: p.youtubeUrl || ''
             };
 
             updateMetaTagsForProduct(p);
@@ -2163,6 +2201,7 @@
                 if (detailImgEl) detailImgEl.classList.remove('grayscale');
             }
 
+            // ضمان تفعيل صفحة التفاصيل وعرض إطار وفيديو يوتيوب إن وجد
             switchTab('detail');
 
             lucide.createIcons();
