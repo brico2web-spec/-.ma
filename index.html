@@ -665,23 +665,17 @@
                     <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <!-- عرض عنصر الوسائط الرئيسي -->
-                <div id="detail-media-viewer-container" class="w-full rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-3 relative group">
-                    <img id="detail-product-img" alt="Product Detail" class="w-full h-auto max-h-[85vh] object-contain">
-                    
-                    <div id="custom-video-wrapper" class="relative w-full h-auto max-h-[85vh] flex items-center justify-center hidden bg-black rounded-xl overflow-hidden">
-                        <video id="detail-product-video" autoplay playsinline loop class="w-full h-auto max-h-[85vh] object-contain"></video>
-                        <!-- شريط التحكم السفلي (كتم/تشغيل الصوت) -->
-                        <div class="absolute bottom-3 left-3 right-3 bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl flex items-center justify-between text-white text-xs z-20">
-                            <button onclick="toggleCustomVideoMute()" class="flex items-center gap-1.5 hover:text-[#F97316] transition-colors focus:outline-none">
-                                <i id="video-mute-icon" data-lucide="volume-2" class="w-5 h-5 text-amber-400"></i>
-                                <span id="video-mute-text">صوت</span>
-                            </button>
-                        </div>
-                    </div>
+                <!-- فيديو Dropbox مدمج ومضبوط بالقياسات الطبيعية بدقة العرض بدون مساحات سوداء وبدون تكرار (autoplay مع الصوت) -->
+                <div class="w-full max-w-[280px] mx-auto rounded-2xl overflow-hidden bg-black flex items-center justify-center border-2 border-amber-400 shadow-xl watermarked-container p-0 relative aspect-[9/16]">
+                    <video id="standalone-dropbox-video" src="https://www.dropbox.com/scl/fi/ak80v4az0diny3u11dx0z/lv_0_20261105202148.mp4?rlkey=csctbi1qlq3e4di54mw9fbnze&st=1ajau9a5&dl=1" class="absolute inset-0 w-full h-full object-cover scale-[1.03]" playsinline autoplay controls muted="false"></video>
                 </div>
 
-                <!-- شريط المصغرات للصور فقط بدون فيديوهات -->
+                <!-- عرض صور المنتج حصرياً كما كانت -->
+                <div id="detail-media-viewer-container" class="w-full rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200 shadow-inner watermarked-container p-3 relative group">
+                    <img id="detail-product-img" alt="Product Detail" class="w-full h-auto max-h-[85vh] object-contain">
+                </div>
+
+                <!-- شريط المصغرات للصور فقط -->
                 <div id="detail-thumbnails-container" class="flex items-center gap-3 overflow-x-auto pb-2"></div>
 
                 <div class="flex items-baseline gap-4 py-3 border-b border-gray-200">
@@ -876,7 +870,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.39</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.63</span>
                     </span>
                 </div>
             </div>
@@ -889,6 +883,9 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_OWpRUNTJC9hEQ_IUctXxxA_Hh4zyEID';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
+
+        // رابط فيديو Dropbox المخصص ليشتغل أوتوماتيكياً مع الصوت (بدون تكرار)
+        const DROPBOX_VIDEO_URL = "https://www.dropbox.com/scl/fi/ak80v4az0diny3u11dx0z/lv_0_20261105202148.mp4?rlkey=csctbi1qlq3e4di54mw9fbnze&st=1ajau9a5&dl=1";
 
         let categoriesDatabase = [
             { key: 'women', name: 'نساء', color: '#ec4899' },
@@ -991,7 +988,7 @@
                 version: "الإصدار:",
                 placeholder_name: "أدخل اسمك الكامل",
                 placeholder_city: "أدخل مدينتك",
-                placeholder_address: "أدخل مدينتك وعنوان الاستلام",
+                placeholder_address: "أدخل مدينتك وعنوان الاستلاستلام",
                 placeholder_review_name: "اسمك الكريم والمدينة (مثال: كريم من القنيطرة)",
                 placeholder_review_comment: "اكتب تعليقك أو رأيك حول خدماتنا ومصداقية الموقع..."
             },
@@ -1384,28 +1381,6 @@
                 }
             });
 
-            const videoKeys = ['video', 'videos', 'video1', 'video2', 'link_video'];
-            videoKeys.forEach(vk => {
-                if (record[vk] && typeof record[vk] === 'string' && record[vk].trim() !== '') {
-                    const val = record[vk].trim();
-                    if (val.startsWith('[') || val.startsWith('{')) {
-                        try {
-                            const parsed = JSON.parse(val);
-                            if (Array.isArray(parsed)) {
-                                parsed.forEach(item => { if (item) { const f = formatMediaUrl(item); if (f) mediaList.push({ type: 'video', url: f }); } });
-                            }
-                        } catch(e) {}
-                    } else if (val.includes(',')) {
-                        val.split(',').forEach(part => { const f = formatMediaUrl(part.trim()); if (f) mediaList.push({ type: 'video', url: f }); });
-                    } else {
-                        const f = formatMediaUrl(val);
-                        if (f) mediaList.push({ type: 'video', url: f });
-                    }
-                } else if (Array.isArray(record[vk])) {
-                    record[vk].forEach(item => { const f = formatMediaUrl(item); if (f) mediaList.push({ type: 'video', url: f }); });
-                }
-            });
-
             const targetKeys = ['images', 'image', 'img', 'photo', 'photos', 'picture', 'pictures'];
             targetKeys.forEach(key => {
                 if (record[key]) {
@@ -1416,7 +1391,7 @@
                             try {
                                 const parsed = JSON.parse(trimmed);
                                 if (Array.isArray(parsed)) {
-                                    parsed.forEach(item => { if (item) { const f = formatMediaUrl(item); if (f) mediaList.push({ type: 'image', url: f }); } });
+                                    parsed.forEach(item => { if (item) { const f = formatMediaUrl(String(item)); if (f) mediaList.push({ type: 'image', url: f }); } });
                                 }
                             } catch(e) {}
                         } else if (trimmed.includes(',')) {
@@ -1426,7 +1401,7 @@
                             if (f) mediaList.push({ type: 'image', url: f });
                         }
                     } else if (Array.isArray(val)) {
-                        val.forEach(item => { const f = formatMediaUrl(item); if (f) mediaList.push({ type: 'image', url: f }); });
+                        val.forEach(item => { if (item) { const f = formatMediaUrl(String(item)); if (f) mediaList.push({ type: 'image', url: f }); } });
                     }
                 }
             });
@@ -1836,7 +1811,7 @@
                     if (m.type === 'video') {
                         html += `
                             <div class="w-full bg-zinc-900 rounded-2xl overflow-hidden border border-amber-500/55 p-3 flex items-center justify-center shadow-2xl watermarked-container">
-                                <video src="${m.url}" autoplay playsinline loop class="w-full h-auto object-contain rounded-xl max-h-[85vh]"></video>
+                                <video src="${m.url}" playsinline autoplay controls class="w-full h-auto object-contain rounded-xl max-h-[85vh]"></video>
                             </div>
                         `;
                     } else {
@@ -2006,17 +1981,6 @@
         function closeSuccessModal() { document.getElementById('order-success-modal').classList.add('hidden'); }
 
         function switchTab(tabName) {
-            // إيقاف أي فيديو يعمل وإخفاء مشغله فوراً عند مغادرة صفحة التفاصيل
-            const videoEl = document.getElementById('detail-product-video');
-            const customVideoWrapper = document.getElementById('custom-video-wrapper');
-            if (videoEl) {
-                videoEl.pause();
-                videoEl.currentTime = 0;
-            }
-            if (customVideoWrapper) {
-                customVideoWrapper.classList.add('hidden');
-            }
-
             document.getElementById('section-store').classList.add('hidden');
             document.getElementById('section-product-detail').classList.add('hidden');
             document.getElementById('section-vendor-store').classList.add('hidden');
@@ -2030,6 +1994,11 @@
 
             if (tabName === 'detail') {
                 document.getElementById('section-product-detail').classList.remove('hidden');
+                // تحديث وتعيين رابط فيديو Dropbox ليعمل أوتوماتيكياً ودون تكرار عند الدخول لصفحة المنتج
+                const dropboxVideo = document.getElementById('standalone-dropbox-video');
+                if (dropboxVideo) {
+                    dropboxVideo.src = DROPBOX_VIDEO_URL;
+                }
             } else if (tabName === 'vendor') {
                 document.getElementById('section-vendor-store').classList.remove('hidden');
             } else if (tabName === 'black_free_day') {
@@ -2044,7 +2013,7 @@
                 document.getElementById('section-store').classList.remove('hidden');
                 if (window.history.pushState) window.history.pushState({path: baseUrl}, '', baseUrl);
                 document.getElementById('meta-og-title').setAttribute('content', 'bedal.online - منتوجات بي تخفيض خيالي');
-                document.getElementById('meta-og-desc').setAttribute('content', 'تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلام.');
+                document.getElementById('meta-og-desc').setAttribute('content', 'تصفح أحدث المنتجات والعروض الحصرية بأفضل الأسعار مع الدفع عند الاستلاستلام.');
                 document.getElementById('meta-og-image').setAttribute('content', 'https://www.dropbox.com/scl/fi/c2q8fsf14774hn79dnaug/Meta_AI_890299753_28896443713360247_5765214201380557664_n_20261103_145315.webp?rlkey=lr5s9f0xc5vsseak3badbizs6&st=v6qhfqa0&dl=1');
                 if (metaUrlEl) metaUrlEl.setAttribute('content', baseUrl);
             }
@@ -2124,7 +2093,7 @@
         }
 
         function openProductDetailObject(p) {
-            const mediaItems = p.mediaItems?.length > 0 ? p.mediaItems : [{ type: 'image', url: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80' }];
+            let imagesList = p.images?.length > 0 ? [...p.images] : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
             
             let catKey = p.category || 'various';
             let foundCat = categoriesDatabase.find(c => c.key === catKey);
@@ -2137,8 +2106,8 @@
                 price: p.price || 0,
                 oldPrice: p.oldPrice || p.price || 0,
                 discountBadge: p.discountBadge || 'عرض خاص',
-                mediaItems: mediaItems,
-                currentMediaIndex: 0,
+                images: imagesList,
+                currentImageIndex: 0,
                 category: catLabel,
                 categoryColor: catColor,
                 description: p.description || '',
@@ -2154,7 +2123,7 @@
                 window.history.pushState({path: productPageUrl}, '', productPageUrl);
             }
 
-            updateDetailMediaViewer();
+            updateDetailImageViewer();
             renderDetailThumbnails();
 
             document.getElementById('detail-product-title').innerText = currentProduct.title;
@@ -2196,6 +2165,7 @@
             }
 
             switchTab('detail');
+
             lucide.createIcons();
             applyTranslations();
         }
@@ -2204,16 +2174,12 @@
             const container = document.getElementById('detail-thumbnails-container');
             if (!container) return;
             let html = '';
-            // تصفية المصغرات لعرض الصور فقط وتجنب عرض أي فيديو أو أيقونة فيديو
-            const imageItemsOnly = currentProduct.mediaItems.filter(m => m.type === 'image');
             
-            imageItemsOnly.forEach((m, idx) => {
-                const isActive = idx === currentProduct.currentMediaIndex;
-                let thumbContent = `<img src="${m.url}" class="w-full h-full object-contain">`;
-
+            currentProduct.images.forEach((imgUrl, idx) => {
+                const isActive = currentProduct.currentImageIndex === idx;
                 html += `
-                    <div onclick="setDetailMediaIndex(${idx})" class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 cursor-pointer transition-all duration-300 flex items-center justify-center bg-gray-50 p-1.5 overflow-hidden ${isActive ? 'border-[#F97316] scale-105 shadow-md ring-2 ring-orange-200' : 'border-gray-300 opacity-70 hover:opacity-100'}">
-                        ${thumbContent}
+                    <div onclick="setDetailImageIndex(${idx})" class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 cursor-pointer transition-all duration-300 flex items-center justify-center bg-gray-50 p-1.5 overflow-hidden ${isActive ? 'border-[#F97316] scale-105 shadow-md ring-2 ring-orange-200' : 'border-gray-300 opacity-70 hover:opacity-100'}">
+                        <img src="${imgUrl}" class="w-full h-full object-contain">
                     </div>
                 `;
             });
@@ -2221,56 +2187,28 @@
             lucide.createIcons();
         }
 
-        function setDetailMediaIndex(idx) {
-            currentProduct.currentMediaIndex = idx;
-            updateDetailMediaViewer();
+        function setDetailImageIndex(idx) {
+            currentProduct.currentImageIndex = idx;
+            updateDetailImageViewer();
             renderDetailThumbnails();
             
             const metaImgEl = document.getElementById('meta-og-image');
-            if (metaImgEl && currentProduct.mediaItems[idx] && currentProduct.mediaItems[idx].type === 'image') {
-                metaImgEl.setAttribute('content', currentProduct.mediaItems[idx].url);
+            if (metaImgEl && currentProduct.images[idx]) {
+                metaImgEl.setAttribute('content', currentProduct.images[idx]);
             }
         }
 
-        function updateDetailMediaViewer() {
-            if (!currentProduct.mediaItems.length) return;
-            const currentItem = currentProduct.mediaItems[currentProduct.currentMediaIndex];
+        function updateDetailImageViewer() {
+            if (!currentProduct.images.length) return;
+            const imgUrl = currentProduct.images[currentProduct.currentImageIndex];
             const imgEl = document.getElementById('detail-product-img');
-            const customVideoWrapper = document.getElementById('custom-video-wrapper');
-            const videoEl = document.getElementById('detail-product-video');
-
-            if (currentItem.type === 'video') {
-                imgEl.classList.add('hidden');
-                customVideoWrapper.classList.remove('hidden');
-                videoEl.src = currentItem.url;
-                videoEl.muted = false; // تشغيل الصوت بشكل افتراضي
-                videoEl.play().catch(() => {});
-                updateVideoMuteUI(false);
-            } else {
-                videoEl.pause();
-                customVideoWrapper.classList.add('hidden');
-                imgEl.style.opacity = '0';
-                setTimeout(() => {
-                    imgEl.src = currentItem.url;
-                    imgEl.style.opacity = '1';
-                }, 150);
-                imgEl.classList.remove('hidden');
-            }
-        }
-
-        function toggleCustomVideoMute() {
-            const videoEl = document.getElementById('detail-product-video');
-            if (!videoEl) return;
-            videoEl.muted = !videoEl.muted;
-            updateVideoMuteUI(videoEl.muted);
-        }
-
-        function updateVideoMuteUI(isMuted) {
-            const muteIcon = document.getElementById('video-mute-icon');
-            const muteText = document.getElementById('video-mute-text');
-            if (muteIcon) muteIcon.setAttribute('data-lucide', isMuted ? 'volume-x' : 'volume-2');
-            if (muteText) muteText.innerText = isMuted ? (currentLang === 'ar' ? 'صامت' : 'Mute') : (currentLang === 'ar' ? 'صوت' : 'Sound');
-            lucide.createIcons();
+            if (!imgEl) return;
+            
+            imgEl.style.opacity = '0';
+            setTimeout(() => {
+                imgEl.src = imgUrl;
+                imgEl.style.opacity = '1';
+            }, 150);
         }
 
         filterCategory = (catKey) => {
