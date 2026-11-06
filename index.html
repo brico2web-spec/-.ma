@@ -658,9 +658,9 @@
                     <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
                 </div>
 
-                <!-- فيديو يوتيوب مدمج بمقاس 9:16 مع ضبط الإطار والتحميل الفوري -->
+                <!-- فيديو يوتيوب مدمج بمقاس 9:16 مع ضبط الإطار (يتم تعيين المصدر برمجياً فقط عند فتح صفحة المنتج ودون تكرار) -->
                 <div class="w-full max-w-[280px] mx-auto rounded-2xl overflow-hidden bg-black flex items-center justify-center border-2 border-amber-400 shadow-xl watermarked-container p-0 relative aspect-[9/16]" id="video-wrapper-container">
-                    <iframe id="standalone-youtube-video" src="https://www.youtube.com/embed/VbAV3zG4wOg?enablejsapi=1&autoplay=1&mute=0&loop=1&playlist=VbAV3zG4wOg" class="absolute inset-0 w-full h-full object-cover scale-[1.03]" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe id="standalone-youtube-video" src="" class="absolute inset-0 w-full h-full object-cover scale-[1.03]" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
 
                 <!-- عرض صور المنتج حصرياً كما كانت -->
@@ -863,7 +863,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.72</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.75</span>
                     </span>
                 </div>
             </div>
@@ -1985,16 +1985,20 @@
             const baseUrl = cleanOrigin + window.location.pathname;
             const metaUrlEl = document.getElementById('meta-og-url');
 
+            // إيقاف وتفريغ فيديو يوتيوب عند الخروج من صفحة المنتج لمنع تكراره أو تشغيله في الخلفية
+            const youtubeVideo = document.getElementById('standalone-youtube-video');
             if (tabName === 'detail') {
                 document.getElementById('section-product-detail').classList.remove('hidden');
-                
-                const youtubeVideo = document.getElementById('standalone-youtube-video');
                 if (youtubeVideo) {
-                    if (!youtubeVideo.src || youtubeVideo.src === window.location.href || youtubeVideo.src === "") {
-                        youtubeVideo.src = YOUTUBE_VIDEO_URL;
-                    }
+                    youtubeVideo.src = YOUTUBE_VIDEO_URL;
                 }
-            } else if (tabName === 'vendor') {
+            } else {
+                if (youtubeVideo) {
+                    youtubeVideo.src = "";
+                }
+            }
+
+            if (tabName === 'vendor') {
                 document.getElementById('section-vendor-store').classList.remove('hidden');
             } else if (tabName === 'black_free_day') {
                 document.getElementById('section-black-free-day').classList.remove('hidden');
@@ -2004,7 +2008,7 @@
                 if (metaUrlEl) metaUrlEl.setAttribute('content', baseUrl);
             } else if (tabName === 'bfd-album') {
                 document.getElementById('section-bfd-album').classList.remove('hidden');
-            } else {
+            } else if (tabName !== 'detail') {
                 document.getElementById('section-store').classList.remove('hidden');
                 if (window.history.pushState) window.history.pushState({path: baseUrl}, '', baseUrl);
                 document.getElementById('meta-og-title').setAttribute('content', 'bedal.online - منتوجات بي تخفيض خيالي');
