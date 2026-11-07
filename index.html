@@ -863,7 +863,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.79</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.81</span>
                     </span>
                 </div>
             </div>
@@ -1406,7 +1406,6 @@
             return mediaList;
         }
 
-        // دالة شاملة لاستخراج ومعالجة رابط يوتيوب (بما فيها Shorts والعادية) وعرضه بشكل صحيح في ايفريم
         function getYouTubeEmbedUrl(url) {
             if (!url || typeof url !== 'string') return '';
             let cleanUrl = url.trim();
@@ -1462,7 +1461,6 @@
                         const mediaList = extractMediaFromRecord(p);
                         const imagesList = mediaList.filter(m => m.type === 'image').map(m => m.url);
                         
-                        // فحص جميع الحقول المحتملة لرابط يوتيوب في Supabase (youtube_url, youtube, video_url, video, youtubeUrl)
                         const rawYt = p.youtube_url || p.youtube || p.video_url || p.video || p.youtubeUrl || '';
                         const ytEmbed = getYouTubeEmbedUrl(rawYt);
 
@@ -1523,8 +1521,7 @@
                     });
                 }
 
-                const bfdTitles = new Set(blackFreeDayProducts.map(b => b.title ? b.title.trim().toLowerCase() : ''));
-                productsDatabase = fetchedProducts.filter(p => !bfdTitles.has(p.title ? p.title.trim().toLowerCase() : ''));
+                productsDatabase = fetchedProducts;
 
                 renderStoreProducts(productsDatabase);
                 renderPartnerProductsMarquee(productsDatabase);
@@ -2017,7 +2014,6 @@
             const baseUrl = cleanOrigin + window.location.pathname;
             const metaUrlEl = document.getElementById('meta-og-url');
 
-            // التحكم الديناميكي في إطار وفيديو يوتيوب لكل منتج عند فتح أو إغلاق صفحة التفاصيل
             const youtubeVideo = document.getElementById('standalone-youtube-video');
             const videoWrapper = document.getElementById('video-wrapper-container');
 
@@ -2201,7 +2197,6 @@
                 if (detailImgEl) detailImgEl.classList.remove('grayscale');
             }
 
-            // ضمان تفعيل صفحة التفاصيل وعرض إطار وفيديو يوتيوب إن وجد
             switchTab('detail');
 
             lucide.createIcons();

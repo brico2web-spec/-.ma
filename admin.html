@@ -179,7 +179,7 @@
                         <!-- القسم المجمع الجديد: الفئات -->
                         <option value="categories" data-i18n="tab_categories">📂 الفئات</option>
                         <!-- قسم عروض نهاية الأسبوع الكبرى -->
-                        <option value="weekend_offers">🔥 عروض نهاية الأسبوع الكبرى</option>
+                        <option value="weekend_offers" data-i18n="tab_weekend_offers">🔥 عروض نهاية الأسبوع الكبرى</option>
 
                         <option value="ads" data-i18n="tab_ads">💰 مصاريف الإعلانات (ADS)</option>
                         <option value="contests" data-i18n="tab_contests">🎁 مسابقات للخصم</option>
@@ -367,7 +367,7 @@
                             <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
                                 <i data-lucide="zap" class="w-6 h-6 text-amber-600"></i> إدارة عروض نهاية الأسبوع الكبرى
                             </h3>
-                            <p class="text-xs text-gray-500 mt-1">عرض المنتجات التي تم تفعيل عرض نهاية الأسبوع الكبرى لها.</p>
+                            <p class="text-xs text-gray-500 mt-1">عرض المنتجات التي تم تفعيل عرض نهاية الأسبوع الكبرى لها مع كامل التفاصيل والمميزات.</p>
                         </div>
                         <button onclick="openProductModalForAdd()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
                             <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة منتج جديد
@@ -380,7 +380,12 @@
                                     <th class="p-4" data-i18n="th_image">الصورة</th>
                                     <th class="p-4" data-i18n="th_prod_name">اسم المنتج</th>
                                     <th class="p-4">SKU</th>
+                                    <th class="p-4" data-i18n="th_orig_price">الثمن الأصلي</th>
                                     <th class="p-4" data-i18n="th_disc_price">ثمن الخصم</th>
+                                    <th class="p-4" data-i18n="th_admin">المسؤول</th>
+                                    <th class="p-4" data-i18n="th_category">القسم</th>
+                                    <th class="p-4">الحالة</th>
+                                    <th class="p-4" data-i18n="th_prod_actions">الإجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-weekend-offers-table-body" class="divide-y divide-gray-100"></tbody>
@@ -733,6 +738,20 @@
                     </div>
                 </div>
 
+                <!-- تفعيل خاصية عروض نهاية الأسبوع الكبرى -->
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="prod-form-weekend-offer" onchange="handleWeekendOfferCheckboxChange(this)" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
+                        <label for="prod-form-weekend-offer" class="font-bold text-amber-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
+                            <i data-lucide="zap" class="w-4 h-4 text-amber-600"></i> <span>تفعيل خاصية عروض نهاية الأسبوع الكبرى (Weekend Offers)</span>
+                        </label>
+                    </div>
+                    <div id="weekend-offer-toggle-notification" class="hidden text-[11px] font-bold text-amber-700 bg-amber-100 px-3 py-1.5 rounded-xl flex items-center gap-1.5 animate-in fade-in duration-200">
+                        <i data-lucide="info" class="w-4 h-4 text-amber-600 flex-shrink-0"></i>
+                        <span>🔥 سيظهر هذا المنتج في صفحة (عروض نهاية الأسبوع الكبرى) فور حفظ التعديل!</span>
+                    </div>
+                </div>
+
                 <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl space-y-2">
                     <div class="flex items-center gap-3">
                         <input type="checkbox" id="prod-form-has-ads" onchange="handleAdsCheckboxChange(this)" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
@@ -843,7 +862,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.129</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.132</span>
                 </span>
             </div>
         </div>
@@ -923,6 +942,7 @@
                 tab_orders: "📦 سجل الطلبات",
                 tab_products: "🛍️ إدارة المنتجات",
                 tab_categories: "📂 الفئات",
+                tab_weekend_offers: "🔥 عروض نهاية الأسبوع الكبرى",
                 tab_ads: "💰 مصاريف الإعلانات (ADS)",
                 tab_contests: "🎁 مسابقات للخصم",
                 tab_slider: "🖼️ إدارة شرائح السلايدر",
@@ -1072,6 +1092,7 @@
                 tab_orders: "📦 Commandes",
                 tab_products: "🛍️ Gestion des produits",
                 tab_categories: "📂 Catégories",
+                tab_weekend_offers: "🔥 Offres du Grand Week-end",
                 tab_ads: "💰 Dépenses Publicitaires (ADS)",
                 tab_contests: "🎁 Concours de Réduction",
                 tab_slider: "🖼️ Gestion du Slider",
@@ -1221,6 +1242,7 @@
                 tab_orders: "📦 Orders Log",
                 tab_products: "🛍️ Products Management",
                 tab_categories: "📂 Categories",
+                tab_weekend_offers: "🔥 Grand Weekend Offers",
                 tab_ads: "💰 Ad Expenses (ADS)",
                 tab_contests: "🎁 Discount Contests",
                 tab_slider: "🖼️ Slider Management",
@@ -1519,6 +1541,17 @@
         // دوال إظهار وإخفاء إشعارات التفعيل الفورية داخل نموذج المنتج
         function handleAdsCheckboxChange(checkboxEl) {
             const notifEl = document.getElementById('ads-toggle-notification');
+            if (!notifEl) return;
+            if (checkboxEl.checked) {
+                notifEl.classList.remove('hidden');
+            } else {
+                notifEl.classList.add('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        function handleWeekendOfferCheckboxChange(checkboxEl) {
+            const notifEl = document.getElementById('weekend-offer-toggle-notification');
             if (!notifEl) return;
             if (checkboxEl.checked) {
                 notifEl.classList.remove('hidden');
@@ -2060,20 +2093,56 @@
             const weekendProducts = productsDatabase.filter(p => p.weekendOffer === true);
             let html = '';
             if (weekendProducts.length === 0) {
-                html = `<tr><td colspan="4" class="p-6 text-center text-gray-400">لا توجد منتجات مفعّلة في عروض نهاية الأسبوع الكبرى حالياً.</td></tr>`;
+                html = `<tr><td colspan="9" class="p-6 text-center text-gray-400">لا توجد منتجات مفعّلة في عروض نهاية الأسبوع الكبرى حالياً. قم بتعديل أي منتج وتفعيل الخاصية ليظهر هنا.</td></tr>`;
             } else {
                 weekendProducts.forEach((prod) => {
                     const originalIdx = productsDatabase.indexOf(prod);
                     const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : '';
-                    const discountPrice = (prod.discountPrice !== undefined && prod.discountPrice !== '' && prod.discountPrice !== null) ? `${prod.discountPrice} د.م` : 'لا يوجد';
+                    const originalPrice = prod.price || 0;
+                    const discountPrice = (prod.discountPrice !== undefined && prod.discountPrice !== '' && prod.discountPrice !== null) ? `${prod.discountPrice} د.م` : '<span class="text-gray-400 text-xs">لا يوجد</span>';
                     const skuCode = prod.sku || 'N/A';
+                    const adminName = prod.adminKey || 'ZAMZAM';
+
+                    let catLabel = prod.catLabel || 'منتجات متنوعة';
+                    let catColorHex = '#6366f1';
+                    const matchedCat = categoriesDatabase.find(c => c.key === prod.category);
+                    if (matchedCat) {
+                        catLabel = matchedCat.name;
+                        catColorHex = matchedCat.color || '#6366f1';
+                    } else if(prod.category === 'women') { catLabel = 'نساء'; catColorHex = '#ec4899'; }
+                    else if(prod.category === 'men') { catLabel = 'رجال'; catColorHex = '#3b82f6'; }
+                    else if(prod.category === 'kids') { catLabel = 'أطفال'; catColorHex = '#f59e0b'; }
+                    else if(prod.category === 'various') { catLabel = 'منتجات متنوعة'; catColorHex = '#6366f1'; }
+
+                    const isAvailable = prod.isActive !== false;
+                    const hasAdsBadge = prod.hasAds ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700"><i data-lucide="badge-dollar-sign" class="w-3 h-3"></i> ADS مفعل</span>' : '';
 
                     html += `
                         <tr>
                             <td class="p-4"><img src="${mainImg}" onclick="openImageZoomModal('${mainImg}', '${prod.title || ''}')" class="w-12 h-12 object-cover rounded-xl border cursor-pointer hover:scale-110 transition-transform"></td>
-                            <td class="p-4 font-bold text-gray-900">${prod.title} <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 mr-2"><i data-lucide="zap" class="w-3 h-3"></i> عرض مفعل</span></td>
+                            <td class="p-4 font-bold text-gray-900">${prod.title} ${hasAdsBadge} <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 mr-2 shadow-xs"><i data-lucide="zap" class="w-3.5 h-3.5 text-amber-600"></i> عرض نهاية الأسبوع</span></td>
                             <td class="p-4 font-mono text-xs">${skuCode}</td>
+                            <td class="p-4 font-bold">${originalPrice} د.م</td>
                             <td class="p-4 font-bold text-amber-600">${discountPrice}</td>
+                            <td class="p-4 font-semibold">${adminName}</td>
+                            <td class="p-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold border shadow-xs inline-block" style="background-color: ${catColorHex}15; color: ${catColorHex}; border-color: ${catColorHex}40;">
+                                    ${catLabel}
+                                </span>
+                            </td>
+                            <td class="p-4">
+                                <span class="px-3 py-1 rounded-xl text-xs font-bold ${isAvailable ? 'bg-emerald-50 text-emerald-700 border border-emerald-300' : 'bg-gray-300 text-gray-700'}">
+                                    ${isAvailable ? '🟢 متاح' : '🔴 غير متاح'}
+                                </span>
+                            </td>
+                            <td class="p-4 flex items-center gap-2 whitespace-nowrap">
+                                <button onclick="openProductModalForEdit(${originalIdx})" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 transition-colors">
+                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> تعديل
+                                </button>
+                                <button onclick="toggleWeekendOfferStatus(${originalIdx}, false)" class="bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 transition-colors">
+                                    <i data-lucide="zap-off" class="w-3.5 h-3.5"></i> إلغاء العرض
+                                </button>
+                            </td>
                         </tr>
                     `;
                 });
@@ -2275,7 +2344,7 @@
                     }
 
                     const hasAdsBadge = prod.hasAds ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700"><i data-lucide="badge-dollar-sign" class="w-3 h-3"></i> ADS مفعل</span>' : '';
-                    const weekendBadge = prod.weekendOffer ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700"><i data-lucide="zap" class="w-3 h-3"></i> عرض نهاية الأسبوع</span>' : '';
+                    const weekendBadge = prod.weekendOffer ? '<span class="mr-2 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 shadow-xs"><i data-lucide="zap" class="w-3 h-3 text-amber-600"></i> عروض نهاية الأسبوع</span>' : '';
 
                     html += `
                         <tr class="${rowBgClass}">
@@ -2930,6 +2999,10 @@
             adsCheckbox.checked = false;
             document.getElementById('ads-toggle-notification').classList.add('hidden');
 
+            const weekendCheckbox = document.getElementById('prod-form-weekend-offer');
+            weekendCheckbox.checked = false;
+            document.getElementById('weekend-offer-toggle-notification').classList.add('hidden');
+
             document.getElementById('calc-tajir-price').value = '';
             document.getElementById('calc-prep-cost').value = '';
             document.getElementById('calc-target-sale-price').value = '';
@@ -2962,6 +3035,13 @@
             if (p.hasAds) adsNotif.classList.remove('hidden');
             else adsNotif.classList.add('hidden');
 
+            const weekendCheckbox = document.getElementById('prod-form-weekend-offer');
+            weekendCheckbox.checked = !!p.weekendOffer;
+
+            const weekendNotif = document.getElementById('weekend-offer-toggle-notification');
+            if (p.weekendOffer) weekendNotif.classList.remove('hidden');
+            else weekendNotif.classList.add('hidden');
+
             document.getElementById('prod-form-category').value = p.category || 'various';
             document.getElementById('prod-form-admin').value = p.adminKey || 'ZAMZAM';
             
@@ -2992,6 +3072,7 @@
             const discountPriceVal = document.getElementById('prod-form-discount-price').value.trim();
             const discountPrice = discountPriceVal !== "" ? parseFloat(discountPriceVal) : null;
             const hasAds = document.getElementById('prod-form-has-ads').checked;
+            const weekendOffer = document.getElementById('prod-form-weekend-offer').checked;
 
             const adminKey = document.getElementById('prod-form-admin').value;
             const category = document.getElementById('prod-form-category').value;
@@ -3031,6 +3112,7 @@
             const prodData = {
                 title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, 
                 hasAds, has_ads: hasAds, 
+                weekendOffer, weekend_offer: weekendOffer, weekendoffer: weekendOffer,
                 tajirPrice, prepCost, targetSalePrice, netProfit
             };
 
@@ -3038,6 +3120,8 @@
                 const targetProd = productsDatabase.find(p => p.id == id || productsDatabase.indexOf(p) == id);
                 if (targetProd && targetProd.id) {
                     await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
+                    targetProd.weekendOffer = weekendOffer;
+                    targetProd.hasAds = hasAds;
                 } else {
                     await supabaseClient.from('products').insert([prodData]);
                 }
@@ -3046,7 +3130,19 @@
             }
 
             await fetchSupabaseData();
-            showCustomAlert('تم حفظ البيانات وتحديث التعديلات في قاعدة البيانات (Supabase) بنجاح!', 'نجاح الحفظ');
+            
+            if (id !== "" && !isNaN(id)) {
+                let updatedTarget = productsDatabase.find(p => p.id == id);
+                if (updatedTarget) {
+                    updatedTarget.weekendOffer = weekendOffer;
+                    updatedTarget.hasAds = hasAds;
+                }
+            }
+
+            renderAdminProducts();
+            renderWeekendOffersTable();
+
+            showCustomAlert('تم حفظ البيانات وتحديث التعديلات في قاعدة البيانات (Supabase) بنجاح! إذا كانت خاصية عروض نهاية الأسبوع مفعلة، سيظهر المنتج تلقائياً في صفحة عروض نهاية الأسبوع الكبرى.', 'نجاح الحفظ');
             toggleProductModal();
         }
 
