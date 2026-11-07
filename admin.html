@@ -178,8 +178,9 @@
                         
                         <!-- القسم المجمع الجديد: الفئات -->
                         <option value="categories" data-i18n="tab_categories">📂 الفئات</option>
+                        <!-- قسم عروض نهاية الأسبوع الكبرى -->
+                        <option value="weekend_offers">🔥 عروض نهاية الأسبوع الكبرى</option>
 
-                        <option value="bfd" data-i18n="tab_bfd">🔥 إدارة منتجات Black Free Day</option>
                         <option value="ads" data-i18n="tab_ads">💰 مصاريف الإعلانات (ADS)</option>
                         <option value="contests" data-i18n="tab_contests">🎁 مسابقات للخصم</option>
                         <option value="slider" data-i18n="tab_slider">🖼️ إدارة شرائح السلايدر</option>
@@ -225,23 +226,7 @@
                     </div>
                 </div>
 
-                <!-- خانة العد التنازولي لعروض Black Free Day (أيام السبت والأحد) المطلوبة -->
-                <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-5 rounded-2xl shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                            <i data-lucide="flame" class="w-6 h-6 text-white"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-base" data-i18n="bfd_timer_title">العد التنازولي لعروض Black Free Day (نهاية الأسبوع)</h4>
-                            <p id="bfd-timer-msg" class="text-xs text-amber-100 mt-0.5" data-i18n="bfd_timer_sub">الوقت المتبقي لانتهاء عروض السبت والأحد:</p>
-                        </div>
-                    </div>
-                    <div id="bfd-countdown-clock" class="flex items-center gap-2 text-center font-mono font-black text-lg bg-black/20 px-4 py-2 rounded-xl backdrop-blur-sm">
-                        <span>00</span>:<span>00</span>:<span>00</span>:<span>00</span>
-                    </div>
-                </div>
-
-                <!-- المبيان الإحصائي الشامل والتقرير Mالي المفصل -->
+                <!-- المبيان الإحصائي الشامل والتقرير المالي المفصل -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- رسم بياني (Chart.js Canvas) -->
                     <div class="bg-white p-6 rounded-2xl border shadow-sm lg:col-span-2 space-y-4 flex flex-col justify-center items-center">
@@ -374,35 +359,31 @@
                 </div>
             </div>
 
-            <!-- إدارة منتجات Black Free Day -->
-            <div id="admin-subtab-bfd" class="hidden space-y-6">
+            <!-- قسم عروض نهاية الأسبوع الكبرى -->
+            <div id="admin-subtab-weekend_offers" class="hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-6">
                     <div class="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                             <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2">
-                                <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i> <span data-i18n="bfd_mgmt_title">إدارة منتجات Black Free Day</span>
+                                <i data-lucide="zap" class="w-6 h-6 text-amber-600"></i> إدارة عروض نهاية الأسبوع الكبرى
                             </h3>
-                            <p class="text-xs text-gray-500 mt-1" data-i18n="bfd_mgmt_sub">تعديل وإدارة عروض نهاية الأسبوع الكبرى.</p>
+                            <p class="text-xs text-gray-500 mt-1">عرض المنتجات التي تم تفعيل عرض نهاية الأسبوع الكبرى لها.</p>
                         </div>
-                        <div class="flex items-center gap-3 w-full sm:w-auto">
-                            <input type="text" id="search-bfd-input" onkeyup="filterBfdTable()" placeholder="بحث في عروض BFD..." data-i18n-placeholder="search_bfd_ph" class="px-4 py-2 rounded-xl border text-xs w-full sm:w-56 focus:outline-none focus:border-amber-600">
-                            <button onclick="openProductModalForAdd()" class="bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-amber-700 shadow-md flex items-center gap-1.5 whitespace-nowrap">
-                                <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="btn_add_bfd">إضافة منتج BFD جديد</span>
-                            </button>
-                        </div>
+                        <button onclick="openProductModalForAdd()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-700 shadow-md flex items-center gap-2 transition-colors whitespace-nowrap">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة منتج جديد
+                        </button>
                     </div>
-                    <div class="overflow-x-auto custom-scroll-container">
-                        <table class="w-full text-right text-sm text-gray-600">
+                    <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto custom-scroll-container">
+                        <table class="w-full text-right text-sm text-gray-600 min-w-[700px]">
                             <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
                                 <tr>
                                     <th class="p-4" data-i18n="th_image">الصورة</th>
-                                    <th class="p-4" data-i18n="th_title">العنوان</th>
-                                    <th class="p-4" data-i18n="th_price">السعر</th>
-                                    <th class="p-4" data-i18n="th_badge">البادج</th>
-                                    <th class="p-4" data-i18n="th_actions_simple">الإجراءات</th>
+                                    <th class="p-4" data-i18n="th_prod_name">اسم المنتج</th>
+                                    <th class="p-4">SKU</th>
+                                    <th class="p-4" data-i18n="th_disc_price">ثمن الخصم</th>
                                 </tr>
                             </thead>
-                            <tbody id="admin-bfd-table-body" class="divide-y divide-gray-100"></tbody>
+                            <tbody id="admin-weekend-offers-table-body" class="divide-y divide-gray-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -431,6 +412,7 @@
                         <table class="w-full text-right text-sm text-gray-600">
                             <thead class="bg-gray-50 text-gray-700 font-semibold text-xs border-b sticky top-0 z-10">
                                 <tr>
+                                    <th class="p-4">المنتج / الخدمة المخسور عليها</th>
                                     <th class="p-4" data-i18n="th_platform">المنصة</th>
                                     <th class="p-4" data-i18n="th_amount_dh">المبلغ (د.م)</th>
                                     <th class="p-4" data-i18n="th_start_date">تاريخ البداية</th>
@@ -574,6 +556,12 @@
             <h3 class="text-xl font-bold text-gray-900" data-i18n="modal_add_ad_title">تسجيل مصروف إعلاني جديد</h3>
             <div class="space-y-4 text-sm">
                 <div>
+                    <label class="block font-semibold mb-1">المنتج أو الخدمة المرتبطة بالإعلان (المخسور عليه) *</label>
+                    <select id="ads-form-product" class="w-full px-4 py-2.5 rounded-xl border bg-white font-bold text-indigo-900">
+                        <!-- سيتم تعبئتها ديناميكياً بالمنتجات -->
+                    </select>
+                </div>
+                <div>
                     <label class="block font-semibold mb-1" data-i18n="label_platform">المنصة *</label>
                     <select id="ads-form-platform" class="w-full px-4 py-2.5 rounded-xl border bg-white">
                         <option value="Facebook">Facebook</option>
@@ -680,7 +668,6 @@
             <button onclick="toggleProductModal()" class="absolute top-5 left-5 text-gray-400"><i data-lucide="x" class="w-6 h-6"></i></button>
             <h3 id="prod-modal-title" class="text-xl font-bold text-gray-900" data-i18n="modal_add_product_title">إضافة منتج جديد</h3>
             <input type="hidden" id="prod-form-id">
-            <input type="hidden" id="prod-form-is-bfd-edit-id">
 
             <!-- آلة حاسبة الأرباح والتسعير التلقائي -->
             <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-2xl space-y-3">
@@ -746,18 +733,18 @@
                     </div>
                 </div>
 
-                <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-center gap-3">
-                    <input type="checkbox" id="prod-form-is-bfd" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
-                    <label for="prod-form-is-bfd" class="font-bold text-amber-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
-                        <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i> <span data-i18n="label_move_bfd">نقل هذا المنتج إلى إدارة منتجات Black Free Day وإخفائه من المنتجات العادية</span>
-                    </label>
-                </div>
-
-                <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3">
-                    <input type="checkbox" id="prod-form-has-ads" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
-                    <label for="prod-form-has-ads" class="font-bold text-rose-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
-                        <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> <span data-i18n="label_prod_has_ads">هل تم إطلاق إعلانات (Ads) على هذا المنتج؟ (تحديد حالة الإعلان)</span>
-                    </label>
+                <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl space-y-2">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" id="prod-form-has-ads" onchange="handleAdsCheckboxChange(this)" class="w-5 h-5 accent-rose-600 rounded cursor-pointer">
+                        <label for="prod-form-has-ads" class="font-bold text-rose-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
+                            <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-rose-600"></i> <span data-i18n="label_prod_has_ads">هل تم إطلاق إعلانات (Ads) على هذا المنتج؟ (تحديد حالة الإعلان)</span>
+                        </label>
+                    </div>
+                    <!-- إشعار التنبيه الفوري الخاص بالإعلانات -->
+                    <div id="ads-toggle-notification" class="hidden text-[11px] font-bold text-rose-700 bg-rose-100 px-3 py-1.5 rounded-xl flex items-center gap-1.5 animate-in fade-in duration-200">
+                        <i data-lucide="info" class="w-4 h-4 text-rose-600 flex-shrink-0"></i>
+                        <span>🔔 تم تفعيل إعلانات (ADS) لهذا المنتج! سيظهر بادج الإعلان بوضوح بجانب اسم المنتج في القائمة.</span>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -856,7 +843,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.113</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.129</span>
                 </span>
             </div>
         </div>
@@ -871,7 +858,6 @@
         let productsDatabase = [];
         let salesOrdersDatabase = [];
         let sliderDatabase = [];
-        let bfdDatabase = [];
         let adsExpensesDatabase = [];
         
         let categoriesDatabase = [
@@ -937,7 +923,6 @@
                 tab_orders: "📦 سجل الطلبات",
                 tab_products: "🛍️ إدارة المنتجات",
                 tab_categories: "📂 الفئات",
-                tab_bfd: "🔥 إدارة منتجات Black Free Day",
                 tab_ads: "💰 مصاريف الإعلانات (ADS)",
                 tab_contests: "🎁 مسابقات للخصم",
                 tab_slider: "🖼️ إدارة شرائح السلايدر",
@@ -960,8 +945,6 @@
                 btn_add_product: "+ إضافة منتج جديد",
                 stat_orders_count: "عدد الطلبات",
                 stat_products_count: "إجمالي المنتجات",
-                bfd_timer_title: "العد التنازولي لعروض Black Free Day (نهاية الأسبوع)",
-                bfd_timer_sub: "الوقت المتبقي لانتهاء عروض السبت والأحد:",
                 orders_header_title: "إدارة الطلبات وإرسالها للتاجر",
                 search_orders_ph: "بحث في الطلبات...",
                 btn_excel_group: "Excel جماعي",
@@ -982,14 +965,6 @@
                 th_admin: "المسؤول",
                 th_category: "القسم",
                 th_prod_actions: "الإجراءات (تعديل / حذف)",
-                bfd_mgmt_title: "إدارة منتجات Black Free Day",
-                bfd_mgmt_sub: "تعديل وإدارة عروض نهاية الأسبوع الكبرى.",
-                search_bfd_ph: "بحث في عروض BFD...",
-                btn_add_bfd: "+ إضافة منتج BFD جديد",
-                th_title: "العنوان",
-                th_price: "السعر",
-                th_badge: "البادج",
-                th_actions_simple: "الإجراءات",
                 ads_mgmt_title: "حساب وإدارة مصاريف الإعلانات (ADS)",
                 ads_mgmt_sub: "تسجيل ميزانية مصاريف الإعلانات مع اختيار المنصة والتاريخ ومدة الإغلاق والعداد التنازلي.",
                 btn_add_ad: "إضافة مصروف إعلاني جديد",
@@ -999,6 +974,7 @@
                 th_start_date: "تاريخ البداية",
                 th_duration: "مدة الإعلان",
                 th_countdown: "العداد التنازلي وحالة الإعلان",
+                th_actions_simple: "الإجراءات",
                 contests_mgmt_title: "إعدادات مسابقات وخصومات الموقع (-50%)",
                 contests_mgmt_sub: "أدخل كلمة أو رقم الكود الخاص بالمسابقة لتفعيل نمط الخصم 50% وتغيير لون الموقع تلقائياً.",
                 label_contest_code: "كود الخصم (كلمة أو رقم) *",
@@ -1042,7 +1018,6 @@
                 label_prod_name: "اسم المنتج *",
                 label_form_orig_price: "الثمن الأصلي (أوتوماتيكي مقفل) *",
                 label_form_disc_price: "ثمن الخصم / المستهدف (أوتوماتيكي مقفل)",
-                label_move_bfd: "نقل هذا المنتج إلى إدارة منتجات Black Free Day وإخفائه من المنتجات العادية",
                 label_prod_has_ads: "هل تم إطلاق إعلانات (Ads) على هذا المنتج؟ (تحديد حالة الإعلان)",
                 label_category: "القسم *",
                 cat_women: "نساء",
@@ -1097,7 +1072,6 @@
                 tab_orders: "📦 Commandes",
                 tab_products: "🛍️ Gestion des produits",
                 tab_categories: "📂 Catégories",
-                tab_bfd: "🔥 Produits Black Free Day",
                 tab_ads: "💰 Dépenses Publicitaires (ADS)",
                 tab_contests: "🎁 Concours de Réduction",
                 tab_slider: "🖼️ Gestion du Slider",
@@ -1120,8 +1094,6 @@
                 btn_add_product: "+ Ajouter un produit",
                 stat_orders_count: "Nombre de commandes",
                 stat_products_count: "Total des produits",
-                bfd_timer_title: "Compte à rebours Black Free Day (Weekend)",
-                bfd_timer_sub: "Temps restant pour les offres du weekend :",
                 orders_header_title: "Gestion des commandes et envoi au fournisseur",
                 search_orders_ph: "Rechercher des commandes...",
                 btn_excel_group: "Excel groupé",
@@ -1142,14 +1114,6 @@
                 th_admin: "Admin",
                 th_category: "Catégorie",
                 th_prod_actions: "Actions (Modifier / Supprimer)",
-                bfd_mgmt_title: "Gestion Black Free Day",
-                bfd_mgmt_sub: "Modifier et gérer les offres majeures du weekend.",
-                search_bfd_ph: "Rechercher BFD...",
-                btn_add_bfd: "+ Ajouter un produit BFD",
-                th_title: "Titre",
-                th_price: "Prix",
-                th_badge: "Badge",
-                th_actions_simple: "Actions",
                 ads_mgmt_title: "Gestion des Dépenses Publicitaires (ADS)",
                 ads_mgmt_sub: "Enregistrer le budget publicitaire, la plateforme, la date et le compte à rebours.",
                 btn_add_ad: "Ajouter une dépense pub",
@@ -1159,6 +1123,7 @@
                 th_start_date: "Date de début",
                 th_duration: "Durée",
                 th_countdown: "Compte à rebours et statut",
+                th_actions_simple: "Actions",
                 contests_mgmt_title: "Paramètres des Concours et Réductions (-50%)",
                 contests_mgmt_sub: "Entrez le code du concours pour activer -50% et changer la couleur du thème.",
                 label_contest_code: "Code de réduction (Mot ou chiffre) *",
@@ -1202,7 +1167,6 @@
                 label_prod_name: "Nom du produit *",
                 label_form_orig_price: "Prix d'origine (Verrouillé auto) *",
                 label_form_disc_price: "Prix promo / ciblé (Verrouillé auto)",
-                label_move_bfd: "Déplacer ce produit vers Black Free Day et le masquer des produits normaux",
                 label_prod_has_ads: "Des publicités (Ads) ont-elles été lancées sur ce produit ?",
                 label_category: "Catégorie *",
                 cat_women: "Femmes",
@@ -1257,7 +1221,6 @@
                 tab_orders: "📦 Orders Log",
                 tab_products: "🛍️ Products Management",
                 tab_categories: "📂 Categories",
-                tab_bfd: "🔥 Black Free Day Management",
                 tab_ads: "💰 Ad Expenses (ADS)",
                 tab_contests: "🎁 Discount Contests",
                 tab_slider: "🖼️ Slider Management",
@@ -1280,8 +1243,6 @@
                 btn_add_product: "+ Add New Product",
                 stat_orders_count: "Total Orders",
                 stat_products_count: "Total Products",
-                bfd_timer_title: "Black Free Day Countdown (Weekend)",
-                bfd_timer_sub: "Time remaining for weekend offers:",
                 orders_header_title: "Manage Orders and Send to Supplier",
                 search_orders_ph: "Search orders...",
                 btn_excel_group: "Bulk Excel",
@@ -1302,14 +1263,6 @@
                 th_admin: "Admin",
                 th_category: "Category",
                 th_prod_actions: "Actions (Edit / Delete)",
-                bfd_mgmt_title: "Black Free Day Management",
-                bfd_mgmt_sub: "Edit and manage major weekend offers.",
-                search_bfd_ph: "Search BFD offers...",
-                btn_add_bfd: "+ Add New BFD Product",
-                th_title: "Title",
-                th_price: "Price",
-                th_badge: "Badge",
-                th_actions_simple: "Actions",
                 ads_mgmt_title: "Ad Expenses Management (ADS)",
                 ads_mgmt_sub: "Track advertising budget with platform, date, duration, and countdown.",
                 btn_add_ad: "Add New Ad Expense",
@@ -1319,6 +1272,7 @@
                 th_start_date: "Start Date",
                 th_duration: "Duration",
                 th_countdown: "Countdown & Status",
+                th_actions_simple: "Actions",
                 contests_mgmt_title: "Contests & Discount Settings (-50%)",
                 contests_mgmt_sub: "Enter contest code to activate 50% discount mode and change theme color.",
                 label_contest_code: "Discount Code (Word or Number) *",
@@ -1362,7 +1316,6 @@
                 label_prod_name: "Product Name *",
                 label_form_orig_price: "Original Price (Locked Auto) *",
                 label_form_discount_price: "Discount / Target Price (Locked Auto)",
-                label_move_bfd: "Move this product to Black Free Day and hide from regular products",
                 label_prod_has_ads: "Were ads launched for this product? (Ad Status)",
                 label_category: "Category *",
                 cat_women: "Women",
@@ -1464,8 +1417,8 @@
             renderAdminProducts();
             renderAdminOrders();
             renderAdsExpensesTable();
-            renderBfdTable();
             renderCategoriesPage();
+            renderWeekendOffersTable();
             updateAdminStatsChartAndCalculations();
         }
 
@@ -1561,6 +1514,18 @@
             } else {
                 showCustomAlert('يرجى إدخال ثمن المستهدف للبيع في الحاسبة أولاً!', 'تنبيه');
             }
+        }
+
+        // دوال إظهار وإخفاء إشعارات التفعيل الفورية داخل نموذج المنتج
+        function handleAdsCheckboxChange(checkboxEl) {
+            const notifEl = document.getElementById('ads-toggle-notification');
+            if (!notifEl) return;
+            if (checkboxEl.checked) {
+                notifEl.classList.remove('hidden');
+            } else {
+                notifEl.classList.add('hidden');
+            }
+            lucide.createIcons();
         }
 
         async function handleLogin() {
@@ -1733,7 +1698,8 @@
                         discountPrice: p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.discount_price !== undefined ? p.discount_price : ''),
                         adminKey: p.adminKey || p.admin_key || 'ZAMZAM',
                         hasAds: p.hasAds !== undefined ? p.hasAds : (p.has_ads !== undefined ? p.has_ads : (p.hasads !== undefined ? p.hasads : false)),
-                        isActive: p.isActive !== undefined ? p.isActive : (p.is_active !== undefined ? p.is_active : true)
+                        isActive: p.isActive !== undefined ? p.isActive : (p.is_active !== undefined ? p.is_active : true),
+                        weekendOffer: p.weekendOffer !== undefined ? p.weekendOffer : (p.weekend_offer !== undefined ? p.weekend_offer : (p.weekendoffer !== undefined ? p.weekendoffer : false))
                     }));
                 }
                 productsDatabase = fetchedProducts;
@@ -1753,27 +1719,11 @@
                 renderAdminsTable();
                 updateCategoriesForm();
                 renderCategoriesPage();
+                renderWeekendOffersTable();
+                updateAdsProductDropdown();
 
                 const { data: slider } = await supabaseClient.from('slider').select('*');
                 if (slider) sliderDatabase = slider;
-
-                const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
-                if (bfd) {
-                    bfdDatabase = bfd.map(b => {
-                        let parsedImgList = extractImagesAdmin(b);
-                        if (parsedImgList.length <= 1 && b.title) {
-                            const matchedNormal = productsDatabase.find(p => p.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
-                            if (matchedNormal && matchedNormal.images && matchedNormal.images.length > 1) {
-                                parsedImgList = matchedNormal.images;
-                            }
-                        }
-                        return {
-                            ...b,
-                            images: parsedImgList,
-                            img: parsedImgList[0] || b.img
-                        };
-                    });
-                }
 
                 await loadPopupAdSettings();
                 await loadContestSettings();
@@ -1782,7 +1732,6 @@
                 renderAdminOrders();
                 renderAdsExpensesTable();
                 renderSliderEditor();
-                renderBfdTable();
                 initAdsCountdowns();
                 updateAdminStatsChartAndCalculations();
                 renderColorPalette();
@@ -2045,7 +1994,16 @@
             }
         }
 
-        // دالة عرض وتعبئة صفحة الفئات الشاملة (مع أزرار التعديل والحذف)
+        function updateAdsProductDropdown() {
+            const adsProdSelect = document.getElementById('ads-form-product');
+            if (!adsProdSelect) return;
+            let html = `<option value="عام / عامة">إعلان عام (بدون منتج محدد)</option>`;
+            productsDatabase.forEach(p => {
+                html += `<option value="${p.title || ''}">${p.title || ''} ${p.sku ? '(' + p.sku + ')' : ''}</option>`;
+            });
+            adsProdSelect.innerHTML = html;
+        }
+
         function renderCategoriesPage() {
             const container = document.getElementById('categories-cards-container');
             if (!container) return;
@@ -2094,6 +2052,52 @@
             });
             container.innerHTML = html;
             lucide.createIcons();
+        }
+
+        function renderWeekendOffersTable() {
+            const tbody = document.getElementById('admin-weekend-offers-table-body');
+            if (!tbody) return;
+            const weekendProducts = productsDatabase.filter(p => p.weekendOffer === true);
+            let html = '';
+            if (weekendProducts.length === 0) {
+                html = `<tr><td colspan="4" class="p-6 text-center text-gray-400">لا توجد منتجات مفعّلة في عروض نهاية الأسبوع الكبرى حالياً.</td></tr>`;
+            } else {
+                weekendProducts.forEach((prod) => {
+                    const originalIdx = productsDatabase.indexOf(prod);
+                    const mainImg = (prod.images && prod.images.length > 0) ? prod.images[0] : '';
+                    const discountPrice = (prod.discountPrice !== undefined && prod.discountPrice !== '' && prod.discountPrice !== null) ? `${prod.discountPrice} د.م` : 'لا يوجد';
+                    const skuCode = prod.sku || 'N/A';
+
+                    html += `
+                        <tr>
+                            <td class="p-4"><img src="${mainImg}" onclick="openImageZoomModal('${mainImg}', '${prod.title || ''}')" class="w-12 h-12 object-cover rounded-xl border cursor-pointer hover:scale-110 transition-transform"></td>
+                            <td class="p-4 font-bold text-gray-900">${prod.title} <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 mr-2"><i data-lucide="zap" class="w-3 h-3"></i> عرض مفعل</span></td>
+                            <td class="p-4 font-mono text-xs">${skuCode}</td>
+                            <td class="p-4 font-bold text-amber-600">${discountPrice}</td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        async function toggleWeekendOfferStatus(idx, statusVal) {
+            const prod = productsDatabase[idx];
+            if (!prod) return;
+            prod.weekendOffer = statusVal;
+
+            if (prod.id) {
+                try {
+                    await supabaseClient.from('products').update({ 
+                        weekend_offer: statusVal, 
+                        weekendOffer: statusVal, 
+                        weekendoffer: statusVal 
+                    }).eq('id', prod.id);
+                } catch(e) {}
+            }
+            renderWeekendOffersTable();
+            renderAdminProducts();
         }
 
         function filterProductsByCategoryFromPage(catKey) {
@@ -2153,12 +2157,10 @@
             }
 
             if (editIdxVal !== "") {
-                // حالة التعديل
                 const idx = parseInt(editIdxVal);
                 categoriesDatabase[idx] = { key, name, color };
                 showCustomAlert(`تم تعديل الفئة بنجاح!`, 'نجاح');
             } else {
-                // حالة الإضافة الجديدة
                 if (categoriesDatabase.some(c => c.key === key)) {
                     showCustomAlert('هذا المعرف موجود مسبقاً، يرجى اختيار معرف آخر.', 'تنبيه');
                     return;
@@ -2232,7 +2234,7 @@
 
             if (prod.id) {
                 try {
-                    await supabaseClient.from('products').update({ is_active: isActiveValue }).eq('id', prod.id);
+                    await supabaseClient.from('products').update({ is_active: isActiveValue, isActive: isActiveValue }).eq('id', prod.id);
                 } catch(e) {}
             }
             renderAdminProducts();
@@ -2265,26 +2267,23 @@
                     else if(prod.category === 'kids') { catLabel = 'أطفال'; catColorHex = '#f59e0b'; }
                     else if(prod.category === 'various') { catLabel = 'منتجات متنوعة'; catColorHex = '#6366f1'; }
 
-                    const isInBfd = bfdDatabase.some(b => b.title && prod.title && b.title.trim().toLowerCase() === prod.title.trim().toLowerCase());
                     const isAvailable = prod.isActive !== false;
                     
-                    // تعديل التنسيق واللون الأصفر عند تفعيل عرض Black FreeDay للمنتج
                     let rowBgClass = '';
                     if (!isAvailable) {
                         rowBgClass = 'bg-gray-200 text-gray-500 opacity-80';
-                    } else if (isInBfd) {
-                        rowBgClass = 'bg-yellow-100 text-yellow-900 border-r-4 border-r-yellow-500 font-bold';
                     }
 
-                    const hasAdsBadge = prod.hasAds ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700"><i data-lucide="badge-dollar-sign" class="w-3 h-3"></i> ADS مفعل</span>' : '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-500">بدون ADS</span>';
+                    const hasAdsBadge = prod.hasAds ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700"><i data-lucide="badge-dollar-sign" class="w-3 h-3"></i> ADS مفعل</span>' : '';
+                    const weekendBadge = prod.weekendOffer ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700"><i data-lucide="zap" class="w-3 h-3"></i> عرض نهاية الأسبوع</span>' : '';
 
                     html += `
                         <tr class="${rowBgClass}">
                             <td class="p-4"><img src="${mainImg}" onclick="openImageZoomModal('${mainImg}', '${prod.title || ''}')" class="w-12 h-12 object-cover rounded-xl border cursor-pointer hover:scale-110 transition-transform ${!isAvailable ? 'grayscale' : ''}" title="اضغط لتكبير الصورة"></td>
                             <td class="p-4 font-bold text-gray-900">
                                 ${prod.title}
-                                ${isInBfd ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500 text-white shadow-sm"><i data-lucide="flame" class="w-3 h-3"></i> Black Free Day</span>' : ''}
                                 ${hasAdsBadge}
+                                ${weekendBadge}
                             </td>
                             <td class="p-4 font-mono text-xs">${skuCode}</td>
                             <td class="p-4 font-bold">${originalPrice} د.م</td>
@@ -2330,6 +2329,7 @@
         }
 
         function openAdsModalForAdd() {
+            updateAdsProductDropdown();
             document.getElementById('ads-form-amount').value = '';
             const todayStr = new Date().toISOString().split('T')[0];
             document.getElementById('ads-form-date').value = todayStr;
@@ -2338,6 +2338,7 @@
         }
 
         async function saveAdsExpense() {
+            const productVal = document.getElementById('ads-form-product').value;
             const platform = document.getElementById('ads-form-platform').value;
             const amount = parseFloat(document.getElementById('ads-form-amount').value);
             const date = document.getElementById('ads-form-date').value;
@@ -2348,7 +2349,14 @@
                 return;
             }
 
-            const newExpense = { platform, amount, date, durationDays };
+            const newExpense = { 
+                product_name: productVal, 
+                productName: productVal, 
+                platform, 
+                amount, 
+                date, 
+                durationDays 
+            };
 
             try {
                 const { data, error } = await supabaseClient.from('ads_expenses').insert([newExpense]).select();
@@ -2365,7 +2373,7 @@
                 localStorage.setItem('bedal_ads_expenses_local', JSON.stringify(adsExpensesDatabase));
             }
 
-            showCustomAlert('تم حفظ المصروف الإعلاني والعداد بنجاح!', 'نجاح');
+            showCustomAlert('تم حفظ المصروف الإعلاني والمخسور عليه وتاريخ القيمة بنجاح!', 'نجاح');
             toggleAdsModal();
             renderAdsExpensesTable();
             initAdsCountdowns();
@@ -2381,7 +2389,7 @@
             let totalSum = 0;
 
             if (adsExpensesDatabase.length === 0) {
-                html = `<tr><td colspan="6" class="p-6 text-center text-gray-400">لا توجد مصاريف إعلانية مسجلة حالياً.</td></tr>`;
+                html = `<tr><td colspan="7" class="p-6 text-center text-gray-400">لا توجد مصاريف إعلانية مسجلة حالياً.</td></tr>`;
             } else {
                 adsExpensesDatabase.forEach((exp, idx) => {
                     totalSum += (parseFloat(exp.amount) || 0);
@@ -2393,12 +2401,21 @@
 
                     const dayUnit = translations[currentLang]['day_unit'] || 'يوم';
                     let durationLabel = `${exp.durationDays || 1} ${dayUnit}`;
+                    const linkedProduct = exp.product_name || exp.productName || 'إعلان عام';
+                    const expenseDate = exp.date || 'غير محدد';
+                    const expenseAmount = parseFloat(exp.amount || 0).toFixed(2);
 
                     html += `
                         <tr>
+                            <td class="p-4 font-bold text-gray-900">
+                                <div class="flex items-center gap-2">
+                                    <i data-lucide="package" class="w-4 h-4 text-indigo-600"></i>
+                                    <span>${linkedProduct}</span>
+                                </div>
+                            </td>
                             <td class="p-4"><span class="${badgeColor} px-2.5 py-1 rounded-md text-xs font-bold">${exp.platform}</span></td>
-                            <td class="p-4 font-black text-rose-600">${parseFloat(exp.amount).toFixed(2)} د.م</td>
-                            <td class="p-4 text-gray-500 font-semibold">${exp.date || 'غير محدد'}</td>
+                            <td class="p-4 font-black text-rose-600">${expenseAmount} د.م</td>
+                            <td class="p-4 text-gray-500 font-semibold">${expenseDate}</td>
                             <td class="p-4 text-xs font-bold text-gray-700">${durationLabel}</td>
                             <td class="p-4">
                                 <div id="ads-countdown-${idx}" class="font-mono font-bold text-xs px-3 py-1.5 rounded-xl inline-flex items-center gap-1.5 bg-gray-100 text-gray-800">
@@ -2702,98 +2719,6 @@
             });
         }
 
-        function renderBfdTable(filteredList = null) {
-            const tbody = document.getElementById('admin-bfd-table-body');
-            if (!tbody) return;
-            const listToRender = filteredList || bfdDatabase;
-            let html = '';
-            listToRender.forEach((item, idx) => {
-                const originalIdx = bfdDatabase.indexOf(item);
-                const mainBfdImg = (item.images && item.images[0]) || item.img || '';
-                html += `
-                    <tr class="bg-amber-50/70 font-semibold">
-                        <td class="p-4"><img src="${mainBfdImg}" class="w-12 h-12 object-cover rounded-xl border"></td>
-                        <td class="p-4 font-bold text-gray-900">${item.title}</td>
-                        <td class="p-4 text-amber-600 font-bold">${item.price} د.م</td>
-                        <td class="p-4"><span class="bg-amber-500 text-white px-2.5 py-1 rounded-md text-xs font-semibold shadow-sm">${item.discountBadge}</span></td>
-                        <td class="p-4 flex items-center gap-2 whitespace-nowrap">
-                            <button onclick="openBfdModalForEdit(${originalIdx})" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 transition-colors">
-                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> تعديل
-                            </button>
-                            <button onclick="deleteBfd(${originalIdx})" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 transition-colors">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> حذف
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-            lucide.createIcons();
-        }
-
-        function filterBfdTable() {
-            const query = document.getElementById('search-bfd-input').value.toLowerCase().trim();
-            if (!query) {
-                renderBfdTable();
-                return;
-            }
-            const filtered = bfdDatabase.filter(b => 
-                (b.title && b.title.toLowerCase().includes(query)) ||
-                (b.discountBadge && b.discountBadge.toLowerCase().includes(query))
-            );
-            renderBfdTable(filtered);
-        }
-
-        function openBfdModalForEdit(idx) {
-            const bfdItem = bfdDatabase[idx];
-            if (!bfdItem) return;
-            
-            const matchedProd = productsDatabase.find(p => p.title && bfdItem.title && p.title.trim().toLowerCase() === bfdItem.title.trim().toLowerCase());
-
-            document.getElementById('prod-modal-title').innerText = 'تعديل عرض Black Free Day';
-            document.getElementById('prod-form-id').value = matchedProd ? (matchedProd.id || '') : '';
-            document.getElementById('prod-form-is-bfd-edit-id').value = bfdItem.id || idx;
-            document.getElementById('prod-form-title').value = bfdItem.title || '';
-            document.getElementById('prod-form-sku').value = matchedProd ? (matchedProd.sku || '') : '';
-            document.getElementById('prod-form-price').value = bfdItem.oldPrice || (matchedProd ? matchedProd.price : bfdItem.price) || '';
-            document.getElementById('prod-form-discount-price').value = bfdItem.price || '';
-            document.getElementById('prod-form-is-bfd').checked = true;
-            document.getElementById('prod-form-has-ads').checked = matchedProd ? !!matchedProd.hasAds : false;
-            
-            document.getElementById('prod-form-category').value = matchedProd && matchedProd.category ? matchedProd.category : 'various';
-            document.getElementById('prod-form-admin').value = matchedProd && matchedProd.adminKey ? matchedProd.adminKey : 'ZAMZAM';
-
-            document.getElementById('calc-tajir-price').value = matchedProd && matchedProd.tajirPrice ? matchedProd.tajirPrice : '';
-            document.getElementById('calc-prep-cost').value = matchedProd && matchedProd.prepCost ? matchedProd.prepCost : '';
-            document.getElementById('calc-target-sale-price').value = matchedProd && matchedProd.targetSalePrice ? matchedProd.targetSalePrice : (bfdItem.price || '');
-            calculateNetProfitAuto();
-
-            const imgs = (bfdItem.images && bfdItem.images.length > 0) ? bfdItem.images : (matchedProd && matchedProd.images ? matchedProd.images : [bfdItem.img]);
-            for(let i = 1; i <= 5; i++) {
-                document.getElementById(`prod-form-img-${i}`).value = imgs[i-1] || '';
-            }
-
-            const vids = matchedProd && Array.isArray(matchedProd.videos) ? matchedProd.videos : [];
-            document.getElementById('prod-form-video-1').value = vids[0] || '';
-            document.getElementById('prod-form-video-2').value = vids[1] || '';
-
-            document.getElementById('prod-form-desc').value = matchedProd && matchedProd.description ? matchedProd.description : (bfdItem.title || '');
-            toggleProductModal();
-        }
-
-        function deleteBfd(idx) {
-            showCustomConfirm('هل أنت متأكد من حذف هذا العرض؟', async () => {
-                const item = bfdDatabase[idx];
-                if(item && item.id) {
-                    await supabaseClient.from('black_free_day').delete().eq('id', item.id);
-                }
-                bfdDatabase.splice(idx, 1);
-                renderBfdTable();
-                renderAdminProducts();
-                showCustomAlert('تم حذف العرض بنجاح!', 'تم الحذف');
-            });
-        }
-
         function renderSliderEditor(filteredList = null) {
             const container = document.getElementById('admin-slider-editor-container');
             if (!container) return;
@@ -2996,13 +2921,15 @@
         function openProductModalForAdd() {
             document.getElementById('prod-modal-title').innerText = 'إضافة منتج جديد';
             document.getElementById('prod-form-id').value = '';
-            document.getElementById('prod-form-is-bfd-edit-id').value = '';
             document.getElementById('prod-form-title').value = '';
             document.getElementById('prod-form-sku').value = '';
             document.getElementById('prod-form-price').value = '';
             document.getElementById('prod-form-discount-price').value = '';
-            document.getElementById('prod-form-is-bfd').checked = false;
-            document.getElementById('prod-form-has-ads').checked = false;
+            
+            const adsCheckbox = document.getElementById('prod-form-has-ads');
+            adsCheckbox.checked = false;
+            document.getElementById('ads-toggle-notification').classList.add('hidden');
+
             document.getElementById('calc-tajir-price').value = '';
             document.getElementById('calc-prep-cost').value = '';
             document.getElementById('calc-target-sale-price').value = '';
@@ -3016,23 +2943,25 @@
             document.getElementById('prod-form-video-2').value = '';
             document.getElementById('prod-form-desc').value = '';
             toggleProductModal();
+            lucide.createIcons();
         }
 
         function openProductModalForEdit(idx) {
             const p = productsDatabase[idx];
             document.getElementById('prod-modal-title').innerText = 'تعديل المنتج';
             document.getElementById('prod-form-id').value = p.id || idx;
-            document.getElementById('prod-form-is-bfd-edit-id').value = '';
             document.getElementById('prod-form-title').value = p.title || '';
             document.getElementById('prod-form-sku').value = p.sku || '';
             document.getElementById('prod-form-price').value = p.price || '';
             document.getElementById('prod-form-discount-price').value = p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : '';
             
-            // التحقق مما إذا كان المنتج مضافاً مسبقاً لقسم BFD لتحديد المربع أوتوماتيكياً عند التعديل
-            const isInBfd = bfdDatabase.some(b => b.title && p.title && b.title.trim().toLowerCase() === p.title.trim().toLowerCase());
-            document.getElementById('prod-form-is-bfd').checked = isInBfd;
-            
-            document.getElementById('prod-form-has-ads').checked = !!p.hasAds;
+            const adsCheckbox = document.getElementById('prod-form-has-ads');
+            adsCheckbox.checked = !!p.hasAds;
+
+            const adsNotif = document.getElementById('ads-toggle-notification');
+            if (p.hasAds) adsNotif.classList.remove('hidden');
+            else adsNotif.classList.add('hidden');
+
             document.getElementById('prod-form-category').value = p.category || 'various';
             document.getElementById('prod-form-admin').value = p.adminKey || 'ZAMZAM';
             
@@ -3052,17 +2981,16 @@
 
             document.getElementById('prod-form-desc').value = p.description || '';
             toggleProductModal();
+            lucide.createIcons();
         }
 
         async function saveProductForm() {
             const id = document.getElementById('prod-form-id').value;
-            const bfdEditId = document.getElementById('prod-form-is-bfd-edit-id').value;
             const title = document.getElementById('prod-form-title').value.trim();
             const sku = document.getElementById('prod-form-sku').value.trim();
             const price = parseFloat(document.getElementById('prod-form-price').value);
             const discountPriceVal = document.getElementById('prod-form-discount-price').value.trim();
             const discountPrice = discountPriceVal !== "" ? parseFloat(discountPriceVal) : null;
-            const isBfdChecked = document.getElementById('prod-form-is-bfd').checked;
             const hasAds = document.getElementById('prod-form-has-ads').checked;
 
             const adminKey = document.getElementById('prod-form-admin').value;
@@ -3100,73 +3028,10 @@
                 return;
             }
 
-            if (bfdEditId !== "") {
-                const bfdData = {
-                    title: title,
-                    price: discountPrice !== null && !isNaN(discountPrice) ? discountPrice : price,
-                    oldPrice: price,
-                    discountBadge: discountPrice !== null && !isNaN(discountPrice) ? `تخفيض ${Math.round(((price - discountPrice) / price) * 100)}%` : 'عرض حصري',
-                    img: images[0],
-                    images: images
-                };
-
-                await supabaseClient.from('black_free_day').update(bfdData).eq('id', bfdEditId);
-
-                if (id !== "") {
-                    const prodData = { title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds, tajirPrice, prepCost, targetSalePrice, netProfit };
-                    const targetProd = productsDatabase.find(p => p.id == id);
-                    if (targetProd && targetProd.id) {
-                        await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
-                    }
-                }
-
-                await fetchSupabaseData();
-                showCustomAlert('تم تحديث عرض Black Free Day وكافة صور المنتج بنجاح وتم حفظ التغييرات بقاعدة البيانات!', 'نجاح التحديث');
-                toggleProductModal();
-                return;
-            }
-
-            if (isBfdChecked) {
-                const bfdData = {
-                    title: title,
-                    price: discountPrice !== null && !isNaN(discountPrice) ? discountPrice : price,
-                    oldPrice: price,
-                    discountBadge: discountPrice !== null && !isNaN(discountPrice) ? `تخفيض ${Math.round(((price - discountPrice) / price) * 100)}%` : 'عرض حصري',
-                    img: images[0],
-                    images: images
-                };
-
-                // التحقق مما إذا كان المنتج موجوداً مسبقاً في جدول bfd لتفادي التكرار عند التعديل
-                const existingBfd = bfdDatabase.find(b => b.title && title && b.title.trim().toLowerCase() === title.trim().toLowerCase());
-                if (existingBfd && existingBfd.id) {
-                    await supabaseClient.from('black_free_day').update(bfdData).eq('id', existingBfd.id);
-                } else {
-                    await supabaseClient.from('black_free_day').insert([bfdData]);
-                }
-                
-                // حفظ المنتج أيضاً في جدول products ليظهر في قائمة المنتجات باللون الأصفر
-                const prodData = {
-                    title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds, tajirPrice, prepCost, targetSalePrice, netProfit
-                };
-                if (id !== "" && !isNaN(id)) {
-                    const targetProd = productsDatabase.find(p => p.id == id || productsDatabase.indexOf(p) == id);
-                    if (targetProd && targetProd.id) {
-                        await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
-                    } else {
-                        await supabaseClient.from('products').insert([prodData]);
-                    }
-                } else {
-                    await supabaseClient.from('products').insert([prodData]);
-                }
-
-                await fetchSupabaseData();
-                showCustomAlert('تمت إضافة المنتج بنجاح إلى قسم Black Free Day وقائمة المنتجات (باللون الأصفر) وحفظه في قاعدة البيانات!', 'نجاح الإضافة');
-                toggleProductModal();
-                return;
-            }
-
             const prodData = {
-                title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, hasAds, tajirPrice, prepCost, targetSalePrice, netProfit
+                title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, 
+                hasAds, has_ads: hasAds, 
+                tajirPrice, prepCost, targetSalePrice, netProfit
             };
 
             if (id !== "" && !isNaN(id)) {
@@ -3204,7 +3069,7 @@
                 return;
             }
 
-            const tabs = ['dashboard', 'orders', 'products', 'categories', 'bfd', 'ads', 'contests', 'slider', 'popupad', 'admins'];
+            const tabs = ['dashboard', 'orders', 'products', 'categories', 'weekend_offers', 'ads', 'contests', 'slider', 'popupad', 'admins'];
             tabs.forEach(t => {
                 const el = document.getElementById(`admin-subtab-${t}`);
                 if (el) {
@@ -3224,8 +3089,8 @@
                 renderAdminProducts();
             } else if (tabKey === 'categories') {
                 renderCategoriesPage();
-            } else if (tabKey === 'bfd') {
-                renderBfdTable();
+            } else if (tabKey === 'weekend_offers') {
+                renderWeekendOffersTable();
             } else if (tabKey === 'ads') {
                 renderAdsExpensesTable();
             } else if (tabKey === 'contests') {
@@ -3241,53 +3106,10 @@
             }
         }
 
-        function initBfdCountdown() {
-            const clockEl = document.getElementById('bfd-countdown-clock');
-            const msgEl = document.getElementById('bfd-timer-msg');
-            if (!clockEl) return;
-
-            function updateTimer() {
-                const now = new Date();
-                const day = now.getDay();
-                let targetDate = new Date(now);
-                if (day === 6 || day === 0) {
-                    targetDate.setHours(23, 59, 59, 999);
-                } else {
-                    let daysUntilSaturday = (6 - day + 7) % 7;
-                    if (daysUntilSaturday === 0) daysUntilSaturday = 7;
-                    targetDate.setDate(now.getDate() + daysUntilSaturday);
-                    targetDate.setHours(0, 0, 0, 0);
-                }
-
-                const diff = targetDate - now;
-                if (diff <= 0) {
-                    clockEl.innerHTML = "انتهى الوقت!";
-                    if (msgEl) msgEl.innerText = "⚠️ تنبيه: انتهى وقت عروض Black Free Day! يرجى إضافة منتجات جديدة فوراً.";
-                    return;
-                }
-
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-                const dUnit = translations[currentLang]['day_unit'] || 'يوم';
-                const hUnit = translations[currentLang]['hour_unit'] || 'س';
-                const mUnit = translations[currentLang]['min_unit'] || 'د';
-                const sUnit = translations[currentLang]['sec_unit'] || 'ث';
-
-                clockEl.innerHTML = `<span>${String(days).padStart(2, '0')}</span> ${dUnit} : <span>${String(hours).padStart(2, '0')}</span> ${hUnit} : <span>${String(minutes).padStart(2, '0')}</span> ${mUnit} : <span>${String(seconds).padStart(2, '0')}</span> ${sUnit}`;
-            }
-
-            updateTimer();
-            setInterval(updateTimer, 1000);
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             changeLanguage('ar');
             fetchSupabaseData();
             setupSupabaseRealtime();
-            initBfdCountdown();
             lucide.createIcons();
             const headerAdminNameEl = document.getElementById('header-logged-admin-name');
             if (headerAdminNameEl) {
