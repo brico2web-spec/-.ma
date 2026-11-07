@@ -855,7 +855,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.137</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.140</span>
                 </span>
             </div>
         </div>
@@ -1723,7 +1723,11 @@
                             adminKey: p.adminKey || p.admin_key || 'ZAMZAM',
                             hasAds: adsVal,
                             isActive: activeVal,
-                            isWeekendOffer: weekendVal
+                            isWeekendOffer: weekendVal,
+                            tajirPrice: p.tajirPrice !== undefined ? p.tajirPrice : p.tajir_price,
+                            prepCost: p.prepCost !== undefined ? p.prepCost : p.prep_cost,
+                            targetSalePrice: p.targetSalePrice !== undefined ? p.targetSalePrice : p.target_sale_price,
+                            netProfit: p.netProfit !== undefined ? p.netProfit : p.net_profit
                         };
                     });
                 }
@@ -2985,7 +2989,7 @@
         function openProductModalForEdit(idx) {
             const p = productsDatabase[idx];
             document.getElementById('prod-modal-title').innerText = 'تعديل المنتج';
-            document.getElementById('prod-form-id').value = p.id || idx;
+            document.getElementById('prod-form-id').value = p.id !== undefined && p.id !== null ? p.id : idx;
             document.getElementById('prod-form-title').value = p.title || '';
             document.getElementById('prod-form-sku').value = p.sku || '';
             document.getElementById('prod-form-price').value = p.price || '';
@@ -3026,7 +3030,7 @@
         }
 
         async function saveProductForm() {
-            const id = document.getElementById('prod-form-id').value;
+            const idVal = document.getElementById('prod-form-id').value;
             const title = document.getElementById('prod-form-title').value.trim();
             const sku = document.getElementById('prod-form-sku').value.trim();
             const price = parseFloat(document.getElementById('prod-form-price').value);
@@ -3074,17 +3078,19 @@
 
             const prodData = {
                 title, price, category, catLabel, images, description, sku, discountPrice, adminKey, videos, 
-                hasAds, has_ads: hasAds, 
-                isWeekendOffer, is_weekend_offer: isWeekendOffer,
-                tajirPrice, prepCost, targetSalePrice, netProfit
+                hasAds, has_ads: hasAds, hasads: hasAds,
+                isWeekendOffer, is_weekend_offer: isWeekendOffer, weekend: isWeekendOffer, weekendOffer: isWeekendOffer,
+                tajirPrice, tajir_price: tajirPrice,
+                prepCost, prep_cost: prepCost,
+                targetSalePrice, target_sale_price: targetSalePrice,
+                netProfit, net_profit: netProfit
             };
 
-            if (id !== "" && !isNaN(id)) {
-                const targetProd = productsDatabase.find(p => p.id == id || productsDatabase.indexOf(p) == id);
-                if (targetProd && targetProd.id) {
+            if (idVal !== "") {
+                const numericId = parseInt(idVal);
+                const targetProd = productsDatabase.find(p => p.id == numericId || p.id == idVal);
+                if (targetProd && (targetProd.id !== undefined && targetProd.id !== null)) {
                     await supabaseClient.from('products').update(prodData).eq('id', targetProd.id);
-                    targetProd.hasAds = hasAds;
-                    targetProd.isWeekendOffer = isWeekendOffer;
                 } else {
                     await supabaseClient.from('products').insert([prodData]);
                 }
@@ -3093,15 +3099,6 @@
             }
 
             await fetchSupabaseData();
-            
-            if (id !== "" && !isNaN(id)) {
-                let updatedTarget = productsDatabase.find(p => p.id == id);
-                if (updatedTarget) {
-                    updatedTarget.hasAds = hasAds;
-                    updatedTarget.isWeekendOffer = isWeekendOffer;
-                }
-            }
-
             renderAdminProducts();
 
             showCustomAlert('تم حفظ البيانات وتحديث التعديلات في قاعدة البيانات (Supabase) بنجاح!', 'نجاح الحفظ');
