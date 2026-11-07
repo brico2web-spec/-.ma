@@ -862,7 +862,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.132</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.133</span>
                 </span>
             </div>
         </div>
@@ -1723,17 +1723,23 @@
                 let fetchedProducts = [];
                 const { data: prods } = await supabaseClient.from('products').select('*').order('id', { ascending: false });
                 if (prods) {
-                    fetchedProducts = prods.map(p => ({
-                        ...p,
-                        images: extractImagesAdmin(p),
-                        videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
-                        sku: p.sku || '',
-                        discountPrice: p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.discount_price !== undefined ? p.discount_price : ''),
-                        adminKey: p.adminKey || p.admin_key || 'ZAMZAM',
-                        hasAds: p.hasAds !== undefined ? p.hasAds : (p.has_ads !== undefined ? p.has_ads : (p.hasads !== undefined ? p.hasads : false)),
-                        isActive: p.isActive !== undefined ? p.isActive : (p.is_active !== undefined ? p.is_active : true),
-                        weekendOffer: p.weekendOffer !== undefined ? p.weekendOffer : (p.weekend_offer !== undefined ? p.weekend_offer : (p.weekendoffer !== undefined ? p.weekendoffer : false))
-                    }));
+                    fetchedProducts = prods.map(p => {
+                        const weekendVal = p.weekendOffer !== undefined ? p.weekendOffer : (p.weekend_offer !== undefined ? p.weekend_offer : (p.weekendoffer !== undefined ? p.weekendoffer : false));
+                        const adsVal = p.hasAds !== undefined ? p.hasAds : (p.has_ads !== undefined ? p.has_ads : (p.hasads !== undefined ? p.hasads : false));
+                        const activeVal = p.isActive !== undefined ? p.isActive : (p.is_active !== undefined ? p.is_active : true);
+
+                        return {
+                            ...p,
+                            images: extractImagesAdmin(p),
+                            videos: typeof p.videos === 'string' ? JSON.parse(p.videos) : (p.videos || []),
+                            sku: p.sku || '',
+                            discountPrice: p.discountPrice !== undefined && p.discountPrice !== null ? p.discountPrice : (p.discount_price !== undefined ? p.discount_price : ''),
+                            adminKey: p.adminKey || p.admin_key || 'ZAMZAM',
+                            hasAds: adsVal,
+                            isActive: activeVal,
+                            weekendOffer: weekendVal
+                        };
+                    });
                 }
                 productsDatabase = fetchedProducts;
 

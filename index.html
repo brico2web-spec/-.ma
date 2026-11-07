@@ -863,7 +863,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.81</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.82</span>
                     </span>
                 </div>
             </div>
@@ -1454,6 +1454,9 @@
                             isAvailable = false;
                         }
 
+                        // التحقق من خاصية عروض نهاية الأسبوع الكبرى
+                        let isWeekendOffer = p.weekendOffer !== undefined ? p.weekendOffer : (p.weekend_offer !== undefined ? p.weekend_offer : (p.weekendoffer !== undefined ? p.weekendoffer : false));
+
                         let catKey = p.category || 'various';
                         let foundCat = categoriesDatabase.find(c => c.key === catKey);
                         let catLabel = foundCat ? foundCat.name : (p.catLabel || 'متنوع');
@@ -1469,6 +1472,7 @@
                             category: catKey,
                             catLabel: catLabel,
                             is_available: isAvailable,
+                            weekendOffer: isWeekendOffer,
                             mediaItems: mediaList,
                             images: imagesList,
                             youtubeUrl: ytEmbed,
@@ -1511,6 +1515,7 @@
                             category: catKey,
                             catLabel: catLabel,
                             is_available: isAvailable,
+                            weekendOffer: true,
                             description: productDescription,
                             price: discPrice,
                             oldPrice: parseFloat(b.oldPrice || originalPrice),
@@ -1521,7 +1526,8 @@
                     });
                 }
 
-                productsDatabase = fetchedProducts;
+                // فلترة المنتجات في الصفحة الرئيسية لإخفاء المنتجات التي تتوفر على خاصية عروض نهاية الأسبوع الكبرى
+                productsDatabase = fetchedProducts.filter(p => !p.weekendOffer);
 
                 renderStoreProducts(productsDatabase);
                 renderPartnerProductsMarquee(productsDatabase);
@@ -1529,7 +1535,7 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const productIdParam = urlParams.get('product');
                 if (productIdParam) {
-                    const targetProd = productsDatabase.find(p => String(p.id) === String(productIdParam)) || blackFreeDayProducts.find(p => String(p.id) === String(productIdParam));
+                    const targetProd = fetchedProducts.find(p => String(p.id) === String(productIdParam)) || blackFreeDayProducts.find(p => String(p.id) === String(productIdParam));
                     if (targetProd) {
                         updateMetaTagsForProduct(targetProd);
                         openProductDetailObject(targetProd);
