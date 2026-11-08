@@ -541,13 +541,7 @@
         
         <!-- SECTION 1: STORE FRONT -->
         <section id="section-store" class="block space-y-8">
-            <div class="py-3 flex justify-center">
-                <div class="w-full max-w-3xl cursor-pointer group rounded-xl overflow-hidden shadow-xl transition-transform hover:scale-[1.01]" onclick="scrollToWeekendOffers()">
-                    <div class="w-full watermarked-container bg-zinc-950 flex items-center justify-center">
-                        <img src="https://www.dropbox.com/scl/fi/etmk8sohwtdfi6zayiazx/Meta_AI_884822598_1746169016472049_4568012206892948502_n_20261104_032318.jpeg?rlkey=7rcsjficeziwkrnw3a1zweek1&raw=1" alt="هدية الويكاند من BEDAL" class="w-full h-auto object-contain block mx-auto">
-                    </div>
-                </div>
-            </div>
+            <!-- تم حذف الصورة من الأعلى بناءً على الطلب -->
 
             <!-- قسم عروض نهاية الأسبوع الكبرى في الصفحة الرئيسية مباشرة -->
             <div id="weekend-offers-section" class="space-y-6 pt-4">
@@ -613,10 +607,21 @@
                     </div>
                 </div>
 
-                <div class="pt-6 border-t border-zinc-800 flex justify-center">
-                    <button id="bfd-album-whatsapp-btn" onclick="" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-4 px-8 rounded-xl transition-all shadow-xl flex items-center justify-center gap-3 text-base sm:text-lg bfd-attention-btn cursor-pointer">
-                        <i data-lucide="message-circle" class="w-6 h-6 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
-                    </button>
+                <!-- تم تحديث الأزرار هنا لتطابق الطلب (السلة + طلب عبر الواتساب) مع عبارة سارع تحت العرض -->
+                <div class="pt-6 border-t border-zinc-800 space-y-4">
+                    <div id="bfd-hurry-msg-box" class="hidden text-center">
+                        <span class="inline-block text-amber-300 text-sm sm:text-base font-extrabold tracking-wide">
+                            سارع قبل نفاد الكمية!
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button id="bfd-album-cart-btn" onclick="" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3.5 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-base sm:text-lg cursor-pointer">
+                            <i data-lucide="shopping-cart" class="w-6 h-6 text-white"></i> <span data-i18n="cart">السلة</span>
+                        </button>
+                        <button id="bfd-album-whatsapp-btn" onclick="" class="w-full bg-[#0284C7] hover:bg-[#0369A1] text-white font-black py-3.5 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-base sm:text-lg cursor-pointer">
+                            <i data-lucide="message-circle" class="w-6 h-6 text-white"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -653,6 +658,12 @@
                         </div>
                     </div>
                     <h1 id="detail-product-title" class="text-2xl sm:text-3xl font-black text-[#0F172A] leading-snug">عنوان المنتج</h1>
+                    <!-- عبارة سارع تظهر تحت العنوان فقط إذا كان المنتج محطوط فالعرض -->
+                    <div id="detail-weekend-hurry-text" class="hidden pt-1">
+                        <span class="text-amber-600 text-sm font-black tracking-wide bg-amber-100 px-3 py-1 rounded-lg border border-amber-300 inline-block">
+                            سارع قبل نفاد الكمية!
+                        </span>
+                    </div>
                 </div>
 
                 <!-- فيديو يوتيوب الخاص بالمنتج (يظهر تلقائياً إذا وُجد رابط في الإدارة أو Supabase) -->
@@ -716,20 +727,21 @@
                         </div>
                     </div>
 
+                    <!-- تم تحديث الترتيب والأزرار هنا لتكون أزرار (السلة) و(طلب عبر الواتساب) بالشكل المطلوب -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#0284C7] hover:bg-[#0369A1] text-white py-4 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md text-base">
+                        <button onclick="submitDirectProductOrderToCart()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white py-4 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md text-base cursor-pointer">
+                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                            <span data-i18n="cart">السلة</span>
+                        </button>
+                        <button onclick="submitDirectWhatsAppOrder()" class="w-full bg-[#0284C7] hover:bg-[#0369A1] text-white py-4 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md text-base cursor-pointer">
                             <i data-lucide="message-circle" class="w-6 h-6"></i>
                             <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
-                        </button>
-                        <button onclick="submitDirectProductOrder()" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white py-4 px-4 rounded-xl font-black transition-colors flex items-center justify-center gap-2 shadow-md text-base">
-                            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
-                            <span data-i18n="site_order_btn">الطلب عبر الموقع</span>
                         </button>
                     </div>
 
                     <div class="flex flex-wrap items-center justify-center gap-5 text-xs text-gray-700 font-bold pt-1">
                         <div class="flex items-center gap-1.5">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-[#0284C7]"></i> <span data-i18n="cod_badge">الدفع عند الاستلام</span>
+                            <i data-lucide="check-circle" class="w-4 h-4 text-[#0284C7]"></i> <span data-i18n="cod_badge">الدفع عند الاستلاستلام</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <i data-lucide="truck" class="w-4 h-4 text-[#F97316]"></i> <span data-i18n="fast_delivery">توصيل سريع</span>
@@ -750,7 +762,7 @@
                 <div id="detail-bottom-order-btn-box" class="pt-4">
                     <button onclick="scrollToOrderForm()" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-4 px-6 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2 text-lg bfd-attention-btn cursor-pointer">
                         <i data-lucide="shopping-bag" class="w-6 h-6 animate-bounce"></i>
-                        <span data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلام</span>
+                        <span data-i18n="order_now_cod">اطلب الآن - الدفع عند الاستلاستلام</span>
                     </button>
                 </div>
             </div>
@@ -860,7 +872,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.88</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.92</span>
                     </span>
                 </div>
             </div>
@@ -1229,13 +1241,6 @@
             }
         }
 
-        function scrollToWeekendOffers() {
-            const el = document.getElementById('weekend-offers-section');
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
-
         async function sendTelegramNotification(orderData) {
             try {
                 await fetch(MAKE_WEBHOOK_URL, {
@@ -1458,11 +1463,22 @@
                             isAvailable = false;
                         }
 
-                        let isWeekendOffer = p.weekendOffer !== undefined ? p.weekendOffer : (p.weekend_offer !== undefined ? p.weekend_offer : (p.weekendoffer !== undefined ? p.weekendoffer : (p.is_weekend_offer !== undefined ? p.is_weekend_offer : (p.black_free_day !== undefined ? p.black_free_day : (p.blackfreeday !== undefined ? p.blackfreeday : false)))));
-                        if (String(isWeekendOffer) === 'true' || isWeekendOffer === 1 || isWeekendOffer === '1') {
-                            isWeekendOffer = true;
-                        } else {
-                            isWeekendOffer = false;
+                        let isWeekendOffer = false;
+                        const possibleWeekendKeys = [p.weekendOffer, p.weekend_offer, p.weekendoffer, p.is_weekend_offer, p.black_free_day, p.blackfreeday, p.is_black_free_day];
+                        for (let val of possibleWeekendKeys) {
+                            if (val !== undefined && val !== null) {
+                                if (val === true || val === 1 || val === '1' || String(val).toLowerCase() === 'true') {
+                                    isWeekendOffer = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!isWeekendOffer) {
+                            const descStr = String(p.description || '').toLowerCase();
+                            const titleStr = String(p.title || '').toLowerCase();
+                            if (descStr.includes('عرض نهاية الأسبوع') || titleStr.includes('عرض نهاية الأسبوع')) {
+                                isWeekendOffer = true;
+                            }
                         }
 
                         let catKey = p.category || 'various';
@@ -1543,11 +1559,20 @@
                 });
 
                 blackFreeDayProducts = loadedBfdProducts;
-                productsDatabase = fetchedProducts;
+                
+                const bfdIds = new Set(blackFreeDayProducts.map(b => String(b.id)));
+                const bfdTitles = new Set(blackFreeDayProducts.map(b => b.title ? b.title.trim().toLowerCase() : ''));
+                
+                productsDatabase = fetchedProducts.filter(p => {
+                    if (p.weekendOffer === true) return false;
+                    if (bfdIds.has(String(p.id))) return false;
+                    if (p.title && bfdTitles.has(p.title.trim().toLowerCase())) return false;
+                    return true;
+                });
 
                 renderStoreProducts(productsDatabase);
                 renderWeekendOffersSection();
-                renderPartnerProductsMarquee(productsDatabase);
+                renderPartnerProductsMarquee(fetchedProducts);
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const productIdParam = urlParams.get('product');
@@ -1849,9 +1874,20 @@
                 }
             }
 
+            // تحديث أزرار ألبوم عرض الأسبوع (السلة + الواتساب)
+            const cartBtn = document.getElementById('bfd-album-cart-btn');
             const waBtn = document.getElementById('bfd-album-whatsapp-btn');
+            const hurryMsgBox = document.getElementById('bfd-hurry-msg-box');
+
+            if (cartBtn) {
+                const firstImg = mediaItems[0] ? mediaItems[0].url : '';
+                cartBtn.setAttribute('onclick', `addToCart('${product.title.replace(/'/g, "\\'")}', ${product.price}, ${product.oldPrice}, '${firstImg}'); toggleCartDrawer();`);
+            }
             if (waBtn) {
                 waBtn.setAttribute('onclick', `orderBfdViaWhatsApp('${product.title.replace(/'/g, "\\'")}', '${product.price.toFixed(2)}')`);
+            }
+            if (hurryMsgBox) {
+                hurryMsgBox.classList.remove('hidden');
             }
 
             const container = document.getElementById('bfd-album-images-container');
@@ -1897,6 +1933,12 @@
 
             const message = `السلام عليكم، أريد طلب هذا المنتج:\n\n🛍️ *المنتج:* ${currentProduct.title}\n💰 *الثمن:* ${currentProduct.price.toFixed(2)} د.م\n\n👤 *الإسم الكامل:* ${name}\n📞 *رقم الهاتف:* ${phone}\n📍 *المدينة:* ${city}`;
             window.open(`https://wa.me/212601749553?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        function submitDirectProductOrderToCart() {
+            const firstImg = currentProduct.images && currentProduct.images[0] ? currentProduct.images[0] : '';
+            addToCart(currentProduct.title, currentProduct.price, currentProduct.oldPrice, firstImg);
+            toggleCartDrawer();
         }
 
         async function submitDirectProductOrder() {
@@ -2137,9 +2179,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-5 pt-0 mt-auto flex-shrink-0 bg-yellow-50" onclick="event.stopPropagation()">
-                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3.5 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2.5 text-sm sm:text-base bfd-attention-btn cursor-pointer">
-                                    <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
+                            <div class="p-5 pt-0 mt-auto flex-shrink-0 bg-yellow-50 grid grid-cols-2 gap-2.5" onclick="event.stopPropagation()">
+                                <button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-2 text-sm cursor-pointer">
+                                    <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
+                                </button>
+                                <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#0284C7] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#0369A1] transition-colors shadow-md flex items-center justify-center gap-2 text-sm cursor-pointer">
+                                    <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                                 </button>
                             </div>
                         </div>
@@ -2215,6 +2260,7 @@
             const weekendBadge = document.getElementById('detail-weekend-badge');
             const detailCardWrapper = document.getElementById('detail-card-wrapper');
             const detailImgEl = document.getElementById('detail-product-img');
+            const weekendHurryText = document.getElementById('detail-weekend-hurry-text');
 
             if (isWeekend) {
                 if (detailCardWrapper) {
@@ -2222,12 +2268,14 @@
                     detailCardWrapper.classList.remove('bg-white', 'border-amber-200');
                 }
                 if (weekendBadge) weekendBadge.classList.remove('hidden');
+                if (weekendHurryText) weekendHurryText.classList.remove('hidden');
             } else {
                 if (detailCardWrapper) {
                     detailCardWrapper.classList.remove('bg-yellow-50', 'border-4', 'border-amber-400', 'shadow-2xl');
                     detailCardWrapper.classList.add('bg-white', 'border-amber-200');
                 }
                 if (weekendBadge) weekendBadge.classList.add('hidden');
+                if (weekendHurryText) weekendHurryText.classList.add('hidden');
             }
 
             if (!currentProduct.is_available) {
