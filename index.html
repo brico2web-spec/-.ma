@@ -946,7 +946,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.94</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.95</span>
                     </span>
                 </div>
             </div>
@@ -1340,7 +1340,7 @@
         let productsDatabase = [];
         let blackFreeDayProducts = [];
         let currentPage = 1;
-        const itemsPerPage = 8; // تم التعديل هنا ليصبح 8 بطاقات في الصفحة الواحدة
+        const itemsPerPage = 8;
         let currentFilterCategory = 'all';
 
         let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', mediaItems: [], currentMediaIndex: 0, category: '', description: '', sku: '', is_available: true, youtubeUrl: '', weekendOffer: false };
@@ -1354,14 +1354,26 @@
         async function checkAndShowWelcomeAd() {
             let adImgUrl = 'https://tajercod.com/media/7755/Sb3dwl70Wf2KxCH3qJxX1qbiqEWr18B1XibK5IWA.png';
             try {
-                const { data, error } = await supabaseClient.from('settings').select('value').eq('key', 'popup_ad_img').single();
-                if (!error && data && data.value) {
-                    let clean = data.value.trim();
-                    if (clean.includes('dropbox.com')) {
-                        clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '').replace('&dl=0', '');
-                        if (!clean.includes('dl=1') && !clean.includes('raw=1')) clean += (clean.includes('?') ? '&' : '?') + 'raw=1';
+                const { data: settingsList, error } = await supabaseClient.from('settings').select('*');
+                if (!error && settingsList) {
+                    let adImgSetting = settingsList.find(s => s.key === 'popup_ad_img');
+                    let adStatusSetting = settingsList.find(s => s.key === 'popup_ad_status' || s.key === 'popup_ad_active' || s.key === 'popup_status');
+
+                    if (adStatusSetting) {
+                        let stVal = adStatusSetting.value;
+                        if (stVal === false || stVal === 0 || String(stVal).toLowerCase() === 'false' || String(stVal).toLowerCase() === '0' || String(stVal).toLowerCase() === 'disabled' || String(stVal).toLowerCase() === 'معطل') {
+                            return; // الإعلان معطل تماماً، لا تظهر النافذة
+                        }
                     }
-                    adImgUrl = clean;
+
+                    if (adImgSetting && adImgSetting.value) {
+                        let clean = adImgSetting.value.trim();
+                        if (clean.includes('dropbox.com')) {
+                            clean = clean.replace('www.dropbox.com', 'dl.dropboxusercontent.com').replace('?dl=0', '').replace('&dl=0', '');
+                            if (!clean.includes('dl=1') && !clean.includes('raw=1')) clean += (clean.includes('?') ? '&' : '?') + 'raw=1';
+                        }
+                        adImgUrl = clean;
+                    }
                 }
             } catch(e) {}
 
