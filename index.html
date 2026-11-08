@@ -857,13 +857,13 @@
                         <a href="https://www.instagram.com/bedal_online_shop/" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
                             <img src="https://www.dropbox.com/scl/fi/86073utombw0040esp03e/Meta_AI_4_instagram_1024_20261105_174050.png?rlkey=e3vkkv6v6gupblla1dp0ps4xo&st=3328469h&raw=1" alt="Instagram" class="w-7 h-7 object-contain">
                         </a>
-                        <a href="https://www.tiktok.com/@bedalonlinestor" target="_blank" aria-label="TikTok" class="hover:scale-110 transition-transform flex items-center justify-center">
+                        <a href="https://www.tiktok.com/@bedalonlinestor" target="_blank" aria-label="Instagram" class="hover:scale-110 transition-transform flex items-center justify-center">
                             <img src="https://www.dropbox.com/scl/fi/6880k7lxqnwv4se4z27yf/Meta_AI_4_music_1024_20261105_174055.png?rlkey=jzx0evote70f6mjfwe9im6iv4&st=r6tc9dc3&raw=1" alt="TikTok" class="w-7 h-7 object-contain">
                         </a>
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.85</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.86</span>
                     </span>
                 </div>
             </div>
@@ -1487,9 +1487,10 @@
                     });
                 }
 
+                let loadedBfdProducts = [];
                 const { data: bfd } = await supabaseClient.from('black_free_day').select('*');
                 if (bfd) {
-                    blackFreeDayProducts = bfd.map(b => {
+                    loadedBfdProducts = bfd.map(b => {
                         let mediaList = extractMediaFromRecord(b);
                         let matchedNormalProd = fetchedProducts.find(p => p.title && b.title && p.title.trim().toLowerCase() === b.title.trim().toLowerCase());
                         if (mediaList.length <= 1 && matchedNormalProd && matchedNormalProd.mediaItems.length > 1) {
@@ -1534,12 +1535,15 @@
                 // دمج المنتجات المفعلة لعروض نهاية الأسبوع الكبرى من جدول المنتجات الرئيسي
                 let weekendProdsFromProducts = fetchedProducts.filter(p => p.weekendOffer === true);
                 weekendProdsFromProducts.forEach(wp => {
-                    if (!blackFreeDayProducts.some(b => String(b.id) === String(wp.id) || (b.title && wp.title && b.title.trim().toLowerCase() === wp.title.trim().toLowerCase()))) {
-                        blackFreeDayProducts.push(wp);
+                    if (!loadedBfdProducts.some(b => String(b.id) === String(wp.id) || (b.title && wp.title && b.title.trim().toLowerCase() === wp.title.trim().toLowerCase()))) {
+                        loadedBfdProducts.push(wp);
                     }
                 });
 
-                productsDatabase = fetchedProducts;
+                blackFreeDayProducts = loadedBfdProducts;
+
+                // استثناء منتجات عروض نهاية الأسبوع من الواجهة الرئيسية (Store Front) بحيث لا تظهر إلا في صفحة عروض نهاية الأسبوع الكبرى
+                productsDatabase = fetchedProducts.filter(p => p.weekendOffer !== true);
 
                 renderStoreProducts(productsDatabase);
                 renderPartnerProductsMarquee(productsDatabase);
