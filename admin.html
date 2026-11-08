@@ -755,12 +755,12 @@
                     </div>
                 </div>
 
-                <!-- زر اختيار عروض نهاية الأسبوع داخل نموذج المنتج -->
+                <!-- زر اختيار عروض نهاية الأسبوع داخل نموذج المنتج (مرتبط بقاعدة البيانات) -->
                 <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
                     <div class="flex items-center gap-3">
                         <input type="checkbox" id="prod-form-weekend" class="w-5 h-5 accent-amber-600 rounded cursor-pointer">
                         <label for="prod-form-weekend" class="font-bold text-amber-900 text-xs sm:text-sm cursor-pointer select-none flex items-center gap-1.5">
-                            <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> هل هذا المنتج ضمن "عروض نهاية الأسبوع"؟
+                            <i data-lucide="zap" class="w-4 h-4 text-amber-500"></i> تفعيل المنتج ضمن "عروض نهاية الأسبوع الكبرى" (يتغير لونه للأصفر مع إشارة العرض في الرئيسية)
                         </label>
                     </div>
                 </div>
@@ -863,7 +863,7 @@
             <div>© 2026 <span data-i18n="footer_rights">جميع الحقوق محفوظة لـ</span> <span class="font-semibold text-gray-700">bedal.online</span>.</div>
             <div class="flex items-center gap-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.148</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> <span data-i18n="footer_version">الإصدار المعدل:</span> <span class="text-indigo-600 font-bold">إصدار v 3.9.150</span>
                 </span>
             </div>
         </div>
@@ -2316,10 +2316,12 @@
                     let rowBgClass = '';
                     if (!isAvailable) {
                         rowBgClass = 'bg-gray-200 text-gray-500 opacity-80';
+                    } else if (prod.isWeekendOffer) {
+                        rowBgClass = 'bg-amber-50/80 border-l-4 border-amber-500';
                     }
 
                     const hasAdsBadge = prod.hasAds ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700"><i data-lucide="badge-dollar-sign" class="w-3 h-3"></i> ADS مفعل</span>' : '';
-                    const isWeekendBadge = prod.isWeekendOffer ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700"><i data-lucide="zap" class="w-3 h-3"></i> عرض نهاية الأسبوع</span>' : '';
+                    const isWeekendBadge = prod.isWeekendOffer ? '<span class="mr-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900 animate-pulse"><i data-lucide="zap" class="w-3 h-3 text-amber-600"></i> عرض نهاية الأسبوع (أصفر)</span>' : '';
 
                     html += `
                         <tr class="${rowBgClass}">
@@ -3120,7 +3122,7 @@
                 await fetchSupabaseData();
                 renderAdminProducts();
                 toggleProductModal();
-                showCustomAlert('تم حفظ البيانات وتحديث التعديلات في قاعدة البيانات (Supabase) بنجاح!', 'نجاح الحفظ');
+                showCustomAlert('تم حفظ البيانات وتحديث التعديلات في قاعدة البيانات (Supabase) وعروض نهاية الأسبوع بنجاح!', 'نجاح الحفظ');
             } catch (err) {
                 console.error("خطأ أثناء حفظ المنتج في Supabase:", err);
                 showCustomAlert('حدث خطأ أثناء الاتصال بقاعدة البيانات Supabase: ' + (err.message || err), 'خطأ في الحفظ');
