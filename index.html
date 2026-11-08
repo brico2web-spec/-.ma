@@ -955,7 +955,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.96</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.97</span>
                     </span>
                 </div>
             </div>
@@ -1547,6 +1547,40 @@
             return cleanUrl;
         }
 
+        // دالة الفلترة لاستبعاد منتجات إدارة كوسميتيك ومنتجات صفحة produits
+        function shouldExcludeProduct(p) {
+            if (!p) return false;
+            
+            // الفحص عبر الحقول المختلفة التي تدل على مصدر أو اسم إدارة كوسميتيك أو صفحة produits
+            const rawFields = [
+                p.title,
+                p.description,
+                p.category,
+                p.catLabel,
+                p.vendor,
+                p.source,
+                p.admin,
+                p.store_name,
+                p.page
+            ];
+
+            for (let field of rawFields) {
+                if (field && typeof field === 'string') {
+                    const lower = field.toLowerCase();
+                    if (
+                        lower.includes('كوسميتيك') || 
+                        lower.includes('cosmetic') || 
+                        lower.includes('cosmetics') ||
+                        lower.includes('proutuits') || 
+                        lower.includes('produits')
+                    ) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         async function fetchSupabaseStoreData() {
             try {
                 try {
@@ -1665,12 +1699,14 @@
                     }
                 });
 
-                blackFreeDayProducts = loadedBfdProducts;
+                // تصفية واستبعاد منتجات إدارة كوسميتيك وصفحة proutuits نهائياً
+                blackFreeDayProducts = loadedBfdProducts.filter(b => !shouldExcludeProduct(b));
                 
                 const bfdIds = new Set(blackFreeDayProducts.map(b => String(b.id)));
                 const bfdTitles = new Set(blackFreeDayProducts.map(b => b.title ? b.title.trim().toLowerCase() : ''));
                 
                 productsDatabase = fetchedProducts.filter(p => {
+                    if (shouldExcludeProduct(p)) return false;
                     if (p.weekendOffer === true) return false;
                     if (bfdIds.has(String(p.id))) return false;
                     if (p.title && bfdTitles.has(p.title.trim().toLowerCase())) return false;
@@ -1679,13 +1715,13 @@
 
                 renderStoreProducts(productsDatabase);
                 renderWeekendOffersSection();
-                renderPartnerProductsMarquee(fetchedProducts);
+                renderPartnerProductsMarquee(productsDatabase);
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const productIdParam = urlParams.get('product');
                 if (productIdParam) {
                     const targetProd = fetchedProducts.find(p => String(p.id) === String(productIdParam)) || blackFreeDayProducts.find(p => String(p.id) === String(productIdParam));
-                    if (targetProd) {
+                    if (targetProd && !shouldExcludeProduct(targetProd)) {
                         updateMetaTagsForProduct(targetProd);
                         if (targetProd.weekendOffer) {
                             openBfdProductModal(targetProd.id);
