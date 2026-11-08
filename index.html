@@ -540,13 +540,29 @@
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         <!-- SECTION 1: STORE FRONT -->
-        <section id="section-store" class="block space-y-0">
+        <section id="section-store" class="block space-y-8">
             <div class="py-3 flex justify-center">
-                <div class="w-full max-w-3xl cursor-pointer group rounded-xl overflow-hidden shadow-xl transition-transform hover:scale-[1.01]" onclick="openBlackFreeDayPage()">
+                <div class="w-full max-w-3xl cursor-pointer group rounded-xl overflow-hidden shadow-xl transition-transform hover:scale-[1.01]" onclick="scrollToWeekendOffers()">
                     <div class="w-full watermarked-container bg-zinc-950 flex items-center justify-center">
                         <img src="https://www.dropbox.com/scl/fi/etmk8sohwtdfi6zayiazx/Meta_AI_884822598_1746169016472049_4568012206892948502_n_20261104_032318.jpeg?rlkey=7rcsjficeziwkrnw3a1zweek1&raw=1" alt="هدية الويكاند من BEDAL" class="w-full h-auto object-contain block mx-auto">
                     </div>
                 </div>
+            </div>
+
+            <!-- قسم عروض نهاية الأسبوع الكبرى في الصفحة الرئيسية مباشرة -->
+            <div id="weekend-offers-section" class="space-y-6 pt-4">
+                <div class="bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-600 rounded-2xl shadow-xl p-6 sm:p-8 text-zinc-950 text-center space-y-3 border-2 border-amber-300">
+                    <div class="inline-flex items-center gap-2 bg-zinc-950 text-amber-400 font-black px-4 py-1.5 rounded-xl text-xs sm:text-sm uppercase tracking-wider shadow-md">
+                        <i data-lucide="flame" class="w-4 h-4 text-amber-400"></i> <span data-i18n="weekend_offers">عروض نهاية الأسبوع الكبرى</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-4xl font-black tracking-tight uppercase">
+                        عروض نهاية الأسبوع الكبرى -70%
+                    </h2>
+                    <p class="text-zinc-900 text-sm sm:text-base font-bold max-w-xl mx-auto" data-i18n="bfd_desc_header">
+                        المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" id="black-free-day-products-grid"></div>
             </div>
 
             <div class="w-full flex items-center justify-center my-6">
@@ -565,31 +581,11 @@
             </div>
         </section>
 
-        <!-- SECTION: BLACK FREE DAY PAGE -->
-        <section id="section-black-free-day" class="hidden space-y-8">
-            <button onclick="switchTab('store')" class="inline-flex items-center gap-2.5 text-base font-bold text-amber-800 hover:text-amber-950 bg-amber-50 px-5 py-2.5 rounded-xl transition-colors border border-amber-200 shadow-sm">
-                <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                <span data-i18n="back_to_home">العودة للرئيسية</span>
-            </button>
-            <div class="bg-gradient-to-r from-zinc-900 via-neutral-900 to-black rounded-2xl border-2 border-amber-500 shadow-2xl p-8 sm:p-12 text-white relative overflow-hidden text-center space-y-5">
-                <div class="inline-flex items-center gap-2 bg-amber-500 text-zinc-950 font-black px-5 py-2 rounded-xl text-sm uppercase tracking-widest shadow-lg animate-bounce">
-                    <i data-lucide="flame" class="w-5 h-5"></i> <span data-i18n="weekend_offers">عروض نهاية الأسبوع الكبرى</span>
-                </div>
-                <h1 class="text-3xl sm:text-5xl font-black tracking-wider bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent uppercase drop-shadow-md leading-tight">
-                    عروض نهاية الأسبوع الكبرى -70%
-                </h1>
-                <p class="text-amber-100 text-lg sm:text-xl font-bold max-w-2xl mx-auto leading-relaxed" data-i18n="bfd_desc_header">
-                    المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!
-                </p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch" id="black-free-day-products-grid"></div>
-        </section>
-
         <!-- SECTION: BFD ALBUM PAGE -->
         <section id="section-bfd-album" class="hidden space-y-6 max-w-3xl mx-auto">
             <div>
-                <button onclick="switchTab('black_free_day')" class="inline-flex items-center gap-2 text-base font-bold text-white bg-zinc-900 hover:bg-black px-6 py-3 rounded-xl shadow-lg border border-amber-500/50 transition-all">
-                    <i data-lucide="arrow-right" class="w-5 h-5 text-amber-400"></i> <span data-i18n="back_to_offers">العودة لقائمة العروض</span>
+                <button onclick="switchTab('store')" class="inline-flex items-center gap-2 text-base font-bold text-white bg-zinc-900 hover:bg-black px-6 py-3 rounded-xl shadow-lg border border-amber-500/50 transition-all cursor-pointer">
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-amber-400"></i> <span data-i18n="back_to_offers">العودة للرئيسية</span>
                 </button>
             </div>
 
@@ -610,7 +606,7 @@
                     <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-4">
                         <p id="bfd-album-description" class="text-zinc-200 text-base sm:text-lg leading-relaxed whitespace-pre-line font-medium">وصف المنتج هنا...</p>
                         <div class="flex items-center justify-between pt-2">
-                            <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-sm sm:text-base underline focus:outline-none" data-i18n="more">
+                            <button id="bfd-desc-toggle-btn" onclick="toggleBfdAlbumDescription()" class="hidden text-amber-400 hover:text-amber-300 font-bold text-sm sm:text-base underline focus:outline-none cursor-pointer" data-i18n="more">
                                 المزيد...
                             </button>
                         </div>
@@ -646,11 +642,12 @@
                 </button>
             </div>
 
-            <div class="bg-white rounded-2xl border border-amber-200 shadow-xl overflow-hidden p-6 sm:p-8 space-y-6">
+            <div id="detail-card-wrapper" class="bg-white rounded-2xl border border-amber-200 shadow-xl overflow-hidden p-6 sm:p-8 space-y-6 transition-all">
                 
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
                         <span id="detail-unavailable-badge" class="hidden bg-gray-800 text-white text-sm font-black px-4 py-1.5 rounded-full shadow-md uppercase tracking-wider">غير متاح حالياً</span>
+                        <span id="detail-weekend-badge" class="hidden bg-amber-500 text-zinc-950 text-sm font-black px-4 py-1.5 rounded-full shadow-md uppercase tracking-wider">عرض نهاية الأسبوع</span>
                         <div class="flex items-center justify-end text-sm font-bold px-3.5 py-1.5 rounded-xl border ms-auto shadow-xs" id="detail-product-cat-container">
                             <span id="detail-product-cat" class="font-extrabold">متنوع</span>
                         </div>
@@ -863,7 +860,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.86</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.88</span>
                     </span>
                 </div>
             </div>
@@ -940,7 +937,7 @@
                 back_to_home: "العودة للرئيسية",
                 weekend_offers: "عروض نهاية الأسبوع الكبرى",
                 bfd_desc_header: "المنتجات الحصرية ليوم السبت والأحد .. تخفيضات جنونية غير مسبوقة بانتظارك!",
-                back_to_offers: "العودة لقائمة العروض",
+                back_to_offers: "العودة للقائمة",
                 exclusive_album: "🔥 ألبوم صور المنتج الحصري",
                 product_desc: "وصف المنتج",
                 more: "المزيد...",
@@ -1032,7 +1029,7 @@
                 back_to_home: "Retour à l'accueil",
                 weekend_offers: "Super Soldes du Weekend",
                 bfd_desc_header: "Produits exclusifs du weekend .. Des réductions folles vous attendent !",
-                back_to_offers: "Retour aux offres",
+                back_to_offers: "Retour",
                 exclusive_album: "🔥 Album photo exclusif du produit",
                 product_desc: "Description du produit",
                 more: "Plus...",
@@ -1124,7 +1121,7 @@
                 back_to_home: "Back to Home",
                 weekend_offers: "Weekend Mega Deals",
                 bfd_desc_header: "Exclusive Saturday & Sunday products .. Unprecedented crazy discounts await you!",
-                back_to_offers: "Back to Offers",
+                back_to_offers: "Back",
                 exclusive_album: "🔥 Exclusive Product Photo Album",
                 product_desc: "Product Description",
                 more: "More...",
@@ -1232,6 +1229,13 @@
             }
         }
 
+        function scrollToWeekendOffers() {
+            const el = document.getElementById('weekend-offers-section');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
         async function sendTelegramNotification(orderData) {
             try {
                 await fetch(MAKE_WEBHOOK_URL, {
@@ -1249,7 +1253,7 @@
         const itemsPerPage = 10;
         let currentFilterCategory = 'all';
 
-        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', mediaItems: [], currentMediaIndex: 0, category: '', description: '', sku: '', is_available: true, youtubeUrl: '' };
+        let currentProduct = { title: '', price: '', oldPrice: '', discountBadge: '', mediaItems: [], currentMediaIndex: 0, category: '', description: '', sku: '', is_available: true, youtubeUrl: '', weekendOffer: false };
         let fullBfdDescriptionText = '';
         let isBfdDescExpanded = false;
 
@@ -1454,7 +1458,6 @@
                             isAvailable = false;
                         }
 
-                        // التحقق من خاصية عروض نهاية الأسبوع الكبرى (دعم لكافة التسميات المحتملة في قاعدة البيانات وSupabase)
                         let isWeekendOffer = p.weekendOffer !== undefined ? p.weekendOffer : (p.weekend_offer !== undefined ? p.weekend_offer : (p.weekendoffer !== undefined ? p.weekendoffer : (p.is_weekend_offer !== undefined ? p.is_weekend_offer : (p.black_free_day !== undefined ? p.black_free_day : (p.blackfreeday !== undefined ? p.blackfreeday : false)))));
                         if (String(isWeekendOffer) === 'true' || isWeekendOffer === 1 || isWeekendOffer === '1') {
                             isWeekendOffer = true;
@@ -1532,7 +1535,6 @@
                     });
                 }
 
-                // دمج المنتجات المفعلة لعروض نهاية الأسبوع الكبرى من جدول المنتجات الرئيسي
                 let weekendProdsFromProducts = fetchedProducts.filter(p => p.weekendOffer === true);
                 weekendProdsFromProducts.forEach(wp => {
                     if (!loadedBfdProducts.some(b => String(b.id) === String(wp.id) || (b.title && wp.title && b.title.trim().toLowerCase() === wp.title.trim().toLowerCase()))) {
@@ -1541,11 +1543,10 @@
                 });
 
                 blackFreeDayProducts = loadedBfdProducts;
-
-                // استثناء منتجات عروض نهاية الأسبوع من الواجهة الرئيسية (Store Front) بحيث لا تظهر إلا في صفحة عروض نهاية الأسبوع الكبرى
-                productsDatabase = fetchedProducts.filter(p => p.weekendOffer !== true);
+                productsDatabase = fetchedProducts;
 
                 renderStoreProducts(productsDatabase);
+                renderWeekendOffersSection();
                 renderPartnerProductsMarquee(productsDatabase);
 
                 const urlParams = new URLSearchParams(window.location.search);
@@ -1638,6 +1639,7 @@
                 const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
                 const firstImg = productImages[0];
                 const isAvailable = (p.is_available !== false);
+                const isWeekend = p.weekendOffer === true;
 
                 let catKey = p.category || 'various';
                 let foundCat = categoriesDatabase.find(c => c.key === catKey);
@@ -1658,19 +1660,22 @@
                     storeThumbnailsHtml += `</div>`;
                 }
 
-                const cardBgClass = isAvailable ? 'bg-white' : 'bg-gray-200 opacity-75 grayscale';
+                const cardBgClass = isAvailable 
+                    ? (isWeekend ? 'bg-yellow-50 border-amber-400 border-2 shadow-xl' : 'bg-white') 
+                    : 'bg-gray-200 opacity-75 grayscale';
                 const imgFilterClass = isAvailable ? '' : 'grayscale';
                 const titleColorClass = isAvailable ? 'text-[#0F172A] hover:text-[#F97316]' : 'text-gray-800 font-bold';
                 const unavailableBadge = !isAvailable ? `<span class="absolute top-3 right-3 z-20 bg-gray-900 text-white text-sm font-black px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider">غير متاح</span>` : '';
+                const weekendBadge = (isAvailable && isWeekend) ? `<span class="absolute top-3 right-3 z-20 bg-amber-500 text-zinc-950 text-xs font-black px-3.5 py-1 rounded-full shadow-lg uppercase tracking-wider">عرض نهاية الأسبوع</span>` : '';
 
                 let cartBtnHtml = '';
                 let waBtnHtml = '';
 
                 if (isAvailable) {
-                    cartBtnHtml = `<button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-2 text-sm">
+                    cartBtnHtml = `<button onclick="addToCart('${p.title.replace(/'/g, "\\'")}', ${p.price}, ${p.oldPrice}, '${firstImg}')" class="w-full bg-[#F97316] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#EA580C] transition-colors shadow-md flex items-center justify-center gap-2 text-sm cursor-pointer">
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i> <span data-i18n="cart">للسلة</span>
                     </button>`;
-                    waBtnHtml = `<button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#0284C7] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#0369A1] transition-colors shadow-md flex items-center justify-center gap-2 text-sm">
+                    waBtnHtml = `<button onclick="openWhatsAppModal('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#0284C7] text-white py-3 px-3 rounded-xl font-extrabold hover:bg-[#0369A1] transition-colors shadow-md flex items-center justify-center gap-2 text-sm cursor-pointer">
                         <i data-lucide="message-circle" class="w-4 h-4"></i> <span data-i18n="whatsapp_order_btn">طلب عبر الواتساب</span>
                     </button>`;
                 } else {
@@ -1685,6 +1690,7 @@
                 html += `
                     <div class="product-item ${cardBgClass} rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group relative flex flex-col justify-between cursor-pointer h-full" onclick="openProductDetailObject(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                         ${unavailableBadge}
+                        ${weekendBadge}
                         <div class="flex flex-col flex-grow">
                             <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-3 h-80 sm:h-96 flex-shrink-0">
                                 <img id="store-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-contain store-card-img group-hover:scale-105 transition-transform duration-300 ${imgFilterClass}">
@@ -1989,7 +1995,7 @@
                             <span class="text-sm font-black text-gray-900">${item.quantity}</span>
                             <button onclick="cart[${index}].quantity -= 1; if(cart[${index}].quantity<=0) cart.splice(${index},1); updateCartUI();" class="text-rose-600 font-black text-base px-1">-</button>
                         </div>
-                        <button onclick="cart.splice(${index},1); updateCartUI();" class="text-rose-500 hover:text-rose-700 p-1.5"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                        <button onclick="cart.splice(${index},1); updateCartUI();" class="text-rose-500 hover:text-rose-700 p-1.5 cursor-pointer"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                     </div>
                 `;
             });
@@ -2028,7 +2034,6 @@
             document.getElementById('section-store').classList.add('hidden');
             document.getElementById('section-product-detail').classList.add('hidden');
             document.getElementById('section-vendor-store').classList.add('hidden');
-            document.getElementById('section-black-free-day').classList.add('hidden');
             document.getElementById('section-bfd-album').classList.add('hidden');
 
             let cleanOrigin = window.location.origin;
@@ -2055,12 +2060,6 @@
 
             if (tabName === 'vendor') {
                 document.getElementById('section-vendor-store').classList.remove('hidden');
-            } else if (tabName === 'black_free_day') {
-                document.getElementById('section-black-free-day').classList.remove('hidden');
-                if (window.history.pushState) window.history.pushState({path: baseUrl}, '', baseUrl);
-                document.getElementById('meta-og-title').setAttribute('content', 'عروض نهاية الأسبوع الكبرى - bedal.online');
-                document.getElementById('meta-og-desc').setAttribute('content', 'اكتشف تخفيضات نهاية الأسبوع الجنونية حتى -70% مع الدفع عند الاستلام.');
-                if (metaUrlEl) metaUrlEl.setAttribute('content', baseUrl);
             } else if (tabName === 'bfd-album') {
                 document.getElementById('section-bfd-album').classList.remove('hidden');
             } else if (tabName !== 'detail') {
@@ -2074,11 +2073,12 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function openBlackFreeDayPage() {
+        function renderWeekendOffersSection() {
             const grid = document.getElementById('black-free-day-products-grid');
+            if(!grid) return;
             let html = '';
             if(blackFreeDayProducts.length === 0) {
-                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-12 text-lg font-bold">لا توجد عروض نهاية الأسبوع حالياً.</p>';
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-6 text-base font-bold">لا توجد عروض نهاية الأسبوع حالياً.</p>';
             } else {
                 blackFreeDayProducts.forEach(p => {
                     const productImages = p.images?.length > 0 ? p.images : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
@@ -2091,7 +2091,7 @@
 
                     let bfdThumbnailsHtml = '';
                     if (productImages.length > 1) {
-                        bfdThumbnailsHtml = `<div class="flex items-center gap-2 overflow-x-auto py-2 px-3.5 bg-gray-50 border-t border-gray-200 flex-shrink-0">`;
+                        bfdThumbnailsHtml = `<div class="flex items-center gap-2 overflow-x-auto py-2 px-3.5 bg-yellow-50 border-t border-yellow-200 flex-shrink-0">`;
                         productImages.forEach((imgUrl, imgIdx) => {
                             const isFirst = imgIdx === 0;
                             bfdThumbnailsHtml += `
@@ -2104,19 +2104,25 @@
                     }
 
                     html += `
-                        <div class="bg-white rounded-2xl border-2 border-amber-400 shadow-xl overflow-hidden group relative flex flex-col justify-between bfd-glowing-card transform hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full" onclick="openBfdProductModal('${p.id}')">
-                            <div class="flex flex-col flex-grow">
-                                <div class="bg-gray-100 relative overflow-hidden flex items-center justify-center p-3 h-80 sm:h-96 flex-shrink-0">
+                        <div class="bg-yellow-50 rounded-2xl border-4 border-amber-400 shadow-2xl overflow-hidden group relative flex flex-col justify-between transform hover:scale-[1.02] transition-all duration-300 cursor-pointer h-full" onclick="openBfdProductModal('${p.id}')">
+                            <span class="absolute top-3 left-3 z-20 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg uppercase tracking-wider animate-pulse">
+                                -70%
+                            </span>
+                            <span class="absolute top-3 right-3 z-20 bg-amber-500 text-zinc-950 text-xs font-black px-3.5 py-1 rounded-full shadow-lg uppercase tracking-wider">
+                                عرض نهاية الأسبوع
+                            </span>
+                            <div class="flex flex-col flex-grow pt-10">
+                                <div class="bg-white relative overflow-hidden flex items-center justify-center p-3 h-80 sm:h-96 flex-shrink-0 border-b border-yellow-200">
                                     <img id="bfd-main-img-${p.id}" src="${firstImg}" class="w-full h-full object-contain bfd-card-img">
                                 </div>
                                 ${bfdThumbnailsHtml}
-                                <div class="p-5 space-y-3 flex flex-col flex-grow justify-between">
+                                <div class="p-5 space-y-3 flex flex-col flex-grow justify-between bg-yellow-50/90">
                                     <div class="space-y-2">
                                         <span class="text-xs font-bold px-3 py-1.5 rounded-xl inline-block border shadow-xs" style="background-color: ${catColor}15; color: ${catColor}; border-color: ${catColor}40;">${catLabel}</span>
                                         <h3 class="font-extrabold text-[#0F172A] text-lg sm:text-xl leading-snug line-clamp-2 min-h-[3.5rem] flex items-center">${p.title}</h3>
-                                        <p class="text-gray-600 text-sm line-clamp-2 font-medium">${p.description || ''}</p>
+                                        <p class="text-gray-700 text-sm line-clamp-2 font-medium">${p.description || ''}</p>
                                     </div>
-                                    <div class="p-3 bg-orange-50/75 border border-orange-200 rounded-xl flex items-center justify-between mt-auto shadow-xs">
+                                    <div class="p-3 bg-amber-100/90 border border-amber-300 rounded-xl flex items-center justify-between mt-auto shadow-xs">
                                         <div>
                                             <span class="text-[11px] font-bold text-[#0284C7] block" data-i18n="total_after_disc">ثمن الصدمة الحصري:</span>
                                             <div class="flex items-baseline gap-1">
@@ -2131,7 +2137,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="p-5 pt-0 mt-auto flex-shrink-0" onclick="event.stopPropagation()">
+                            <div class="p-5 pt-0 mt-auto flex-shrink-0 bg-yellow-50" onclick="event.stopPropagation()">
                                 <button onclick="orderBfdViaWhatsApp('${p.title.replace(/'/g, "\\'")}', '${p.price.toFixed(2)}')" class="w-full bg-[#F97316] hover:bg-[#EA580C] text-white font-black py-3.5 px-4 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2.5 text-sm sm:text-base bfd-attention-btn cursor-pointer">
                                     <i data-lucide="message-circle" class="w-5 h-5 text-white fill-white animate-bounce"></i> <span data-i18n="hurry_whatsapp">سارع قبل نفاد الكمية! إضغط للإرسال عبر الواتساب</span>
                                 </button>
@@ -2142,7 +2148,6 @@
             }
             grid.innerHTML = html;
             lucide.createIcons();
-            switchTab('black_free_day');
             applyTranslations();
         }
 
@@ -2153,6 +2158,7 @@
             let foundCat = categoriesDatabase.find(c => c.key === catKey);
             let catLabel = foundCat ? foundCat.name : (p.catLabel || 'عام');
             let catColor = foundCat && foundCat.color ? foundCat.color : '#6366f1';
+            let isWeekend = p.weekendOffer === true;
 
             currentProduct = {
                 id: p.id || '',
@@ -2166,7 +2172,8 @@
                 categoryColor: catColor,
                 description: p.description || '',
                 is_available: (p.is_available !== false),
-                youtubeUrl: p.youtubeUrl || ''
+                youtubeUrl: p.youtubeUrl || '',
+                weekendOffer: isWeekend
             };
 
             updateMetaTagsForProduct(p);
@@ -2205,7 +2212,23 @@
             const orderFormContainer = document.getElementById('order-form-container');
             const bottomOrderBtnBox = document.getElementById('detail-bottom-order-btn-box');
             const unavailableBadge = document.getElementById('detail-unavailable-badge');
+            const weekendBadge = document.getElementById('detail-weekend-badge');
+            const detailCardWrapper = document.getElementById('detail-card-wrapper');
             const detailImgEl = document.getElementById('detail-product-img');
+
+            if (isWeekend) {
+                if (detailCardWrapper) {
+                    detailCardWrapper.classList.add('bg-yellow-50', 'border-4', 'border-amber-400', 'shadow-2xl');
+                    detailCardWrapper.classList.remove('bg-white', 'border-amber-200');
+                }
+                if (weekendBadge) weekendBadge.classList.remove('hidden');
+            } else {
+                if (detailCardWrapper) {
+                    detailCardWrapper.classList.remove('bg-yellow-50', 'border-4', 'border-amber-400', 'shadow-2xl');
+                    detailCardWrapper.classList.add('bg-white', 'border-amber-200');
+                }
+                if (weekendBadge) weekendBadge.classList.add('hidden');
+            }
 
             if (!currentProduct.is_available) {
                 if (orderFormContainer) orderFormContainer.classList.add('hidden');
