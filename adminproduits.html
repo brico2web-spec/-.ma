@@ -44,7 +44,7 @@
         </div>
     </header>
 
-    <!-- Modern Admin Navigation Menu Bar -->
+    <!-- Modern Admin Navigation Menu Bar (تم حذف زر إضافة/تعديل من هنا بناءً على طلبك) -->
     <nav class="bg-white border-b border-gray-200 shadow-xs sticky top-16 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto py-3">
             <button onclick="switchAdminTab('dashboard')" id="nav-btn-dashboard" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-[#059669] text-white shadow-sm flex-shrink-0">
@@ -54,10 +54,6 @@
             <button onclick="switchAdminTab('products')" id="nav-btn-products" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-gray-100 hover:bg-gray-200 text-gray-700 flex-shrink-0">
                 <i data-lucide="package" class="w-4 h-4"></i>
                 <span>إدارة المنتجات</span>
-            </button>
-            <button onclick="switchAdminTab('form')" id="nav-btn-form" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-gray-100 hover:bg-gray-200 text-gray-700 flex-shrink-0">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                <span>إضافة / تعديل منتج</span>
             </button>
             <button onclick="switchAdminTab('orders')" id="nav-btn-orders" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-gray-100 hover:bg-gray-200 text-gray-700 flex-shrink-0">
                 <i data-lucide="shopping-bag" class="w-4 h-4"></i>
@@ -133,7 +129,7 @@
                     </h2>
                     <div class="flex items-center gap-2">
                         <button onclick="switchAdminTab('form')" class="bg-[#059669] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-[#047857]">
-                            <i data-lucide="plus" class="w-4 h-4"></i> إضافة منتج
+                            <i data-lucide="plus" class="w-4 h-4"></i> إضافة منتج جديد
                         </button>
                         <button onclick="fetchProducts()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                             <i data-lucide="rotate-cw" class="w-5 h-5"></i>
@@ -369,7 +365,7 @@
 
     <!-- Footer with updated version -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6 text-center text-xs text-gray-500 font-bold">
-        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.40</span>
+        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.45</span>
     </footer>
 
     <!-- Admin JS Logic -->
@@ -412,7 +408,7 @@
             const target = document.getElementById(`tab-${tabId}`);
             if (target) target.classList.add('active');
 
-            const navBtns = ['dashboard', 'products', 'form', 'orders', 'settings'];
+            const navBtns = ['dashboard', 'products', 'orders', 'settings'];
             navBtns.forEach(btn => {
                 const btnEl = document.getElementById(`nav-btn-${btn}`);
                 if (btnEl) {
@@ -429,7 +425,6 @@
 
         async function fetchProducts() {
             try {
-                // جلب حصري لمنتجات قسم مستحضرات التجميل والعناية لتفادي عرض منتجات الإدارات الأخرى
                 const { data, error } = await supabaseClient.from('products').select('*').eq('category', 'cosmetics').order('created_at', { ascending: false });
                 if (error) throw error;
                 localProducts = data || [];
@@ -530,12 +525,9 @@
             e.preventDefault();
             const id = document.getElementById('prod-id').value;
             const title = document.getElementById('prod-title').value.trim();
-            const sku = document.getElementById('prod-sku').value.trim();
             const price = parseFloat(document.getElementById('prod-price').value);
-            const oldPrice = parseFloat(document.getElementById('prod-old-price').value || 0);
             const category = document.getElementById('prod-category').value;
-            const manager = document.getElementById('prod-manager').value;
-            const is_available = document.getElementById('prod-available').value === 'true';
+            const description = document.getElementById('prod-desc').value.trim();
             
             const image1 = document.getElementById('prod-image').value.trim();
             const image2 = document.getElementById('prod-image-2').value.trim();
@@ -543,26 +535,13 @@
             const image4 = document.getElementById('prod-image-4').value.trim();
             const image5 = document.getElementById('prod-image-5').value.trim();
             
-            const video1 = document.getElementById('prod-video-1').value.trim();
-            const video2 = document.getElementById('prod-video-2').value.trim();
-            const description = document.getElementById('prod-desc').value.trim();
-
             const imagesList = [image1, image2, image3, image4, image5].filter(img => img !== '');
-            const videosList = [video1, video2].filter(vid => vid !== '');
 
             const productData = {
                 title,
-                sku,
                 price,
-                discountPrice: price,
-                oldPrice: oldPrice > price ? oldPrice : price,
                 category,
-                manager,
-                is_available,
-                is_active: is_available,
-                image: image1,
                 images: imagesList,
-                videos: videosList,
                 description
             };
 
@@ -590,23 +569,16 @@
 
             document.getElementById('prod-id').value = p.id;
             document.getElementById('prod-title').value = p.title || '';
-            document.getElementById('prod-sku').value = p.sku || '';
             document.getElementById('prod-price').value = p.price || '';
-            document.getElementById('prod-old-price').value = p.oldPrice || '';
+            document.getElementById('prod-old-price').value = p.oldPrice || (p.price ? p.price * 1.7 : '');
             document.getElementById('prod-category').value = p.category || 'cosmetics';
-            document.getElementById('prod-manager').value = p.manager || 'ZAMZAM';
-            document.getElementById('prod-available').value = (p.is_available !== false) ? 'true' : 'false';
 
-            const imgs = p.images || [p.image || ''];
-            document.getElementById('prod-image').value = imgs[0] || p.image || '';
-            document.getElementById('prod-image-2').value = imgs[1] || '';
-            document.getElementById('prod-image-3').value = imgs[2] || '';
-            document.getElementById('prod-image-4').value = imgs[3] || '';
-            document.getElementById('prod-image-5').value = imgs[4] || '';
-
-            const vids = p.videos || [];
-            document.getElementById('prod-video-1').value = vids[0] || '';
-            document.getElementById('prod-video-2').value = vids[1] || '';
+            const imgs = p.images || [p.image || p.image1 || ''];
+            document.getElementById('prod-image').value = imgs[0] || p.image || p.image1 || '';
+            document.getElementById('prod-image-2').value = imgs[1] || p.image2 || '';
+            document.getElementById('prod-image-3').value = imgs[2] || p.image3 || '';
+            document.getElementById('prod-image-4').value = imgs[3] || p.image4 || '';
+            document.getElementById('prod-image-5').value = imgs[4] || p.image5 || '';
 
             document.getElementById('prod-desc').value = p.description || '';
 
