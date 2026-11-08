@@ -863,7 +863,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.83</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.85</span>
                     </span>
                 </div>
             </div>
@@ -1454,8 +1454,13 @@
                             isAvailable = false;
                         }
 
-                        // التحقق من خاصية عروض نهاية الأسبوع الكبرى
-                        let isWeekendOffer = p.weekendOffer !== undefined ? p.weekendOffer : (p.weekend_offer !== undefined ? p.weekend_offer : (p.weekendoffer !== undefined ? p.weekendoffer : false));
+                        // التحقق من خاصية عروض نهاية الأسبوع الكبرى (دعم لكافة التسميات المحتملة في قاعدة البيانات وSupabase)
+                        let isWeekendOffer = p.weekendOffer !== undefined ? p.weekendOffer : (p.weekend_offer !== undefined ? p.weekend_offer : (p.weekendoffer !== undefined ? p.weekendoffer : (p.is_weekend_offer !== undefined ? p.is_weekend_offer : (p.black_free_day !== undefined ? p.black_free_day : (p.blackfreeday !== undefined ? p.blackfreeday : false)))));
+                        if (String(isWeekendOffer) === 'true' || isWeekendOffer === 1 || isWeekendOffer === '1') {
+                            isWeekendOffer = true;
+                        } else {
+                            isWeekendOffer = false;
+                        }
 
                         let catKey = p.category || 'various';
                         let foundCat = categoriesDatabase.find(c => c.key === catKey);
@@ -1526,7 +1531,7 @@
                     });
                 }
 
-                // دمج المنتجات المفعلة لعروض نهاية الأسبوع الكبرى (سواء من جدول black_free_day أو المنتجات التي حُدد فيها weekendOffer في جدول products)
+                // دمج المنتجات المفعلة لعروض نهاية الأسبوع الكبرى من جدول المنتجات الرئيسي
                 let weekendProdsFromProducts = fetchedProducts.filter(p => p.weekendOffer === true);
                 weekendProdsFromProducts.forEach(wp => {
                     if (!blackFreeDayProducts.some(b => String(b.id) === String(wp.id) || (b.title && wp.title && b.title.trim().toLowerCase() === wp.title.trim().toLowerCase()))) {
@@ -1534,8 +1539,7 @@
                     }
                 });
 
-                // استبعاد منتجات عروض نهاية الأسبوع الكبرى نهائياً من قائمة المنتجات الرئيسية
-                productsDatabase = fetchedProducts.filter(p => !p.weekendOffer);
+                productsDatabase = fetchedProducts;
 
                 renderStoreProducts(productsDatabase);
                 renderPartnerProductsMarquee(productsDatabase);
