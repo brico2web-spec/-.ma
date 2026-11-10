@@ -37,7 +37,7 @@
                 <i data-lucide="shield-check" class="w-8 h-8 text-[#34D399]"></i>
                 <h1 class="text-xl font-black tracking-wide">لوحة تحكم bedal.online</h1>
             </div>
-            <!-- تم توجيه زر المعاينة إلى صفحة produits.html بناءً على طلبك -->
+            <!-- زر المعاينة يوجه إلى صفحة produits.html -->
             <a href="produits.html" target="_blank" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-bold border border-white/20 transition-all">
                 <i data-lucide="external-link" class="w-4 h-4"></i>
                 <span>معاينة الموقع الرئيسي</span>
@@ -460,7 +460,7 @@
 
     <!-- Footer with updated version -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6 text-center text-xs text-gray-500 font-bold">
-        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.61</span>
+        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.62</span>
     </footer>
 
     <!-- Admin JS Logic -->
@@ -592,7 +592,7 @@
         function openProductModal() {
             resetProductForm();
             renderCategoriesSelect();
-            document.getElementById('form-title').innerText = 'إضافة منتج تجميل وعناية جديد (Supabase)';
+            document.getElementById('form-title').innerText = 'إضافة منتج جديد (Supabase)';
             document.getElementById('product-modal').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -644,9 +644,9 @@
         }
 
         async function openAddCategoryModal() {
-            const catName = await showCustomPrompt('أدخل اسم الفئة الجديدة (مثال: العناية الشخصية):');
+            const catName = await showCustomPrompt('أدخل اسم الفئة الجديدة (مثال: مكملات غذائية):');
             if (!catName) return;
-            const catKey = await showCustomPrompt('أدخل رمز الفئة بالإنجليزية بدون مسافات (مثال: personal_care):');
+            const catKey = await showCustomPrompt('أدخل رمز الفئة بالإنجليزية بدون مسافات (مثال: supplements):');
             if (!catKey) return;
             
             categoriesList.push({ key: catKey.trim().toLowerCase(), name: catName.trim() });
@@ -691,8 +691,8 @@
 
         async function fetchProducts() {
             try {
-                // جلب منتجات قسم مستحضرات التجميل والعناية (cosmetics) فقط لإدارتها هنا
-                const { data, error } = await supabaseClient.from('products').select('*').eq('category', 'cosmetics').order('created_at', { ascending: false });
+                // جلب كافة المنتجات بدون تقييد بقسم معين لكي تظهر جميع الفئات المضافة هنا وفي produits.html
+                const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 localProducts = data || [];
                 document.getElementById('stat-total-products').innerText = localProducts.length;
@@ -740,7 +740,7 @@
                         <td class="p-4 font-bold text-gray-500 line-through">${parseFloat(p.oldPrice || p.old_price || (p.price ? p.price * 1.7 : 0)).toFixed(2)} د.م</td>
                         <td class="p-4 font-extrabold text-[#059669]">${parseFloat(p.price || 0).toFixed(2)} د.م</td>
                         <td class="p-4 font-bold text-gray-700 text-xs">${p.manager || 'ZAMZAM'}</td>
-                        <td class="p-4"><span class="bg-emerald-50 text-[#059669] px-2.5 py-1 rounded-lg text-xs font-bold">${p.category || 'مستحضرات التجميل'}</span></td>
+                        <td class="p-4"><span class="bg-emerald-50 text-[#059669] px-2.5 py-1 rounded-lg text-xs font-bold">${p.category || 'عام'}</span></td>
                         <td class="p-4">
                             <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isAvail ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
                                 ${isAvail ? 'متاح' : 'غير متاح'}
@@ -870,7 +870,7 @@
         async function deleteProduct(id) {
             const confirmDel = await new Promise((resolve) => {
                 document.getElementById('custom-modal-title').innerText = 'تأكيد الحذف';
-                document.getElementById('custom-modal-message').innerText = 'واش متأكد بغيتي تحذف هاد المنتوج؟ أيمشي حتى من الصفحة الرئيسية!';
+                document.getElementById('custom-modal-message').innerText = 'واش متأكد بغيتي تحذف هاد المنتوج؟';
                 document.getElementById('custom-modal-input-container').classList.add('hidden');
                 document.getElementById('custom-modal-cancel').classList.remove('hidden');
                 document.getElementById('custom-modal').classList.remove('hidden');
