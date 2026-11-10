@@ -459,7 +459,7 @@
 
     <!-- Footer with updated version -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6 text-center text-xs text-gray-500 font-bold">
-        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.56</span>
+        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.57</span>
     </footer>
 
     <!-- Admin JS Logic -->
@@ -469,15 +469,20 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let localProducts = [];
-        let categoriesList = [
+        let categoriesList = JSON.parse(localStorage.getItem('bedal_categories')) || [
             { key: 'cosmetics', name: 'مستحضرات التجميل' },
             { key: 'health_care', name: 'العناية بالصحة' },
             { key: 'skincare', name: 'العناية بالبشرة والشعر' },
             { key: 'organic', name: 'منتجات طبيعية' }
         ];
+
         let calculatedSuggestedPrice = 0;
         let calculatedOriginalPrice = 0;
         let modalResolveCallback = null;
+
+        function saveCategoriesToLocalStorage() {
+            localStorage.setItem('bedal_categories', JSON.stringify(categoriesList));
+        }
 
         function showCustomAlert(message) {
             return new Promise((resolve) => {
@@ -579,11 +584,13 @@
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
             renderCategoriesTable();
+            renderCategoriesSelect();
             lucide.createIcons();
         }
 
         function openProductModal() {
             resetProductForm();
+            renderCategoriesSelect();
             document.getElementById('form-title').innerText = 'إضافة منتج تجميل وعناية جديد (Supabase)';
             document.getElementById('product-modal').classList.remove('hidden');
             lucide.createIcons();
@@ -642,6 +649,7 @@
             if (!catKey) return;
             
             categoriesList.push({ key: catKey.trim().toLowerCase(), name: catName.trim() });
+            saveCategoriesToLocalStorage();
             renderCategoriesSelect();
             renderCategoriesTable();
             await showCustomAlert('تم إضافة الفئة "' + catName + '" بنجاح!');
@@ -652,6 +660,7 @@
             const newName = await showCustomPrompt('تعديل اسم الفئة:', cat.name);
             if (!newName) return;
             categoriesList[index].name = newName.trim();
+            saveCategoriesToLocalStorage();
             renderCategoriesSelect();
             renderCategoriesTable();
             await showCustomAlert('تم تعديل الفئة بنجاح!');
@@ -673,6 +682,7 @@
 
             if (!confirmDel) return;
             categoriesList.splice(index, 1);
+            saveCategoriesToLocalStorage();
             renderCategoriesSelect();
             renderCategoriesTable();
             await showCustomAlert('تم حذف الفئة بنجاح!');
@@ -680,7 +690,7 @@
 
         async function fetchProducts() {
             try {
-                const { data, error } = await supabaseClient.from('products').select('*').eq('category', 'cosmetics').order('created_at', { ascending: false });
+                const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
                 localProducts = data || [];
                 document.getElementById('stat-total-products').innerText = localProducts.length;
@@ -830,6 +840,8 @@
         function editProduct(id) {
             const p = localProducts.find(item => String(item.id) === String(id));
             if (!p) return;
+
+            renderCategoriesSelect();
 
             document.getElementById('prod-id').value = p.id;
             document.getElementById('prod-title').value = p.title || '';
