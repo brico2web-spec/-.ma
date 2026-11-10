@@ -167,7 +167,7 @@
                     </button>
                 </div>
 
-                <div class="space-y-2.5">
+                <div class="space-y-2.5" id="drawer-categories-container">
                     <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
                         <i data-lucide="layers" class="w-5 h-5 text-[#059669]"></i>
                         <span>الكل</span>
@@ -615,7 +615,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span>الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.98</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span>الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.99</span>
                     </span>
                 </div>
             </div>
@@ -629,7 +629,7 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/is2ul8rlnn15glu03a9mibxyz2yepe11';
 
-        let categoriesDatabase = [
+        let categoriesDatabase = JSON.parse(localStorage.getItem('bedal_categories')) || [
             { key: 'cosmetics', name: 'مستحضرات التجميل', color: '#ec4899' },
             { key: 'health_care', name: 'العناية بالصحة', color: '#10b981' },
             { key: 'skincare', name: 'العناية بالبشرة والشعر', color: '#f43f5e' },
@@ -830,11 +830,33 @@
         let currentFilterCategory = 'all';
         let currentProduct = { title: '', price: '', oldPrice: '', mediaItems: [], currentMediaIndex: 0, category: '', description: '', youtubeUrl: '' };
 
+        function renderCategoriesDrawerDynamic() {
+            const container = document.getElementById('drawer-categories-container');
+            if (!container) return;
+            let html = `
+                <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
+                    <i data-lucide="layers" class="w-5 h-5 text-[#059669]"></i>
+                    <span>الكل</span>
+                </button>
+            `;
+            categoriesDatabase.forEach(cat => {
+                html += `
+                    <button onclick="filterCategory('${cat.key}'); toggleCategoriesDrawer();" id="cat-drawer-btn-${cat.key}" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
+                        <i data-lucide="tag" class="w-5 h-5" style="color: ${cat.color || '#059669'}"></i>
+                        <span>${cat.name}</span>
+                    </button>
+                `;
+            });
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
         async function fetchSupabaseStoreData() {
             try {
                 let fetchedProducts = [];
-                // جلب حصري لمنتجات قسم مستحضرات التجميل والعناية (cosmetics أو ما يعادلها في الإدارة)
-                const { data: prods } = await supabaseClient.from('products').select('*').eq('category', 'cosmetics').order('created_at', { ascending: false });
+                // جلب حصري للمنتجات التي تنتمي للفئات المعرفة لهذه الصفحة وعدم جلب منتجات index
+                const allowedKeys = categoriesDatabase.map(c => c.key);
+                const { data: prods } = await supabaseClient.from('products').select('*').in('category', allowedKeys).order('created_at', { ascending: false });
                 if (prods) {
                     fetchedProducts = prods.map(p => {
                         let originalPrice = parseFloat(p.price || 0);
@@ -1347,6 +1369,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            renderCategoriesDrawerDynamic();
             fetchSupabaseStoreData();
             initFooterReviewsSlider();
             checkAndShowWelcomeAd();
