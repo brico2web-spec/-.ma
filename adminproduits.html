@@ -30,6 +30,39 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
+    <!-- نافذة تسجيل الدخول (Login Modal) بنفس ستايل الموقع -->
+    <div id="login-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 text-white border border-emerald-500/30 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6">
+            <div class="flex items-center gap-3 border-b border-emerald-500/20 pb-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-inner">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black tracking-wide text-white">تسجيل الدخول للإدارة</h3>
+                    <p class="text-xs text-emerald-300/80 font-medium mt-0.5">الرجاء إدخال بيانات الاعتماد للمتابعة</p>
+                </div>
+            </div>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-emerald-200 mb-1.5">اسم المستخدم *</label>
+                    <input type="text" id="login-username" required placeholder="أدخل اسم المستخدم..." class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-emerald-500/30 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-emerald-200 mb-1.5">كلمة المرور *</label>
+                    <input type="password" id="login-password" required placeholder="••••••••••••" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-emerald-500/30 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm" dir="ltr">
+                </div>
+                <div id="login-error-msg" class="hidden text-rose-400 text-xs font-bold text-center bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/20">
+                    اسم المستخدم أو كلمة المرور غير صحيحة!
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-xl transition-all shadow-md text-sm border border-emerald-400/30 flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>
+                    <span>دخول إلى لوحة التحكم</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Header / Navbar -->
     <header class="bg-[#059669] text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -460,7 +493,7 @@
 
     <!-- Footer with updated version -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6 text-center text-xs text-gray-500 font-bold">
-        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.67</span>
+        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.68</span>
     </footer>
 
     <!-- Admin JS Logic -->
@@ -491,6 +524,20 @@
         let calculatedSuggestedPrice = 0;
         let calculatedOriginalPrice = 0;
         let modalResolveCallback = null;
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-username').value.trim();
+            const p = document.getElementById('login-password').value.trim();
+            const errEl = document.getElementById('login-error-msg');
+
+            if (u === 'ZAMZAM' && p === 'AMIRMOUNA303026') {
+                document.getElementById('login-modal').classList.add('hidden');
+                errEl.classList.add('hidden');
+            } else {
+                errEl.classList.remove('hidden');
+            }
+        }
 
         function saveCategoriesToLocalStorage() {
             localStorage.setItem('bedal_categories', JSON.stringify(categoriesList));
