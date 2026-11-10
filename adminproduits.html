@@ -460,7 +460,7 @@
 
     <!-- Footer with updated version -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6 text-center text-xs text-gray-500 font-bold">
-        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.65</span>
+        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.67</span>
     </footer>
 
     <!-- Admin JS Logic -->
@@ -470,12 +470,23 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let localProducts = [];
-        let categoriesList = JSON.parse(localStorage.getItem('bedal_categories')) || [
+        // قائمة الفئات الممنوعة أو المراد إخفاؤها تماماً من الإدارة
+        const hiddenCategories = ['نساء', 'رجال', 'اطفال', 'أطفال', 'منتجات متنوعة', 'مستلزمات طبية', 'منزلية', 'إلكترونيات', 'women', 'men', 'kids', 'various', 'medical', 'home', 'electronics'];
+
+        let initialCategories = JSON.parse(localStorage.getItem('bedal_categories')) || [
             { key: 'cosmetics', name: 'مستحضرات التجميل' },
             { key: 'health_care', name: 'العناية بالصحة' },
             { key: 'skincare', name: 'العناية بالبشرة والشعر' },
             { key: 'organic', name: 'منتجات طبيعية' }
         ];
+
+        // فلترة مسبقة للفئات الممنوعة لضمان عدم ظهورها أبداً
+        let categoriesList = initialCategories.filter(cat => {
+            let k = String(cat.key || '').toLowerCase().trim();
+            let n = String(cat.name || '').toLowerCase().trim();
+            return !hiddenCategories.some(hc => k === hc || n === hc);
+        });
+        localStorage.setItem('bedal_categories', JSON.stringify(categoriesList));
 
         let calculatedSuggestedPrice = 0;
         let calculatedOriginalPrice = 0;
@@ -691,10 +702,14 @@
 
         async function fetchProducts() {
             try {
-                // جلب المنتجات المرتبطة بقاعدة البيانات في Supabase مباشرة لكي تظهر على جميع الأجهزة
-                const { data, error } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
+                const { data, error } = await supabaseClient.from('products').select('*').eq('source_admin', 'adminproduits').order('created_at', { ascending: false });
                 if (error) throw error;
-                localProducts = data || [];
+                // فلترة المنتجات المسترجعة للتأكد من إخفاء المنتجات التي تنتمي للفئات الممنوعة
+                localProducts = (data || []).filter(p => {
+                    let cat = String(p.category || '').toLowerCase().trim();
+                    let lbl = String(p.catLabel || '').toLowerCase().trim();
+                    return !hiddenCategories.some(hc => cat === hc || lbl === hc);
+                });
                 document.getElementById('stat-total-products').innerText = localProducts.length;
                 renderProductsTable(localProducts);
             } catch (err) {
@@ -818,7 +833,8 @@
                 manager,
                 category,
                 images: imagesList,
-                description
+                description,
+                source_admin: 'adminproduits'
             };
 
             try {
