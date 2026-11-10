@@ -167,28 +167,7 @@
                     </button>
                 </div>
 
-                <div class="space-y-2.5" id="drawer-categories-container">
-                    <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
-                        <i data-lucide="layers" class="w-5 h-5 text-[#059669]"></i>
-                        <span>الكل</span>
-                    </button>
-                    <button onclick="filterCategory('cosmetics'); toggleCategoriesDrawer();" id="cat-drawer-btn-cosmetics" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
-                        <i data-lucide="sparkles" class="w-5 h-5 text-pink-500"></i>
-                        <span>مستحضرات التجميل</span>
-                    </button>
-                    <button onclick="filterCategory('health_care'); toggleCategoriesDrawer();" id="cat-drawer-btn-health_care" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
-                        <i data-lucide="activity" class="w-5 h-5 text-emerald-500"></i>
-                        <span>العناية بالصحة</span>
-                    </button>
-                    <button onclick="filterCategory('skincare'); toggleCategoriesDrawer();" id="cat-drawer-btn-skincare" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
-                        <i data-lucide="heart" class="w-5 h-5 text-rose-500"></i>
-                        <span>العناية بالبشرة والشعر</span>
-                    </button>
-                    <button onclick="filterCategory('organic'); toggleCategoriesDrawer();" id="cat-drawer-btn-organic" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
-                        <i data-lucide="leaf" class="w-5 h-5 text-teal-600"></i>
-                        <span>منتجات طبيعية</span>
-                    </button>
-                </div>
+                <div class="space-y-2.5 hidden" id="drawer-categories-container"></div>
 
                 <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-center gap-4">
                     <a href="https://www.facebook.com/BedalOnlineShop" target="_blank" aria-label="Facebook" class="hover:scale-110 transition-transform flex items-center justify-center">
@@ -615,7 +594,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span>الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.100</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span>الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.105</span>
                     </span>
                 </div>
             </div>
@@ -833,32 +812,23 @@
         function renderCategoriesDrawerDynamic() {
             const container = document.getElementById('drawer-categories-container');
             if (!container) return;
-            let html = `
-                <button onclick="filterCategory('all'); toggleCategoriesDrawer();" id="cat-drawer-btn-all" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
-                    <i data-lucide="layers" class="w-5 h-5 text-[#059669]"></i>
-                    <span>الكل</span>
-                </button>
-            `;
-            categoriesDatabase.forEach(cat => {
-                html += `
-                    <button onclick="filterCategory('${cat.key}'); toggleCategoriesDrawer();" id="cat-drawer-btn-${cat.key}" class="w-full flex items-center gap-2.5 p-3 rounded-xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-900 font-extrabold text-sm transition-all">
-                        <i data-lucide="tag" class="w-5 h-5" style="color: ${cat.color || '#059669'}"></i>
-                        <span>${cat.name}</span>
-                    </button>
-                `;
-            });
-            container.innerHTML = html;
-            lucide.createIcons();
+            container.innerHTML = '';
         }
 
         async function fetchSupabaseStoreData() {
             try {
                 let fetchedProducts = [];
-                // جلب حصري للمنتجات التي تنتمي للفئات المعرفة في مستحضرات التجميل والعناية وعدم جلب منتجات admin.html
-                const allowedKeys = categoriesDatabase.map(c => c.key);
-                const { data: prods } = await supabaseClient.from('products').select('*').in('category', allowedKeys).order('created_at', { ascending: false });
+                const { data: prods } = await supabaseClient.from('products').select('*').order('created_at', { ascending: false });
                 if (prods) {
-                    fetchedProducts = prods.map(p => {
+                    // قائمة الفئات الممنوعة أو المراد إخفاؤها تماماً من هذه الصفحة
+                    const hiddenCategories = ['نساء', 'رجال', 'اطفال', 'أطفال', 'منتجات متنوعة', 'مستلزمات طبية', 'منزلية', 'إلكترونيات', 'women', 'men', 'kids', 'various', 'medical', 'home', 'electronics'];
+
+                    fetchedProducts = prods.filter(p => {
+                        let cat = String(p.category || '').toLowerCase().trim();
+                        let lbl = String(p.catLabel || '').toLowerCase().trim();
+                        // التحقق مما إذا كانت الفئة مطابقة لأحد الأقسام الممنوعة
+                        return !hiddenCategories.some(hc => cat === hc || lbl === hc);
+                    }).map(p => {
                         let originalPrice = parseFloat(p.price || 0);
                         let finalDiscPrice = (p.discountPrice !== undefined && p.discountPrice !== null && p.discountPrice !== '') ? parseFloat(p.discountPrice) : originalPrice;
                         
@@ -868,7 +838,7 @@
 
                         let catKey = p.category || 'cosmetics';
                         let foundCat = categoriesDatabase.find(c => c.key === catKey);
-                        let catLabel = foundCat ? foundCat.name : (p.catLabel || 'مستحضرات التجميل');
+                        let catLabel = foundCat ? foundCat.name : (p.catLabel || catKey);
 
                         const mediaList = extractMediaFromRecord(p);
                         const imagesList = mediaList.filter(m => m.type === 'image').map(m => m.url);
@@ -960,8 +930,8 @@
 
                 let catKey = p.category || 'cosmetics';
                 let foundCat = categoriesDatabase.find(c => c.key === catKey);
-                let catLabel = foundCat ? foundCat.name : (p.catLabel || 'مستحضرات التجميل');
-                let catColor = foundCat && foundCat.color ? foundCat.color : '#ec4899';
+                let catLabel = foundCat ? foundCat.name : (p.catLabel || catKey);
+                let catColor = foundCat && foundCat.color ? foundCat.color : '#059669';
 
                 let storeThumbnailsHtml = '';
                 if (p.images && p.images.length > 1) {
@@ -1121,8 +1091,8 @@
             let imagesList = p.images?.length > 0 ? [...p.images] : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
             let catKey = p.category || 'cosmetics';
             let foundCat = categoriesDatabase.find(c => c.key === catKey);
-            let catLabel = foundCat ? foundCat.name : (p.catLabel || 'مستحضرات التجميل');
-            let catColor = foundCat && foundCat.color ? foundCat.color : '#ec4899';
+            let catLabel = foundCat ? foundCat.name : (p.catLabel || catKey);
+            let catColor = foundCat && foundCat.color ? foundCat.color : '#059669';
 
             currentProduct = {
                 id: p.id || '',
