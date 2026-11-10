@@ -615,7 +615,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span>الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.99</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span>الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.100</span>
                     </span>
                 </div>
             </div>
@@ -854,7 +854,7 @@
         async function fetchSupabaseStoreData() {
             try {
                 let fetchedProducts = [];
-                // جلب حصري للمنتجات التي تنتمي للفئات المعرفة لهذه الصفحة وعدم جلب منتجات index
+                // جلب حصري للمنتجات التي تنتمي للفئات المعرفة في مستحضرات التجميل والعناية وعدم جلب منتجات admin.html
                 const allowedKeys = categoriesDatabase.map(c => c.key);
                 const { data: prods } = await supabaseClient.from('products').select('*').in('category', allowedKeys).order('created_at', { ascending: false });
                 if (prods) {
