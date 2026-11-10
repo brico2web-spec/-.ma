@@ -710,7 +710,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span>الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.106</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#059669] animate-pulse"></span> <span>الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.107</span>
                     </span>
                 </div>
             </div>
@@ -981,7 +981,7 @@
                 const productIdParam = urlParams.get('product');
                 if (productIdParam) {
                     const targetProd = fetchedProducts.find(p => String(p.id) === String(productIdParam));
-                    if (targetProd) openProductDetailObject(targetProd);
+                    if (targetProd) openProductDetailObject(targetProd, false);
                 }
             } catch (err) {}
         }
@@ -1201,7 +1201,7 @@
             }, 1500);
         }
 
-        function openProductDetailObject(p) {
+        function openProductDetailObject(p, pushState = true) {
             let imagesList = p.images?.length > 0 ? [...p.images] : ['https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80'];
             let catKey = p.category || 'cosmetics';
             let foundCat = categoriesDatabase.find(c => c.key === catKey);
@@ -1221,6 +1221,11 @@
                 is_available: (p.is_available !== false),
                 youtubeUrl: p.youtubeUrl || ''
             };
+
+            if (pushState && currentProduct.id) {
+                const newUrl = `${window.location.pathname}?product=${currentProduct.id}`;
+                window.history.pushState({ productId: currentProduct.id }, '', newUrl);
+            }
 
             updateDetailImageViewer();
             renderDetailThumbnails();
@@ -1448,9 +1453,21 @@
                 if (youtubeVideo) youtubeVideo.src = "";
                 if (videoWrapper) videoWrapper.classList.add('hidden');
                 document.getElementById('section-store').classList.remove('hidden');
+                window.history.pushState({}, '', window.location.pathname);
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        window.addEventListener('popstate', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productIdParam = urlParams.get('product');
+            if (productIdParam && productsDatabase.length > 0) {
+                const targetProd = productsDatabase.find(p => String(p.id) === String(productIdParam));
+                if (targetProd) openProductDetailObject(targetProd, false);
+            } else {
+                switchTab('store');
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             renderCategoriesDrawerDynamic();
