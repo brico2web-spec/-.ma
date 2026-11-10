@@ -460,7 +460,7 @@
 
     <!-- Footer with updated version -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6 text-center text-xs text-gray-500 font-bold">
-        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.63</span>
+        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.64</span>
     </footer>
 
     <!-- Admin JS Logic -->
@@ -691,7 +691,7 @@
 
         async function fetchProducts() {
             try {
-                // جلب المنتجات الخاصة بفئات هذه الصفحة وعدم خلطها مع منتجات index عبر مطابقة مفاتيح الفئات المعرفة هنا (أو الاستثناء)
+                // جلب المنتجات التي تنتمي حصرياً لفئات هذه الصفحة فقط وعدم جلب منتجات index
                 const allowedKeys = categoriesList.map(c => c.key);
                 const { data, error } = await supabaseClient.from('products').select('*').in('category', allowedKeys).order('created_at', { ascending: false });
                 if (error) throw error;
