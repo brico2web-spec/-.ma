@@ -955,7 +955,7 @@
                     </div>
                     
                     <span class="inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-800 border border-gray-300 shadow-xs">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.97</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] animate-pulse"></span> <span data-i18n="version">الإصدار:</span> <span class="text-[#F97316] font-black">v 0.9.99</span>
                     </span>
                 </div>
             </div>
@@ -1547,11 +1547,9 @@
             return cleanUrl;
         }
 
-        // دالة الفلترة لاستبعاد منتجات إدارة كوسميتيك ومنتجات صفحة produits
+        // دالة الفلترة الذكية لاستبعاد منتجات adminproduits وصفحة produits وجميع منتجات التجميل/الزيادة نهائياً
         function shouldExcludeProduct(p) {
             if (!p) return false;
-            
-            // الفحص عبر الحقول المختلفة التي تدل على مصدر أو اسم إدارة كوسميتيك أو صفحة produits
             const rawFields = [
                 p.title,
                 p.description,
@@ -1561,7 +1559,8 @@
                 p.source,
                 p.admin,
                 p.store_name,
-                p.page
+                p.page,
+                p.sku
             ];
 
             for (let field of rawFields) {
@@ -1572,7 +1571,16 @@
                         lower.includes('cosmetic') || 
                         lower.includes('cosmetics') ||
                         lower.includes('proutuits') || 
-                        lower.includes('produits')
+                        lower.includes('produits') ||
+                        lower.includes('adminproduits') ||
+                        lower.includes('protine') ||
+                        lower.includes('curve') ||
+                        lower.includes('boost') ||
+                        lower.includes('sirop') ||
+                        lower.includes('محلول') ||
+                        lower.includes('بروتين') ||
+                        lower.includes('زيادة الوزن') ||
+                        lower.includes('المناطق الأنثوية')
                     ) {
                         return true;
                     }
@@ -1699,7 +1707,7 @@
                     }
                 });
 
-                // تصفية واستبعاد منتجات إدارة كوسميتيك وصفحة proutuits نهائياً
+                // تطبيق الفلترة الصارمة لاستبعاد منتجات adminproduits والصفحات الفرعية نهائياً
                 blackFreeDayProducts = loadedBfdProducts.filter(b => !shouldExcludeProduct(b));
                 
                 const bfdIds = new Set(blackFreeDayProducts.map(b => String(b.id)));
