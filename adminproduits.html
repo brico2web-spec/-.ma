@@ -44,328 +44,422 @@
         </div>
     </header>
 
-    <!-- Modern Admin Navigation Menu Bar (تم حذف زر إضافة/تعديل من هنا بناءً على طلبك) -->
-    <nav class="bg-white border-b border-gray-200 shadow-xs sticky top-16 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 overflow-x-auto py-3">
-            <button onclick="switchAdminTab('dashboard')" id="nav-btn-dashboard" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-[#059669] text-white shadow-sm flex-shrink-0">
-                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                <span>الرئيسية والإحصائيات</span>
-            </button>
-            <button onclick="switchAdminTab('products')" id="nav-btn-products" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-gray-100 hover:bg-gray-200 text-gray-700 flex-shrink-0">
-                <i data-lucide="package" class="w-4 h-4"></i>
-                <span>إدارة المنتجات</span>
-            </button>
-            <button onclick="switchAdminTab('orders')" id="nav-btn-orders" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-gray-100 hover:bg-gray-200 text-gray-700 flex-shrink-0">
-                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-                <span>طلبات الزبناء</span>
-            </button>
-            <button onclick="switchAdminTab('settings')" id="nav-btn-settings" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-gray-100 hover:bg-gray-200 text-gray-700 flex-shrink-0">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                <span>إعدادات الإعلان (Popup)</span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow space-y-8">
+    <!-- Layout Container with Sidebar and Main Content -->
+    <div class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 gap-8">
         
-        <!-- TAB 1: DASHBOARD / OVERVIEW -->
-        <div id="tab-dashboard" class="admin-tab-content active space-y-8">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">إجمالي المنتجات</span>
-                        <h3 id="stat-total-products" class="text-3xl font-black text-[#059669] mt-1">0</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-[#059669]">
-                        <i data-lucide="package" class="w-6 h-6"></i>
-                    </div>
+        <!-- Sidebar Menu (مجموعة قائمة التنقل القابلة للطي والفتح) -->
+        <aside class="w-full md:w-64 bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col gap-2 flex-shrink-0 h-fit sticky top-24">
+            
+            <!-- زر مجموعة قائمة التنقل الرئيسية -->
+            <button onclick="toggleNavigationGroup()" class="flex items-center justify-between px-4 py-3 rounded-xl font-black text-sm transition-all bg-[#059669] text-white shadow-sm w-full text-right">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="menu" class="w-5 h-5 text-emerald-200"></i>
+                    <span>قائمة التنقل</span>
                 </div>
+                <i data-lucide="chevron-down" id="nav-group-chevron" class="w-4 h-4 transition-transform duration-200 rotate-180"></i>
+            </button>
 
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">إجمالي الطلبات</span>
-                        <h3 id="stat-total-orders" class="text-3xl font-black text-amber-600 mt-1">0</h3>
-                    </div>
-                    <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
-                        <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-                    </div>
-                </div>
+            <!-- الموني المندرج الذي يفتح ويغلق عند النقر -->
+            <div id="navigation-submenu" class="space-y-1 pt-2">
+                <button onclick="switchAdminTab('dashboard')" id="nav-btn-dashboard" class="flex items-center gap-3 px-4 py-3 rounded-xl font-extrabold text-sm transition-all bg-[#059669] text-white shadow-sm w-full text-right">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>الرئيسية والإحصائيات</span>
+                </button>
+                <button onclick="switchAdminTab('products')" id="nav-btn-products" class="flex items-center gap-3 px-4 py-3 rounded-xl font-extrabold text-sm transition-all bg-gray-50 hover:bg-gray-100 text-gray-700 w-full text-right">
+                    <i data-lucide="package" class="w-5 h-5"></i>
+                    <span>إدارة المنتجات</span>
+                </button>
 
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold text-gray-500 uppercase">حالة الاتصال</span>
-                        <h3 class="text-lg font-black text-emerald-600 mt-1 flex items-center gap-2">
-                            <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span> متصل بـ Supabase
-                        </h3>
-                    </div>
-                    <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600">
-                        <i data-lucide="database" class="w-6 h-6"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-center space-y-4">
-                <h2 class="text-2xl font-black text-gray-800">مرحباً بك في لوحة تحكم bedal.online (مستحضرات التجميل والعناية)</h2>
-                <p class="text-gray-600 max-w-xl mx-auto text-base">استخدم القائمة أعلاه للتنقل بسلاسة بين إدارة مستحضرات التجميل ومنتجات العناية، إضافة منتجات جديدة، ومتابعة الطلبات.</p>
-                <div class="flex items-center justify-center gap-4 pt-4">
-                    <button onclick="switchAdminTab('form')" class="bg-[#059669] hover:bg-[#047857] text-white px-6 py-3 rounded-xl font-bold text-sm shadow-md transition-all flex items-center gap-2">
-                        <i data-lucide="plus-circle" class="w-5 h-5"></i> أضف منتج جديد الآن
+                <!-- مجموعة الأقسام والفئات الفرعية القابلة للفتح والطي -->
+                <div class="space-y-1">
+                    <button onclick="toggleCategoriesGroup()" class="flex items-center justify-between px-4 py-3 rounded-xl font-extrabold text-sm transition-all bg-gray-50 hover:bg-gray-100 text-gray-700 w-full text-right">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="grid" class="w-5 h-5"></i>
+                            <span>قسم الفئات والأقسام</span>
+                        </div>
+                        <i data-lucide="chevron-down" id="categories-chevron" class="w-4 h-4 transition-transform duration-200"></i>
                     </button>
-                    <button onclick="switchAdminTab('orders')" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-md transition-all flex items-center gap-2">
-                        <i data-lucide="shopping-bag" class="w-5 h-5"></i> تفقد الطلبات الواردة
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: PRODUCTS MANAGEMENT -->
-        <div id="tab-products" class="admin-tab-content space-y-8">
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden space-y-4 p-6">
-                <div class="flex items-center justify-between border-b pb-4">
-                    <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
-                        <i data-lucide="list" class="w-6 h-6 text-[#059669]"></i>
-                        <span>إدارة المنتجات الحالية</span>
-                    </h2>
-                    <div class="flex items-center gap-2">
-                        <button onclick="switchAdminTab('form')" class="bg-[#059669] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-[#047857]">
-                            <i data-lucide="plus" class="w-4 h-4"></i> إضافة منتج جديد
+                    <div id="categories-submenu" class="hidden pr-6 space-y-1 pt-1">
+                        <button onclick="switchAdminTab('categories')" id="nav-btn-categories" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-bold text-xs transition-all bg-gray-100 hover:bg-gray-200 text-gray-700 w-full text-right">
+                            <i data-lucide="layers" class="w-4 h-4 text-[#059669]"></i>
+                            <span>عرض وإدارة الفئات</span>
                         </button>
-                        <button onclick="fetchProducts()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                        <button onclick="openAddCategoryModal()" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-bold text-xs transition-all bg-emerald-50 hover:bg-emerald-100 text-emerald-800 w-full text-right">
+                            <i data-lucide="plus-circle" class="w-4 h-4 text-[#059669]"></i>
+                            <span>إضافة فئة جديدة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="switchAdminTab('orders')" id="nav-btn-orders" class="flex items-center gap-3 px-4 py-3 rounded-xl font-extrabold text-sm transition-all bg-gray-50 hover:bg-gray-100 text-gray-700 w-full text-right">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <span>طلبات الزبناء</span>
+                </button>
+                <button onclick="switchAdminTab('settings')" id="nav-btn-settings" class="flex items-center gap-3 px-4 py-3 rounded-xl font-extrabold text-sm transition-all bg-gray-50 hover:bg-gray-100 text-gray-700 w-full text-right">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>إعدادات الإعلان (Popup)</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Container -->
+        <main class="flex-grow space-y-8">
+            
+            <!-- TAB 1: DASHBOARD / OVERVIEW -->
+            <div id="tab-dashboard" class="admin-tab-content active space-y-8">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-gray-500 uppercase">إجمالي المنتجات</span>
+                            <h3 id="stat-total-products" class="text-3xl font-black text-[#059669] mt-1">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-[#059669]">
+                            <i data-lucide="package" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-gray-500 uppercase">إجمالي الطلبات</span>
+                            <h3 id="stat-total-orders" class="text-3xl font-black text-amber-600 mt-1">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600">
+                            <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-gray-500 uppercase">حالة الاتصال</span>
+                            <h3 class="text-lg font-black text-emerald-600 mt-1 flex items-center gap-2">
+                                <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span> متصل بـ Supabase
+                            </h3>
+                        </div>
+                        <div class="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600">
+                            <i data-lucide="database" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm text-center space-y-4">
+                    <h2 class="text-2xl font-black text-gray-800">مرحباً بك في لوحة تحكم bedal.online (مستحضرات التجميل والعناية)</h2>
+                    <p class="text-gray-600 max-w-xl mx-auto text-base">استخدم القائمة الجانبية للتنقل بسلاسة بين إدارة مستحضرات التجميل ومنتجات العناية، إضافة منتجات جديدة، ومتابعة الطلبات.</p>
+                    <div class="flex items-center justify-center gap-4 pt-4">
+                        <button onclick="openProductModal()" class="bg-[#059669] hover:bg-[#047857] text-white px-6 py-3 rounded-xl font-bold text-sm shadow-md transition-all flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-5 h-5"></i> أضف منتج جديد الآن
+                        </button>
+                        <button onclick="switchAdminTab('orders')" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-md transition-all flex items-center gap-2">
+                            <i data-lucide="shopping-bag" class="w-5 h-5"></i> تفقد الطلبات الواردة
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: PRODUCTS MANAGEMENT -->
+            <div id="tab-products" class="admin-tab-content space-y-8">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden space-y-4 p-6">
+                    <div class="flex items-center justify-between border-b pb-4">
+                        <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
+                            <i data-lucide="list" class="w-6 h-6 text-[#059669]"></i>
+                            <span>إدارة المنتجات الحالية</span>
+                        </h2>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openProductModal()" class="bg-[#059669] text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-[#047857]">
+                                <i data-lucide="plus" class="w-4 h-4"></i> إضافة منتج جديد
+                            </button>
+                            <button onclick="fetchProducts()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                <i data-lucide="rotate-cw" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs font-black uppercase">
+                                    <th class="p-4">الصورة</th>
+                                    <th class="p-4">اسم المنتج</th>
+                                    <th class="p-4">SKU</th>
+                                    <th class="p-4">الثمن الأصلي</th>
+                                    <th class="p-4">ثمن الخصم</th>
+                                    <th class="p-4">المسؤول</th>
+                                    <th class="p-4">القسم</th>
+                                    <th class="p-4">الحالة</th>
+                                    <th class="p-4 text-center">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body" class="divide-y divide-gray-100 text-sm font-medium">
+                                <tr>
+                                    <td colspan="9" class="text-center p-8 text-gray-500 font-bold">جاري تحميل المنتجات...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CATEGORIES MANAGEMENT (قسم الفئات وإدارة الفئات) -->
+            <div id="tab-categories" class="admin-tab-content space-y-8">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between border-b pb-4">
+                        <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
+                            <i data-lucide="grid" class="w-6 h-6 text-[#059669]"></i>
+                            <span>إدارة الفئات والأقسام</span>
+                        </h2>
+                        <button onclick="openAddCategoryModal()" class="bg-[#059669] hover:bg-[#047857] text-white px-4 py-2 rounded-xl font-bold text-xs shadow-md transition-all flex items-center gap-1.5">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>إضافة فئة جديدة</span>
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs font-black uppercase">
+                                    <th class="p-4">رمز الفئة (Key)</th>
+                                    <th class="p-4">اسم الفئة</th>
+                                    <th class="p-4 text-center">العمليات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table-body" class="divide-y divide-gray-100 text-sm font-medium">
+                                <!-- سيتم ملؤها ديناميكياً -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: ORDERS -->
+            <div id="tab-orders" class="admin-tab-content space-y-8">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden space-y-4 p-6">
+                    <div class="flex items-center justify-between border-b pb-4">
+                        <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
+                            <i data-lucide="shopping-cart" class="w-6 h-6 text-amber-600"></i>
+                            <span>طلبات الزبناء الواردة</span>
+                        </h2>
+                        <button onclick="fetchOrders()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                             <i data-lucide="rotate-cw" class="w-5 h-5"></i>
                         </button>
                     </div>
-                </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs font-black uppercase">
-                                <th class="p-4">الصورة</th>
-                                <th class="p-4">اسم المنتج</th>
-                                <th class="p-4">الثمن</th>
-                                <th class="p-4">القسم</th>
-                                <th class="p-4">الحالة</th>
-                                <th class="p-4 text-center">العمليات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="products-table-body" class="divide-y divide-gray-100 text-sm font-medium">
-                            <tr>
-                                <td colspan="6" class="text-center p-8 text-gray-500 font-bold">جاري تحميل المنتجات...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs font-black uppercase">
+                                    <th class="p-4">الزبون</th>
+                                    <th class="p-4">الهاتف</th>
+                                    <th class="p-4">المدينة / العنوان</th>
+                                    <th class="p-4">المنتجات المطلوبة</th>
+                                    <th class="p-4">المجموع</th>
+                                    <th class="p-4">الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body" class="divide-y divide-gray-100 text-sm font-medium">
+                                <tr>
+                                    <td colspan="6" class="text-center p-8 text-gray-500 font-bold">جاري تحميل الطلبات...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 3: PRODUCT FORM (ADD / EDIT) - REDESIGNED STYLE -->
-        <div id="tab-form" class="admin-tab-content space-y-8">
-            <div class="bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 text-white p-6 sm:p-10 rounded-3xl shadow-2xl space-y-8 max-w-4xl mx-auto border border-emerald-500/30">
-                
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-emerald-500/20 pb-6 gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-inner">
-                            <i data-lucide="package-plus" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h2 id="form-title" class="text-2xl font-black tracking-wide text-white">إضافة منتج تجميل وعناية جديد (Supabase)</h2>
-                            <p class="text-xs text-emerald-300/80 font-medium mt-0.5">قم بإدخال بيانات المنتج بدقة مع استخدام حاسبة الأرباح الذكية</p>
-                        </div>
+            <!-- TAB 5: SETTINGS -->
+            <div id="tab-settings" class="admin-tab-content space-y-8">
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6 max-w-xl mx-auto">
+                    <div class="border-b pb-4">
+                        <h2 class="text-lg font-black text-gray-900 flex items-center gap-2">
+                            <i data-lucide="image" class="w-5 h-5 text-amber-500"></i>
+                            <span>إعداد الإعلان الحصري (Popup)</span>
+                        </h2>
                     </div>
-                    <button id="cancel-edit-btn" onclick="resetProductForm()" class="hidden text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 px-4 py-2 rounded-xl font-bold transition-all flex items-center gap-1.5">
-                        <i data-lucide="x" class="w-4 h-4"></i> إلغاء التعديل
-                    </button>
-                </div>
-
-                <form id="product-form" onsubmit="handleProductSubmit(event)" class="space-y-6">
-                    <input type="hidden" id="prod-id">
-
-                    <!-- Calculator Card Box -->
-                    <div class="bg-emerald-900/30 backdrop-blur-md p-6 rounded-2xl border border-emerald-500/30 space-y-4 shadow-lg">
-                        <div class="flex items-center gap-2 text-emerald-300 font-extrabold text-sm border-b border-emerald-500/20 pb-3">
-                            <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i>
-                            <span>آلة حاسبة التسعير وحساب الربح الصافي تلقائياً</span>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-emerald-200 mb-1.5">ثمن المنتوج في tajir *</label>
-                                <input type="number" step="0.01" id="calc-tajir" placeholder="0.00" oninput="calculateProfit()" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-emerald-500/30 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-emerald-200 mb-1.5">ثمن تجهيز المنتوج *</label>
-                                <input type="number" step="0.01" id="calc-prep" placeholder="0.00" oninput="calculateProfit()" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-emerald-500/30 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-emerald-200 mb-1.5">ثمن المستهدف للبيع *</label>
-                                <input type="number" step="0.01" id="calc-target" placeholder="0.00" oninput="calculateProfit()" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-emerald-500/30 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm">
-                            </div>
-                        </div>
-
+                    <form onsubmit="handleAdSubmit(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-emerald-200 mb-1.5">الربح الصافي النهائي (أوتوماتيكي مقفل) *</label>
-                            <input type="text" id="calc-net-profit" readonly value="0.00" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-emerald-500/20 text-emerald-400 font-black text-sm cursor-not-allowed">
+                            <label class="block text-sm font-bold text-gray-700 mb-1">رابط صورة الإعلان</label>
+                            <input type="url" id="ad-img-url" placeholder="https://..." class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-[#059669] font-medium text-sm" dir="ltr">
                         </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                            <div class="bg-slate-900/60 p-4 rounded-xl border border-emerald-500/20 flex items-center justify-between">
-                                <span class="text-xs font-bold text-gray-300">الثمن المقترح في المتجر:</span>
-                                <span id="display-suggested-price" class="text-lg font-black text-emerald-400">0.00 د.م</span>
-                            </div>
-                            <div class="bg-slate-900/60 p-4 rounded-xl border border-emerald-500/20 flex items-center justify-between">
-                                <span class="text-xs font-bold text-gray-300">الثمن الأصلي في السوق (+70% تلقائي):</span>
-                                <span id="display-original-price" class="text-lg font-black text-amber-400">0.00 د.م</span>
-                            </div>
-                        </div>
-
-                        <button type="button" onclick="applyCalculatorValues()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-sm border border-emerald-400/30">
-                            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
-                            <span>تطبيق الثمن المقترح في المتجر والثمن المستهدف أوتوماتيكياً</span>
+                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-black py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            <span>تحديث صورة الإعلان</span>
                         </button>
+                    </form>
+
+                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-xs text-emerald-800 space-y-1">
+                        <p class="font-bold">💡 تنبيه:</p>
+                        <p>أي تغيير كديرو هنا كيتحدث مباشرة فالموقع عند الزوار بدون الحاجة لإعادة رفع الكود.</p>
                     </div>
-
-                    <!-- Main Product Details Group -->
-                    <div class="bg-slate-800/50 backdrop-blur-md p-6 rounded-2xl border border-slate-700/60 space-y-5">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 mb-1.5">اسم المنتج *</label>
-                                <input type="text" id="prod-title" required placeholder="مثال: كريم العناية بالبشرة..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 mb-1.5">رمز المنتج (SKU)</label>
-                                <input type="text" id="prod-sku" placeholder="SKU-XXXX" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-mono text-sm uppercase">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 mb-1.5">الثمن الأصلي (أوتوماتيكي) *</label>
-                                <input type="number" step="0.01" id="prod-old-price" required placeholder="0.00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 mb-1.5">ثمن الخصم / المستهدف (أوتوماتيكي مقفل) *</label>
-                                <input type="number" step="0.01" id="prod-price" required placeholder="0.00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 mb-1.5">المسؤول *</label>
-                                <select id="prod-manager" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-sm focus:outline-none focus:border-emerald-500">
-                                    <option value="ZAMZAM">ZAMZAM</option>
-                                    <option value="ADMIN">ADMIN</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-300 mb-1.5">القسم (التجميل والعناية) *</label>
-                                <select id="prod-category" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-sm focus:outline-none focus:border-emerald-500">
-                                    <option value="cosmetics">مستحضرات التجميل</option>
-                                    <option value="health_care">العناية بالصحة</option>
-                                    <option value="skincare">العناية بالبشرة والشعر</option>
-                                    <option value="organic">منتجات طبيعية</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <input type="hidden" id="prod-available" value="true">
-
-                        <div class="space-y-3 pt-2">
-                            <label class="block text-xs font-bold text-gray-300">رابط الصور (حتى 5 صور)</label>
-                            <input type="url" id="prod-image" required placeholder="رابط الصورة الرئيسية 1 *" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
-                            <input type="url" id="prod-image-2" placeholder="رابط الصورة 2" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
-                            <input type="url" id="prod-image-3" placeholder="رابط الصورة 3" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
-                            <input type="url" id="prod-image-4" placeholder="رابط الصورة 4" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
-                            <input type="url" id="prod-image-5" placeholder="رابط الصورة 5" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
-                        </div>
-
-                        <div class="space-y-3 pt-2">
-                            <label class="block text-xs font-bold text-gray-300">روابط الفيديوهات (إن وجدت)</label>
-                            <input type="url" id="prod-video-1" placeholder="رابط الفيديو الأول (YouTube / MP4)" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
-                            <input type="url" id="prod-video-2" placeholder="رابط الفيديو الثاني" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-300 mb-1.5">وصف المنتج *</label>
-                            <textarea id="prod-desc" rows="4" placeholder="أدخل تفاصيل ومميزات مستحضرات التجميل والعناية..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm resize-none"></textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" id="submit-prod-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 text-base border border-emerald-400/30">
-                        <i data-lucide="save" class="w-5 h-5"></i>
-                        <span>حفظ البيانات</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- TAB 4: ORDERS -->
-        <div id="tab-orders" class="admin-tab-content space-y-8">
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden space-y-4 p-6">
-                <div class="flex items-center justify-between border-b pb-4">
-                    <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
-                        <i data-lucide="shopping-cart" class="w-6 h-6 text-amber-600"></i>
-                        <span>طلبات الزبناء الواردة</span>
-                    </h2>
-                    <button onclick="fetchOrders()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                        <i data-lucide="rotate-cw" class="w-5 h-5"></i>
-                    </button>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs font-black uppercase">
-                                <th class="p-4">الزبون</th>
-                                <th class="p-4">الهاتف</th>
-                                <th class="p-4">المدينة / العنوان</th>
-                                <th class="p-4">المنتجات المطلوبة</th>
-                                <th class="p-4">المجموع</th>
-                                <th class="p-4">الحالة</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orders-table-body" class="divide-y divide-gray-100 text-sm font-medium">
-                            <tr>
-                                <td colspan="6" class="text-center p-8 text-gray-500 font-bold">جاري تحميل الطلبات...</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 5: SETTINGS -->
-        <div id="tab-settings" class="admin-tab-content space-y-8">
-            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6 max-w-xl mx-auto">
-                <div class="border-b pb-4">
-                    <h2 class="text-lg font-black text-gray-900 flex items-center gap-2">
-                        <i data-lucide="image" class="w-5 h-5 text-amber-500"></i>
-                        <span>إعداد الإعلان الحصري (Popup)</span>
-                    </h2>
-                </div>
-                <form onsubmit="handleAdSubmit(event)" class="space-y-4">
+        </main>
+    </div>
+
+    <!-- Modal for Add/Edit Product (Fully Responsive for Mobile & Desktop) -->
+    <div id="product-modal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto hidden">
+        <div class="bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 text-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 max-w-4xl w-full border border-emerald-500/30 my-4 max-h-[90vh] overflow-y-auto">
+            
+            <div class="flex items-center justify-between border-b border-emerald-500/20 pb-4 sticky top-0 bg-slate-900/90 backdrop-blur-md z-10 pt-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-inner flex-shrink-0">
+                        <i data-lucide="package-plus" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                    </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">رابط صورة الإعلان</label>
-                        <input type="url" id="ad-img-url" placeholder="https://..." class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-[#059669] font-medium text-sm" dir="ltr">
+                        <h2 id="form-title" class="text-lg sm:text-2xl font-black tracking-wide text-white">إضافة منتج تجميل وعناية جديد (Supabase)</h2>
+                        <p class="text-xs text-emerald-300/80 font-medium mt-0.5">قم بإدخال بيانات المنتج بدقة مع استخدام حاسبة الأرباح الذكية</p>
                     </div>
-                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-black py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
-                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                        <span>تحديث صورة الإعلان</span>
-                    </button>
-                </form>
-
-                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-xs text-emerald-800 space-y-1">
-                    <p class="font-bold">💡 تنبيه:</p>
-                    <p>أي تغيير كديرو هنا كيتحدث مباشرة فالموقع عند الزوار بدون الحاجة لإعادة رفع الكود.</p>
                 </div>
+                <button type="button" onclick="closeProductModal()" class="text-xs bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-bold transition-all flex items-center gap-1.5 flex-shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i> إغلاق
+                </button>
+            </div>
+
+            <form id="product-form" onsubmit="handleProductSubmit(event)" class="space-y-6">
+                <input type="hidden" id="prod-id">
+
+                <!-- Calculator Card Box -->
+                <div class="bg-emerald-900/30 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-emerald-500/30 space-y-4 shadow-lg">
+                    <div class="flex items-center gap-2 text-emerald-300 font-extrabold text-sm border-b border-emerald-500/20 pb-3">
+                        <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i>
+                        <span>آلة حاسبة التسعير وحساب الربح الصافي تلقائياً</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-200 mb-1.5">ثمن المنتوج في tajir *</label>
+                            <input type="number" step="0.01" id="calc-tajir" placeholder="0.00" oninput="calculateProfit()" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-emerald-500/30 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-200 mb-1.5">ثمن تجهيز المنتوج *</label>
+                            <input type="number" step="0.01" id="calc-prep" placeholder="0.00" oninput="calculateProfit()" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-emerald-500/30 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-200 mb-1.5">ثمن المستهدف للبيع *</label>
+                            <input type="number" step="0.01" id="calc-target" placeholder="0.00" oninput="calculateProfit()" class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-emerald-500/30 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-200 mb-1.5">الربح الصافي النهائي (أوتوماتيكي مقفل) *</label>
+                        <input type="text" id="calc-net-profit" readonly value="0.00" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-emerald-500/20 text-emerald-400 font-black text-sm cursor-not-allowed">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-emerald-500/20 flex items-center justify-between">
+                            <span class="text-xs font-bold text-gray-300">الثمن المقترح في المتجر:</span>
+                            <span id="display-suggested-price" class="text-lg font-black text-emerald-400">0.00 د.م</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-emerald-500/20 flex items-center justify-between">
+                            <span class="text-xs font-bold text-gray-300">الثمن الأصلي في السوق (+70% تلقائي):</span>
+                            <span id="display-original-price" class="text-lg font-black text-amber-400">0.00 د.م</span>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="applyCalculatorValues()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-sm border border-emerald-400/30">
+                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                        <span>تطبيق الثمن المقترح في المتجر والثمن المستهدف أوتوماتيكياً</span>
+                    </button>
+                </div>
+
+                <!-- Main Product Details Group -->
+                <div class="bg-slate-800/50 backdrop-blur-md p-4 sm:p-6 rounded-2xl border border-slate-700/60 space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1.5">اسم المنتج *</label>
+                            <input type="text" id="prod-title" required placeholder="مثال: كريم العناية بالبشرة..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1.5">رمز المنتج (SKU)</label>
+                            <input type="text" id="prod-sku" placeholder="SKU-XXXX" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-mono text-sm uppercase">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1.5">الثمن الأصلي (أوتوماتيكي) *</label>
+                            <input type="number" step="0.01" id="prod-old-price" required placeholder="0.00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1.5">ثمن الخصم / المستهدف (أوتوماتيكي مقفل) *</label>
+                            <input type="number" step="0.01" id="prod-price" required placeholder="0.00" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1.5">المسؤول *</label>
+                            <select id="prod-manager" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-sm focus:outline-none focus:border-emerald-500">
+                                <option value="ZAMZAM">ZAMZAM</option>
+                                <option value="ADMIN">ADMIN</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="block text-xs font-bold text-gray-300">القسم (التجميل والعناية) *</label>
+                                <button type="button" onclick="openAddCategoryModal()" class="text-xs text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 transition-colors">
+                                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                                    <span>إضافة فئة جديدة</span>
+                                </button>
+                            </div>
+                            <select id="prod-category" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold text-sm focus:outline-none focus:border-emerald-500">
+                                <!-- يتم تعبئتها ديناميكياً -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="prod-available" value="true">
+
+                    <div class="space-y-3 pt-2">
+                        <label class="block text-xs font-bold text-gray-300">رابط الصور (حتى 5 صور)</label>
+                        <input type="url" id="prod-image" required placeholder="رابط الصورة الرئيسية 1 *" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
+                        <input type="url" id="prod-image-2" placeholder="رابط الصورة 2" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
+                        <input type="url" id="prod-image-3" placeholder="رابط الصورة 3" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
+                        <input type="url" id="prod-image-4" placeholder="رابط الصورة 4" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
+                        <input type="url" id="prod-image-5" placeholder="رابط الصورة 5" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <label class="block text-xs font-bold text-gray-300">روابط الفيديوهات (إن وجدت)</label>
+                        <input type="url" id="prod-video-1" placeholder="رابط الفيديو الأول (YouTube / MP4)" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
+                        <input type="url" id="prod-video-2" placeholder="رابط الفيديو الثاني" class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm" dir="ltr">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1.5">وصف المنتج *</label>
+                        <textarea id="prod-desc" rows="4" placeholder="أدخل تفاصيل ومميزات مستحضرات التجميل والعناية..." class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 font-medium text-sm resize-none"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-prod-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl transition-all shadow-xl flex items-center justify-center gap-2 text-base border border-emerald-400/30">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    <span>حفظ البيانات</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Modern Modal Backdrop for Prompts and Alerts -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 text-white border border-emerald-500/30 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6">
+            <div class="flex items-center gap-3 border-b border-emerald-500/20 pb-4">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                </div>
+                <h3 id="custom-modal-title" class="text-lg font-black tracking-wide">تنبيه لوحة التحكم</h3>
+            </div>
+            <p id="custom-modal-message" class="text-sm font-medium text-emerald-100/90"></p>
+            <div id="custom-modal-input-container" class="hidden">
+                <input type="text" id="custom-modal-input" class="w-full px-4 py-3 rounded-xl bg-slate-950 border border-emerald-500/40 text-white placeholder-emerald-700 focus:outline-none focus:border-emerald-400 font-bold text-sm" placeholder="أدخل القيمة هنا...">
+            </div>
+            <div class="flex items-center gap-3 pt-2">
+                <button id="custom-modal-submit" onclick="resolveCustomModal(true)" class="flex-grow bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3.5 rounded-xl transition-all shadow-md text-sm border border-emerald-400/30">موافق</button>
+                <button id="custom-modal-cancel" onclick="resolveCustomModal(false)" class="hidden flex-grow bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 font-bold py-3.5 rounded-xl transition-all text-sm">إلغاء</button>
             </div>
         </div>
-
-    </main>
+    </div>
 
     <!-- Footer with updated version -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-6 text-center text-xs text-gray-500 font-bold">
-        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.45</span>
+        <span>bedal.online Admin Panel — الإصدار:</span> <span class="text-[#059669] font-black">v 0.9.56</span>
     </footer>
 
     <!-- Admin JS Logic -->
@@ -375,8 +469,53 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let localProducts = [];
+        let categoriesList = [
+            { key: 'cosmetics', name: 'مستحضرات التجميل' },
+            { key: 'health_care', name: 'العناية بالصحة' },
+            { key: 'skincare', name: 'العناية بالبشرة والشعر' },
+            { key: 'organic', name: 'منتجات طبيعية' }
+        ];
         let calculatedSuggestedPrice = 0;
         let calculatedOriginalPrice = 0;
+        let modalResolveCallback = null;
+
+        function showCustomAlert(message) {
+            return new Promise((resolve) => {
+                document.getElementById('custom-modal-title').innerText = 'تنبيه النظام';
+                document.getElementById('custom-modal-message').innerText = message;
+                document.getElementById('custom-modal-input-container').classList.add('hidden');
+                document.getElementById('custom-modal-cancel').classList.add('hidden');
+                document.getElementById('custom-modal').classList.remove('hidden');
+                lucide.createIcons();
+                modalResolveCallback = (res) => {
+                    document.getElementById('custom-modal').classList.add('hidden');
+                    resolve(res);
+                };
+            });
+        }
+
+        function showCustomPrompt(message, defaultVal = '') {
+            return new Promise((resolve) => {
+                document.getElementById('custom-modal-title').innerText = 'إدخال بيانات الفئة';
+                document.getElementById('custom-modal-message').innerText = message;
+                const inputEl = document.getElementById('custom-modal-input');
+                inputEl.value = defaultVal;
+                document.getElementById('custom-modal-input-container').classList.remove('hidden');
+                document.getElementById('custom-modal-cancel').classList.remove('hidden');
+                document.getElementById('custom-modal').classList.remove('hidden');
+                inputEl.focus();
+                lucide.createIcons();
+                modalResolveCallback = (res) => {
+                    const val = inputEl.value;
+                    document.getElementById('custom-modal').classList.add('hidden');
+                    resolve(res ? val : null);
+                };
+            });
+        }
+
+        function resolveCustomModal(isConfirm) {
+            if (modalResolveCallback) modalResolveCallback(isConfirm);
+        }
 
         function calculateProfit() {
             const tajir = parseFloat(document.getElementById('calc-tajir').value) || 0;
@@ -393,14 +532,32 @@
             document.getElementById('display-original-price').innerText = calculatedOriginalPrice.toFixed(2) + ' د.م';
         }
 
-        function applyCalculatorValues() {
+        async function applyCalculatorValues() {
             if (calculatedSuggestedPrice <= 0) {
-                alert('الرجاء إدخال ثمن المستهدف للبيع أولاً في الحاسبة.');
+                await showCustomAlert('الرجاء إدخال ثمن المستهدف للبيع أولاً في الحاسبة.');
                 return;
             }
             document.getElementById('prod-price').value = calculatedSuggestedPrice.toFixed(2);
             document.getElementById('prod-old-price').value = calculatedOriginalPrice.toFixed(2);
-            alert('تم تطبيق الثمن المقترح والثمن الأصلي بنجاح في حقول المنتج!');
+            await showCustomAlert('تم تطبيق الثمن المقترح والثمن الأصلي بنجاح في حقول المنتج!');
+        }
+
+        function toggleNavigationGroup() {
+            const submenu = document.getElementById('navigation-submenu');
+            const chevron = document.getElementById('nav-group-chevron');
+            if (submenu && chevron) {
+                submenu.classList.toggle('hidden');
+                chevron.classList.toggle('rotate-180');
+            }
+        }
+
+        function toggleCategoriesGroup() {
+            const submenu = document.getElementById('categories-submenu');
+            const chevron = document.getElementById('categories-chevron');
+            if (submenu && chevron) {
+                submenu.classList.toggle('hidden');
+                chevron.classList.toggle('rotate-180');
+            }
         }
 
         function switchAdminTab(tabId) {
@@ -413,14 +570,112 @@
                 const btnEl = document.getElementById(`nav-btn-${btn}`);
                 if (btnEl) {
                     if (btn === tabId) {
-                        btnEl.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-[#059669] text-white shadow-sm flex-shrink-0";
+                        btnEl.className = "flex items-center gap-3 px-4 py-3 rounded-xl font-extrabold text-sm transition-all bg-[#059669] text-white shadow-sm w-full text-right";
                     } else {
-                        btnEl.className = "flex items-center gap-2 px-5 py-2.5 rounded-xl font-extrabold text-sm transition-all bg-gray-100 hover:bg-gray-200 text-gray-700 flex-shrink-0";
+                        btnEl.className = "flex items-center gap-3 px-4 py-3 rounded-xl font-extrabold text-sm transition-all bg-gray-50 hover:bg-gray-100 text-gray-700 w-full text-right";
                     }
                 }
             });
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderCategoriesTable();
             lucide.createIcons();
+        }
+
+        function openProductModal() {
+            resetProductForm();
+            document.getElementById('form-title').innerText = 'إضافة منتج تجميل وعناية جديد (Supabase)';
+            document.getElementById('product-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function renderCategoriesSelect() {
+            const selectEl = document.getElementById('prod-category');
+            if (!selectEl) return;
+            const currentVal = selectEl.value;
+            let html = '';
+            categoriesList.forEach(cat => {
+                html += `<option value="${cat.key}">${cat.name}</option>`;
+            });
+            selectEl.innerHTML = html;
+            if (currentVal) selectEl.value = currentVal;
+        }
+
+        function renderCategoriesTable() {
+            const tbody = document.getElementById('categories-table-body');
+            if (!tbody) return;
+            if (categoriesList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center p-6 text-gray-500 font-bold">لا توجد فئات حالياً.</td></tr>';
+                return;
+            }
+            let html = '';
+            categoriesList.forEach((cat, index) => {
+                html += `
+                    <tr class="hover:bg-gray-50/50 transition-colors">
+                        <td class="p-4 font-mono text-xs text-gray-600">${cat.key}</td>
+                        <td class="p-4 font-bold text-gray-900">${cat.name}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="editCategory(${index})" class="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-bold text-xs flex items-center gap-1">
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i> تعديل
+                                </button>
+                                <button onclick="deleteCategory(${index})" class="p-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg font-bold text-xs flex items-center gap-1">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i> حذف
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        async function openAddCategoryModal() {
+            const catName = await showCustomPrompt('أدخل اسم الفئة الجديدة (مثال: العناية الشخصية):');
+            if (!catName) return;
+            const catKey = await showCustomPrompt('أدخل رمز الفئة بالإنجليزية بدون مسافات (مثال: personal_care):');
+            if (!catKey) return;
+            
+            categoriesList.push({ key: catKey.trim().toLowerCase(), name: catName.trim() });
+            renderCategoriesSelect();
+            renderCategoriesTable();
+            await showCustomAlert('تم إضافة الفئة "' + catName + '" بنجاح!');
+        }
+
+        async function editCategory(index) {
+            const cat = categoriesList[index];
+            const newName = await showCustomPrompt('تعديل اسم الفئة:', cat.name);
+            if (!newName) return;
+            categoriesList[index].name = newName.trim();
+            renderCategoriesSelect();
+            renderCategoriesTable();
+            await showCustomAlert('تم تعديل الفئة بنجاح!');
+        }
+
+        async function deleteCategory(index) {
+            const confirmDel = await new Promise((resolve) => {
+                document.getElementById('custom-modal-title').innerText = 'تأكيد الحذف';
+                document.getElementById('custom-modal-message').innerText = 'واش متأكد بغيتي تحذف هاد الفئة؟';
+                document.getElementById('custom-modal-input-container').classList.add('hidden');
+                document.getElementById('custom-modal-cancel').classList.remove('hidden');
+                document.getElementById('custom-modal').classList.remove('hidden');
+                lucide.createIcons();
+                modalResolveCallback = (res) => {
+                    document.getElementById('custom-modal').classList.add('hidden');
+                    resolve(res);
+                };
+            });
+
+            if (!confirmDel) return;
+            categoriesList.splice(index, 1);
+            renderCategoriesSelect();
+            renderCategoriesTable();
+            await showCustomAlert('تم حذف الفئة بنجاح!');
         }
 
         async function fetchProducts() {
@@ -450,7 +705,7 @@
         function renderProductsTable(products) {
             const tbody = document.getElementById('products-table-body');
             if (!products || products.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center p-8 text-gray-500 font-bold">لا توجد منتجات حالياً.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center p-8 text-gray-500 font-bold">لا توجد منتجات حالياً.</td></tr>';
                 return;
             }
 
@@ -469,7 +724,10 @@
                             <img src="${img}" class="w-12 h-12 object-contain rounded-lg border bg-white p-1">
                         </td>
                         <td class="p-4 font-bold text-gray-900">${p.title || 'بدون عنوان'}</td>
+                        <td class="p-4 font-mono text-xs text-gray-600 uppercase">${p.sku || p.SKU || '-'}</td>
+                        <td class="p-4 font-bold text-gray-500 line-through">${parseFloat(p.oldPrice || p.old_price || (p.price ? p.price * 1.7 : 0)).toFixed(2)} د.م</td>
                         <td class="p-4 font-extrabold text-[#059669]">${parseFloat(p.price || 0).toFixed(2)} د.م</td>
+                        <td class="p-4 font-bold text-gray-700 text-xs">${p.manager || 'ZAMZAM'}</td>
                         <td class="p-4"><span class="bg-emerald-50 text-[#059669] px-2.5 py-1 rounded-lg text-xs font-bold">${p.category || 'مستحضرات التجميل'}</span></td>
                         <td class="p-4">
                             <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isAvail ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
@@ -525,7 +783,10 @@
             e.preventDefault();
             const id = document.getElementById('prod-id').value;
             const title = document.getElementById('prod-title').value.trim();
+            const sku = document.getElementById('prod-sku').value.trim();
             const price = parseFloat(document.getElementById('prod-price').value);
+            const oldPrice = parseFloat(document.getElementById('prod-old-price').value);
+            const manager = document.getElementById('prod-manager').value;
             const category = document.getElementById('prod-category').value;
             const description = document.getElementById('prod-desc').value.trim();
             
@@ -539,7 +800,10 @@
 
             const productData = {
                 title,
+                sku,
                 price,
+                oldPrice,
+                manager,
                 category,
                 images: imagesList,
                 description
@@ -549,17 +813,17 @@
                 if (id) {
                     const { error } = await supabaseClient.from('products').update(productData).eq('id', id);
                     if (error) throw error;
-                    alert('تم تعديل المنتج بنجاح!');
+                    await showCustomAlert('تم تعديل المنتج بنجاح!');
                 } else {
                     const { error } = await supabaseClient.from('products').insert([productData]);
                     if (error) throw error;
-                    alert('تم إضافة المنتج الجديد بنجاح!');
+                    await showCustomAlert('تم إضافة المنتج الجديد بنجاح!');
                 }
+                closeProductModal();
                 resetProductForm();
                 fetchProducts();
-                switchAdminTab('products');
             } catch (err) {
-                alert('حدث خطأ: ' + err.message);
+                await showCustomAlert('حدث خطأ: ' + err.message);
             }
         }
 
@@ -569,8 +833,10 @@
 
             document.getElementById('prod-id').value = p.id;
             document.getElementById('prod-title').value = p.title || '';
+            document.getElementById('prod-sku').value = p.sku || p.SKU || '';
             document.getElementById('prod-price').value = p.price || '';
-            document.getElementById('prod-old-price').value = p.oldPrice || (p.price ? p.price * 1.7 : '');
+            document.getElementById('prod-old-price').value = p.oldPrice || p.old_price || (p.price ? p.price * 1.7 : '');
+            document.getElementById('prod-manager').value = p.manager || 'ZAMZAM';
             document.getElementById('prod-category').value = p.category || 'cosmetics';
 
             const imgs = p.images || [p.image || p.image1 || ''];
@@ -583,27 +849,38 @@
             document.getElementById('prod-desc').value = p.description || '';
 
             document.getElementById('form-title').innerText = 'تعديل المنتج';
-            document.getElementById('cancel-edit-btn').classList.remove('hidden');
-            switchAdminTab('form');
+            document.getElementById('product-modal').classList.remove('hidden');
             lucide.createIcons();
         }
 
         async function deleteProduct(id) {
-            if (!confirm('واش متأكد بغيتي تحذف هاد المنتوج؟ أيمشي حتى من الصفحة الرئيسية!')) return;
+            const confirmDel = await new Promise((resolve) => {
+                document.getElementById('custom-modal-title').innerText = 'تأكيد الحذف';
+                document.getElementById('custom-modal-message').innerText = 'واش متأكد بغيتي تحذف هاد المنتوج؟ أيمشي حتى من الصفحة الرئيسية!';
+                document.getElementById('custom-modal-input-container').classList.add('hidden');
+                document.getElementById('custom-modal-cancel').classList.remove('hidden');
+                document.getElementById('custom-modal').classList.remove('hidden');
+                lucide.createIcons();
+                modalResolveCallback = (res) => {
+                    document.getElementById('custom-modal').classList.add('hidden');
+                    resolve(res);
+                };
+            });
+
+            if (!confirmDel) return;
+
             try {
                 const { error } = await supabaseClient.from('products').delete().eq('id', id);
                 if (error) throw error;
                 fetchProducts();
             } catch (err) {
-                alert('خطأ أثناء الحذف: ' + err.message);
+                await showCustomAlert('خطأ أثناء الحذف: ' + err.message);
             }
         }
 
         function resetProductForm() {
             document.getElementById('product-form').reset();
             document.getElementById('prod-id').value = '';
-            document.getElementById('form-title').innerText = 'إضافة منتج تجميل وعناية جديد (Supabase)';
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
             document.getElementById('calc-net-profit').value = '0.00';
             document.getElementById('display-suggested-price').innerText = '0.00 د.م';
             document.getElementById('display-original-price').innerText = '0.00 د.م';
@@ -617,13 +894,15 @@
             try {
                 const { error } = await supabaseClient.from('settings').upsert({ key: 'popup_ad_img', value: url });
                 if (error) throw error;
-                alert('تم تحديث صورة الإعلان الحصري بنجاح!');
+                await showCustomAlert('تم تحديث صورة الإعلان الحصري بنجاح!');
             } catch (err) {
-                alert('خطأ: ' + err.message);
+                await showCustomAlert('خطأ: ' + err.message);
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            renderCategoriesSelect();
+            renderCategoriesTable();
             fetchProducts();
             fetchOrders();
             lucide.createIcons();
